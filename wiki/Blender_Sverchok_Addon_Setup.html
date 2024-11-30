@@ -1,0 +1,126 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Blender Sverchok Addon Setup</span></h1><div class="mw-parser-output"><div id="itsfree" style="text-align:center;color:black;background:#FDE0A8;margin:1em 7em;padding:0.5em 2em;border:2px solid #FF5706;">These notes are a work in progress.</div>
+<div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Debian_11"><span class="tocnumber">2</span> <span class="toctext">Debian 11</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Manjaro"><span class="tocnumber">3</span> <span class="toctext">Manjaro</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Linux_Appimage"><span class="tocnumber">4</span> <span class="toctext">Linux Appimage</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Miscellaneous"><span class="tocnumber">5</span> <span class="toctext">Miscellaneous</span></a></li>
+</ul>
+</div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>The Sverchok addon for Blender allows direct read and write of FreeCAD FCStd files.
+</p><p>There are some requirements to configure the Sverchok addon to get it working.
+</p><p>Generally, both Blender and FreeCAD must be using the same major.minor version of Python. So, for example if Blender is using Python 3.9, then FreeCAD must be as well.
+When configuring the Sverchok addon in Blender, the Blender addon must display a checkmark and <i>FreeCAD package is available</i> in the FreeCAD setup area at the bottom of the addon setting in Blender preferences.
+</p><p>Both Blender and FreeCAD versions continue to change and may be different on any given PC. The versions mentioned below were used when writing these notes.
+</p>
+<h2><span class="mw-headline" id="Debian_11">Debian 11</span></h2>
+<p>(Note: on this machine I build multiple flavors of FreeCAD. Here I discuss my install/build of FreeCAD source retrieved and built from github daily. I run FreeCAD from the build directory and do not install, i.e. I never run ‘make install’ .)
+</p><p>This PC has Python 3.9.2.
+</p><p>Blender is at 2.93.3. In the Addons section sverchok nodes (1.0.1) are installed in the usual way. But, there is no path specified for FreeCAD python. On the Addons Blender/sverchok setup line for FreeCAD it says ‘FreeCAD package is available’.
+</p><p>At the Python console in Blender (Shift-F4) the following commands produce:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">PartDesign</span><span class="p">;</span> <span class="n">PartDesign</span><span class="o">.</span><span class="vm">__file__</span>
+<span class="s1">'~/fc-daily-build-occt77/Mod/PartDesign/__init__.py'</span>
+
+ <span class="kn">import</span> <span class="nn">freecad</span><span class="p">;</span> <span class="n">freecad</span><span class="o">.</span><span class="vm">__file__</span>
+<span class="s1">'~/fc-daily-build-occt77/Ext/freecad/__init__.py'</span>
+
+<span class="kn">import</span> <span class="nn">Part</span><span class="p">;</span> <span class="n">Part</span><span class="o">.</span><span class="vm">__file__</span>
+<span class="s1">'~/fc-daily-build-occt77/Mod/Part/Part.so'</span>
+</pre></div>
+<p>(Note: the tilde represents the users home directory)
+</p><p>(Note: so the modules that Python finds are in the build folder in my home directory.)
+(Note: Modules PartDesign and freecad don't have .so files, but, Part does.)
+</p><p>If python sys.path is used to see the path it searches:
+</p><p>(Note: in this particular case, it works with nothing specified in the Blender Preferences Sverchok addons FreeCAD path. This happens on this particular PC because the Python path includes the required FreeCAD modules.)
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+<span class="p">[</span><span class="s1">'/home/mac/.local/share/FreeCAD/Mod/lattice2/./'</span><span class="p">,</span> <span class="s1">'/home/mac/.local/share/FreeCAD/Mod/lattice2'</span><span class="p">,</span> <span class="s1">'/home/mac/.local/share/FreeCAD/Mod/Curves/./'</span><span class="p">,</span> <span class="s1">'/home/mac/.local/share/FreeCAD/Mod/Curves'</span><span class="p">,</span> <span class="s1">'/home/mac/.local/share/FreeCAD/Mod/CurvedShapes/./'</span><span class="p">,</span> <span class="s1">'/home/mac/.local/share/FreeCAD/Mod/CurvedShapes'</span><span class="p">,</span> <span class="s1">'/home/mac/.local/share/FreeCAD/Mod/A2plus/./'</span><span class="p">,</span> <span class="s1">'/home/mac/.local/share/FreeCAD/Mod/A2plus'</span><span class="p">,</span> <span class="s1">'/home/mac/.local/share/FreeCAD/Mod/sheetmetal/./'</span><span class="p">,</span> 
+<span class="o">&lt;</span><span class="n">a</span> <span class="n">long</span> <span class="nb">list</span> <span class="n">that</span> <span class="n">includes</span><span class="o">&gt;</span>
+<span class="o">~/&lt;</span><span class="n">build</span> <span class="nb">dir</span><span class="o">&gt;/</span><span class="n">Mod</span><span class="o">/</span><span class="n">PartDesign</span>
+<span class="o">~/&lt;</span><span class="n">build</span> <span class="nb">dir</span><span class="o">&gt;/</span><span class="n">Mod</span>
+<span class="o">~/&lt;</span><span class="n">build</span> <span class="nb">dir</span><span class="o">&gt;/</span><span class="n">Ext</span>
+<span class="err">…</span>
+<span class="o">...</span>
+</pre></div>
+<p>So, in this case Blender/sverchok has found the FreeCAD modules, the Python versions match, and the nodes work.
+</p>
+<h2><span class="mw-headline" id="Manjaro">Manjaro</span></h2>
+<p>On this PC Blender 3.1.2 and FreeeCAD AUR is installed. The latter means FreeCAD is built from the latest github source and is installed.
+</p><p>Installed, should imply that things are pretty much the same, but, there is a wrinkle thanks to the way the AUR package is installed. (I don’t know if it is a bug in the AUR script or it is a glitch thanks to the fact that Arch/Manjaro updated to Python 3.10.)
+</p><p>Most of the previous discussion is the same. Except that none of the places that Python searches has a directory called PartDesign, the Blender/sverchok can’t find <i>PartDesign/__init__py</i>.
+</p><p>The solution is to use a BASH shellscript to launch Blender that uses the python path and Linux export to add the needed path to the Python search path.
+Save the following (adjusted for paths and such on the target PC) in a file with the extension <i>.sh</i>:
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span><span class="nv">PYTHONPATH</span><span class="o">=</span>/usr/lib/freecad/Mod           <span class="c1">#define PYTHONPATH</span>
+<span class="nb">export</span> PYTHONPATH                         <span class="c1">#export PYTHONPATH</span>
+blender                                   <span class="c1">#launch blender</span>
+</pre></div>
+<h2><span class="mw-headline" id="Linux_Appimage">Linux Appimage</span></h2>
+<p>This process was determined under Ubuntu 22.04 with Blender 3.4.1 and the Appimage of FreeCAD 0.21. (Both using Python 3.10.x)
+</p><p>When the FreeCAD appimage is started it creates a temporary FreeCAD installation in the /tmp directory. The name is different each time FreeCAD is started. It is in the following form where the last 6 letters are a random string:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">/</span><span class="n">tmp</span><span class="o">/.</span><span class="n">mount_FreeCAwoAlTz</span>
+</pre></div>
+<p>This directory is only available while FreeCAD is running. This means that the setting under Blender Preferences Add-ons for Sverchok can't be set permanently and must be discoverable by Sverchok. Sverchok need to know where the FreeCAD Modules reside. The complete is as follows:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">/</span><span class="n">tmp</span><span class="o">/.</span><span class="n">mount_FreeCAwoAlTz</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">lib</span>
+</pre></div>
+<p>The solution is to use a BASH shellscript to launch Blender that uses the python path and Linux export to add the needed path to the Python search path.
+Save the following (adjusted for paths and such on the target PC) in a file with the extension <i>.sh</i>:
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="k">$(</span>find  /tmp -type d -iname <span class="s1">'*mount_FreeCA*'</span> <span class="m">2</span>&gt;/dev/null<span class="k">)</span><span class="s2">"/usr/lib"</span>    <span class="c1">#define PYTHONPATH</span>
+<span class="nb">export</span> PYTHONPATH                                                                 <span class="c1">#export PYTHONPATH</span>
+blender                                                                           <span class="c1">#launch blender</span>
+</pre></div>
+<p>FreeCAD <i>must</i> be running <i>before</i> this script executes and remain running while Blender/Sverchok is in use.
+As script similar to the following would only launch Blender if FreeCAD is running.
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nv">APP</span><span class="o">=</span><span class="s2">"FreeCAD.appimag"</span>
+<span class="k">if</span> pgrep <span class="s2">"</span><span class="nv">$APP</span><span class="s2">"</span> &gt;/dev/null      <span class="c1">#Is FreeCAD running?</span>
+<span class="k">then</span>
+    <span class="nb">echo</span> <span class="s2">"</span><span class="nv">$APP</span><span class="s2"> is running! Starting Blender"</span> <span class="c1">#launch blender</span>
+
+    <span class="nv">PYTHONPATH</span><span class="o">=</span><span class="k">$(</span>find  /tmp -type d -iname <span class="s1">'*mount_FreeCA*'</span> <span class="m">2</span>&gt;/dev/null<span class="k">)</span><span class="s2">"/usr/lib"</span>
+    <span class="nb">echo</span> <span class="s2">"PYTHONPATH: </span><span class="nv">$PYTHONPATH</span><span class="s2">"</span>
+
+    <span class="nb">cd</span> ~/blender
+    ./blender
+<span class="k">else</span>
+    <span class="nb">echo</span> <span class="s2">"</span><span class="nv">$APP</span><span class="s2"> is not running, exiting!"</span>
+<span class="k">fi</span>
+</pre></div>
+<h2><span class="mw-headline" id="Miscellaneous">Miscellaneous</span></h2>
+<ul><li>Notes on other operating systems need to be added.</li>
+<li>The initial Arch/Majaro AUR install of FreeCAD has been addressed as this writing (6/16/2022). Specifics mentioned above may be different or not required.</li>
+<li>In some cases, the Sverchok addon setup just finds FreeCAD and no additional path setting is required.</li></ul>
+<!-- 
+NewPP limit report
+Cached time: 20241129211354
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.036 seconds
+Real time usage: 1.053 seconds
+Preprocessor visited node count: 115/1000000
+Post‐expand include size: 777/2097152 bytes
+Template argument size: 1753/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 7/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 6226/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 1043.692      1 -total
+ 99.79% 1041.465      7 Template:Code
+  0.12%    1.268      1 Template:VeryImportantMessage
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:290241-0!canonical and timestamp 20241129211353 and revision id 1222887. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>

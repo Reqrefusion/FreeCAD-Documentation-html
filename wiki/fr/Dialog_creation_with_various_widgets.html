@@ -1,0 +1,439 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Dialog creation with various widgets/fr</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Dialog_creation_with_various_widgets.html" lang="de" title="Dialogerstellung mit verschiedenen Widgets (100% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Dialog_creation_with_various_widgets.html" lang="en" title="Dialog creation with various widgets (100% translated)">English</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="fr">français</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Dialog_creation_with_various_widgets.html" lang="it" title="Creare una finestra di dialogo con diversi widget (14% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Dialog_creation_with_various_widgets.html" lang="pl" title="Tworzenie dialogów z różnymi widżetami (100% translated)">polski</a></li></ul></div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>Exemple de <a href="Dialog_creation.html" title="Dialog creation/fr">création de boîte de dialogue</a> avec <a href="PySide.html" title="PySide/fr">PySide</a>.
+</p><p>Dans cet exemple, l'interface entière est définie en <a href="Python.html" title="Python/fr">Python</a>. Bien que cela soit possible pour les petites interfaces, pour les interfaces plus importantes, il est recommandé de créer des fichiers <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">.ui</span> via Qt Designer et de les charger dans le programme.
+</p><p><span id="Method_1"></span>
+</p>
+<h2><span id="M.C3.A9thode_1"></span><span class="mw-headline" id="Méthode_1">Méthode 1</span></h2>
+<p>Un exemple de fenêtre de dialogue complète avec ses connections.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># Create by flachyjoe</span>
+
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">_fromUtf8</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QString</span><span class="o">.</span><span class="n">fromUtf8</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_fromUtf8</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">_encoding</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">UnicodeUTF8</span>
+    <span class="k">def</span> <span class="nf">_translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">,</span> <span class="n">_encoding</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Ui_MainWindow</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MainWindow</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">MainWindow</span>
+
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">))</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"centralWidget"</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">93</span><span class="p">,</span> <span class="mi">28</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"pushButton"</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_pushButton_clicked</span><span class="p">)</span> <span class="c1">#connection pushButton</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">211</span><span class="p">,</span> <span class="mi">22</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"lineEdit"</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">returnPressed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_lineEdit_clicked</span><span class="p">)</span> <span class="c1">#connection lineEdit</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">81</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"checkBoxON"</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_checkBox_clicked</span><span class="p">)</span> <span class="c1">#connection checkBox</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRadioButton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"radioButton"</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_radioButton_clicked</span><span class="p">)</span> <span class="c1">#connection radioButton</span>
+
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMenuBar</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">26</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"menuBar"</span><span class="p">))</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setMenuBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mainToolBar</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QToolBar</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mainToolBar</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"mainToolBar"</span><span class="p">))</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">addToolBar</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TopToolBarArea</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mainToolBar</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStatusBar</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"statusBar"</span><span class="p">))</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setStatusBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">retranslateUi</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+
+     <span class="k">def</span> <span class="nf">retranslateUi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MainWindow</span><span class="p">):</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">,</span> <span class="s2">"MainWindow"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">,</span> <span class="s2">"OK"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">,</span> <span class="s2">"tyty"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">,</span> <span class="s2">"CheckBox"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">,</span> <span class="s2">"RadioButton"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+     <span class="k">def</span> <span class="nf">on_checkBox_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">checkState</span><span class="p">())</span><span class="o">+</span><span class="s2">"  CheckBox KO</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>     
+            <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">checkState</span><span class="p">())</span><span class="o">+</span><span class="s2">" CheckBox OK</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="c1">#        App.Console.PrintMessage(str(self.lineEdit.setText("tititi"))+" LineEdit\r\n") #write text to the lineEdit window !</span>
+<span class="c1">#        str(self.lineEdit.setText("tititi")) #écrit le texte dans la fenêtre lineEdit</span>
+        <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">displayText</span><span class="p">())</span><span class="o">+</span><span class="s2">" LineEdit</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+
+     <span class="k">def</span> <span class="nf">on_radioButton_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+             <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">isChecked</span><span class="p">())</span><span class="o">+</span><span class="s2">" Radio OK</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+             <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">isChecked</span><span class="p">())</span><span class="o">+</span><span class="s2">"  Radio KO</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+
+     <span class="k">def</span> <span class="nf">on_lineEdit_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="c1">#        if self.lineEdit.textChanged():</span>
+             <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">displayText</span><span class="p">())</span><span class="o">+</span><span class="s2">" LineEdit Display</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+
+     <span class="k">def</span> <span class="nf">on_pushButton_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="s2">"Terminé</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+
+<span class="n">MainWindow</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">()</span>
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Ui_MainWindow</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+<span class="n">MainWindow</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+<p>Ici la même fenêtre mais avec un icône sur chaque bouton.
+</p><p>Téléchargez les icônes associés (Faites clic droit sur l'icône "Enregistrer l'image sous ...)"
+</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Icone01.png"><img decoding="async" height="64" src="../File/Icone01.png" width="64"/></a></span> <span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Icone02.png"><img decoding="async" height="64" src="../File/Icone02.png" width="64"/></a></span> <span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Icone03.png"><img decoding="async" height="64" src="../File/Icone03.png" width="64"/></a></span>
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">_fromUtf8</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QString</span><span class="o">.</span><span class="n">fromUtf8</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_fromUtf8</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">s</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">_encoding</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">UnicodeUTF8</span>
+    <span class="k">def</span> <span class="nf">_translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">,</span> <span class="n">_encoding</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Ui_MainWindow</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MainWindow</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">MainWindow</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ConfigGet</span><span class="p">(</span><span class="s2">"UserAppData"</span><span class="p">)</span>
+<span class="c1">#        path = FreeCAD.ConfigGet("AppHomePath")</span>
+
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">))</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"centralWidget"</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">93</span><span class="p">,</span> <span class="mi">28</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"pushButton"</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_pushButton_clicked</span><span class="p">)</span> <span class="c1">#connection pushButton</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">211</span><span class="p">,</span> <span class="mi">22</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"lineEdit"</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">returnPressed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_lineEdit_clicked</span><span class="p">)</span> <span class="c1">#connection lineEdit</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"checkBoxON"</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_checkBox_clicked</span><span class="p">)</span> <span class="c1">#connection checkBox</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRadioButton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"radioButton"</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_radioButton_clicked</span><span class="p">)</span> <span class="c1">#connection radioButton</span>
+
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMenuBar</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">26</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"menuBar"</span><span class="p">))</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setMenuBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mainToolBar</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QToolBar</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mainToolBar</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"mainToolBar"</span><span class="p">))</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">addToolBar</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">TopToolBarArea</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mainToolBar</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStatusBar</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="s2">"statusBar"</span><span class="p">))</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setStatusBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">retranslateUi</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+
+        <span class="c1"># Affiche un icone sur le bouton PushButton</span>
+        <span class="c1"># self.image_01 = "C:\Program Files\FreeCAD0.13\Icone01.png" # adapt the icon name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_01</span> <span class="o">=</span> <span class="n">path</span><span class="o">+</span><span class="s2">"Icone01.png"</span> <span class="c1"># adapt the name of the icon</span>
+        <span class="n">icon01</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span> 
+        <span class="n">icon01</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_01</span><span class="p">),</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="o">.</span><span class="n">Off</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon01</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">setLayoutDirection</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">RightToLeft</span><span class="p">)</span> <span class="c1"># This command reverses the direction of the button</span>
+
+        <span class="c1"># Affiche un icone sur le bouton RadioButton </span>
+        <span class="c1"># self.image_02 = "C:\Program Files\FreeCAD0.13\Icone02.png" # adapt the name of the icon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_02</span> <span class="o">=</span> <span class="n">path</span><span class="o">+</span><span class="s2">"Icone02.png"</span> <span class="c1"># adapter le nom de l'icone</span>
+        <span class="n">icon02</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span> 
+        <span class="n">icon02</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_02</span><span class="p">),</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="o">.</span><span class="n">Off</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon02</span><span class="p">)</span> 
+        <span class="c1"># self.radioButton.setLayoutDirection(QtCore.Qt.RightToLeft) #  This command reverses the direction of the button</span>
+
+        <span class="c1"># Affiche un icone sur le bouton CheckBox </span>
+        <span class="c1"># self.image_03 = "C:\Program Files\FreeCAD0.13\Icone03.png" # the name of the icon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_03</span> <span class="o">=</span> <span class="n">path</span><span class="o">+</span><span class="s2">"Icone03.png"</span> <span class="c1"># adapter le nom de l'icone</span>
+        <span class="n">icon03</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span> 
+        <span class="n">icon03</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_03</span><span class="p">),</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="o">.</span><span class="n">Off</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon03</span><span class="p">)</span> 
+        <span class="c1"># self.checkBox.setLayoutDirection(QtCore.Qt.RightToLeft) # This command reverses the direction of the button</span>
+
+
+     <span class="k">def</span> <span class="nf">retranslateUi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MainWindow</span><span class="p">):</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">,</span> <span class="s2">"FreeCAD"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">,</span> <span class="s2">"OK"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">,</span> <span class="s2">"tyty"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">,</span> <span class="s2">"CheckBox"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">,</span> <span class="s2">"RadioButton"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+     <span class="k">def</span> <span class="nf">on_checkBox_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">checkState</span><span class="p">()</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">checkState</span><span class="p">())</span><span class="o">+</span><span class="s2">"  CheckBox KO</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>     
+            <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">checkState</span><span class="p">())</span><span class="o">+</span><span class="s2">" CheckBox OK</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+           <span class="c1"># App.Console.PrintMessage(str(self.lineEdit.setText("tititi"))+" LineEdit\r\n") # write text to the lineEdit window !</span>
+           <span class="c1"># str(self.lineEdit.setText("tititi")) #écrit le texte dans la fenêtre lineEdit</span>
+        <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">displayText</span><span class="p">())</span><span class="o">+</span><span class="s2">" LineEdit</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+
+     <span class="k">def</span> <span class="nf">on_radioButton_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+             <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">isChecked</span><span class="p">())</span><span class="o">+</span><span class="s2">" Radio OK</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+             <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">isChecked</span><span class="p">())</span><span class="o">+</span><span class="s2">"  Radio KO</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+
+     <span class="k">def</span> <span class="nf">on_lineEdit_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+          <span class="c1"># if self.lineEdit.textChanged():</span>
+          <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">displayText</span><span class="p">())</span><span class="o">+</span><span class="s2">" LineEdit Display</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+
+     <span class="k">def</span> <span class="nf">on_pushButton_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="s2">"Terminé</span><span class="se">\r\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+
+<span class="n">MainWindow</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">()</span>
+<span class="n">ui</span> <span class="o">=</span> <span class="n">Ui_MainWindow</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+<span class="n">MainWindow</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+<p>Ici le code pour afficher l'icône sur le <b>pushButton</b>, modifiez le nom pour un autre bouton, (<b>radioButton, checkBox</b>) ainsi que le chemin de l'icône.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># Affiche un icône sur le bouton PushButton</span>
+        <span class="c1"># self.image_01 = "C:\Program Files\FreeCAD0.13\icone01.png" # the name of the icon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_01</span> <span class="o">=</span> <span class="n">path</span><span class="o">+</span><span class="s2">"icone01.png"</span> <span class="c1"># the name of the icon</span>
+        <span class="n">icon01</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">()</span> 
+        <span class="n">icon01</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image_01</span><span class="p">),</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="o">.</span><span class="n">Off</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon01</span><span class="p">)</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">setLayoutDirection</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">RightToLeft</span><span class="p">)</span> <span class="c1"># This command reverses the direction of the button</span>
+</pre></div>
+<p>La commande 
+<b>UserAppData</b> donne le chemin utilisateur 
+<b>AppHomePath</b> donne le chemin d'installation de FreeCAD
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#        path = FreeCAD.ConfigGet("UserAppData")</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ConfigGet</span><span class="p">(</span><span class="s2">"AppHomePath"</span><span class="p">)</span>
+</pre></div>
+<p>Cette commande inverse le sens horizontal du bouton,  droite à gauche
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">setLayoutDirection</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">RightToLeft</span><span class="p">)</span> <span class="c1"># This command reverses the direction of the button</span>
+</pre></div>
+<p><span id="Method_2"></span>
+</p>
+<h2><span id="M.C3.A9thode_2"></span><span class="mw-headline" id="Méthode_2">Méthode 2</span></h2>
+<p>Une autre méthode pour afficher une fenêtre, ici en créant un fichier <b>QtForm.py</b> qui renferme l'entête du programme (module appelé avec <b>import QtForm</b>), et d'un deuxième module qui renferme le code de la fenêtre tous ces accessoires, et votre code (le module appelant).
+</p><p>Cette méthode nécessite 2 fichiers distincts, mais permet de raccourcir votre programme, en utilisant le fichier <i>QtForm.py</i> en import. Il faut alors distribuer les deux fichiers ensemble, ils sont indissociables.
+</p><p>Le fichier <b>QtForm.py</b>
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># Create by flachyjoe</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">_fromUtf8</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QString</span><span class="o">.</span><span class="n">fromUtf8</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+   <span class="k">def</span> <span class="nf">_fromUtf8</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">s</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">_encoding</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">UnicodeUTF8</span>
+    <span class="k">def</span> <span class="nf">_translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">,</span> <span class="n">_encoding</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+   <span class="k">def</span> <span class="nf">_translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">disambig</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Form</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+   <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">window</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="o">=</span><span class="n">title</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="n">_fromUtf8</span><span class="p">(</span><span class="n">title</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+
+   <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">createUI</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">retranslateUI</span><span class="p">()</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+   
+   <span class="k">def</span> <span class="nf">setText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">control</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+      <span class="n">control</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">_translate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+</pre></div>
+<p>Le fichier appelant, qui contient la fenêtre et votre code.
+</p><p>Le fichier <b>my_file.py</b>
+</p><p>Les connections sont à faire, un bon exercice.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># Create by flachyjoe</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+<span class="kn">import</span> <span class="nn">QtForm</span>
+
+<span class="k">class</span> <span class="nc">myForm</span><span class="p">(</span><span class="n">QtForm</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
+   <span class="k">def</span> <span class="nf">createUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+      
+      <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPushButton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">93</span><span class="p">,</span> <span class="mi">28</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_pushButton_clicked</span><span class="p">)</span>
+      
+      <span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">211</span><span class="p">,</span> <span class="mi">22</span><span class="p">))</span>
+      
+      <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">81</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+      
+      <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QRadioButton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralWidget</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">95</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+   
+   <span class="k">def</span> <span class="nf">retranslateUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pushButton</span><span class="p">,</span> <span class="s2">"Fermer"</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lineEdit</span><span class="p">,</span> <span class="s2">"essais de texte"</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">checkBox</span><span class="p">,</span> <span class="s2">"CheckBox"</span><span class="p">)</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">radioButton</span><span class="p">,</span> <span class="s2">"RadioButton"</span><span class="p">)</span>
+   
+   <span class="k">def</span> <span class="nf">on_pushButton_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+      <span class="bp">self</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+
+<span class="n">myWindow</span><span class="o">=</span><span class="n">myForm</span><span class="p">(</span><span class="s2">"Fenetre de test"</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">myWindow</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+<p><b>Autre exemple</b>
+</p>
+<center>
+<ul class="gallery mw-gallery-traditional">
+<li class="gallerybox" style="width: 435px">
+<div class="thumb" style="width: 430px; height: 230px;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Qt_Example_00.png" title="Qt example 1"><img alt="Qt example 1" decoding="async" height="200" src="../File/Qt_Example_00.png" srcset="/images/thumb/f/fe/Qt_Example_00.png/250px-Qt_Example_00.png 1.5x, /images/thumb/f/fe/Qt_Example_00.png/333px-Qt_Example_00.png 2x" width="167"/></a></span></div>
+<div class="gallerytext">
+<p>Qt example 1
+</p>
+</div>
+</li>
+<li class="gallerybox" style="width: 435px">
+<div class="thumb" style="width: 430px; height: 230px;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Qt_Example_01.png" title="Qt example details"><img alt="Qt example details" decoding="async" height="200" src="../File/Qt_Example_01.png" srcset="/images/thumb/d/d4/Qt_Example_01.png/250px-Qt_Example_01.png 1.5x, /images/thumb/d/d4/Qt_Example_01.png/333px-Qt_Example_01.png 2x" width="167"/></a></span></div>
+<div class="gallerytext">
+<p>Qt example details
+</p>
+</div>
+</li>
+</ul>
+</center>
+<div style="clear:both"></div>
+<p>Sont traités :
+</p>
+<ol><li>icon for window : l'icône affiché sur le coin supérieur gauche de la fenêtre principale</li>
+<li>horizontalSlider : horizontal slider sa connexion et extraction / affectation de données</li>
+<li>progressBar horizontal : progress bar horizontal sa connexion et extraction / affectation de données</li>
+<li>verticalSlider : vertical slider sa connexion et extraction / affectation de données</li>
+<li>progressBar vertical : progress bar verticale sa connexion et extraction / affectation de données</li>
+<li>lineEdit : line edit sa connexion et extraction / affectation de données</li>
+<li>lineEdit :</li>
+<li>doubleSpinBox : double spinbox sa connexion et extraction / affectation de données</li>
+<li>doubleSpinBox :</li>
+<li>doubleSpinBox :</li>
+<li>button : button et sa connexion</li>
+<li>button :</li>
+<li>radioButton : radio button avec icône sa connexion checked</li>
+<li>checkBox : checkbox with avec icône sa connexion checked and unchecked</li>
+<li>textEdit : text edit sa connexion et extraction / affectation de données</li>
+<li>graphicsView : graphic view avec 2 images et la méthode pour changer d'image</li></ol>
+<p>La page de code et les icônes <a href="Qt_Example.html" title="Qt Example/fr">Qt Exemples</a>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Scripts FreeCAD :</b> <a href="Python.html" title="Python/fr">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/fr">Introduction à Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/fr">Tutoriel sur les scripts Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/fr">Débuter avec les scripts</a></li></ul>
+<hr/>
+<ul><li><b>Modules :</b> <a href="Builtin_modules.html" title="Builtin modules/fr">Modules intégrés</a>, <a href="Units.html" title="Units/fr">Unités</a>, <a href="Quantity.html" title="Quantity/fr">Quantity</a></li>
+<li><b>Ateliers :</b> <a href="Workbench_creation.html" title="Workbench creation/fr">Création d'atelier</a>, <a href="Gui_Command.html" title="Gui Command/fr">Commands Gui</a>, <a href="Command.html" title="Command/fr">Les commandes</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/fr">Installer des ateliers supplémentaires</a></li>
+<li><b>Maillages et objets Parts :</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/fr">Scripts Mesh</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/fr">Script de données topologiques</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/fr">Conversion objet Mesh en Part</a>, <a href="PythonOCC.html" title="PythonOCC/fr">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Objets paramétriques :</b> <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a>, <a href="Viewprovider.html" title="Viewprovider/fr">Viewproviders</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view/fr">Icône personnalisée dans l'arborescence</a>)</small></li>
+<li><b>Scénographie :</b> <a href="Scenegraph.html" title="Scenegraph/fr">Graphe de scène Coin (Inventor)</a>, <a href="Pivy.html" title="Pivy/fr">Pivy</a></li>
+<li><b>Interface graphique :</b> <a href="Interface_creation.html" title="Interface creation/fr">Création d'interface</a>, <a href="Dialog_creation.html" title="Dialog creation/fr">Création d'une boite de dialogue</a> <small>(<a class="mw-selflink selflink">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files/fr">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors/fr">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF/fr">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets/fr">5</a>)</small>, <a href="PySide.html" title="PySide/fr">PySide</a>, Exemples PySide <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples/fr">débutant</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/fr">intermédiaire</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples/fr">expérimenté</a></li>
+<li><b>Macros :</b> <a href="Macros.html" title="Macros/fr">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros/fr">Comment installer des macros</a></li>
+<li><b>Intégration :</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/fr">Intégrer FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/fr">Intégration de FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Autre :</b> <a href="Expressions.html" title="Expressions/fr">Expressions</a>, <a href="Code_snippets.html" title="Code snippets/fr">Extraits de codes</a>, <a href="Line_drawing_function.html" title="Line drawing function/fr">Fonction - tracer une ligne</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/fr">Bibliothèque mathématique vectorielle de FreeCAD</a> <small>(déprécié)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs :</b> <a href="User_hub.html" title="User hub/fr">Hub utilisateurs</a>, <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>, <a href="Developer_hub.html" title="Developer hub/fr">Hub développeurs</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211724
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [no‐toc‐conversion]
+CPU time usage: 0.124 seconds
+Real time usage: 1.323 seconds
+Preprocessor visited node count: 187/1000000
+Post‐expand include size: 7073/2097152 bytes
+Template argument size: 15432/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 7/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 68029/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 1201.046      1 -total
+ 98.87% 1187.465      7 Template:Code
+  0.20%    2.368      1 Template:Powerdocnavi/fr
+  0.12%    1.414      1 Template:Navigation_menu_2
+  0.06%    0.713      1 Template:FileName
+  0.06%    0.697      2 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:198195-0!canonical and timestamp 20241129211723 and revision id 1495566. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

@@ -1,0 +1,1204 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">B-Splines/pl</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="B-Splines.html" lang="de" title="B-Splines (80% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="B-Splines.html" lang="en" title="B-Splines (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--high" dir="ltr" href="B-Splines.html" lang="es" title="B-Splines (63% translated)">español</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="B-Splines.html" lang="fr" title="B-splines (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="B-Splines.html" lang="it" title="B-Splines (5% translated)">italiano</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="pl">polski</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="B-Splines.html" lang="ru" title="B-Splines/ru (2% translated)">русский</a></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Motywacja"><span class="tocnumber">1</span> <span class="toctext">Motywacja</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Krzywe_Béziera"><span class="tocnumber">2</span> <span class="toctext">Krzywe Béziera</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#Pochodne"><span class="tocnumber">2.1</span> <span class="toctext">Pochodne</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Zasady"><span class="tocnumber">2.2</span> <span class="toctext">Zasady</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Matematyka"><span class="tocnumber">2.3</span> <span class="toctext">Matematyka</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-6"><a href="#Krzywe_złożone"><span class="tocnumber">3</span> <span class="toctext">Krzywe złożone</span></a>
+<ul>
+<li class="toclevel-2 tocsection-7"><a href="#Podstawy"><span class="tocnumber">3.1</span> <span class="toctext">Podstawy</span></a>
+<ul>
+<li class="toclevel-3 tocsection-8"><a href="#Zasady_2"><span class="tocnumber">3.1.1</span> <span class="toctext">Zasady</span></a></li>
+<li class="toclevel-3 tocsection-9"><a href="#Wektor_węzła"><span class="tocnumber">3.1.2</span> <span class="toctext">Wektor węzła</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-10"><a href="#Niejednorodne_krzywe_B-spline"><span class="tocnumber">3.2</span> <span class="toctext">Niejednorodne krzywe B-spline</span></a></li>
+<li class="toclevel-2 tocsection-11"><a href="#Relacyjne_krzywe_B-splajn"><span class="tocnumber">3.3</span> <span class="toctext">Relacyjne krzywe B-splajn</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-12"><a href="#Krzywe_złożone_w_programie_FreeCAD"><span class="tocnumber">4</span> <span class="toctext">Krzywe złożone w programie FreeCAD</span></a>
+<ul>
+<li class="toclevel-2 tocsection-13"><a href="#Tworzenie"><span class="tocnumber">4.1</span> <span class="toctext">Tworzenie</span></a></li>
+<li class="toclevel-2 tocsection-14"><a href="#Zmiana_stopni"><span class="tocnumber">4.2</span> <span class="toctext">Zmiana stopni</span></a></li>
+<li class="toclevel-2 tocsection-15"><a href="#Zmiana_wielokrotności_węzłów"><span class="tocnumber">4.3</span> <span class="toctext">Zmiana wielokrotności węzłów</span></a></li>
+<li class="toclevel-2 tocsection-16"><a href="#Zmiana_wagi"><span class="tocnumber">4.4</span> <span class="toctext">Zmiana wagi</span></a></li>
+<li class="toclevel-2 tocsection-17"><a href="#Edycja_węzłów"><span class="tocnumber">4.5</span> <span class="toctext">Edycja węzłów</span></a></li>
+<li class="toclevel-2 tocsection-18"><a href="#Wyświetlanie_informacji"><span class="tocnumber">4.6</span> <span class="toctext">Wyświetlanie informacji</span></a></li>
+<li class="toclevel-2 tocsection-19"><a href="#Ograniczenia"><span class="tocnumber">4.7</span> <span class="toctext">Ograniczenia</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-20"><a href="#Przypadki_typowego_zastosowania"><span class="tocnumber">5</span> <span class="toctext">Przypadki typowego zastosowania</span></a>
+<ul>
+<li class="toclevel-2 tocsection-21"><a href="#Projektowanie"><span class="tocnumber">5.1</span> <span class="toctext">Projektowanie</span></a></li>
+<li class="toclevel-2 tocsection-22"><a href="#Ciągłość_w_przejściach_geometrycznych"><span class="tocnumber">5.2</span> <span class="toctext">Ciągłość w przejściach geometrycznych</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>Ta strona opisuje jak używać krzywych złożonych <i>(typu B-spline)</i> w programie FreeCAD. Podaje również podstawowe informacje czym są krzywe złożone i do jakich zastosowań są przydatne.
+</p><p><span id="Motivation"></span>
+</p>
+<h2><span class="mw-headline" id="Motywacja">Motywacja</span></h2>
+<p>Jeśli posiadasz już wiedzę na temat krzywych złożonych typu B-splines i ich zastosowania, możesz przejść bezpośrednio do rozdziału <a class="mw-selflink-fragment" href="#Krzywe_z.C5.82o.C5.BCone_w_programie_FreeCAD">Krzywe złożone w programie FreeCAD</a>.
+</p><p>Załóżmy, że chcesz zaprojektować część, która powinna być wytworzona za pomocą drukarki 3D. Część musi mieć krawędź zaprojektowaną w ten sposób:
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/B-splines_Motivation-start.png"><img decoding="async" height="291" src="../File/B-splines_Motivation-start.png" srcset="/images/b/b6/B-splines_Motivation-start.png 1.5x" width="450"/></a></span>
+</p><p>Musisz wydrukować część w kierunku od dołu szkicu do góry. Zewnętrzne konstrukcje wsporcze mogą nie być rozwiązaniem. Dlatego musisz dodać podporę bezpośrednio do swojej części. Jakie masz opcje?
+</p>
+<ul><li>Opcja 1: możesz dodać linię od punktu <i>(20, 0)</i> do punktu <i>(80, 40)</i>:</li></ul>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/B-splines_Motivation-line.png"><img decoding="async" height="294" src="../File/B-splines_Motivation-line.png" srcset="/images/f/f8/B-splines_Motivation-line.png 1.5x" width="450"/></a></span>
+</p><p>Jednak takie rozwiązanie wymaga dużej objętości, a co za tym idzie wagi i ilości materiału.
+</p>
+<ul><li>Opcja 2: możesz połączyć te dwa punkty łukiem okręgu. Aby zaoszczędzić na objętości, łuk powinien kończyć się stycznie w punkcie <i>(80,40)</i>. Wtedy twoje rozwiązanie będzie wyglądać następująco:</li></ul>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/B-splines_Motivation-circle.png"><img decoding="async" height="295" src="../File/B-splines_Motivation-circle.png" srcset="/images/c/c2/B-splines_Motivation-circle.png 1.5x" width="450"/></a></span>
+</p><p>W PORZĄDKU. Ale na dole nie potrzebujesz bezpośredniego wsparcia.
+</p>
+<ul><li>Opcja 3: możesz zaoszczędzić trochę więcej objętości, jeśli połączenie między dwoma punktami jest krzywą, która zaczyna się stycznie w punkcie o współrzędnych <i>(0, 20)</i> i kończy stycznie w <i>(80, 40)</i>:</li></ul>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/B-splines_Motivation-bezier.png"><img decoding="async" height="290" src="../File/B-splines_Motivation-bezier.png" srcset="/images/thumb/4/45/B-splines_Motivation-bezier.png/675px-B-splines_Motivation-bezier.png 1.5x, /images/4/45/B-splines_Motivation-bezier.png 2x" width="450"/></a></span>
+</p><p>Tak więc krzywa, za pomocą której można połączyć dwa punkty stycznie do punktu odniesienia, może być bardzo przydatna w konstrukcjach. Krzywe Béziera zapewniają tę cechę.
+</p><p><span id="Bézier_curves"></span>
+</p>
+<h2><span id="Krzywe_B.C3.A9ziera"></span><span class="mw-headline" id="Krzywe_Béziera">Krzywe Béziera</span></h2>
+<p><span id="Derivation"></span>
+</p>
+<h3><span class="mw-headline" id="Pochodne">Pochodne</span></h3>
+<p>Krzywe Béziera są wielomianami opisującymi połączenie między dwoma punktami. Najprostszym wielomianem łączącym dwa punkty jest prosta <i>(<span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle A*x^{1}+B}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>A</mi>
+<mo>∗<!-- ∗ --></mo>
+<msup>
+<mi>x</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>1</mn>
+</mrow>
+</msup>
+<mo>+</mo>
+<mi>B</mi>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle A*x^{1}+B}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle A*x^{1}+B}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/59ad13b69733eab9240e2178bd0a00ce514ba502" style="vertical-align: -0.505ex; width:10.926ex; height:2.843ex;"/></span>)</i>, zatem liniowe krzywe Béziera są również odcinkami linii:
+</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Bezier_linear_anim.gif"><img decoding="async" height="120" src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Bezier_linear_anim.gif" width="70"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Animacja 1: Liniowa krzywa Béziera.</p>
+<p>Jednak wielomian staje się użyteczny, gdy możemy go kontrolować. Powinien więc istnieć punkt pomiędzy dwoma punktami końcowymi, który pozwala nam określić jak punkty końcowe są połączone. Tak jak w powyższym przykładzie w opcji trzeciej krzywa jest przydatna, gdy zaczyna się i kończy stycznie do linii przecinających punkty końcowe. I to jest główna cecha krzywych Béziera. Dodajmy więc punkt kontrolny pomiędzy punktami końcowymi. Krzywa zacznie się stycznie do tego punktu kontrolnego, co oznacza, że jest styczna do linii, którą możemy narysować pomiędzy punktem początkowym a punktem kontrolnym. Idąc wstecz od punktu końcowego krzywa będzie również styczna do linii, którą możemy narysować pomiędzy punktem kontrolnym a punktem końcowym. Animacja numer 2 pokazuje jak wygląda taka krzywa.
+</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Bezier_quadratic_anim.gif"><img decoding="async" height="120" src="https://upload.wikimedia.org/wikipedia/commons/3/35/Bezier_quadratic_anim.gif" width="190"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Animacja 2: Kwadratowa krzywa Béziera. Punktem kontrolnym jest tutaj punkt P1.</p>
+<p>Animacja jasno pokazuje, czym w zasadzie jest krzywa - przejściem od punktu P0 do punktu P2 poprzez obrócenie linii P0-P1 tak, aby stała się linią P1-P2. W ten sposób otrzymujemy ładną cechę stycznego początku / końca.
+</p><p>Taka krzywa może być opisana tylko wielomianem kwadratowym. <i>(Liczba lewych / prawych obrotów + 1 to konieczny rząd wielomianu. Wielomian kwadratowy to jeden zwrot, wielomian sześcienny ma dwa zwroty, itd.)</i> Dlatego krzywa Béziera z jednym punktem kontrolnym jest kwadratową <i>(drugiego rzędu)</i> krzywą Béziera.
+</p><p>Posiadanie tylko jednego punktu kontrolnego często nie jest wystarczające. Weźmy powyższy motywujący przykład. Tam w opcji 3 kończymy krzywą stycznie w kierunku x. Ale jak można połączyć punkty <i>(20, 0)</i> i <i>(80, 40)</i> tak, aby krzywa kończyła się stycznie w kierunku y? Aby to osiągnąć potrzebny jest najpierw zwrot w prawo, a potem w lewo, a więc wielomian sześcienny <i>(trzeciego rzędu)</i>. A to oznacza, że dla krzywej Béziera potrzebujemy <i>(lub można powiedzieć, że zyskujemy)</i> drugi punkt kontrolny. Animacja 3 pokazuje sześcienną krzywą Béziera.
+</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Bezier_cubic_anim.gif"><img decoding="async" height="120" src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Bezier_cubic_anim.gif" width="290"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Animacja 3: Sześcienna krzywa Béziera.</p>
+<p>Aby odpowiedzieć na pytanie, rozwiązaniem z zakończeniem stycznym w kierunku y dla przykładu jest:
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/B-splines_Motivation-cubic-bezier.png"><img decoding="async" height="289" src="../File/B-splines_Motivation-cubic-bezier.png" srcset="/images/4/4f/B-splines_Motivation-cubic-bezier.png 1.5x" width="450"/></a></span>
+</p><p><span id="Rules"></span>
+</p>
+<h3><span class="mw-headline" id="Zasady">Zasady</span></h3>
+<p>W pochodnej mogłeś już zauważyć pewne "reguły" dla krzywych Béziera:
+</p>
+<ul><li>Stopień wielomianu jest jednocześnie stopniem krzywych.</li>
+<li>Jeśli potrzebujesz <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle n}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>n</mi>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle n}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle n}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/a601995d55609f2d9f5e233e36fbe9ea26011b3b" style="vertical-align: -0.338ex; width:1.395ex; height:1.676ex;"/></span> skrętów, potrzebujesz co najmniej <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle n+1}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>n</mi>
+<mo>+</mo>
+<mn>1</mn>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle n+1}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle n+1}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/2a135e65a42f2d73cccbfc4569523996ca0036f1" style="vertical-align: -0.505ex; width:5.398ex; height:2.343ex;"/></span> stopnia krzywej Béziera.</li>
+<li>Krzywa Béziera zawsze zaczyna się stycznie do linii między punktem początkowym a pierwszym punktem kontrolnym <i>(i kończy się stycznie do linii między ostatnim punktem kontrolnym a punktem końcowym)</i>.</li></ul>
+<p><span id="Math"></span>
+</p>
+<h3><span class="mw-headline" id="Matematyka">Matematyka</span></h3>
+<p>Jeśli jesteś zainteresowany, aby zrozumieć matematykę w tle, oto podstawy.
+</p><p>Krzywą Béziera oblicza się według poniższego wzoru:
+</p><p><span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle \quad {\textrm {Bezier}}(n,t)=\sum _{i=0}^{n}\underbrace {\binom {n}{i}} _{\text{polynomial term}}\underbrace {\left(1-t\right)^{n-i}t^{i}} _{\text{polynomial term}}\;\underbrace {P_{i}} _{\text{point coordinate}}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mspace width="1em"></mspace>
+<mrow class="MJX-TeXAtom-ORD">
+<mrow class="MJX-TeXAtom-ORD">
+<mtext>Bezier</mtext>
+</mrow>
+</mrow>
+<mo stretchy="false">(</mo>
+<mi>n</mi>
+<mo>,</mo>
+<mi>t</mi>
+<mo stretchy="false">)</mo>
+<mo>=</mo>
+<munderover>
+<mo>∑<!-- ∑ --></mo>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>=</mo>
+<mn>0</mn>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>n</mi>
+</mrow>
+</munderover>
+<munder>
+<mrow class="MJX-TeXAtom-OP MJX-fixedlimits">
+<munder>
+<mrow>
+<mrow class="MJX-TeXAtom-OPEN">
+<mo maxsize="2.047em" minsize="2.047em">(</mo>
+</mrow>
+<mfrac linethickness="0">
+<mi>n</mi>
+<mi>i</mi>
+</mfrac>
+<mrow class="MJX-TeXAtom-CLOSE">
+<mo maxsize="2.047em" minsize="2.047em">)</mo>
+</mrow>
+</mrow>
+<mo>⏟<!-- ⏟ --></mo>
+</munder>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mtext>polynomial term</mtext>
+</mrow>
+</munder>
+<munder>
+<mrow class="MJX-TeXAtom-OP MJX-fixedlimits">
+<munder>
+<mrow>
+<msup>
+<mrow>
+<mo>(</mo>
+<mrow>
+<mn>1</mn>
+<mo>−<!-- − --></mo>
+<mi>t</mi>
+</mrow>
+<mo>)</mo>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>n</mi>
+<mo>−<!-- − --></mo>
+<mi>i</mi>
+</mrow>
+</msup>
+<msup>
+<mi>t</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+</mrow>
+</msup>
+</mrow>
+<mo>⏟<!-- ⏟ --></mo>
+</munder>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mtext>polynomial term</mtext>
+</mrow>
+</munder>
+<mspace width="thickmathspace"></mspace>
+<munder>
+<mrow class="MJX-TeXAtom-OP MJX-fixedlimits">
+<munder>
+<msub>
+<mi>P</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+</mrow>
+</msub>
+<mo>⏟<!-- ⏟ --></mo>
+</munder>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mtext>point coordinate</mtext>
+</mrow>
+</munder>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle \quad {\textrm {Bezier}}(n,t)=\sum _{i=0}^{n}\underbrace {\binom {n}{i}} _{\text{polynomial term}}\underbrace {\left(1-t\right)^{n-i}t^{i}} _{\text{polynomial term}}\;\underbrace {P_{i}} _{\text{point coordinate}}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle \quad {\textrm {Bezier}}(n,t)=\sum _{i=0}^{n}\underbrace {\binom {n}{i}} _{\text{polynomial term}}\underbrace {\left(1-t\right)^{n-i}t^{i}} _{\text{polynomial term}}\;\underbrace {P_{i}} _{\text{point coordinate}}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/bf952743aab4a01c76d7ab2524f9d3b6f64e229b" style="vertical-align: -6.171ex; width:56.744ex; height:10.009ex;"/></span>
+</p><p>"n" jest niniejszym stopniem krzywej. Zatem krzywa Béziera stopnia <i>n</i> jest wielokątem rzędu <i>n</i>. Współczynniki <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle P_{i}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>P</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+</mrow>
+</msub>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle P_{i}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle P_{i}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/3ba1396129f7be3c7f828a571b6649e6807d10d3" style="vertical-align: -0.671ex; width:2.292ex; height:2.509ex;"/></span> są więc współrzędnymi punktów kontrolnych krzywych Béziera. Wizualizację można znaleźć na stronie <a class="external text" href="https://pomax.github.io/bezierinfo/#control" rel="nofollow">kontrolowanie krzywizn Béziera</a>.
+</p><p>Jeśli jesteś dalej zainteresowany, spójrz na stronę <a class="external text" href="https://pomax.github.io/bezierinfo/#explanation" rel="nofollow">Matematyka krzywych Béziera</a> z ładnie animowanym wyprowadzeniem matematyki dla krzywych Béziera.
+</p><p><span id="B-Splines"></span>
+</p>
+<h2><span id="Krzywe_z.C5.82o.C5.BCone"></span><span class="mw-headline" id="Krzywe_złożone">Krzywe złożone</span></h2>
+<p><span id="Basics"></span>
+</p>
+<h3><span class="mw-headline" id="Podstawy">Podstawy</span></h3>
+<p><a class="external text" href="https://www.youtube.com/watch?v=bE1MrrqBAl8" rel="nofollow">Ten film</a> wymienia na początku praktyczne problemy z krzywymi Béziera. Na przykład, że dodanie lub zmiana punktu kontrolnego zmienia całą krzywą. Te problemy mogą być rozwiązane przez połączenie kilku krzywych Béziera. Wynikiem jest tak zwany <i>splajn</i>, w szczególności B-splajn <i>(basis spline)</i>. Film wyjaśnia również, że złożenie kwadratowych krzywych Béziera tworzy jednolity kwadratowy B-splajn, oraz że złożenie sześciennych krzywych Béziera tworzy jednolity sześcienny B-splajn.
+</p><p>Z filmów możemy zebrać przydatne "zasady" dla krzywych złożonych <i>(B-spline)</i>:
+</p>
+<ul><li>Pierwszy i ostatni punkt kontrolny jest punktem końcowym / początkowym krzywej.</li>
+<li>Podobnie jak dla krzywych Béziera, krzywe złożone zawsze zaczynają się stycznie do linii pomiędzy punktem początkowym a pierwszym punktem kontrolnym <i>(i kończą się stycznie do linii pomiędzy ostatnim punktem kontrolnym a punktem końcowym)</i>.</li>
+<li>Połączenie <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle S}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>S</mi>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle S}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle S}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/4611d85173cd3b508e67077d4a1252c9c05abca2" style="vertical-align: -0.338ex; width:1.499ex; height:2.176ex;"/></span> krzywych Béziera o stopniu <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle D}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>D</mi>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle D}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle D}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/f34a0c600395e5d4345287e21fb26efd386990e6" style="vertical-align: -0.338ex; width:1.924ex; height:2.176ex;"/></span> posiada <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle S+D}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>S</mi>
+<mo>+</mo>
+<mi>D</mi>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle S+D}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle S+D}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/65a5d3f864247ec4ca8a4174e180fd0154651187" style="vertical-align: -0.505ex; width:6.264ex; height:2.343ex;"/></span> punktów kontrolnych.
+<ul><li>Ponieważ w większości przypadków pracujemy z sześciennymi krzywymi złożonymi, możemy stwierdzić, że <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>N</mi>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle N}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle N}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/f5e3890c981ae85503089652feb48b191b57aae3" style="vertical-align: -0.338ex; width:2.064ex; height:2.176ex;"/></span> punktów kontrolnych prowadzi do <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N-3}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>N</mi>
+<mo>−<!-- − --></mo>
+<mn>3</mn>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle N-3}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle N-3}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/b849f72aa23caee22353feb5ea5c327854650fb0" style="vertical-align: -0.505ex; width:6.066ex; height:2.343ex;"/></span> segmentów Béziera, i z kolei <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N-4}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>N</mi>
+<mo>−<!-- − --></mo>
+<mn>4</mn>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle N-4}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle N-4}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/87f288cc09f331fd1fc0d38ce419af503fe8cd23" style="vertical-align: -0.505ex; width:6.066ex; height:2.343ex;"/></span> punktów węzłowych segmentów.</li></ul></li>
+<li>Krzywa złożona o stopniu <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle D}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>D</mi>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle D}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle D}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/f34a0c600395e5d4345287e21fb26efd386990e6" style="vertical-align: -0.338ex; width:1.924ex; height:2.176ex;"/></span> oferuje w każdym punkcie ciągłą pochodną rzędu <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle D-1}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>D</mi>
+<mo>−<!-- − --></mo>
+<mn>1</mn>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle D-1}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle D-1}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/a2882b444f937e7119403c8625aea8647b667747" style="vertical-align: -0.505ex; width:5.927ex; height:2.343ex;"/></span>.
+<ul><li>Dla sześciennej krzywej złożonej oznacza to, że krzywizna <i>(pochodna drugiego rzędu)</i> nie zmienia się podczas przechodzenia z jednego odcinka do następnego. Jest to bardzo użyteczna cecha, jak zobaczymy później.</li></ul></li></ul>
+<p>Jeśli interesuje Cię więcej szczegółów na temat właściwości krzywych złożonych, zajrzyj na film <a class="external text" href="https://www.youtube.com/watch?v=xXJylM2S72s" rel="nofollow">Krzywe MOOC 8.2: Właściwości krzywych B-spline</a>.
+</p><p><span id="Basis"></span>
+</p>
+<h4><span class="mw-headline" id="Zasady_2">Zasady</span></h4>
+<p>Ponieważ przedstawimy tylko podstawy teorii krzywej złożonej <i>B-spline</i>, nie wchodzimy tutaj w szczegóły.
+</p><p>Podstawą jest konstrukcja krzywej typu splajn. Patrząc na definicję krzywych Béziera w dziale <a href="#Matematyka">Matematyka</a> pamiętamy, że krzywa Béziera jest liniową kombinacją wielomianów, których współczynnikiem jest współrzędna x/y każdego z punktów kontrolnych. Wielomiany te nazywane są wielomianami Bernsteina.
+</p><p>Ponieważ kilka krzywych Béziera jest łączonych w celu utworzenia splajnu, otrzymujemy zbiór wielomianów Bernsteina tworzących splajn (są one podstawą). Ponieważ chcemy pokonać wspomniane ograniczenia krzywych Béziera, nie łączymy geometrycznie różnych wielomianów Bernsteina z krzywych Béziera, ale definiujemy wielomian Bernsteina w całym zakresie geometrycznym splajnu. Zatem <b>nie łączymy</b> krzywych Béziera z ich wielomianami Bernsteina, który byłby:
+</p>
+<dl><dd><span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle {\textrm {Bezier-combination}}={\begin{cases}\sum _{i=0}^{n}P_{i}\cdot B_{i,n}(t),&amp;0\leq t\leq 1\\\sum _{i=0}^{n}P_{i+n}\cdot B_{i,n}(t-1),&amp;1\leq t\leq 2\\\cdots \end{cases}}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mrow class="MJX-TeXAtom-ORD">
+<mrow class="MJX-TeXAtom-ORD">
+<mtext>Bezier-combination</mtext>
+</mrow>
+</mrow>
+<mo>=</mo>
+<mrow class="MJX-TeXAtom-ORD">
+<mrow>
+<mo>{</mo>
+<mtable columnalign="left left" columnspacing="1em" displaystyle="false" rowspacing=".2em">
+<mtr>
+<mtd>
+<munderover>
+<mo>∑<!-- ∑ --></mo>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>=</mo>
+<mn>0</mn>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>n</mi>
+</mrow>
+</munderover>
+<msub>
+<mi>P</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+</mrow>
+</msub>
+<mo>⋅<!-- ⋅ --></mo>
+<msub>
+<mi>B</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+<mo stretchy="false">(</mo>
+<mi>t</mi>
+<mo stretchy="false">)</mo>
+<mo>,</mo>
+</mtd>
+<mtd>
+<mn>0</mn>
+<mo>≤<!-- ≤ --></mo>
+<mi>t</mi>
+<mo>≤<!-- ≤ --></mo>
+<mn>1</mn>
+</mtd>
+</mtr>
+<mtr>
+<mtd>
+<munderover>
+<mo>∑<!-- ∑ --></mo>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>=</mo>
+<mn>0</mn>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>n</mi>
+</mrow>
+</munderover>
+<msub>
+<mi>P</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>+</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+<mo>⋅<!-- ⋅ --></mo>
+<msub>
+<mi>B</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+<mo stretchy="false">(</mo>
+<mi>t</mi>
+<mo>−<!-- − --></mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+<mo>,</mo>
+</mtd>
+<mtd>
+<mn>1</mn>
+<mo>≤<!-- ≤ --></mo>
+<mi>t</mi>
+<mo>≤<!-- ≤ --></mo>
+<mn>2</mn>
+</mtd>
+</mtr>
+<mtr>
+<mtd>
+<mo>⋯<!-- ⋯ --></mo>
+</mtd>
+</mtr>
+</mtable>
+<mo fence="true" stretchy="true" symmetric="true"></mo>
+</mrow>
+</mrow>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle {\textrm {Bezier-combination}}={\begin{cases}\sum _{i=0}^{n}P_{i}\cdot B_{i,n}(t),&amp;0\leq t\leq 1\\\sum _{i=0}^{n}P_{i+n}\cdot B_{i,n}(t-1),&amp;1\leq t\leq 2\\\cdots \end{cases}}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle {\textrm {Bezier-combination}}={\begin{cases}\sum _{i=0}^{n}P_{i}\cdot B_{i,n}(t),&amp;0\leq t\leq 1\\\sum _{i=0}^{n}P_{i+n}\cdot B_{i,n}(t-1),&amp;1\leq t\leq 2\\\cdots \end{cases}}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/0817128ca14d76650df1a9b11bf766277965eb41" style="vertical-align: -3.838ex; width:60.49ex; height:8.843ex;"/></span></dd></dl>
+<p>natomiast <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle B_{i,n}(t)}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>B</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+<mo stretchy="false">(</mo>
+<mi>t</mi>
+<mo stretchy="false">)</mo>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle B_{i,n}(t)}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle B_{i,n}(t)}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/58fbcfe844c24961f0c5b6bd3fcc5f0bc64bffdf" style="vertical-align: -1.005ex; width:6.656ex; height:3.009ex;"/></span> jest i-tym wielomianem Bernsteina o rzędzie <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle n}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>n</mi>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle n}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle n}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/a601995d55609f2d9f5e233e36fbe9ea26011b3b" style="vertical-align: -0.338ex; width:1.395ex; height:1.676ex;"/></span>, a współczynniki <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle P_{i}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>P</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+</mrow>
+</msub>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle P_{i}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle P_{i}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/3ba1396129f7be3c7f828a571b6649e6807d10d3" style="vertical-align: -0.671ex; width:2.292ex; height:2.509ex;"/></span> są współrzędnymi punktów kontrolnych krzywej Béziera. My jednak używamy <b>innego zestawu funkcji</b>, które są zdefiniowane na całym zakresie splajnu:
+</p>
+<dl><dd><span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle {\textrm {B-spline}}=\sum _{i=0}^{n}p_{i}\cdot N_{i,n}(t)}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mrow class="MJX-TeXAtom-ORD">
+<mrow class="MJX-TeXAtom-ORD">
+<mtext>B-spline</mtext>
+</mrow>
+</mrow>
+<mo>=</mo>
+<munderover>
+<mo>∑<!-- ∑ --></mo>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>=</mo>
+<mn>0</mn>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>n</mi>
+</mrow>
+</munderover>
+<msub>
+<mi>p</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+</mrow>
+</msub>
+<mo>⋅<!-- ⋅ --></mo>
+<msub>
+<mi>N</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+<mo stretchy="false">(</mo>
+<mi>t</mi>
+<mo stretchy="false">)</mo>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle {\textrm {B-spline}}=\sum _{i=0}^{n}p_{i}\cdot N_{i,n}(t)}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle {\textrm {B-spline}}=\sum _{i=0}^{n}p_{i}\cdot N_{i,n}(t)}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/435d04ece09a2c6dd3f34a1b0f0ce44b389013a0" style="vertical-align: -3.005ex; width:25.495ex; height:6.843ex;"/></span>.</dd></dl>
+<p>Zauważ, że ogólnie <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{i,n}(t)\neq B_{i,n}(t)}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>N</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+<mo stretchy="false">(</mo>
+<mi>t</mi>
+<mo stretchy="false">)</mo>
+<mo>≠<!-- ≠ --></mo>
+<msub>
+<mi>B</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+<mo stretchy="false">(</mo>
+<mi>t</mi>
+<mo stretchy="false">)</mo>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle N_{i,n}(t)\neq B_{i,n}(t)}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle N_{i,n}(t)\neq B_{i,n}(t)}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/219aeb22c0243b3301a5304d645e3cc84e086b37" style="vertical-align: -1.005ex; width:16.513ex; height:3.009ex;"/></span>, a punkty kontrolne Beziera <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle \{P_{1},P_{2},\dots \}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mo fence="false" stretchy="false">{</mo>
+<msub>
+<mi>P</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>1</mn>
+</mrow>
+</msub>
+<mo>,</mo>
+<msub>
+<mi>P</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>2</mn>
+</mrow>
+</msub>
+<mo>,</mo>
+<mo>…<!-- … --></mo>
+<mo fence="false" stretchy="false">}</mo>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle \{P_{1},P_{2},\dots \}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle \{P_{1},P_{2},\dots \}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/fa3d6f309315c498fc08f5c8cff074c5a20118b2" style="vertical-align: -0.838ex; width:12.209ex; height:2.843ex;"/></span> różnią się od punktów kontrolnych B-spline <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle \{p_{1},p_{2},\dots \}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mo fence="false" stretchy="false">{</mo>
+<msub>
+<mi>p</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>1</mn>
+</mrow>
+</msub>
+<mo>,</mo>
+<msub>
+<mi>p</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>2</mn>
+</mrow>
+</msub>
+<mo>,</mo>
+<mo>…<!-- … --></mo>
+<mo fence="false" stretchy="false">}</mo>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle \{p_{1},p_{2},\dots \}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle \{p_{1},p_{2},\dots \}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/413bbf4d6821f4a2aa6c81ea4ce35402c0646f8c" style="vertical-align: -0.838ex; width:11.563ex; height:2.843ex;"/></span>.
+</p><p>Różne <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{i,n}(t)}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>N</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+<mo stretchy="false">(</mo>
+<mi>t</mi>
+<mo stretchy="false">)</mo>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle N_{i,n}(t)}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle N_{i,n}(t)}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/a0b8b1a68ff11368898059ae7901f1ce9c0dc59e" style="vertical-align: -1.005ex; width:6.758ex; height:3.009ex;"/></span> są zdefiniowane fragmentarycznie, gdzie przedział każdego fragmentu jest przedziałem fragmentu Béziera.
+</p><p>Gdy długości wszystkich odcinków <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{i,n}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>N</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle N_{i,n}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle N_{i,n}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/1bd501142b372d76ba33e36037e3cebf257b32b3" style="vertical-align: -1.005ex; width:4.109ex; height:2.843ex;"/></span> są równe, mówimy o jednolitym splajnie. <i>(W literaturze często oznacza się to jako równy czas podróży <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle t}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>t</mi>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle t}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle t}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/65658b7b223af9e1acc877d848888ecdb4466560" style="vertical-align: -0.338ex; width:0.84ex; height:2.009ex;"/></span> na kawałek)</i>.
+</p><p>Aby zrozumieć, w jaki sposób <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle p_{i}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>p</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+</mrow>
+</msub>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle p_{i}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle p_{i}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/5bab39399bf5424f25d957cdc57c84a0622626d2" style="vertical-align: -0.671ex; margin-left: -0.089ex; width:2.059ex; height:2.009ex;"/></span> są współrzędnymi punktów kontrolnych krzywej B-spline, zobacz pierwszą minutę filmu <a class="external text" href="https://www.youtube.com/watch?v=dPPTCy4L4rY&amp;list=PL8bSwVy8_IcMvtI70tZoYesCS0hGVO5qd" rel="nofollow">tego wideo</a>.
+</p><p><span id="Knot_vector"></span>
+</p>
+<h4><span id="Wektor_w.C4.99z.C5.82a"></span><span class="mw-headline" id="Wektor_węzła">Wektor węzła</span></h4>
+<p>Jak wywnioskowano powyżej, B-splajny są utworzone z <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{i,n}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>N</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle N_{i,n}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle N_{i,n}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/1bd501142b372d76ba33e36037e3cebf257b32b3" style="vertical-align: -1.005ex; width:4.109ex; height:2.843ex;"/></span> wielomianów kawałkowych o ciągłości do pewnej pochodnej między kawałkami. Punkty końcowe przedziału definicyjnego kawałka nazywane są węzłami. Dla splajnu zdefiniowanego na <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle k}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>k</mi>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle k}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle k}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/c3c9a2c7b599b37105512c5d570edc034056dd40" style="vertical-align: -0.338ex; width:1.211ex; height:2.176ex;"/></span> kawałkach istnieje <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle k+1}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>k</mi>
+<mo>+</mo>
+<mn>1</mn>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle k+1}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle k+1}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/552a558062ed4c0486297b5b5531c5ee044dbd9b" style="vertical-align: -0.505ex; width:5.214ex; height:2.343ex;"/></span> węzłów podanych przez tzw. <i>wektor węzłów</i>: <br/><span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle \{t_{0},t_{1},t_{2},\dots ,t_{k}\}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mo fence="false" stretchy="false">{</mo>
+<msub>
+<mi>t</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>0</mn>
+</mrow>
+</msub>
+<mo>,</mo>
+<msub>
+<mi>t</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>1</mn>
+</mrow>
+</msub>
+<mo>,</mo>
+<msub>
+<mi>t</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>2</mn>
+</mrow>
+</msub>
+<mo>,</mo>
+<mo>…<!-- … --></mo>
+<mo>,</mo>
+<msub>
+<mi>t</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>k</mi>
+</mrow>
+</msub>
+<mo fence="false" stretchy="false">}</mo>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle \{t_{0},t_{1},t_{2},\dots ,t_{k}\}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle \{t_{0},t_{1},t_{2},\dots ,t_{k}\}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/c114653d9cad33ebf60eb5e159a884f89526f9b1" style="vertical-align: -0.838ex; width:17.181ex; height:2.843ex;"/></span> natomiast <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle t_{0}&lt;t_{1}&lt;t_{2}&lt;\dots &lt;t_{k}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>t</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>0</mn>
+</mrow>
+</msub>
+<mo>&lt;</mo>
+<msub>
+<mi>t</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>1</mn>
+</mrow>
+</msub>
+<mo>&lt;</mo>
+<msub>
+<mi>t</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>2</mn>
+</mrow>
+</msub>
+<mo>&lt;</mo>
+<mo>⋯<!-- ⋯ --></mo>
+<mo>&lt;</mo>
+<msub>
+<mi>t</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>k</mi>
+</mrow>
+</msub>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle t_{0}&lt;t_{1}&lt;t_{2}&lt;\dots &lt;t_{k}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle t_{0}&lt;t_{1}&lt;t_{2}&lt;\dots &lt;t_{k}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/8b8a2ac474ff7430aad3519e00f2d4413387c3ef" style="vertical-align: -0.671ex; width:22.727ex; height:2.343ex;"/></span>
+</p><p>Wektor węzłów zawiera węzły <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{i,n}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>N</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle N_{i,n}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle N_{i,n}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/1bd501142b372d76ba33e36037e3cebf257b32b3" style="vertical-align: -1.005ex; width:4.109ex; height:2.843ex;"/></span> funkcji bazowych, które definiują B-spline, zobacz film <a class="external text" href="https://www.youtube.com/watch?v=ni5NNPCVvDY" rel="nofollow">Węzły krzywej B-spline</a>. Funkcje bazowe B-spline mogą być obliczone przy użyciu wektora węzłów i algorytmu tworzenia, zobacz film <a class="external text" href="https://www.youtube.com/watch?v=hrsO45AHtbs" rel="nofollow">Generowanie funkcji bazowych. Wzór Coxa-de Boora</a>.
+</p><p>Pochodna, do której istnieje ciągłość, jest określona przez krotność <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle m}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>m</mi>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle m}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle m}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/0a07d98bb302f3856cbabc47b2b9016692e3f7bc" style="vertical-align: -0.338ex; width:2.04ex; height:1.676ex;"/></span>. Dlatego możemy określić wektor z krotnością dla każdego węzła: <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle \{m_{0},m_{1},\dots ,m_{k}\}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mo fence="false" stretchy="false">{</mo>
+<msub>
+<mi>m</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>0</mn>
+</mrow>
+</msub>
+<mo>,</mo>
+<msub>
+<mi>m</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>1</mn>
+</mrow>
+</msub>
+<mo>,</mo>
+<mo>…<!-- … --></mo>
+<mo>,</mo>
+<msub>
+<mi>m</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>k</mi>
+</mrow>
+</msub>
+<mo fence="false" stretchy="false">}</mo>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle \{m_{0},m_{1},\dots ,m_{k}\}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle \{m_{0},m_{1},\dots ,m_{k}\}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/0598cae76cf2890586d6b1067587a9be45d3dd78" style="vertical-align: -0.838ex; width:17.855ex; height:2.843ex;"/></span>. Węzeł na splajnie o stopniu „d” i krotności „m” mówi, że krzywa po lewej i prawej stronie węzła ma co najmniej równą pochodną rzędu „n” <i>(zwaną „C”&lt; sup&gt;</i>n<i> ciągłość)</i>, podczas gdy <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle n=d-m}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>n</mi>
+<mo>=</mo>
+<mi>d</mi>
+<mo>−<!-- − --></mo>
+<mi>m</mi>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle n=d-m}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle n=d-m}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/f03a465bfac71680367d6c2ce4bd23314e5690ac" style="vertical-align: -0.505ex; width:10.59ex; height:2.343ex;"/></span>.
+</p><p><span id="Non-uniform_B-splines"></span>
+</p>
+<h3><span class="mw-headline" id="Niejednorodne_krzywe_B-spline">Niejednorodne krzywe B-spline</span></h3>
+<p>Wywodzenie krzywych złożonych z krzywych Béziera ma tę matematyczną konsekwencję, że w krzywych złożonych każdy wielomian ma taką samą długość. Takie krzywe złożone nazywane są <i>jednorodnymi</i>. Bardziej ogólny przypadek jest taki, że mogą, ale nie muszą mieć tej samej długości. Takie <i>niejednolite</i> splajny mają tę zaletę, że można kontrolować, jak blisko splajny przecinają swój punkt kontrolny.
+</p><p>Matematycznie osiąga się to przez zdefiniowanie różnych <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{i,n}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>N</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle N_{i,n}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle N_{i,n}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/1bd501142b372d76ba33e36037e3cebf257b32b3" style="vertical-align: -1.005ex; width:4.109ex; height:2.843ex;"/></span> elementów w różnych przedziałach. Jeśli na przykład B-splajn jest zdefiniowany dla przedziału [0, 1], to jest jednolity, jeśli wszystkie jego np. 5 fragmentów są również zdefiniowane w tym przedziale. Jeśli teraz <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{1,4}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>N</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mn>1</mn>
+<mo>,</mo>
+<mn>4</mn>
+</mrow>
+</msub>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle N_{1,4}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle N_{1,4}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/c3738c6fe3451d054d671162b69741e9cb13604b" style="vertical-align: -1.005ex; width:4.2ex; height:2.843ex;"/></span> jest zdefiniowany tylko w przedziale [0, 0.6] <i>(poza tym przedziałem jest ustawiony na zero)</i>, to jest krótszy, a więc splajn staje się niejednolity.
+</p><p>Jak opisano powyżej parametry węzłów są opisane przez wektor węzłów. Tak więc wektor węzłów przechowuje przedziały definicyjne. Kiedy teraz jeden kawałek dostaje inny interwał, również wektor węzłów zmienia się, zobacz film <a class="external text" href="https://www.youtube.com/watch?v=w-l5R70y6u0" rel="nofollow">Niejednolite krzywe B-spline i ich funkcje bazowe</a> dla wizualizacji.
+</p><p><span id="Rational_B-splines"></span>
+</p>
+<h3><span class="mw-headline" id="Relacyjne_krzywe_B-splajn">Relacyjne krzywe B-splajn</span></h3>
+<p>Dalsze uogólnienie dla krzywych złożonych może być dokonane poprzez wprowadzenie wag dla punktów kontrolnych. W ten sposób można kontrolować "jak ważny" jest dany punkt kontrolny.
+</p><p>Równanie dla takiego splajnu to:
+</p>
+<dl><dd><span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle c(n,t)={\cfrac {\sum _{i=0}^{n}d_{i}N_{i,n}(t)\cdot w_{i}}{\sum _{i=0}^{n}N_{i,n}(t)\cdot w_{i}}}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<mi>c</mi>
+<mo stretchy="false">(</mo>
+<mi>n</mi>
+<mo>,</mo>
+<mi>t</mi>
+<mo stretchy="false">)</mo>
+<mo>=</mo>
+<mrow class="MJX-TeXAtom-ORD">
+<mfrac>
+<mrow>
+<mpadded depth="3pt" height="8.6pt" width="0">
+<mrow></mrow>
+</mpadded>
+<mstyle displaystyle="false" scriptlevel="0">
+<mrow class="MJX-TeXAtom-ORD">
+<munderover>
+<mo>∑<!-- ∑ --></mo>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>=</mo>
+<mn>0</mn>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>n</mi>
+</mrow>
+</munderover>
+<msub>
+<mi>d</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+</mrow>
+</msub>
+<msub>
+<mi>N</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+<mo stretchy="false">(</mo>
+<mi>t</mi>
+<mo stretchy="false">)</mo>
+<mo>⋅<!-- ⋅ --></mo>
+<msub>
+<mi>w</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+</mrow>
+</msub>
+</mrow>
+</mstyle>
+</mrow>
+<mrow>
+<mpadded depth="3pt" height="8.6pt" width="0">
+<mrow></mrow>
+</mpadded>
+<mstyle displaystyle="false" scriptlevel="0">
+<mrow class="MJX-TeXAtom-ORD">
+<munderover>
+<mo>∑<!-- ∑ --></mo>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>=</mo>
+<mn>0</mn>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>n</mi>
+</mrow>
+</munderover>
+<msub>
+<mi>N</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>,</mo>
+<mi>n</mi>
+</mrow>
+</msub>
+<mo stretchy="false">(</mo>
+<mi>t</mi>
+<mo stretchy="false">)</mo>
+<mo>⋅<!-- ⋅ --></mo>
+<msub>
+<mi>w</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+</mrow>
+</msub>
+</mrow>
+</mstyle>
+</mrow>
+</mfrac>
+</mrow>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle c(n,t)={\cfrac {\sum _{i=0}^{n}d_{i}N_{i,n}(t)\cdot w_{i}}{\sum _{i=0}^{n}N_{i,n}(t)\cdot w_{i}}}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle c(n,t)={\cfrac {\sum _{i=0}^{n}d_{i}N_{i,n}(t)\cdot w_{i}}{\sum _{i=0}^{n}N_{i,n}(t)\cdot w_{i}}}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/7644b465b454740e81be4cabeec0cbdf1e5960eb" style="vertical-align: -3.005ex; width:28.67ex; height:7.176ex;"/></span></dd></dl>
+<p>Zauważ, że funkcja nie jest już wielomianem, ale funkcją racjonalną, a takie splajny nazywamy racjonalnymi krzywymi złożonymi. Zauważ, że gdy wszystkie <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle w_{i}}" xmlns="http://www.w3.org/1998/Math/MathML">
+<semantics>
+<mrow class="MJX-TeXAtom-ORD">
+<mstyle displaystyle="true" scriptlevel="0">
+<msub>
+<mi>w</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+</mrow>
+</msub>
+</mstyle>
+</mrow>
+<annotation encoding="application/x-tex">{\displaystyle w_{i}}</annotation>
+</semantics>
+</math></span><img alt="{\displaystyle w_{i}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/fe22f0329d3ecb2e1880d44d191aba0e5475db68" style="vertical-align: -0.671ex; width:2.464ex; height:2.009ex;"/></span> są równe, to równanie sprowadza się do regularnej nieracjonalnej krzywej złożonej. Zatem nieracjonalne krzywe złożone są podzbiorem racjonalnych krzywych złożonych.
+</p><p>Te niejednorodne i racjonalne <i>(z powodu podziału)</i> krzywe B-spline są często nazywane <b><a class="external text" href="https://en.wikipedia.org/wiki/Non-uniform_rational_B-spline" rel="nofollow">NURBS</a></b> i są szeroko stosowane w modelowaniu geometrycznym.
+</p><p><span id="B-splines_in_FreeCAD"></span>
+</p>
+<h2><span id="Krzywe_z.C5.82o.C5.BCone_w_programie_FreeCAD"></span><span class="mw-headline" id="Krzywe_złożone_w_programie_FreeCAD">Krzywe złożone w programie FreeCAD</span></h2>
+<p>FreeCAD oferuje możliwość tworzenia jednolitych lub niejednolitych krzywych złożonych dowolnego stopnia w przestrzeni 2D, za pomocą środowiska pracy <a href="Sketcher_Workbench.html" title="Sketcher Workbench/pl">Szkicownik</a>.
+</p><p><span id="Creation"></span>
+</p>
+<h3><span class="mw-headline" id="Tworzenie">Tworzenie</span></h3>
+<p>Aby utworzyć krzywe złożone, przejdź do szkicu i użyj przycisku na pasku narzędzi <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_CreateBSpline.svg"><img decoding="async" height="16" src="../File/Sketcher_CreateBSpline.svg" width="16"/></a></span> <a href="Sketcher_CreateBSpline.html" title="Sketcher CreateBSpline/pl">Utwórz krzywą złożoną</a></span>. Następnie kliknij lewym przyciskiem myszy, aby ustawić punkt kontrolny, przesuń kursor w lewo, aby ustawić następny punkt kontrolny i tak dalej. Na koniec kliknij prawym przyciskiem myszy, aby zakończyć definicję i utworzyć krzywą.
+</p><p>Domyślnie tworzone są jednolite krzywe sześcienne, ale nie ma wystarczającej ilości punktów kontrolnych, aby to zrobić. Tak więc, gdy tworzysz krzywą złożona z tylko 2 punktami kontrolnymi, otrzymujesz oczywiście krzywą, która jest pojedynczą liniową krzywą Béziera, dla 3 punktów kontrolnych otrzymujesz kwadratową krzywą Béziera, a dla 5 punktów kontrolnych otrzymujesz sześcienną krzywą złożoną z 2 segmentów Béziera. <span style="font-size:small;"><a href="Release_notes_0.20.html" title="Release notes 0.20/pl">dostępne w wersji 0.20</a></span> Możesz również użyć klawisza D podczas tworzenia krzywej B-spline, aby ustawić jej stopień <i>(nadal będzie ona opadać do niższego stopnia, jeśli podano mniej punktów)</i>.
+</p><p>Aby utworzyć periodyczne krzywe złożone <i>(B-splajny, które tworzą zamkniętą krzywą)</i>, użyj przycisku na pasku narzędzi <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_CreatePeriodicBSpline.svg"><img decoding="async" height="16" src="../File/Sketcher_CreatePeriodicBSpline.svg" width="16"/></a></span> <a href="Sketcher_CreatePeriodicBSpline.html" title="Sketcher CreatePeriodicBSpline/pl">Okresowa krzywa złożona ...</a></span>. Nie jest konieczne ustawianie ostatniego punktu kontrolnego na pierwszym, ponieważ linia krzywej zostanie automatycznie zamknięta:
+</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_Periodic-B-spline-creation.gif"><img decoding="async" height="367" src="../File/Sketcher_Periodic-B-spline-creation.gif" width="368"/></a></span>
+</p><p>Krzywe złożone mogą być również generowane z istniejących segmentów szkicu. Aby to zrobić, zaznacz elementy i naciśnij przycisk paska narzędzi <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineConvertToNURBS.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineConvertToNURBS.svg" width="24"/></a></span> <a href="Sketcher_BSplineConvertToNURBS.html" title="Sketcher BSplineConvertToNURBS/pl">Konwertuj geometrię na krzywą złożoną</a></span>.
+</p><p>Podczas tworzenia krzywej złożonej można określić jej stopień, naciskając klawisz <span style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #888888; border-radius: 0.3em; padding: 0px 5px 1px 5px;">D</span>. Dzięki temu można zastąpić domyślne ustawienie tworzenia sześciennej krzywej złożonej, jeśli jest to możliwe. <span style="font-size:small;"><a href="Release_notes_0.20.html" title="Release notes 0.20/pl">dostępne w wersji 0.20</a></span>
+</p><p><span id="Changing_the_Degree"></span>
+</p>
+<h3><span class="mw-headline" id="Zmiana_stopni">Zmiana stopni</span></h3>
+<p>Aby zmienić stopień, wybierz krzywą złożoną i użyj przycisku z paska narzędzi <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineIncreaseDegree.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineIncreaseDegree.svg" width="24"/></a></span> <a href="Sketcher_BSplineIncreaseDegree.html" title="Sketcher BSplineIncreaseDegree/pl">Zwiększ stopień krzywej złożonej</a></span> lub <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineDecreaseDegree.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineDecreaseDegree.svg" width="24"/></a></span> <a href="Sketcher_BSplineDecreaseDegree.html" title="Sketcher BSplineDecreaseDegree/pl">Zmniejsz stopień krzywej złożonej</a></span>.
+</p><p><b>Uwaga:</b> Zmniejszanie stopnia nie może odwrócić wcześniejszego zwiększenia stopnia, zobacz stronę Wiki <a href="Sketcher_BSplineDecreaseDegree.html" title="Sketcher BSplineDecreaseDegree/pl">Zmniejsz stopień krzywej złożonej</a>, aby uzyskać wyjaśnienie.
+</p><p><span id="Changing_the_Knot_Multiplicity"></span>
+</p>
+<h3><span id="Zmiana_wielokrotno.C5.9Bci_w.C4.99z.C5.82.C3.B3w"></span><span class="mw-headline" id="Zmiana_wielokrotności_węzłów">Zmiana wielokrotności węzłów</span></h3>
+<p>Punkty, w których dwie krzywe Béziera łączą się tworząc krzywą złożoną nazywane są węzłami. Mnogość węzłów określa sposób łączenia części Béziera, zobacz stronę Wiki <a href="Sketcher_BSplineIncreaseKnotMultiplicity.html" title="Sketcher BSplineIncreaseKnotMultiplicity/pl">Zwiększ liczebność węzłów</a>, aby poznać szczegóły.
+</p><p>Aby zmienić krotność węzłów, użyj przycisków paska narzędzi <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineIncreaseKnotMultiplicity.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineIncreaseKnotMultiplicity.svg" width="24"/></a></span> <a href="Sketcher_BSplineIncreaseKnotMultiplicity.html" title="Sketcher BSplineIncreaseKnotMultiplicity/pl">Zwiększ krotności węzłów</a></span> lub <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineDecreaseKnotMultiplicity.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineDecreaseKnotMultiplicity.svg" width="24"/></a></span> <a href="Sketcher_BSplineDecreaseKnotMultiplicity.html" title="Sketcher BSplineDecreaseKnotMultiplicity/pl">Zmniejsz krotności węzłów</a></span>.
+</p><p><b>Uwaga:</b> Tworzenie dwóch krzywych złożonych, które są ze sobą połączone, nie połączy się w jedną nową krzywą złożoną. Zatem ich punkt połączenia nie jest węzłem. Jedynym sposobem na uzyskanie nowego węzła w istniejącej krzywej jest zmniejszenie jej stopnia. Jednakże, możesz uzyskać wiele nowych węzłów. Dlatego lepszym wyborem jest przerysowanie krzywej z większą liczbą punktów kontrolnych.
+</p><p><span id="Changing_the_Weight"></span>
+</p>
+<h3><span class="mw-headline" id="Zmiana_wagi">Zmiana wagi</span></h3>
+<p>Wokół każdego punktu kontrolnego znajduje się ciemnożółte koło. Jego promień określa wagę dla danego punktu kontrolnego. Domyślnie wszystkie okręgi mają promień równy <i>1</i>. Jest to oznaczone za pomocą wiązania promienia dla pierwszego okręgu punktu kontrolnego.
+</p><p>Aby utworzyć racjonalną krzywą złożoną, wagi muszą być niezależne. Aby to osiągnąć, można usunąć wiązanie, że wszystkie okręgi są równe, a następnie ustawić różne wiązania promienia dla okręgów.
+</p><p>Jeśli nie ustawiono żadnego wiązania promienia, można również zmienić promień, przeciągając go:
+</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_Changing-control-point-weigth-dragging.gif"><img decoding="async" height="430" src="../File/Sketcher_Changing-control-point-weigth-dragging.gif" width="565"/></a></span>
+</p><p>W przykładzie przeciągania widać, że duża waga przyciąga krzywą do punktu kontrolnego, podczas gdy bardzo mała waga zmienia krzywą tak, jakby punkt kontrolny prawie nie istniał.
+</p><p>Kiedy spojrzysz na <a class="mw-selflink-fragment" href="#Niejednorodne_krzywe_B-spline">funkcję tworzenia</a> dla niejednorodnych racjonalnych krzywych złożonych zobaczysz, że waga równa zero doprowadziłaby do dzielenia przez zero. Ujemne wagi są teoretycznie możliwe, ale nie są wspierane. Dlatego możesz określić tylko wagi większe od zera.
+</p><p><b>Uwaga:</b> Podczas przeciągania punktów, węzłów lub szerokości, średnice okręgów oznaczających wagę będą się zmieniać. Dzieje się tak dlatego, że ze względów wizualizacyjnych średnica zależy od całkowitej długości krzywej złożonej. Rzeczywista waga nie ulega zmianie.
+</p><p><span id="Editing_Knots"></span>
+</p>
+<h3><span id="Edycja_w.C4.99z.C5.82.C3.B3w"></span><span class="mw-headline" id="Edycja_węzłów">Edycja węzłów</span></h3>
+<p>Nowe węzły można dodawać za pomocą przycisku <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineInsertKnot.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineInsertKnot.svg" width="24"/></a></span> <a href="Sketcher_BSplineInsertKnot.html" title="Sketcher BSplineInsertKnot/pl">Dodaj węzeł krzywej złozonej</a></span>. <span style="font-size:small;"><a href="Release_notes_0.20.html" title="Release notes 0.20/pl">dostępne w wersji 0.20</a></span>
+</p><p>Węzeł jest usuwany przez zmniejszenie jego stopnia do 0 <i>(tj. zastosowanie <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineDecreaseKnotMultiplicity.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineDecreaseKnotMultiplicity.svg" width="24"/></a></span> <a href="Sketcher_BSplineDecreaseKnotMultiplicity.html" title="Sketcher BSplineDecreaseKnotMultiplicity/pl">Zmniejsz krotność węzła krzywej złożonej</a></span>, gdy jego stopień wynosi 1)</i>.
+</p><p>Zmiana wartości parametru węzła nie jest jeszcze obsługiwana.
+</p><p><span id="Display_Information"></span>
+</p>
+<h3><span id="Wy.C5.9Bwietlanie_informacji"></span><span class="mw-headline" id="Wyświetlanie_informacji">Wyświetlanie informacji</span></h3>
+<p>Ponieważ postać krzywej B-splajnu nie mówi wiele o jej właściwościach, FreeCAD oferuje <a href="Sketcher_Workbench.html#Narz.C4.99dzia_szkicownika_dla_krzywych_z.C5.82o.C5.BConych" title="Sketcher Workbench/pl">różne narzędzia</a> do wyświetlania tych właściwości:
+</p>
+<table class="wikitable float-right">
+<tbody><tr>
+<td>Właściwość
+</td>
+<td>Przycisk narzędzia
+</td></tr>
+<tr>
+<td><b>Stopień</b>
+</td>
+<td><span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineDegree.svg"><img decoding="async" height="16" src="../File/Sketcher_BSplineDegree.svg" width="16"/></a></span> <a href="Sketcher_BSplineDegree.html" title="Sketcher BSplineDegree/pl">Pokaż / ukryj stopnie krzywej złożonej</a></span>
+</td></tr>
+<tr>
+<td><b>Ramka kontrolna</b>
+</td>
+<td><span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplinePolygon.svg"><img decoding="async" height="16" src="../File/Sketcher_BSplinePolygon.svg" width="16"/></a></span> <a href="Sketcher_BSplinePolygon.html" title="Sketcher BSplinePolygon/pl">Pokaż / ukryj ramkę kontrolną krzywej złożonej</a></span>
+</td></tr>
+<tr>
+<td><b>Grzebień krzywizny</b>
+</td>
+<td><span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineComb.svg"><img decoding="async" height="16" src="../File/Sketcher_BSplineComb.svg" width="16"/></a></span> <a href="Sketcher_BSplineComb.html" title="Sketcher BSplineComb/pl">Pokaż / ukryj grzebień krzywizny krzywej złożonej</a></span>
+</td></tr>
+<tr>
+<td><b>Wielokrotność węzłów</b>
+</td>
+<td><span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineKnotMultiplicity.svg"><img decoding="async" height="16" src="../File/Sketcher_BSplineKnotMultiplicity.svg" width="16"/></a></span> <a href="Sketcher_BSplineKnotMultiplicity.html" title="Sketcher BSplineKnotMultiplicity/pl">Pokaż / ukryj krotność węzłów krzywej złożonej</a></span>
+</td></tr>
+<tr>
+<td><b>Waga</b>
+</td>
+<td><span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplinePoleWeight.svg"><img decoding="async" height="16" src="../File/Sketcher_BSplinePoleWeight.svg" width="16"/></a></span> <a href="Sketcher_BSplinePoleWeight.html" title="Sketcher BSplinePoleWeight/pl">Pokaż / ukryj wagi krzywej złożonej</a></span>
+</td></tr></tbody></table>
+<p><span id="Limitations"></span>
+</p>
+<h3><span class="mw-headline" id="Ograniczenia">Ograniczenia</span></h3>
+<p>W chwili obecnej <i>(FreeCAD v0.20)</i> istnieją pewne ograniczenia podczas używania krzywych złożonych, które powinieneś znać:
+</p>
+<ol><li>Nie można ustawić wiązań stycznych.<br/>W tym przykładzie<br/> <span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_spline-limit-tangential.png"><img decoding="async" height="183" src="../File/Sketcher_spline-limit-tangential.png" srcset="/images/thumb/0/0e/Sketcher_spline-limit-tangential.png/675px-Sketcher_spline-limit-tangential.png 1.5x, /images/0/0e/Sketcher_spline-limit-tangential.png 2x" width="450"/></a></span><br/> chcesz zapewnić, że krzywa dotknie niebieskiej krzywej 2 razy stycznie. Byłoby to użyteczne, ponieważ niebieska linia może być na przykład przestrzenną granicą dla twojego projektu.</li>
+<li>Nie można utworzyć krzywej odsunięcia dla linii krzywej złożonej używając narzędzia środowiska Rysunek Roboczy <a href="Draft_Offset.html" title="Draft Offset/pl">Odsunięcie</a>.</li></ol>
+<p><span id="Typical_Use_Cases"></span>
+</p>
+<h2><span class="mw-headline" id="Przypadki_typowego_zastosowania">Przypadki typowego zastosowania</span></h2>
+<p>Zgodnie z właściwościami linii krzywych złożonych, istnieją trzy główne przypadki zastosowań:
+</p>
+<ol><li>Krzywe, które zaczynają się / kończą stycznie do pewnego kierunku. Przykładem tego jest przykład motywacyjny <a href="#Motywacja">powyżej</a>.</li>
+<li>Krzywe opisujące większe projekty i zapewniające swobodę lokalnych zmian. Zobacz <a href="#Projektowanie">przykład projektowania</a> poniżej.</li>
+<li>Krzywe zapewniające pewną ciągłość <i>(pochodną)</i>. Zobacz <a href="#Ci.C4.85g.C5.82o.C5.9B.C4.87_w_przej.C5.9Bciach_geometrycznych">przykład ciągłości</a> poniżej.</li></ol>
+<p><span id="Designing"></span>
+</p>
+<h3><span class="mw-headline" id="Projektowanie">Projektowanie</span></h3>
+<p>Rozważmy przypadek, w którym projektujemy obudowę baterii kuchennej. Jej pożądany kształt powinien wyglądać tak jak ten:
+</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_spline-exmple-mixer-shell.png"><img decoding="async" height="445" src="../File/Sketcher_spline-exmple-mixer-shell.png" width="399"/></a></span>
+</p><p>Do zdefiniowania formy zewnętrznej korzystne jest użycie krzywej złożonej, ponieważ po zmianie punktu kontrolnego w celu zmiany krzywizny u dołu, krzywizna z boku i u góry nie ulegnie zmianie:
+</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_spline-exmple-mixer-sketch.gif"><img decoding="async" height="619" src="../File/Sketcher_spline-exmple-mixer-sketch.gif" width="276"/></a></span>
+</p><p><span id="Continuity_at_Geometric_Transitions"></span>
+</p>
+<h3><span id="Ci.C4.85g.C5.82o.C5.9B.C4.87_w_przej.C5.9Bciach_geometrycznych"></span><span class="mw-headline" id="Ciągłość_w_przejściach_geometrycznych">Ciągłość w przejściach geometrycznych</span></h3>
+<p>Istnieje kilka przypadków, w których fizycznie konieczne jest zachowanie pewnej ciągłości powierzchni na przejściach geometrycznych. Weźmy na przykład wewnętrzne ścianki kanału z płynem. Kiedy mamy zmianę średnicy kanału, nie chcemy mieć krawędzi, ponieważ krawędzie wprowadziłyby turbulencje. Dlatego, tak jak w przykładzie motywacyjnym <a href="#Motywacja">powyżej</a>, używamy do tego celu krzywych złożonych.
+</p><p>Rozwój krzywych Béziera został zapoczątkowany przez francuski przemysł samochodowy. Oprócz oszczędności materiału i zmniejszenia oporów przepływu powietrza, należało również poprawić wygląd samochodów. Patrząc na fantazyjny design francuskich samochodów z lat 60-tych i 70-tych można zauważyć, że krzywe Béziera dały impuls do rozwoju designu samochodów.
+</p><p>Weźmy na przykład to zadanie w projektowaniu samochodów: Błotnik samochodu powinien "ładnie wyglądać". Oto podstawowy szkic do tego zadania:
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/Spline-Fender-sketch1.svg"><img decoding="async" height="304" src="../File/Spline-Fender-sketch1.svg" width="250"/></a></span>
+</p><p>"Ładny wygląd" oznacza, że <i>(potencjalny)</i> klient patrzy na błotnik i nie widzi niespodziewanych refleksów świetlnych, a także w ogóle żadnych nagłych zmian w odbiciu od lakieru samochodowego. Czego więc potrzebujesz, aby uniknąć zmian w odbiciach? Dokładne przyjrzenie się błotnikowi:
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/Spline-Fender-sketch2.svg"><img decoding="async" height="244" src="../File/Spline-Fender-sketch2.svg" width="300"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">W obszarze przestrzennym nad krawędzią intensywność światła odbitego jest niska <i>(oznaczona czerwoną elipsą)</i>, ponieważ w kierunku od krawędzi do oka nie odbija się bezpośrednio żadne światło.</p>
+<p>Widzisz, kiedy jest krawędź, istnieje obszar przestrzenny, w którym odbite światło ma mniejszą intensywność i to jest to, co zauważysz patrząc na błotnik. Aby tego uniknąć potrzebna jest ciągła zmiana nachylenia elementów powierzchni. Nachylenie jest pochodną pierwszego rzędu i jak wyjaśniono w sekcji <a href="#Podstawy">Podstawy</a>, krzywa złożona drugiego stopnia <i>(kwadratowa)</i> oferuje w każdym punkcie ciągłą pochodną pierwszego rzędu.
+</p><p>Ale czy to naprawdę wystarczy? W punkcie przejścia geometrycznego mamy teraz po obu stronach to samo nachylenie, ale nachylenie to może się zmieniać w różny sposób po obu stronach. Wtedy mamy taką sytuację:
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/Spline-Fender-sketch3.svg"><img decoding="async" height="244" src="../File/Spline-Fender-sketch3.svg" width="300"/></a></span>
+</p><p>Mamy więc również obszary przestrzenne, w których natężenie światła odbitego jest różne. Aby tego uniknąć, potrzebujemy w geometrycznym punkcie przejścia również ciągłości pochodnej drugiego rzędu, a więc sześciennej krzywej złożonej.
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20241129211009
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 1.238 seconds
+Real time usage: 1.901 seconds
+Preprocessor visited node count: 478/1000000
+Post‐expand include size: 8016/2097152 bytes
+Template argument size: 2130/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 2553/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    8.664      1 -total
+ 35.43%    3.070      3 Template:Version/pl
+ 10.88%    0.942      4 Template:Caption
+ 10.24%    0.887     14 Template:Button
+  9.07%    0.786      1 Template:TOCright
+  6.19%    0.536      1 Template:KEY
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:248954-0!canonical and timestamp 20241129211007 and revision id 1390239. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

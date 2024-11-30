@@ -1,0 +1,94 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Raytracing templates/fr</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Raytracing_templates.html" lang="de" title="Strahlverfolgung Vorlagen (33% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Raytracing_templates.html" lang="en" title="Raytracing templates (100% translated)">English</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="fr">français</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Raytracing_templates.html" lang="it" title="Modelli per Raytracing (20% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Raytracing_templates.html" lang="pl" title="Raytracing: Szablony (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Raytracing_templates.html" lang="ru" title="Raytracing templates/ru (7% translated)">русский</a></li></ul></div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>L'<a href="Raytracing_Workbench.html" title="Raytracing Workbench/fr">atelier raytracing</a> est livré avec quelques modèles pour Povray et Luxrender, mais vous pouvez facilement créer les vôtres. Tout ce que vous avez à faire est de créer un fichier de scène pour le rendu donné, puis de le modifier manuellement avec un éditeur de texte pour insérer des balises spéciales que FreeCAD reconnaîtra et où il insérera son contenu (données de caméra et d'objets).
+</p><p>Modèle personnel <span style="font-size:small;"><a href="Release_notes_0.18.html" title="Release notes 0.18/fr">introduit dans la version 0.18</a></span> peut être placé dans
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">~/.</span><span class="n">FreeCAD</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">Mod</span><span class="o">/</span><span class="n">Raytracing</span><span class="o">/</span><span class="n">Templates</span>
+</pre></div>
+<h2><span class="mw-headline" id="Povray">Povray</span></h2>
+<p>Les fichiers de raytracing Povray (avec l'extension .pov) peuvent être créés manuellement à l'aide d'un éditeur de texte (povray est principalement conçu pour être utilisé comme langage de script), mais également avec un large éventail d'applications 3D, telles que <a class="external text" href="http://www.blender.org" rel="nofollow">blender</a>. Sur le <a class="external text" href="http://www.povray.org/povray" rel="nofollow">website</a>, vous trouverez des informations complémentaires et une liste d'applications capables de générer des fichiers .pov.
+</p><p>Lorsque vous avez un fichier .pov prêt, vous devez l'ouvrir avec un éditeur de texte et effectuer deux opérations:
+</p>
+<ol><li>Supprimez les informations de la caméra, car FreeCAD placera ses propres données de caméra. Pour ce faire, localisez un bloc de texte comme ceci: <tt> camera {...} </tt>, qui décrit les paramètres de l'appareil photo, puis supprimez-le (ou mettez "//" devant chaque ligne pour les commenter. ).</li>
+<li>Insérez la ligne suivante quelque part: <tt>// RaytracingContent </tt>. C'est ici que FreeCAD insérera son contenu (données de la caméra et des objets). Vous pouvez, par exemple, mettre cette ligne à la fin du fichier.</li></ol>
+<p>Notez que FreeCAD ajoutera également des déclarations que vous pourrez utiliser dans votre modèle, après la <tt>//RaytracingContent</tt> tag. Ceux-ci sont:
+</p>
+<ul><li>cam_location: la location de la camera</li>
+<li>cam_look_at: la location de la cible de la camera</li>
+<li>cam_sky: le vecteur supérieur de la camera.</li>
+<li>cam_angle: l'angle de la camera</li></ul>
+<p>Si vous souhaitez, par exemple, placer une lampe au-dessus de l'appareil photo, vous pouvez utiliser ceci:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">light_source</span> <span class="p">{</span>
+ <span class="n">cam_location</span> <span class="o">+</span> <span class="n">cam_angle</span> <span class="o">*</span> <span class="mi">100</span>
+ <span class="n">color</span> <span class="n">rgb</span> <span class="o">&lt;</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</pre></div>
+<h2><span class="mw-headline" id="Luxrender">Luxrender</span></h2>
+<p>Les fichiers de raytracing Luxrender (avec extension .lxs) peuvent être soit des fichiers uniques, soit un fichier maître .lxs comprenant des fichiers de définition globale (.lxw), de définition du matériau (.lxm) et de définition géométrique (.lxo). Vous pouvez travailler avec les deux styles, mais il est également facile de transformer un groupe de 4 fichiers en un fichier .lxs unique, en copiant le contenu de chaque fichier .lxw, .lxm et .lxo et en le collant à l'endroit où ce fichier est enregistré qui sera inséré dans le fichier .lxs principal.
+</p><p>Les fichiers de scène Luxrender sont difficiles à produire manuellement, mais avec de nombreuses applications 3D telles que <a class="external text" href="http://www.blender.org" rel="nofollow">blender</a>. Sur le <a class="external text" href="http://www.luxrender.net" rel="nofollow">luxrender website</a>, vous trouverez plus d’informations et des plugins pour les principales applications 3D disponibles.
+</p><p>Si vous travaillez avec des fichiers .lxw, .lxm et .lxo séparés, sachez que les fichiers .lx exportés par FreeCAD peuvent se trouver à un emplacement différent de celui du fichier modèle et que ces fichiers risquent de ne pas être trouvés par Luxrender au moment du rendu. Dans ce cas, vous devez copier ces fichiers à l'emplacement de votre fichier final ou modifier leurs chemins dans le fichier .lxs exporté.
+</p><p>Si vous exportez un fichier de scène à partir de blender et souhaitez tout fusionner en un seul fichier, vous devez effectuer une étape avant l'exportation: par défaut, l'exportateur luxrender de Blender exporte toute la géométrie du maillage en tant que fichiers .ply séparés. placer la géométrie du maillage directement dans le fichier .lxo. Pour changer ce comportement, vous devez sélectionner chacune de vos mailles dans Blender, aller à l'onglet "Maillage" et définir l'option "Exporter sous" sur "Maillage luxrender" pour chacune d'entre elles.
+</p><p>Une fois votre fichier de scène prêt, pour le transformer en modèle FreeCAD, vous devez suivre les étapes suivantes:
+</p>
+<ol><li>Localisez la position de la caméra, une ligne qui commence par <tt> LookAt </tt>, et supprimez-la (ou placez un "#" au début de la ligne pour la commenter)</li>
+<li>À cet endroit, insérez la ligne suivante: <tt> #RaytracingCamera </tt></li>
+<li>À un point souhaité, par exemple juste après la fin de la définition des matériaux, avant les informations de géométrie ou tout à la fin, juste avant la dernière ligne <tt> WorldEnd </tt>, insérez la ligne suivante: <tt> #RaytracingContent </tt>. C'est là que FreeCAD va insérer ses propres objets.</li></ol>
+<p>Notez que dans luxrender, les objets stockés dans un fichier de scène peuvent définir des matrices de transformation permettant d'effectuer des opérations de localisation, de rotation ou de mise à l'échelle. Ces matrices peuvent s'empiler et affecter tout ce qui vient après, donc, en plaçant votre balise <tt> #RaytracingContent </tt> à la fin du fichier, vos objets FreeCAD peuvent être affectés par une matrice de transformation placée plus tôt dans le modèle. . Pour vous assurer que cela ne se produira pas, placez votre balise <tt> #RaytracingContent </tt> avant tout autre objet de géométrie présent dans le modèle. FreeCAD lui-même ne définira aucune de ces matrices de transformation.
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><a href="Raytracing_Workbench.html" title="Raytracing Workbench/fr">Raytracing</a> <span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_Raytracing.svg"><img decoding="async" height="24" src="../File/Workbench_Raytracing.svg" width="24"/></a></span>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Outils :</b> <a href="Raytracing_New.html" title="Raytracing New/fr">Nouveau projet PovRay</a>, <a href="Raytracing_Lux.html" title="Raytracing Lux/fr">Nouveau projet LuxRender</a>, <a href="Raytracing_InsertPart.html" title="Raytracing InsertPart/fr">In-serrer un objet</a>, <a href="Raytracing_ResetCamera.html" title="Raytracing ResetCamera/fr">Reset la caméra</a>, <a href="Raytracing_ExportProject.html" title="Raytracing ExportProject/fr">Exporter un projet</a>, <a href="Raytracing_Render.html" title="Raytracing Render/fr">Raytracing rendu</a></li></ul>
+<ul><li><b>Utilitaires :</b> <a href="Raytracing_WriteView.html" title="Raytracing WriteView/fr">Exporter une vue dans Povray</a>, <a href="Raytracing_WriteCamera.html" title="Raytracing WriteCamera/fr">Exporter la caméra dans Povray</a>, <a href="Raytracing_WritePart.html" title="Raytracing WritePart/fr">Exporter un objet dans Povray</a></li></ul>
+<hr/>
+<ul><li><b>Additionnel :</b> <a href="Raytracing_Preferences.html" title="Raytracing Preferences/fr">Préférences</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/User_hub.png"><img decoding="async" height="24" src="../File/User_hub.png" srcset="/images/thumb/9/94/User_hub.png/36px-User_hub.png 1.5x, /images/thumb/9/94/User_hub.png/48px-User_hub.png 2x" width="24"/></a></span> <a href="User_hub.html" title="User hub/fr">Hub utilisateurs</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started/fr">Démarrer avec FreeCAD</a></b></li>
+<li><b>Installation :</b> <a href="Download.html" title="Download/fr">Téléchargements</a>, <a href="Installing_on_Windows.html" title="Installing on Windows/fr">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux/fr">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac/fr">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components/fr">Logiciels supplémentaires</a>, <a href="Compile_on_Docker.html" title="Compile on Docker/fr">Docker</a>, <a href="AppImage.html" title="AppImage/fr">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap/fr">Ubuntu Snap</a></li>
+<li><b>Bases :</b> <a href="About_FreeCAD.html" title="About FreeCAD/fr">À propos de FreeCAD</a>, <a href="Interface.html" title="Interface/fr">Interface</a>, <a href="Mouse_navigation.html" title="Mouse navigation/fr">Navigation par la souris</a>, <a href="Selection_methods.html" title="Selection methods/fr">Méthodes de sélection</a>, <a href="Object_name.html" title="Object name/fr">Objet name</a>, <a href="Preferences_Editor.html" title="Preferences Editor/fr">Préférences</a>, <a href="Workbenches.html" title="Workbenches/fr">Ateliers</a>, <a href="Document_structure.html" title="Document structure/fr">Structure du document</a>, <a href="Property.html" title="Property/fr">Propriétés</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD/fr">Contribuer à FreeCAD</a>, <a href="Donate.html" title="Donate/fr">Faire un don</a></li></ul>
+<hr/>
+<ul><li><b>Aide :</b> <a href="Tutorials.html" title="Tutorials/fr">Tutoriels</a>, <a href="Video_tutorials.html" title="Video tutorials/fr">Tutoriels vidéo</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches/fr">Ateliers</a> :</b> <a href="Std_Base.html" title="Std Base/fr">Std Base</a>, <a href="Arch_Workbench.html" title="Arch Workbench/fr">Arch</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench/fr">Assembly</a>, <a href="CAM_Workbench.html" title="CAM Workbench/fr">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench/fr">Draft</a>, <a href="FEM_Workbench.html" title="FEM Workbench/fr">FEM</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench/fr">Inspection</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench/fr">Mesh</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench/fr">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench/fr">Part</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench/fr">PartDesign</a>, <a href="Points_Workbench.html" title="Points Workbench/fr">Points</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/fr">Reverse Engineering</a>, <a href="Robot_Workbench.html" title="Robot Workbench/fr">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench/fr">Sketcher</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench/fr">Spreadsheet</a>, <a href="Surface_Workbench.html" title="Surface Workbench/fr">Surface</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench/fr">TechDraw</a>, <a href="Testing.html" title="Testing/fr">Test</a></li></ul>
+<hr/>
+<ul><li><b><a href="Addon.html" title="Addon/fr">Addons</a> :</b> <a href="Std_AddonMgr.html" title="Std AddonMgr/fr">Gestionnaire d'Addons</a>, <a href="External_workbenches.html" title="External workbenches/fr">Ateliers externes</a>, <a href="Scripting_and_macros.html" title="Scripting and macros/fr">Scripts et macros</a></li></ul>
+<hr/>
+<ul><li><b>Hubs :</b> <a href="User_hub.html" title="User hub/fr">Hub utilisateurs</a>, <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>, <a href="Developer_hub.html" title="Developer hub/fr">Hub Développeurs</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129210411
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [no‐toc‐conversion]
+CPU time usage: 0.063 seconds
+Real time usage: 0.454 seconds
+Preprocessor visited node count: 75/1000000
+Post‐expand include size: 8415/2097152 bytes
+Template argument size: 2725/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 2/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 2205/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  347.852      1 -total
+ 98.74%  343.452      2 Template:Code
+  0.52%    1.818      1 Template:Raytracing_Tools_navi/fr
+  0.30%    1.049      1 Template:Version/fr
+  0.26%    0.909      1 Template:Userdocnavi/fr
+  0.22%    0.755      2 Template:Navigation_menu_2
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:140872-0!canonical and timestamp 20241129210410 and revision id 440967. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

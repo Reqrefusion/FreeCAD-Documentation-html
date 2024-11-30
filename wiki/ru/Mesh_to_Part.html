@@ -1,0 +1,169 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Mesh to Part/ru</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Mesh_to_Part.html" lang="id" title="Mesh to Part (11% translated)">Bahasa Indonesia</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Mesh_to_Part.html" lang="de" title="Polygonnetz zu Teil (100% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Mesh_to_Part.html" lang="en" title="Mesh to Part (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Mesh_to_Part.html" lang="tr" title="Mesh to Part (11% translated)">Türkçe</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Mesh_to_Part.html" lang="es" title="Mesh to Part (11% translated)">español</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Mesh_to_Part.html" lang="fr" title="Conversion objet Mesh en Part (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Mesh_to_Part.html" lang="it" title="Da Mesh a Parte e viceversa (100% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Mesh_to_Part.html" lang="pl" title="Konwersja Siatki na Część (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Mesh_to_Part.html" lang="ro" title="Piese construite din Plase poligonale (11% translated)">română</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Mesh_to_Part.html" lang="sv" title="Mesh to Part (11% translated)">svenska</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Mesh_to_Part.html" lang="cs" title="Mesh to Part (11% translated)">čeština</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="ru">русский</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Mesh_to_Part.html" lang="ja" title="Mesh to Part/ja (0% translated)">日本語</a></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Преобразование_объектов_Part_в_полигональную_сетку"><span class="tocnumber">1</span> <span class="toctext">Преобразование объектов Part в полигональную сетку</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Преобразование_полигональных_сеток_в_объекты_Part"><span class="tocnumber">2</span> <span class="toctext">Преобразование полигональных сеток в объекты Part</span></a></li>
+</ul>
+</div>
+</div>
+<h2><span id=".D0.9F.D1.80.D0.B5.D0.BE.D0.B1.D1.80.D0.B0.D0.B7.D0.BE.D0.B2.D0.B0.D0.BD.D0.B8.D0.B5_.D0.BE.D0.B1.D1.8A.D0.B5.D0.BA.D1.82.D0.BE.D0.B2_Part_.D0.B2_.D0.BF.D0.BE.D0.BB.D0.B8.D0.B3.D0.BE.D0.BD.D0.B0.D0.BB.D1.8C.D0.BD.D1.83.D1.8E_.D1.81.D0.B5.D1.82.D0.BA.D1.83"></span><span class="mw-headline" id="Преобразование_объектов_Part_в_полигональную_сетку">Преобразование объектов Part в полигональную сетку</span></h2>
+<div class="mw-translate-fuzzy">
+<p>Конвертация высокоуровневых объектов, таких как формы <a href="Part_Workbench.html" title="Part Workbench/ru">Part(Деталей)</a>, в простые объекты, такие как  <a href="Mesh_Workbench.html" title="Mesh Workbench/ru">полигональные сетки</a>, это довольно прямолинейная операция, когда все грани Part разбиваются на треугольники. Результат этой триангуляции  затем используется для построения сетки:
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Mesh</span>
+
+<span class="n">obj</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">Selection</span><span class="o">.</span><span class="n">getSelection</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># a Part object must be preselected</span>
+<span class="n">shp</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Shape</span>
+<span class="n">faces</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">triangles</span> <span class="o">=</span> <span class="n">shp</span><span class="o">.</span><span class="n">tessellate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># the number represents the precision of the tessellation</span>
+<span class="k">for</span> <span class="n">tri</span> <span class="ow">in</span> <span class="n">triangles</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+    <span class="n">face</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tri</span><span class="p">:</span>
+        <span class="n">face</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">triangles</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">face</span><span class="p">)</span>
+
+<span class="n">m</span> <span class="o">=</span> <span class="n">Mesh</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">faces</span><span class="p">)</span>
+<span class="n">Mesh</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+</pre></div>
+<p>Альтернативный пример:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Mesh</span>
+<span class="kn">import</span> <span class="nn">MeshPart</span>
+
+<span class="n">obj</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">Selection</span><span class="o">.</span><span class="n">getSelection</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># a Part object must be preselected</span>
+<span class="n">shp</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Shape</span>
+
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Mesh::Feature"</span><span class="p">,</span> <span class="s2">"Mesh"</span><span class="p">)</span>
+<span class="n">mesh</span><span class="o">.</span><span class="n">Mesh</span> <span class="o">=</span> <span class="n">MeshPart</span><span class="o">.</span><span class="n">meshFromShape</span><span class="p">(</span>
+        <span class="n">Shape</span><span class="o">=</span><span class="n">shp</span><span class="p">,</span>
+        <span class="n">LinearDeflection</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">AngularDeflection</span><span class="o">=</span><span class="mf">0.025</span><span class="p">,</span>
+        <span class="n">Relative</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+<h2><span id=".D0.9F.D1.80.D0.B5.D0.BE.D0.B1.D1.80.D0.B0.D0.B7.D0.BE.D0.B2.D0.B0.D0.BD.D0.B8.D0.B5_.D0.BF.D0.BE.D0.BB.D0.B8.D0.B3.D0.BE.D0.BD.D0.B0.D0.BB.D1.8C.D0.BD.D1.8B.D1.85_.D1.81.D0.B5.D1.82.D0.BE.D0.BA_.D0.B2_.D0.BE.D0.B1.D1.8A.D0.B5.D0.BA.D1.82.D1.8B_Part"></span><span class="mw-headline" id="Преобразование_полигональных_сеток_в_объекты_Part">Преобразование полигональных сеток в объекты Part</span></h2>
+<p>Преобразование полигональных сеток в Part - самая обычная операция. Очень часто вы получаете трёхмерные данные в полигональном виде. Сетки довольно практичны для представления геометрии свободной формы и больших визуальных сцен, поскольку они очень легковесны. Но в FreeCAD мы в основном предпочитаем высокоуровневые объекты, твердотельные, которые несут гораздо больше информации, и позволяют кривые поверхности.
+</p><p>Преобразование сетки в высокоуровневый объект (обрабатываемый в FreeCAD  <a href="Part_Workbench.html" title="Part Workbench/ru">верстаком Деталь</a>) это не простая задача. Сетки могут содержать тысячи треугольников (например, когда они сгенерированы 3D сканером), и телом, состоящим из того же числа граней, будет чрезвычайно сложно управлять. Поэтому обычно хочется оптимизировать объект при преобразовании.
+</p><p>В настоящее время FreeCAD предлагает два метода для преобразования полигональных сеток в объект Part. Первый метод прост, это прямое преобразование, без какой либо оптимизации:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Mesh</span>
+<span class="kn">import</span> <span class="nn">Part</span>
+
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="o">.</span><span class="n">createTorus</span><span class="p">()</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">Shape</span><span class="p">()</span>
+<span class="n">shape</span><span class="o">.</span><span class="n">makeShapeFromMesh</span><span class="p">(</span><span class="n">mesh</span><span class="o">.</span><span class="n">Topology</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span> <span class="c1"># the second arg is the tolerance for sewing</span>
+<span class="n">solid</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">makeSolid</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">Part</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">solid</span><span class="p">)</span>
+</pre></div>
+<p>Второй метод позволяет учитывать какие грани сетки компланарны, когда угол между ними принимает определенное значение, уменьшая количество граней в конечном результате:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Mesh</span>
+<span class="kn">import</span> <span class="nn">Part</span>
+<span class="kn">import</span> <span class="nn">MeshPart</span>
+
+<span class="n">obj</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">Selection</span><span class="o">.</span><span class="n">getSelection</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># a Mesh object must be preselected</span>
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Mesh</span>
+<span class="n">segments</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">getPlanarSegments</span><span class="p">(</span><span class="mf">0.00001</span><span class="p">)</span> <span class="c1"># use rather strict tolerance here</span>
+<span class="n">faces</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">segments</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># a segment can have inner holes</span>
+        <span class="n">wires</span> <span class="o">=</span> <span class="n">MeshPart</span><span class="o">.</span><span class="n">wireFromSegment</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+        <span class="c1"># we assume that the exterior boundary is that one with the biggest bounding box</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">wires</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ext</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">max_length</span><span class="o">=</span><span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">wires</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">BoundBox</span><span class="o">.</span><span class="n">DiagonalLength</span> <span class="o">&gt;</span> <span class="n">max_length</span><span class="p">:</span>
+                    <span class="n">max_length</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">BoundBox</span><span class="o">.</span><span class="n">DiagonalLength</span>
+                    <span class="n">ext</span> <span class="o">=</span> <span class="n">i</span>
+
+            <span class="n">wires</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
+            <span class="c1"># all interior wires mark a hole and must reverse their orientation, otherwise Part.Face fails</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">wires</span><span class="p">:</span>
+                <span class="n">i</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+
+            <span class="c1"># make sure that the exterior wires comes as first in the list</span>
+            <span class="n">wires</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
+            <span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">Face</span><span class="p">(</span><span class="n">wires</span><span class="p">))</span>
+
+<span class="n">solid</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">Solid</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">Shell</span><span class="p">(</span><span class="n">faces</span><span class="p">))</span>
+<span class="n">Part</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">solid</span><span class="p">)</span>
+</pre></div>
+<p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub/ru">Power user documentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>FreeCAD scripting:</b> <a href="Python.html" title="Python/ru">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/ru">Introduction to Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/ru">Python scripting tutorial</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/ru">FreeCAD Scripting Basics</a></li></ul>
+<hr/>
+<ul><li><b>Modules:</b> <a href="Builtin_modules.html" title="Builtin modules/ru">Builtin modules</a>, <a href="Units.html" title="Units/ru">Units</a>, <a class="new" href="index.php?title=Quantity_ru&amp;action=edit&amp;redlink=1.html" title="Quantity/ru (page does not exist)">Quantity</a></li>
+<li><b>Workbenches:</b> <a href="Workbench_creation.html" title="Workbench creation/ru">Workbench creation</a>, <a href="Gui_Command.html" title="Gui Command/ru">Gui Commands</a>, <a href="Command.html" title="Command/ru">Commands</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/ru">Installing more workbenches</a></li>
+<li><b>Meshes and Parts:</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/ru">Mesh Scripting</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/ru">Topological data scripting</a>, <a class="mw-selflink selflink">Mesh to Part</a>, <a href="PythonOCC.html" title="PythonOCC/ru">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Parametric objects:</b> <a href="Scripted_objects.html" title="Scripted objects/ru">Scripted objects</a>, <a href="Viewprovider.html" title="Viewprovider/ru">Viewproviders</a> <small>(<a class="new" href="index.php?title=Custom_icon_in_tree_view_ru&amp;action=edit&amp;redlink=1.html" title="Custom icon in tree view/ru (page does not exist)">Custom icon in tree view</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="Scenegraph.html" title="Scenegraph/ru">Coin (Inventor) scenegraph</a>, <a href="Pivy.html" title="Pivy/ru">Pivy</a></li>
+<li><b>Graphical interface:</b> <a href="Interface_creation.html" title="Interface creation/ru">Interface creation</a>, <a href="Dialog_creation.html" title="Dialog creation/ru">Interface creation completely in Python</a> <small>(<a class="new" href="index.php?title=Dialog_creation_with_various_widgets_ru&amp;action=edit&amp;redlink=1.html" title="Dialog creation with various widgets/ru (page does not exist)">1</a>, <a class="new" href="index.php?title=Dialog_creation_reading_and_writing_files_ru&amp;action=edit&amp;redlink=1.html" title="Dialog creation reading and writing files/ru (page does not exist)">2</a>, <a class="new" href="index.php?title=Dialog_creation_setting_colors_ru&amp;action=edit&amp;redlink=1.html" title="Dialog creation setting colors/ru (page does not exist)">3</a>, <a class="new" href="index.php?title=Dialog_creation_image_and_animated_GIF_ru&amp;action=edit&amp;redlink=1.html" title="Dialog creation image and animated GIF/ru (page does not exist)">4</a>, <a class="new" href="index.php?title=PySide_usage_snippets_ru&amp;action=edit&amp;redlink=1.html" title="PySide usage snippets/ru (page does not exist)">5</a>)</small>, <a href="PySide.html" title="PySide/ru">PySide</a>, PySide examples <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples/ru">beginner</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/ru">intermediate</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples/ru">advanced</a></li>
+<li><b>Macros:</b> <a href="Macros.html" title="Macros/ru">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros/ru">How to install macros</a></li>
+<li><b>Embedding:</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/ru">Embedding FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/ru">Embedding FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Other:</b> <a href="Expressions.html" title="Expressions/ru">Expressions</a>, <a href="Code_snippets.html" title="Code snippets/ru">Code snippets</a>, <a href="Line_drawing_function.html" title="Line drawing function/ru">Line drawing function</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/ru">FreeCAD vector math library</a> <small>(deprecated)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub/ru">User hub</a>, <a href="Power_users_hub.html" title="Power users hub/ru">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub/ru">Developer hub</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_Mesh.svg"><img decoding="async" height="24" src="../File/Workbench_Mesh.svg" width="24"/></a></span> <a href="Mesh_Workbench.html" title="Mesh Workbench/ru">Mesh</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Miscellaneous:</b> <a href="Mesh_Import.html" title="Mesh Import/ru">Import mesh</a>, <a href="Mesh_Export.html" title="Mesh Export/ru">Export mesh</a>, <a href="Mesh_FromPartShape.html" title="Mesh FromPartShape/ru">Create mesh from shape</a>, <a href="Mesh_BuildRegularSolid.html" title="Mesh BuildRegularSolid/ru">Regular solid</a>, <a class="new" href="index.php?title=MeshPart_CreateFlatMesh_ru&amp;action=edit&amp;redlink=1.html" title="MeshPart CreateFlatMesh/ru (page does not exist)">Unwrap Mesh</a>, <a class="new" href="index.php?title=MeshPart_CreateFlatFace_ru&amp;action=edit&amp;redlink=1.html" title="MeshPart CreateFlatFace/ru (page does not exist)">Unwrap Face</a></li>
+<li><b>Modifying:</b> <a href="Mesh_HarmonizeNormals.html" title="Mesh HarmonizeNormals/ru">Harmonize normals</a>, <a href="Mesh_FlipNormals.html" title="Mesh FlipNormals/ru">Flip normals</a>, <a class="new" href="index.php?title=Mesh_FillupHoles_ru&amp;action=edit&amp;redlink=1.html" title="Mesh FillupHoles/ru (page does not exist)">Fill holes</a>, <a href="Mesh_FillInteractiveHole.html" title="Mesh FillInteractiveHole/ru">Close hole</a>, <a class="new" href="index.php?title=Mesh_AddFacet_ru&amp;action=edit&amp;redlink=1.html" title="Mesh AddFacet/ru (page does not exist)">Add triangle</a>, <a href="Mesh_RemoveComponents.html" title="Mesh RemoveComponents/ru">Remove components</a>, <a href="Mesh_RemoveCompByHand.html" title="Mesh RemoveCompByHand/ru">Remove components by hand</a>, <a class="new" href="index.php?title=Mesh_Smoothing_ru&amp;action=edit&amp;redlink=1.html" title="Mesh Smoothing/ru (page does not exist)">Smooth</a>, <a class="new" href="index.php?title=Mesh_RemeshGmsh_ru&amp;action=edit&amp;redlink=1.html" title="Mesh RemeshGmsh/ru (page does not exist)">Refinement</a>, <a class="new" href="index.php?title=Mesh_Decimating_ru&amp;action=edit&amp;redlink=1.html" title="Mesh Decimating/ru (page does not exist)">Decimation</a>, <a href="Mesh_Scale.html" title="Mesh Scale/ru">Scale</a></li></ul>
+<hr/>
+<ul><li><b>Boolean:</b> <a href="Mesh_Union.html" title="Mesh Union/ru">Union</a>, <a href="Mesh_Intersection.html" title="Mesh Intersection/ru">Intersection</a>, <a href="Mesh_Difference.html" title="Mesh Difference/ru">Difference</a></li>
+<li><b>Cutting:</b> <a href="Mesh_PolyCut.html" title="Mesh PolyCut/ru">Cut mesh</a>, <a class="new" href="index.php?title=Mesh_PolyTrim_ru&amp;action=edit&amp;redlink=1.html" title="Mesh PolyTrim/ru (page does not exist)">Trim mesh</a>, <a class="new" href="index.php?title=Mesh_TrimByPlane_ru&amp;action=edit&amp;redlink=1.html" title="Mesh TrimByPlane/ru (page does not exist)">Trim mesh with a plane</a>, <a class="new" href="index.php?title=Mesh_SectionByPlane_ru&amp;action=edit&amp;redlink=1.html" title="Mesh SectionByPlane/ru (page does not exist)">Create section from mesh and plane</a>, <a class="new" href="index.php?title=Mesh_CrossSections_ru&amp;action=edit&amp;redlink=1.html" title="Mesh CrossSections/ru (page does not exist)">Cross-sections</a></li>
+<li><b>Components and segments:</b> <a href="Mesh_Merge.html" title="Mesh Merge/ru">Merge</a>, <a class="new" href="index.php?title=Mesh_SplitComponents_ru&amp;action=edit&amp;redlink=1.html" title="Mesh SplitComponents/ru (page does not exist)">Split by components</a>, <a class="new" href="index.php?title=Mesh_Segmentation_ru&amp;action=edit&amp;redlink=1.html" title="Mesh Segmentation/ru (page does not exist)">Create mesh segments</a>, <a class="new" href="index.php?title=Mesh_SegmentationBestFit_ru&amp;action=edit&amp;redlink=1.html" title="Mesh SegmentationBestFit/ru (page does not exist)">Create mesh segments from best-fit surfaces</a></li></ul>
+<hr/>
+<ul><li><b>Analyze:</b> <a href="Mesh_Evaluation.html" title="Mesh Evaluation/ru">Evaluate and repair mesh</a>, <a href="Mesh_EvaluateFacet.html" title="Mesh EvaluateFacet/ru">Face info</a>, <a href="Mesh_VertexCurvature.html" title="Mesh VertexCurvature/ru">Curvature plot</a>, <a href="Mesh_CurvatureInfo.html" title="Mesh CurvatureInfo/ru">Curvature info</a>, <a href="Mesh_EvaluateSolid.html" title="Mesh EvaluateSolid/ru">Check solid mesh</a>, <a href="Mesh_BoundingBox.html" title="Mesh BoundingBox/ru">Boundings info</a></li>
+<li><b>Additional:</b> <a href="Import_Export_Preferences.html" title="Import Export Preferences/ru">Import Export Preferences</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench/ru">OpenSCAD Workbench</a>, <a href="Mesh_Scripting.html" title="Mesh Scripting/ru">Mesh Scripting</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211551
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.099 seconds
+Real time usage: 0.652 seconds
+Preprocessor visited node count: 180/1000000
+Post‐expand include size: 11573/2097152 bytes
+Template argument size: 5954/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 4/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 12333/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  523.785      1 -total
+ 98.43%  515.563      4 Template:Code
+  0.63%    3.324      1 Template:Powerdocnavi/ru
+  0.61%    3.221      1 Template:Mesh_Tools_navi/ru
+  0.41%    2.152      2 Template:Navigation_menu_2
+  0.14%    0.734      1 Template:TOCright
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:1118-0!canonical and timestamp 20241129211551 and revision id 1007520. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

@@ -1,0 +1,139 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Part Loft Technical Details</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="de" title="Part Ausformung Technische Details (100% translated)">Deutsch</a></li>
+<li><span class="mw-pt-languages-ui mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="en">English</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="fr" title="Part Détails techniques du lissage (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Part_Loft_Technical_Details.html" lang="hr" title="Part Loft Technical Details/hr (0% translated)">hrvatski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="it" title="Dettagli tecnici di Part Loft (100% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="pl" title="Część: Szczegóły techniczne wyciągnięcia przez profile (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--med" dir="ltr" href="Part_Loft_Technical_Details.html" lang="ro" title="Instrumentul Loft (Mansardare)-  Detalii Tehnice (54% translated)">română</a></li></ul></div>
+<p>This page explains the details of how the <a href="Part_Loft.html" title="Part Loft">Loft</a> surface is created. This is also relevant to <a href="Part_Sweep.html" title="Part Sweep">Part Sweep</a> done along a straight path, although there are differences.
+</p><p>The information provided is implementation specific, and may change. Current state is relevant to FreeCAD 0.15.4119, OCC version: 6.7.0.
+</p>
+<div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Stages_of_the_Loft_creation"><span class="tocnumber">1</span> <span class="toctext">Stages of the Loft creation</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Step_1._Making_numbers_of_segment_in_profiles_match"><span class="tocnumber">1.1</span> <span class="toctext">Step 1. Making numbers of segment in profiles match</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#Step_2._Establishing_correspondence_between_segments"><span class="tocnumber">1.2</span> <span class="toctext">Step 2. Establishing correspondence between segments</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Step_3._Making_the_loft_surface"><span class="tocnumber">1.3</span> <span class="toctext">Step 3. Making the loft surface</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-5"><a href="#The_main_point"><span class="tocnumber">2</span> <span class="toctext">The main point</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Additional_remarks"><span class="tocnumber">3</span> <span class="toctext">Additional remarks</span></a></li>
+</ul>
+</div>
+<h2><span class="mw-headline" id="Stages_of_the_Loft_creation">Stages of the Loft creation</span></h2>
+<p>To explain the process of loft, it is convenient to divide it into stages:
+</p>
+<ol><li>make number of segments in the profiles equal (if they are not already)</li>
+<li>establish correspondence between segments</li>
+<li>make the loft surface</li></ol>
+<h3><span class="mw-headline" id="Step_1._Making_numbers_of_segment_in_profiles_match">Step 1. Making numbers of segment in profiles match</span></h3>
+<p>The Loft needs the number of segments to match in order to create surfaces between corresponding segments. If the numbers of segments match in all profiles, this step is skipped.
+</p><p>If at least one of the profiles has a different number of segments, the following procedure is applied. The procedure is explained here for the case of only two profiles for simplicity.
+</p>
+<ol><li>the profiles are temporarily aligned so that they are coplanar and their centers of masses* match.</li>
+<li>(see the picture) for every vertex in one profile, the second profile is sliced at the same polar angle (the polar center is the center of mass). If there is more than one slice possible or no slice possible at all (it can happen on very convex profiles), the Loft typically fails.</li>
+<li>the same is done in the opposite direction.</li></ol>
+<p>The operation is extended to all profiles, to yield the equal number of segments. The total number of segments in each profile would be equal to the sum of all numbers of segments of all profiles (provided none of the vertices happen to be at the same polar angle).
+</p>
+<table style="margin: 0 auto;">
+<tbody><tr>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="File/Loft-vertex-insertion.png"><img decoding="async" height="276" src="File/Loft-vertex-insertion.png" srcset="/images/thumb/7/7b/Loft-vertex-insertion.png/450px-Loft-vertex-insertion.png 1.5x, /images/thumb/7/7b/Loft-vertex-insertion.png/600px-Loft-vertex-insertion.png 2x" width="300"/></a><figcaption>The process of slicing profile2 (white crescent-like shape) to create joints corresponding to vertices of profile1 (purple pentagon). The inserted joints are marked by yellow arrows.</figcaption></figure>
+</td>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="File/Loft_crescent_pentagon.png"><img decoding="async" height="242" src="File/Loft_crescent_pentagon.png" srcset="/images/thumb/3/33/Loft_crescent_pentagon.png/450px-Loft_crescent_pentagon.png 1.5x, /images/thumb/3/33/Loft_crescent_pentagon.png/600px-Loft_crescent_pentagon.png 2x" width="300"/></a><figcaption>The result of loft relevant to the picture on the left.</figcaption></figure>
+</td></tr></tbody></table>
+<h3><span class="mw-headline" id="Step_2._Establishing_correspondence_between_segments">Step 2. Establishing correspondence between segments</span></h3>
+<figure typeof="mw:File/Thumb"><a class="mw-file-description" href="File/Loft_Number_of_verts_match.png"><img decoding="async" height="260" src="File/Loft_Number_of_verts_match.png" srcset="/images/thumb/8/89/Loft_Number_of_verts_match.png/450px-Loft_Number_of_verts_match.png 1.5x, /images/thumb/8/89/Loft_Number_of_verts_match.png/600px-Loft_Number_of_verts_match.png 2x" width="300"/></a><figcaption>Demonstration of Loft keeping the number of segments in profiles when they match. Note how 3 edges of the top square "collapse" into a small polygonal piece of the bottom profile.</figcaption></figure>
+<p>In case numbers of segments in all profiles were not equal, slicing was done in Step 1, and the correspondence is trivial.
+In case numbers of segments in all profiles were equal, existing segments are used (see the picture), and this is when the correspondence must be established. 
+</p><p>The exact algorithm to find corresponding segments is complex, but generally it tends to minimize the twisting of the resulting Loft. This means that if one is doing a loft between two squares, the maximum twist possible is &lt;45°. Further rotation of one of the squares will cause the Loft to jump to other vertices.
+</p><p>The correspondence between neighboring profiles is made independently. This means that additional twisting can be obtained by adding more profiles.
+</p><p>Another thing to note is that when numbers of segments in profiles are equal, the resulting Loft is substantially more robust with respect to complex profiles, especially for non-convex ones.
+</p>
+<div style="clear:both"></div>
+<h3><span class="mw-headline" id="Step_3._Making_the_loft_surface">Step 3. Making the loft surface</span></h3>
+<figure typeof="mw:File/Thumb"><a class="mw-file-description" href="File/Loft_B-spline.png"><img decoding="async" height="342" src="File/Loft_B-spline.png" srcset="/images/thumb/5/5a/Loft_B-spline.png/600px-Loft_B-spline.png 1.5x, /images/thumb/5/5a/Loft_B-spline.png/800px-Loft_B-spline.png 2x" width="400"/></a><figcaption>A spline interpolation curve (red) that follows the loft surface. The points to interpolate through are shown as red squares.</figcaption></figure>
+<p>If there are only two profiles, the surfaces created are ruled surfaces between corresponding segments of the profiles. Straight edges are created to connect corresponding vertices of the profiles.
+</p><p>If there are more than two profiles, the surfaces are made of splines in the same manner as straight lines form ruled surfaces. The imaginary splines the surface is "made of" are drawn through corresponding points of the corresponding segments of the profiles.
+</p><p>The splines are B-spline interpolation.
+</p>
+<ul><li>If the number of profiles is below 10, interpolation is done with by a B-spline with a maximum possible degree (i.e. degree = number_of_profiles - 1).</li>
+<li>If the number of profiles exceeds 10, the interpolation is switched to 3rd degree B-splines.</li></ul>
+<p>The knotting method used is "approximate chord length". Approximate stands for the fact that the knot vector is exactly the same for every spline in a loft. For more info on what is B-spline interpolation, knot vector, chord length method, see, for example, <a class="external text" href="http://www.cs.mtu.edu/~shene/COURSES/cs3621/NOTES/INT-APP/CURVE-INT-global.html" rel="nofollow">cs.mtu.edu Curve Global Interpolation </a>.
+</p><p>Note that Loft has a "Ruled" property. If it is set to true, ruled surfaces are made between neighboring profiles even when there's more than one profile. That is, B-spline interpolation is replaced by piecewise linear interpolation.
+</p>
+<div style="clear:both"></div>
+<h2><span class="mw-headline" id="The_main_point">The main point</span></h2>
+<ul><li>The loft is doing B-spline interpolation between the provided profiles. The interpolation is switched to piecewise linear when "Ruled" property is set to true.</li>
+<li>When number of profiles exceeds 9, interpolation degree is dropped to 3. This switchover can substantially reduce wiggling.</li>
+<li>Matching the number of segments (aka number of vertices) in the profiles allows one to give the loft a slight twist, and typically permits using more complex profiles.</li>
+<li>When numbers of segments are not matched, it's best to keep the profiles to be representable by a proper r(phi) function in polar coordinates.</li></ul>
+<h2><span class="mw-headline" id="Additional_remarks">Additional remarks</span></h2>
+<ul><li>It is not required that the profiles are parallel (see a picture below).</li>
+<li>For Loft, it is not required that the profiles are separated (see a picture below). They can be coplanar, but they should not intersect.</li>
+<li>When "closed" property of the Loft is "true", there is a cusp joint in all the splines forming the Loft (see a picture below). There is no reliable way to close the loft smoothly now.</li></ul>
+<table style="margin: 0 auto;">
+<tbody><tr>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="File/Loft_nonparallel.png"><img decoding="async" height="271" src="File/Loft_nonparallel.png" srcset="/images/thumb/e/e5/Loft_nonparallel.png/450px-Loft_nonparallel.png 1.5x, /images/thumb/e/e5/Loft_nonparallel.png/600px-Loft_nonparallel.png 2x" width="300"/></a><figcaption>It is not required that the profiles are parallel.</figcaption></figure>
+</td>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="File/Loft_Coplanar.png"><img decoding="async" height="167" src="File/Loft_Coplanar.png" srcset="/images/thumb/b/bb/Loft_Coplanar.png/450px-Loft_Coplanar.png 1.5x, /images/b/bb/Loft_Coplanar.png 2x" width="300"/></a><figcaption>In Loft, the profiles can be coplanar. In this example, two of three profiles are coplanar.</figcaption></figure>
+</td>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="File/Loft-closed.png"><img decoding="async" height="207" src="File/Loft-closed.png" srcset="/images/thumb/b/ba/Loft-closed.png/450px-Loft-closed.png 1.5x, /images/thumb/b/ba/Loft-closed.png/600px-Loft-closed.png 2x" width="300"/></a><figcaption>An example of a closed loft between three pentagonal profiles (white). Note the non-smooth joint at the outermost profile. This is the first profile in the closed loft.</figcaption></figure>
+</td></tr></tbody></table>
+<p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="File/Workbench_Part.svg"><img decoding="async" height="24" src="File/Workbench_Part.svg" width="24"/></a></span> <a href="Part_Workbench.html" title="Part Workbench">Part</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Primitives:</b> <a href="Part_Box.html" title="Part Box">Box</a>, <a href="Part_Cylinder.html" title="Part Cylinder">Cylinder</a>, <a href="Part_Sphere.html" title="Part Sphere">Sphere</a>, <a href="Part_Cone.html" title="Part Cone">Cone</a>, <a href="Part_Torus.html" title="Part Torus">Torus</a>, <a href="Part_Tube.html" title="Part Tube">Tube</a>, <a href="Part_Primitives.html" title="Part Primitives">Create primitives</a>, <a href="Part_Builder.html" title="Part Builder">Shape builder</a></li></ul>
+<hr/>
+<ul><li><b>Creation and modification:</b> <a href="Sketcher_NewSketch.html" title="Sketcher NewSketch">Create sketch</a>, <a href="Part_Extrude.html" title="Part Extrude">Extrude</a>, <a href="Part_Revolve.html" title="Part Revolve">Revolve</a>, <a href="Part_Mirror.html" title="Part Mirror">Mirror</a>, <a href="Part_Scale.html" title="Part Scale">Scale</a>, <a href="Part_Fillet.html" title="Part Fillet">Fillet</a>, <a href="Part_Chamfer.html" title="Part Chamfer">Chamfer</a>, <a href="Part_MakeFace.html" title="Part MakeFace">Make face from wires</a>, <a href="Part_RuledSurface.html" title="Part RuledSurface">Ruled Surface</a>, <a href="Part_Loft.html" title="Part Loft">Loft</a>, <a href="Part_Sweep.html" title="Part Sweep">Sweep</a>, <a href="Part_Section.html" title="Part Section">Section</a>, <a href="Part_CrossSections.html" title="Part CrossSections">Cross sections</a>, <a href="Part_Offset.html" title="Part Offset">3D Offset</a>, <a href="Part_Offset2D.html" title="Part Offset2D">2D Offset</a>, <a href="Part_Thickness.html" title="Part Thickness">Thickness</a>, <a href="Part_ProjectionOnSurface.html" title="Part ProjectionOnSurface">Projection on surface</a>, <a href="Part_ColorPerFace.html" title="Part ColorPerFace">Color per face</a></li></ul>
+<hr/>
+<ul><li><b>Boolean:</b> <a href="Part_Compound.html" title="Part Compound">Make compound</a>, <a href="Part_ExplodeCompound.html" title="Part ExplodeCompound">Explode compound</a>, <a href="Part_CompoundFilter.html" title="Part CompoundFilter">Compound Filter</a>, <a href="Part_Boolean.html" title="Part Boolean">Boolean</a>, <a href="Part_Cut.html" title="Part Cut">Cut</a>, <a href="Part_Fuse.html" title="Part Fuse">Union</a>, <a href="Part_Common.html" title="Part Common">Intersection</a>, <a href="Part_JoinConnect.html" title="Part JoinConnect">Connect objects</a>, <a href="Part_JoinEmbed.html" title="Part JoinEmbed">Embed object</a>, <a href="Part_JoinCutout.html" title="Part JoinCutout">Cutout for object</a>, <a href="Part_BooleanFragments.html" title="Part BooleanFragments">Boolean fragments</a>, <a href="Part_SliceApart.html" title="Part SliceApart">Slice apart</a>, <a href="Part_Slice.html" title="Part Slice">Slice to compound</a>, <a href="Part_XOR.html" title="Part XOR">Boolean XOR</a>, <a href="Part_CheckGeometry.html" title="Part CheckGeometry">Check geometry</a>, <a href="Part_Defeaturing.html" title="Part Defeaturing">Defeaturing</a></li></ul>
+<hr/>
+<ul><li><b>Other tools:</b> <a href="Part_Import.html" title="Part Import">Import CAD file</a>, <a href="Part_Export.html" title="Part Export">Export CAD file</a>, <a href="Part_BoxSelection.html" title="Part BoxSelection">Box selection</a>, <a href="Part_ShapeFromMesh.html" title="Part ShapeFromMesh">Create shape from mesh</a>, <a href="Part_PointsFromMesh.html" title="Part PointsFromMesh">Create points object from geometry</a>, <a href="Part_MakeSolid.html" title="Part MakeSolid">Convert to solid</a>, <a href="Part_ReverseShape.html" title="Part ReverseShape">Reverse shapes</a>, <a href="Part_SimpleCopy.html" title="Part SimpleCopy">Create simple copy</a>, <a href="Part_TransformedCopy.html" title="Part TransformedCopy">Create transformed copy</a>, <a href="Part_ElementCopy.html" title="Part ElementCopy">Create shape element copy</a>, <a href="Part_RefineShape.html" title="Part RefineShape">Refine shape</a>, <a href="Part_EditAttachment.html" title="Part EditAttachment">Attachment</a></li></ul>
+<hr/>
+<ul><li><b>Preferences:</b> <a href="PartDesign_Preferences.html" title="PartDesign Preferences">Preferences</a>, <a href="Fine-tuning.html" title="Fine-tuning">Fine tuning</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="File/User_hub.png"><img decoding="async" height="24" src="File/User_hub.png" srcset="/images/thumb/9/94/User_hub.png/36px-User_hub.png 1.5x, /images/thumb/9/94/User_hub.png/48px-User_hub.png 2x" width="24"/></a></span> <a href="User_hub.html" title="User hub">User documentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started">Getting started</a></b></li>
+<li><b>Installation:</b> <a href="Download.html" title="Download">Download</a>, <a href="Installing_on_Windows.html" title="Installing on Windows">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components">Additional components</a>, <a href="Compile_on_Docker.html" title="Compile on Docker">Docker</a>, <a href="AppImage.html" title="AppImage">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap">Ubuntu Snap</a></li>
+<li><b>Basics:</b> <a href="About_FreeCAD.html" title="About FreeCAD">About FreeCAD</a>, <a href="Interface.html" title="Interface">Interface</a>, <a href="Mouse_navigation.html" title="Mouse navigation">Mouse navigation</a>, <a href="Selection_methods.html" title="Selection methods">Selection methods</a>, <a href="Object_name.html" title="Object name">Object name</a>, <a href="Preferences_Editor.html" title="Preferences Editor">Preferences</a>, <a href="Workbenches.html" title="Workbenches">Workbenches</a>, <a href="Document_structure.html" title="Document structure">Document structure</a>, <a href="Property.html" title="Property">Properties</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD">Help FreeCAD</a>, <a href="Donate.html" title="Donate">Donate</a></li></ul>
+<hr/>
+<ul><li><b>Help:</b> <a href="Tutorials.html" title="Tutorials">Tutorials</a>, <a href="Video_tutorials.html" title="Video tutorials">Video tutorials</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches">Workbenches</a>:</b> <a href="Std_Base.html" title="Std Base">Std Base</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench">Assembly</a>, <a href="BIM_Workbench.html" title="BIM Workbench">BIM</a>, <a href="CAM_Workbench.html" title="CAM Workbench">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench">Draft</a>, <a href="FEM_Workbench.html" title="FEM Workbench">FEM</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench">Inspection</a>, <a href="Material_Workbench.html" title="Material Workbench">Material</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench">Mesh</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench">Part</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench">PartDesign</a>, <a href="Points_Workbench.html" title="Points Workbench">Points</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench">Reverse Engineering</a>, <a href="Robot_Workbench.html" title="Robot Workbench">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench">Sketcher</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench">Spreadsheet</a>, <a href="Surface_Workbench.html" title="Surface Workbench">Surface</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench">TechDraw</a>, <a href="Testing.html" title="Testing">Test Framework</a></li></ul>
+<hr/>
+<ul><li><b><a href="Addon.html" title="Addon">Addons</a>:</b> <a href="Std_AddonMgr.html" title="Std AddonMgr">Addon Manager</a>, <a href="External_workbenches.html" title="External workbenches">External workbenches</a>, <a href="Scripting_and_macros.html" title="Scripting and macros">Scripting and macros</a></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub">User hub</a>, <a href="Power_users_hub.html" title="Power users hub">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub">Developer hub</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211749
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.061 seconds
+Real time usage: 0.082 seconds
+Preprocessor visited node count: 206/1000000
+Post‐expand include size: 10574/2097152 bytes
+Template argument size: 3795/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 1476/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    5.255      1 -total
+ 48.18%    2.532      1 Template:Part_Tools_navi
+ 41.18%    2.164      2 Template:Navigation_menu_2
+ 28.34%    1.489      1 Template:Userdocnavi
+ 16.35%    0.859      2 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:48597-0!canonical and timestamp 20241129211749 and revision id 1255089. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>

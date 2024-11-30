@@ -1,0 +1,569 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Scripted objects migration/fr</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--high" dir="ltr" href="Scripted_objects_migration.html" lang="de" title="Migration geskripteter Objekte (65% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Scripted_objects_migration.html" lang="en" title="Scripted objects migration (100% translated)">English</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="fr">français</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Scripted_objects_migration.html" lang="it" title="Migrazione di oggetti creati con script (3% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Scripted_objects_migration.html" lang="pl" title="Obiekty tworzone skryptami, migracja (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Scripted_objects_migration.html" lang="ru" title="Scripted objects migration/ru (0% translated)">русский</a></li></ul></div>
+<div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Ancien_et_nouvel_objet"><span class="tocnumber">2</span> <span class="toctext">Ancien et nouvel objet</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#Ancien_objet"><span class="tocnumber">2.1</span> <span class="toctext">Ancien objet</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Nouvel_objet"><span class="tocnumber">2.2</span> <span class="toctext">Nouvel objet</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-5"><a href="#Méthode_1._Migration_en_redirigeant_la_classe"><span class="tocnumber">3</span> <span class="toctext">Méthode 1. Migration en redirigeant la classe</span></a>
+<ul>
+<li class="toclevel-2 tocsection-6"><a href="#Avantages_et_inconvénients"><span class="tocnumber">3.1</span> <span class="toctext">Avantages et inconvénients</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-7"><a href="#Méthode_2._Migration_lors_de_la_restauration_du_document"><span class="tocnumber">4</span> <span class="toctext">Méthode 2. Migration lors de la restauration du document</span></a>
+<ul>
+<li class="toclevel-2 tocsection-8"><a href="#Avantages_et_inconvénients_2"><span class="tocnumber">4.1</span> <span class="toctext">Avantages et inconvénients</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-9"><a href="#Méthode_3._Migration_lors_de_la_restauration_du_document,_manipulation_manuelle_des_propriétés"><span class="tocnumber">5</span> <span class="toctext">Méthode 3. Migration lors de la restauration du document, manipulation manuelle des propriétés</span></a>
+<ul>
+<li class="toclevel-2 tocsection-10"><a href="#Avantages_et_inconvénients_3"><span class="tocnumber">5.1</span> <span class="toctext">Avantages et inconvénients</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-11"><a href="#Addendum_A._Créer_les_propriétés_uniquement_si_elles_n'existent_pas_déjà"><span class="tocnumber">6</span> <span class="toctext">Addendum A. Créer les propriétés uniquement si elles n'existent pas déjà</span></a>
+<ul>
+<li class="toclevel-2 tocsection-12"><a href="#Avantages_et_inconvénients_4"><span class="tocnumber">6.1</span> <span class="toctext">Avantages et inconvénients</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-13"><a href="#Addendum_B._Migration_de_différentes_versions_de_l'ancien_objet"><span class="tocnumber">7</span> <span class="toctext">Addendum B. Migration de différentes versions de l'ancien objet</span></a>
+<ul>
+<li class="toclevel-2 tocsection-14"><a href="#Avantages_et_inconvénients_5"><span class="tocnumber">7.1</span> <span class="toctext">Avantages et inconvénients</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-15"><a href="#Addendum_B2._Utilisation_des_attributs_internes_de_la_classe_au_lieu_des_propriétés"><span class="tocnumber">8</span> <span class="toctext">Addendum B2. Utilisation des attributs internes de la classe au lieu des propriétés</span></a></li>
+<li class="toclevel-1 tocsection-16"><a href="#Addendum_C._Méthode_3_sans_supprimer_les_anciennes_propriétés_qui_portent_le_même_nom"><span class="tocnumber">9</span> <span class="toctext">Addendum C. Méthode 3 sans supprimer les anciennes propriétés qui portent le même nom</span></a>
+<ul>
+<li class="toclevel-2 tocsection-17"><a href="#Avantages_et_inconvénients_6"><span class="tocnumber">9.1</span> <span class="toctext">Avantages et inconvénients</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-18"><a href="#Résumé"><span class="tocnumber">10</span> <span class="toctext">Résumé</span></a></li>
+<li class="toclevel-1 tocsection-19"><a href="#Liens"><span class="tocnumber">11</span> <span class="toctext">Liens</span></a></li>
+</ul>
+</div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>Les <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a> sont reconstruits à chaque fois qu'un <a href="File_Format_FCStd.html" title="File Format FCStd/fr">document au format FCStd</a> est ouvert. Pour ce faire, le document conserve une référence au module et à la classe Python qui ont été utilisés pour créer l'objet, ainsi que ses propriétés.
+</p>
+<div class="mw-highlight mw-highlight-lang-xml mw-content-ltr" dir="ltr"><pre><span></span><span class="nt">&lt;Document</span> <span class="na">SchemaVersion=</span><span class="s">"4"</span> <span class="na">ProgramVersion=</span><span class="s">"0.19R20959 (Git)"</span> <span class="na">FileVersion=</span><span class="s">"1"</span><span class="nt">&gt;</span>
+    ...
+    <span class="nt">&lt;Properties</span> <span class="na">Count=</span><span class="s">"15"</span> <span class="na">TransientCount=</span><span class="s">"3"</span><span class="nt">&gt;</span>
+    ...
+    <span class="nt">&lt;/Properties&gt;</span>
+    <span class="nt">&lt;Objects</span> <span class="na">Count=</span><span class="s">"1"</span> <span class="na">Dependencies=</span><span class="s">"1"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;ObjectDeps</span> <span class="na">Name=</span><span class="s">"Custom"</span> <span class="na">Count=</span><span class="s">"0"</span><span class="nt">/&gt;</span>
+        <span class="nt">&lt;Object</span> <span class="na">type=</span><span class="s">"Part::FeaturePython"</span> <span class="na">name=</span><span class="s">"Custom"</span> <span class="na">id=</span><span class="s">"2715"</span> <span class="na">Touched=</span><span class="s">"1"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/Objects&gt;</span>
+    <span class="nt">&lt;ObjectData</span> <span class="na">Count=</span><span class="s">"1"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;Object</span> <span class="na">name=</span><span class="s">"Custom"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;Properties</span> <span class="na">Count=</span><span class="s">"9"</span> <span class="na">TransientCount=</span><span class="s">"0"</span><span class="nt">&gt;</span>
+                ...
+                <span class="nt">&lt;Property</span> <span class="na">name=</span><span class="s">"Proxy"</span> <span class="na">type=</span><span class="s">"App::PropertyPythonObject"</span> <span class="na">status=</span><span class="s">"1"</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;Python</span> <span class="na">value=</span><span class="s">"eyJUeXBlIjogIkN1c3RvbSJ9"</span> <span class="na">encoded=</span><span class="s">"yes"</span> <span class="na">module=</span><span class="s">"old_module"</span> <span class="na">class=</span><span class="s">"OldObject"</span><span class="nt">/&gt;</span>
+                <span class="nt">&lt;/Property&gt;</span>
+                ...
+            <span class="nt">&lt;/Properties&gt;</span>
+        <span class="nt">&lt;/Object&gt;</span>
+    <span class="nt">&lt;/ObjectData&gt;</span>
+<span class="nt">&lt;/Document&gt;</span>
+</pre></div>
+<p>Concentrez-vous particulièrement sur cette partie :
+</p>
+<div class="mw-highlight mw-highlight-lang-xml mw-content-ltr" dir="ltr"><pre><span></span>...
+                <span class="nt">&lt;Property</span> <span class="na">name=</span><span class="s">"Proxy"</span> <span class="na">type=</span><span class="s">"App::PropertyPythonObject"</span> <span class="na">status=</span><span class="s">"1"</span><span class="nt">&gt;</span>
+                    <span class="nt">&lt;Python</span> <span class="na">value=</span><span class="s">"eyJUeXBlIjogIkN1c3RvbSJ9"</span> <span class="na">encoded=</span><span class="s">"yes"</span> <span class="na">module=</span><span class="s">"old_module"</span> <span class="na">class=</span><span class="s">"OldObject"</span><span class="nt">/&gt;</span>
+                <span class="nt">&lt;/Property&gt;</span>
+                ...
+</pre></div>
+<p>Si la valeur de <code>module=</code> ou <code>class=</code> n'est pas trouvée sur le système installé, l'objet ne pourra pas être chargé correctement. Cela signifie qu'une fois qu'un objet est créé en utilisant une classe particulière, le module ne doit plus être déplacé ou renommé, car si cela est fait, les objets précédemment enregistrés se briseront.
+</p><p>Toutefois, une raison valable pour déplacer ou renommer le module ou la classe est d'améliorer la structure et la maintenabilité du code d'origine, par exemple, lors de la restructuration d'un atelier entier. Dans ce cas, il existe plusieurs stratégies pour faire migrer les anciens objets vers l'utilisation d'une nouvelle classe. Ceci est fait afin de conserver la compatibilité ascendante, lorsque la rupture pure et simple des anciens documents doit être évitée.
+</p>
+<h2><span class="mw-headline" id="Ancien_et_nouvel_objet">Ancien et nouvel objet</span></h2>
+<h3><span class="mw-headline" id="Ancien_objet">Ancien objet</span></h3>
+<p>Un ancien objet est défini dans un module qui se trouve à la racine de l'atelier.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># old_module.py</span>
+<span class="k">class</span> <span class="nc">OldObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Length"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyArea"</span><span class="p">,</span> <span class="s2">"Area"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mi">15</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Area</span> <span class="o">=</span> <span class="mi">300</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="s2">"Custom"</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+<p>Un objet peut être créé à l'aide de cette classe et il peut être enregistré dans <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">my_document.FCstd</span>. Si aucun <a href="Viewprovider.html" title="Viewprovider/fr">viewprovider</a> particulier n'est attribué au nouvel objet, sa classe proxy est simplement définie sur une valeur différente de <code>None</code>, dans ce cas, sur <code>1</code>.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">old_module</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>
+<span class="n">doc</span><span class="o">.</span><span class="n">FileName</span> <span class="o">=</span> <span class="s2">"my_document.FCStd"</span>
+
+<span class="n">obj</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::FeaturePython"</span><span class="p">,</span> <span class="s2">"Custom"</span><span class="p">)</span>
+<span class="n">old_module</span><span class="o">.</span><span class="n">OldObject</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">App</span><span class="o">.</span><span class="n">GuiUp</span><span class="p">:</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">doc</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+<span class="n">doc</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+<p>Une session de <a href="Python_console.html" title="Python console/fr">console Python</a> avec les propriétés de base omises.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Custom</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">PropertiesList</span><span class="p">)</span>
+<span class="p">[</span><span class="s1">'Area'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">'Length'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">old_module</span><span class="o">.</span><span class="n">OldObject</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7efc3c51c390</span><span class="o">&gt;</span>
+</pre></div>
+<h3><span class="mw-headline" id="Nouvel_objet">Nouvel objet</span></h3>
+<p>Considérons maintenant que l'atelier est restructuré, de sorte que les classes ne se trouvent pas seulement dans le répertoire racine, mais plutôt dans un répertoire <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">objects</span>. Les ateliers complexes qui comportent de nombreux types d'objets différents devraient être structurés en répertoires comprenant des objets, des interfaces <a href="Viewprovider.html" title="Viewprovider/fr">viewproviders</a>, <a href="Command.html" title="Command/fr">Commandes Gui</a>, <a href="Task_panel.html" title="Task panel/fr">Panneau des tâches</a>, etc.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># objects/new_module.py</span>
+<span class="k">class</span> <span class="nc">NewObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Length"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyArea"</span><span class="p">,</span> <span class="s2">"GeneralArea"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyInteger"</span><span class="p">,</span> <span class="s2">"Divisions"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mi">30</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">GeneralArea</span> <span class="o">=</span> <span class="mi">600</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Divisions</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="s2">"Custom"</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+<p>Cette nouvelle classe fera référence au même type d'objet, mais le nom du module ainsi que le nom de la classe ont été renommés. De plus, les propriétés ont également changé ; une propriété a été renommée et une propriété complètement nouvelle a été ajoutée.
+</p><p>Si nous créons un nouvel objet avec ce nouveau module, nous aurons la session de console suivante.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">obj2</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Custom2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj2</span><span class="o">.</span><span class="n">PropertiesList</span><span class="p">)</span>
+<span class="p">[</span><span class="s1">'Divisions'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">'GeneralArea'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">'Length'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj2</span><span class="o">.</span><span class="n">Proxy</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">objects</span><span class="o">.</span><span class="n">new_module</span><span class="o">.</span><span class="n">NewObject</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7efc1cf68c50</span><span class="o">&gt;</span>
+</pre></div>
+<h2><span id="M.C3.A9thode_1._Migration_en_redirigeant_la_classe"></span><span class="mw-headline" id="Méthode_1._Migration_en_redirigeant_la_classe">Méthode 1. Migration en redirigeant la classe</span></h2>
+<p>Nous allons migrer l'ancien objet en redirigeant l'ancienne classe. La classe originale est supprimée, et le nom de la classe est simplement redirigé pour pointer vers la nouvelle classe.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># old_module.py</span>
+<span class="kn">import</span> <span class="nn">objects.new_module</span> <span class="k">as</span> <span class="nn">new_module</span>
+
+<span class="n">OldObject</span> <span class="o">=</span> <span class="n">new_module</span><span class="o">.</span><span class="n">NewObject</span>
+</pre></div>
+<p>Tout document qui tente de charger <code>old_module.OldObject</code> sera redirigé pour charger <code>objects.new_module.NewObject</code> à la place.
+</p><p>Si nous ouvrons le document et inspectons les propriétés de l'objet dans la <a href="Python_console.html" title="Python console/fr">console Python</a>, nous verrons que les anciennes propriétés sont conservées, mais que l'objet a une nouvelle classe Proxy.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Custom</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">PropertiesList</span><span class="p">)</span>
+<span class="p">[</span><span class="s1">'Area'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">'Length'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">objects</span><span class="o">.</span><span class="n">new_module</span><span class="o">.</span><span class="n">NewObject</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f099700b2b0</span><span class="o">&gt;</span>
+</pre></div>
+<p>Cependant, dans ce cas, nous ne voyons pas les nouvelles propriétés de la nouvelle classe. La raison en est simplement que l'ancien objet ne possédait pas ces propriétés. Lorsque <code>old_module.OldObject</code> a été redirigé vers <code>objects.new_module.NewObject</code>, seule la classe proxy a changé, mais les informations précédentes ont été conservées.
+</p><p>Désormais, si le document est enregistré et rouvert, il recherchera automatiquement <code>objets.nouveau_module.NewObject</code> et ne nécessitera plus <code>ancien_module.OldObject</code>. Le fichier <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">old_module.py</span> peut être supprimé définitivement du système tant que tous les anciens objets ont été migrés vers le nouveau module. Si l'ancien module est supprimé mais qu'un objet n'a pas été migré, la <a href="Report_view.html" title="Report view/fr">Vue rapport</a> affichera un message comme celui-ci lors de l'ouverture d'un document contenant cet objet.
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>&lt;class <span class="s1">'ModuleNotFoundError'</span>&gt;: No module named <span class="s1">'old_module'</span>
+</pre></div>
+<p>S'il n'est pas possible, de manière réaliste, de migrer tous les anciens objets, par exemple parce que l'ancien module a été utilisé dans un atelier pendant de nombreuses années, alors <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">old_module.py</span> doit être conservé aussi longtemps qu'il est jugé nécessaire pour donner aux utilisateurs la possibilité de migrer leurs objets.
+</p>
+<h3><span id="Avantages_et_inconv.C3.A9nients"></span><span class="mw-headline" id="Avantages_et_inconvénients">Avantages et inconvénients</span></h3>
+<p><b>Avantages</b>
+</p>
+<ul><li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> C'est la méthode la plus simple qui nécessite juste de rediriger une ancienne classe vers une nouvelle classe.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> Les anciennes propriétés sont conservées tant que la nouvelle classe ne les surcharge pas.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> C'est une bonne chose si l'ancienne et la nouvelle classe ont les mêmes propriétés (gèrent le même type de données) mais que seul leur nom de module ou de classe est différent.</li></ul>
+<p><b>Inconvénients</b>
+</p>
+<ul><li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="24" src="../File/Edit_Cancel.svg" width="24"/></a></span> La nouvelle classe conserve les anciennes propriétés de l'objet, ce qui n'est pas toujours souhaité.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="24" src="../File/Edit_Cancel.svg" width="24"/></a></span> Les nouvelles propriétés ou les propriétés renommées ne sont pas gérées, donc l'objet sera chargé mais il peut ne pas montrer le comportement correct de la nouvelle classe.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="24" src="../File/Edit_Cancel.svg" width="24"/></a></span> L'ancien module peut devoir être conservé indéfiniment pour migrer tous les anciens objets créés dans le passé.</li></ul>
+<h2><span id="M.C3.A9thode_2._Migration_lors_de_la_restauration_du_document"></span><span class="mw-headline" id="Méthode_2._Migration_lors_de_la_restauration_du_document">Méthode 2. Migration lors de la restauration du document</span></h2>
+<p>Nous allons migrer l'ancien objet en modifiant l'ancienne classe. La majorité de la classe d'origine est supprimée et à la place la méthode <code>onDocumentRestored</code> est implémentée. Lorsque cette méthode existe, elle s'exécute lorsque le document tente de restaurer un objet qui utilise la classe. C'est donc l'occasion pour nous d'attribuer une nouvelle classe, de manipuler les informations ou d'imprimer des messages.
+</p><p>Dans ce cas, nous supposons que nous avons également défini un nouveau <a href="Viewprovider.html" title="Viewprovider/fr">viewprovider</a> dans le module <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">viewp/new_view.py</span>. Si nous ne voulons pas migrer cette classe, nous pouvons omettre tout ce qui se trouve après la vérification <code>App.GuiUp</code>.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># old_module.py</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">objects.new_module</span> <span class="k">as</span> <span class="nn">new_module</span>
+<span class="kn">import</span> <span class="nn">viewp.new_view</span> <span class="k">as</span> <span class="nn">new_view</span>
+<span class="n">_wrn</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintWarning</span>
+
+<span class="k">class</span> <span class="nc">OldObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">onDocumentRestored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">new_module</span><span class="o">.</span><span class="n">NewObject</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="n">_wrn</span><span class="p">(</span><span class="s2">"New proxy class used</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">App</span><span class="o">.</span><span class="n">GuiUp</span><span class="p">:</span>
+            <span class="n">new_view</span><span class="o">.</span><span class="n">ViewProviderNew</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
+            <span class="n">_wrn</span><span class="p">(</span><span class="s2">"New viewprovider class used</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+<p>Un exemple plus complexe vérifie d'abord que la classe proxy est du type que nous recherchons, et ne procède à la migration que si c'est le bon type.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">OldObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">onDocumentRestored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"Proxy"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="o">.</span><span class="n">Type</span> <span class="o">==</span> <span class="s2">"Custom"</span><span class="p">:</span>
+            <span class="n">_module</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="o">.</span><span class="vm">__class__</span><span class="p">)</span>
+            <span class="n">_module</span> <span class="o">=</span> <span class="n">_module</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">"&lt;class '"</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"'&gt;"</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">_module</span> <span class="o">==</span> <span class="s2">"old_module.OldObject"</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_migrate</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_migrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">_wrn</span><span class="p">(</span><span class="s2">"New proxy class used</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="n">new_module</span><span class="o">.</span><span class="n">NewObject</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">App</span><span class="o">.</span><span class="n">GuiUp</span><span class="p">:</span>
+            <span class="n">new_view</span><span class="o">.</span><span class="n">ViewProviderNew</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
+            <span class="n">_wrn</span><span class="p">(</span><span class="s2">"New viewprovider class used</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+<p>En supposant que nous avons déjà modifié l'ancien module de cette manière, si nous ouvrons un document avec un ancien objet, nous verrons les messages mentionnant l'utilisation des nouvelles classes.
+</p><p>En inspectant l'objet depuis la <a href="Python_console.html" title="Python console/fr">console Python</a>, nous verrons que les anciennes propriétés sont conservées, et qu'en plus, de nouvelles propriétés ont été ajoutées avec la nouvelle classe Proxy.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Custom</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">PropertiesList</span><span class="p">)</span>
+<span class="p">[</span><span class="s1">'Area'</span><span class="p">,</span> <span class="s1">'Divisions'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">'GeneralArea'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">'Length'</span><span class="p">,</span> <span class="s1">'Length1'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">objects</span><span class="o">.</span><span class="n">new_module</span><span class="o">.</span><span class="n">NewObject</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7fecb0ebd7b8</span><span class="o">&gt;</span>
+</pre></div>
+<p>Les anciennes propriétés étaient <code>Area</code> et <code>Length</code> ; les nouvelles propriétés sont <code>Divisions</code>, <code>GeneralArea</code> et <code>Length</code>. L'objet migré conserve les deux propriétés d'origine et acquiert trois nouvelles propriétés. Cependant, comme la nouvelle <code>Length</code> a le même nom que l'ancienne propriété, la nouvelle propriété est renommée avec un numéro incrémental. Ce n'est sans doute pas ce que nous voulons. Nous pouvons améliorer la situation en suivant l'addendum 2.1 ci-dessous.
+</p><p>Étant donné que les classes sont censées gérer le même type d'objet, nous aimerions une migration dans laquelle <code>Area</code> se transforme en <code>GeneralArea</code>, et <code>Length</code> est simplement affecté au nouveau <code>Length</code>, et il n'y a pas de propriétés en double.
+</p>
+<h3><span id="Avantages_et_inconv.C3.A9nients_2"></span><span class="mw-headline" id="Avantages_et_inconvénients_2">Avantages et inconvénients</span></h3>
+<p><b>Avantages</b>
+</p>
+<ul><li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> Cette méthode nous permet de vérifier que la classe que nous migrons est la bonne, au lieu de simplement rediriger vers une classe plus récente.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> Similaire à la méthode 1, les anciennes propriétés sont conservées tant que la nouvelle classe ne les surcharge pas.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> Contrairement à la méthode 1, les nouvelles propriétés sont toujours ajoutées, cependant si elles ont le même nom, elles seront renommées.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> La migration n'est pas immédiate, on peut encore manipuler les informations, ou imprimer des messages pendant que l'objet se charge.</li></ul>
+<p><b>Inconvénients</b>
+</p>
+<ul><li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="24" src="../File/Edit_Cancel.svg" width="24"/></a></span> Elle est plus verbeuse que la méthode 1 car nous devons implémenter la méthode <code>onDocumentRestored</code> pour migrer l'objet.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="24" src="../File/Edit_Cancel.svg" width="24"/></a></span> Il ajoute toujours les nouvelles propriétés, donc il peut créer des propriétés dupliquées dans le cas où les nouvelles propriétés ont le même nom que les anciennes propriétés. Ceci doit être géré manuellement.</li></ul>
+<h2><span id="M.C3.A9thode_3._Migration_lors_de_la_restauration_du_document.2C_manipulation_manuelle_des_propri.C3.A9t.C3.A9s"></span><span class="mw-headline" id="Méthode_3._Migration_lors_de_la_restauration_du_document,_manipulation_manuelle_des_propriétés">Méthode 3. Migration lors de la restauration du document, manipulation manuelle des propriétés</span></h2>
+<p>Il s'agit d'une extension de la méthode 2. Dans la méthode <code>onDocumentRestored</code>, nous devons enregistrer les valeurs des propriétés que nous voulons, puis nous pouvons supprimer ces propriétés originales. Ainsi, lorsque la nouvelle classe sera utilisée, elle attribuera les nouvelles propriétés sans risquer de collision de noms avec les anciennes propriétés.
+</p><p>Comme dans la méthode 2, si nous le souhaitons, nous pouvons également ajouter le morceau de code qui vérifie que la classe Proxy est la bonne. Dans cet exemple, nous supposons une fois de plus que nous utilisons un <a href="Viewprovider.html" title="Viewprovider/fr">viewprovider</a> personnalisé, avec au moins une propriété personnalisée.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># old_module.py</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">objects.new_module</span> <span class="k">as</span> <span class="nn">new_module</span>
+<span class="kn">import</span> <span class="nn">viewp.new_view</span> <span class="k">as</span> <span class="nn">new_view</span>
+<span class="n">_wrn</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintWarning</span>
+
+<span class="k">class</span> <span class="nc">OldObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">onDocumentRestored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">old</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">old</span><span class="p">[</span><span class="s2">"Area"</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Area</span>
+        <span class="n">old</span><span class="p">[</span><span class="s2">"Length"</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Length</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">removeProperty</span><span class="p">(</span><span class="s2">"Area"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">removeProperty</span><span class="p">(</span><span class="s2">"Length"</span><span class="p">)</span>
+
+        <span class="n">new_module</span><span class="o">.</span><span class="n">NewObject</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">GeneralArea</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">old</span><span class="p">[</span><span class="s2">"Area"</span><span class="p">]</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="n">old</span><span class="p">[</span><span class="s2">"Length"</span><span class="p">]</span>
+        <span class="n">_wrn</span><span class="p">(</span><span class="s2">"New proxy class used; properties migrated</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">App</span><span class="o">.</span><span class="n">GuiUp</span><span class="p">:</span>
+            <span class="n">vobj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span>
+            <span class="n">old</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+            <span class="n">old</span><span class="p">[</span><span class="s2">"LineScale"</span><span class="p">]</span> <span class="o">=</span> <span class="n">vobj</span><span class="o">.</span><span class="n">LineScale</span>
+            <span class="n">vobj</span><span class="o">.</span><span class="n">removeProperty</span><span class="p">(</span><span class="s2">"LineScale"</span><span class="p">)</span>
+
+            <span class="n">new_view</span><span class="o">.</span><span class="n">ViewProviderNew</span><span class="p">(</span><span class="n">vobj</span><span class="p">)</span>
+
+            <span class="n">vobj</span><span class="o">.</span><span class="n">LineScale</span> <span class="o">=</span> <span class="mf">1.05</span> <span class="o">*</span> <span class="n">old</span><span class="p">[</span><span class="s2">"LineScale"</span><span class="p">]</span>
+            <span class="n">_wrn</span><span class="p">(</span><span class="s2">"New viewprovider class used; view properties migrated</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+<p>Nous pouvons voir que les anciennes valeurs sont stockées dans un dictionnaire auxiliaire, puis les anciennes propriétés sont supprimées, puis nous ajoutons la nouvelle classe, et enfin nous assignons les valeurs précédemment sauvegardées aux nouvelles propriétés. À ce moment, nous pouvons transformer les valeurs sauvegardées comme il se doit pour la nouvelle classe. Par exemple, le <code>GeneralArea</code> est fixé à 3 fois l'ancien <code>Area</code>, et le nouveau <code>Length</code> reçoit simplement la valeur de l'ancien <code>Length</code>. Comme nous savons comment l'ancienne et la nouvelle classe sont censées se comporter, nous avons la liberté de manipuler les données pour faire migrer l'objet comme nous le souhaitons.
+</p><p>Nous ne pouvons supprimer que les propriétés qui ont été ajoutées par les classes <a href="Python.html" title="Python/fr">Python</a> lorsque nous avons construit l'<a href="Scripted_objects.html" title="Scripted objects/fr">Objet créé par script</a>. Les autres attributs appartiennent à l'objet C++ de base et ne peuvent pas être supprimés.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">obj</span><span class="o">.</span><span class="n">removeProperty</span><span class="p">(</span><span class="s2">"Visibility"</span><span class="p">)</span>
+<span class="kc">False</span>
+</pre></div>
+<p>En supposant que nous avons déjà modifié l'ancien module de cette manière, si nous ouvrons un document avec un ancien objet, nous verrons les messages mentionnant l'utilisation des nouvelles classes. En inspectant l'objet depuis la <a href="Python_console.html" title="Python console/fr">console Python</a>, nous voyons que les anciennes propriétés ont été supprimées et que seules les nouvelles propriétés existent.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Custom</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">PropertiesList</span><span class="p">)</span>
+<span class="p">[</span><span class="s1">'Divisions'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">'GeneralArea'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">'Length'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">objects</span><span class="o">.</span><span class="n">new_module</span><span class="o">.</span><span class="n">NewObject</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7efd456c9b00</span><span class="o">&gt;</span>
+</pre></div>
+<p>Comme la propriété <code>Divisions</code> n'existait pas dans l'ancienne classe, rien n'a été fait avec elle. Elle a simplement été créée par la nouvelle classe <code>objects.new_module.NewObject</code>.
+</p>
+<h3><span id="Avantages_et_inconv.C3.A9nients_3"></span><span class="mw-headline" id="Avantages_et_inconvénients_3">Avantages et inconvénients</span></h3>
+<p><b>Avantages</b>
+</p>
+<ul><li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> Similaire à la méthode 2, cette méthode nous permet de vérifier que la classe que nous migrons est la bonne.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> Nous avons le contrôle total de ce qu'il faut faire avec les anciennes propriétés. Typiquement, elles seront supprimées afin qu'il n'y ait pas de collision de noms avec les nouvelles propriétés ajoutées. Ainsi nous évitons les propriétés dupliquées.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> En sauvegardant les anciennes valeurs, nous pouvons manipuler les informations de l'étape de restauration comme nous le souhaitons, et affecter les valeurs correspondantes aux nouvelles propriétés.</li></ul>
+<p><b>Inconvénients</b>
+</p>
+<ul><li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="24" src="../File/Edit_Cancel.svg" width="24"/></a></span> Cette méthode est très verbeuse par rapport aux précédentes, car nous devons implémenter la méthode <code>onDocumentRestored</code>, et traiter chacune des propriétés individuellement (enregistrer la valeur, supprimer la propriété, réassigner la valeur). Ceci est problématique si l'objet que nous voulons migrer possède de nombreuses propriétés, ou si leurs valeurs doivent être transformées de manière très spéciale.</li></ul>
+<h2><span id="Addendum_A._Cr.C3.A9er_les_propri.C3.A9t.C3.A9s_uniquement_si_elles_n.27existent_pas_d.C3.A9j.C3.A0"></span><span class="mw-headline" id="Addendum_A._Créer_les_propriétés_uniquement_si_elles_n'existent_pas_déjà">Addendum A. Créer les propriétés uniquement si elles n'existent pas déjà</span></h2>
+<p>L'un des inconvénients de la méthode 2 est qu'elle essaiera toujours d'ajouter les nouvelles propriétés. Si les anciennes propriétés ont le même nom que les nouvelles, elles seront dupliquées avec un numéro incrémental, ainsi <code>Length</code> donnera <code>Length1</code>, puis <code>Length2</code>, et ainsi de suite. Cela fait de la méthode 2 une option irréaliste dans la plupart des cas, car la nouvelle classe n'utilisera de toute façon qu'une seule propriété.
+</p><p>Pour améliorer cette méthode, la nouvelle classe peut également être modifiée pour n'ajouter les propriétés que si elles n'existent pas déjà sous le même nom.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># objects/new_module.py</span>
+<span class="k">class</span> <span class="nc">NewObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"Length"</span><span class="p">):</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Length"</span><span class="p">)</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mi">30</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"GeneralArea"</span><span class="p">):</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyArea"</span><span class="p">,</span> <span class="s2">"GeneralArea"</span><span class="p">)</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">GeneralArea</span> <span class="o">=</span> <span class="mi">600</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"Divisions"</span><span class="p">):</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyInteger"</span><span class="p">,</span> <span class="s2">"Divisions"</span><span class="p">)</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">Divisions</span> <span class="o">=</span> <span class="mi">4</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="s2">"Custom"</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+<p>Dans ce cas, puisque <code>Length</code> existe déjà, elle ne sera pas ajoutée à nouveau ; <code>GeneralArea</code> et <code>Divisions</code> n'existent pas, elles seront donc ajoutées. Et comme précédemment, <code>Area</code> sera conservé car il n'est pas explicitement supprimé, bien qu'il ne soit peut-être plus utilisé dans la nouvelle classe.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Custom</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">PropertiesList</span><span class="p">)</span>
+<span class="p">[</span><span class="s1">'Area'</span><span class="p">,</span> <span class="s1">'Divisions'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">'GeneralArea'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="s1">'Length'</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">objects</span><span class="o">.</span><span class="n">new_module</span><span class="o">.</span><span class="n">NewObject</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f036bd4c6a0</span><span class="o">&gt;</span>
+</pre></div>
+<p>La même chose peut être faite pour la classe du <a href="Viewprovider.html" title="Viewprovider/fr">viewprovider</a>.
+</p><p>En utilisant cette méthode 2 + A, le résultat est similaire à la méthode 1 en ce sens que l'objet conservera toutes les propriétés précédentes, mais en plus il gagnera les nouvelles propriétés fournies par la nouvelle classe.
+</p><p>La méthode 3 n'a pas besoin de cet addendum à la nouvelle classe car les anciennes propriétés sont explicitement supprimées, il n'y aura donc aucun conflit lors de l'installation des nouvelles propriétés. Néanmoins, c'est toujours une bonne pratique que chaque classe ajoute ses propriétés requises seulement si celles-ci n'existent pas déjà. Ceci est utile à la fois dans le cas de la création de nouveaux <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a> ou de leur migration.
+</p>
+<h3><span id="Avantages_et_inconv.C3.A9nients_4"></span><span class="mw-headline" id="Avantages_et_inconvénients_4">Avantages et inconvénients</span></h3>
+<p><b>Avantages</b>
+</p>
+<ul><li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> L'objet conservera toutes les propriétés précédentes, mais en plus il gagnera de nouvelles propriétés sans répétition.</li></ul>
+<p><b>Inconvénients</b>
+</p>
+<ul><li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="24" src="../File/Edit_Cancel.svg" width="24"/></a></span> Comme la méthode 2, elle ne traite toujours pas les propriétés renommées. Les anciennes propriétés doivent être supprimées manuellement.</li></ul>
+<h2><span id="Addendum_B._Migration_de_diff.C3.A9rentes_versions_de_l.27ancien_objet"></span><span class="mw-headline" id="Addendum_B._Migration_de_différentes_versions_de_l'ancien_objet">Addendum B. Migration de différentes versions de l'ancien objet</span></h2>
+<p>La méthode 3 est la plus complexe car les propriétés sont traitées individuellement. Cependant, dans cette méthode, nous disposons également d'une flexibilité totale dans la manière de manipuler les données, ce qui constitue un avantage si nous voulons effectuer des opérations complexes.
+</p><p>Si, dès le début, nous créons une propriété qui contient le numéro de version de notre objet, nous pourrons utiliser ce numéro à l'avenir pour effectuer une migration spécifique de cette version vers une autre. Nous définissons la propriété comme étant en lecture seule, de sorte que nous ne pouvons pas l'écraser dans l'<a href="Property_editor.html" title="Property editor/fr">Éditeur de propriétés</a>, bien qu'elle soit toujours accessible depuis la <a href="Python_console.html" title="Python console/fr">console Python</a>.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># old_module.py</span>
+<span class="k">class</span> <span class="nc">OldObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Length"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyArea"</span><span class="p">,</span> <span class="s2">"Area"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyString"</span><span class="p">,</span> <span class="s2">"Version"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">setEditorMode</span><span class="p">(</span><span class="s2">"Version"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mi">15</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Area</span> <span class="o">=</span> <span class="mi">300</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Version</span> <span class="o">=</span> <span class="s2">"0.18"</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="s2">"Custom"</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+<p>Ensuite, lorsque nous voulons migrer l'objet, nous implémentons la méthode <code>onDocumentRestored</code> et testons cette version.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># old_module.py</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">objects.new_module</span> <span class="k">as</span> <span class="nn">new_module</span>
+<span class="n">_wrn</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintWarning</span>
+
+<span class="k">class</span> <span class="nc">OldObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">onDocumentRestored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"Version"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">Version</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">Version</span> <span class="o">==</span> <span class="s2">"0.18"</span><span class="p">:</span>
+                <span class="n">_migrate_from_018</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">obj</span><span class="o">.</span><span class="n">Version</span> <span class="o">==</span> <span class="s2">"0.19"</span><span class="p">:</span>
+                <span class="n">_migrate_from_019</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_migrate_from_018</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="n">old</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">old</span><span class="p">[</span><span class="s2">"Area"</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Area</span>
+    <span class="n">old</span><span class="p">[</span><span class="s2">"Length"</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Length</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">removeProperty</span><span class="p">(</span><span class="s2">"Area"</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">removeProperty</span><span class="p">(</span><span class="s2">"Length"</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">removeProperty</span><span class="p">(</span><span class="s2">"Version"</span><span class="p">)</span>
+
+    <span class="n">new_module</span><span class="o">.</span><span class="n">NewObject</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="n">obj</span><span class="o">.</span><span class="n">GeneralArea</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">old</span><span class="p">[</span><span class="s2">"Area"</span><span class="p">]</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="n">old</span><span class="p">[</span><span class="s2">"Length"</span><span class="p">]</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">Version</span> <span class="o">=</span> <span class="s2">"0.20"</span>
+    <span class="n">_wrn</span><span class="p">(</span><span class="s2">"New proxy class used; properties migrated</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_migrate_from_019</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="o">...</span>
+</pre></div>
+<p>Nous ne sauvegardons pas la valeur <code>Version</code> car nous définirons un nouveau numéro <code>Version</code> lors de la migration. Comme le montre l'exemple, nous pouvons implémenter diverses fonctions pour chaque version correspondante de l'objet que nous avons l'intention de migrer. Nous omettons la migration des propriétés du <a href="Viewprovider.html" title="Viewprovider/fr">viewprovider</a> mais elle suit le même schéma.
+</p>
+<h3><span id="Avantages_et_inconv.C3.A9nients_5"></span><span class="mw-headline" id="Avantages_et_inconvénients_5">Avantages et inconvénients</span></h3>
+<p><b>Avantages</b>
+</p>
+<ul><li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> Nous avons un contrôle total sur ce qu'il faut faire avec les anciennes propriétés, et sur la façon d'effectuer la migration.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> Nous pouvons implémenter une méthode particulière pour migrer une version particulière de l'ancien objet.</li></ul>
+<p><b>Inconvénients</b>
+</p>
+<ul><li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="24" src="../File/Edit_Cancel.svg" width="24"/></a></span> Cette méthode est très verbeuse car nous devons avoir une idée claire de la façon de traiter chacune des propriétés de chaque "version" que nous voulons migrer. Si notre objet possède de nombreuses versions différentes créées au fil des ans, nous devrons peut-être préparer une longue liste de méthodes pour les faire migrer vers l'objet le plus récent.</li></ul>
+<h2><span id="Addendum_B2._Utilisation_des_attributs_internes_de_la_classe_au_lieu_des_propri.C3.A9t.C3.A9s"></span><span class="mw-headline" id="Addendum_B2._Utilisation_des_attributs_internes_de_la_classe_au_lieu_des_propriétés">Addendum B2. Utilisation des attributs internes de la classe au lieu des propriétés</span></h2>
+<p>Au lieu d'utiliser une <a href="Property.html" title="Property/fr">propriété</a> de l'objet pour contenir l'information de version, nous pouvons utiliser un attribut de la classe. De cette façon, nous "cachons" l'information sur la version, car les propriétés sont normalement publiques et visibles dans l'<a href="Property_editor.html" title="Property editor/fr">éditeur de propriétés</a>, alors que les attributs de classe ne peuvent être manipulés qu'à partir de la <a href="Python_console.html" title="Python console/fr">console Python</a>. Les attributs de classe peuvent être sauvegardés et restaurés comme expliqué dans <a href="Scripted_objects_saving_attributes.html" title="Scripted objects saving attributes/fr">Sauvegarde des attributs des objets scripts</a>.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># old_module.py</span>
+<span class="k">class</span> <span class="nc">OldObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Length"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyArea"</span><span class="p">,</span> <span class="s2">"Area"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mi">15</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Area</span> <span class="o">=</span> <span class="mi">300</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="s2">"Custom"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ver</span> <span class="o">=</span> <span class="s2">"0.18"</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+<p>Cet attribut est inspecté en regardant l'attribut <code>Proxy</code>.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Custom</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="o">.</span><span class="n">ver</span><span class="p">)</span>
+<span class="mf">0.18</span>
+</pre></div>
+<p>Ensuite, le fichier est modifié pour migrer l'objet.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># old_module.py</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">objects.new_module</span> <span class="k">as</span> <span class="nn">new_module</span>
+<span class="n">_wrn</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintWarning</span>
+
+<span class="k">class</span> <span class="nc">OldObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">onDocumentRestored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="p">,</span> <span class="s2">"ver"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="o">.</span><span class="n">ver</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="o">.</span><span class="n">ver</span> <span class="o">==</span> <span class="s2">"0.18"</span><span class="p">:</span>
+                <span class="n">_migrate_from_018</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_migrate_from_018</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="n">old</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">old</span><span class="p">[</span><span class="s2">"Area"</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Area</span>
+    <span class="n">old</span><span class="p">[</span><span class="s2">"Length"</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Length</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">removeProperty</span><span class="p">(</span><span class="s2">"Area"</span><span class="p">)</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">removeProperty</span><span class="p">(</span><span class="s2">"Length"</span><span class="p">)</span>
+
+    <span class="n">new_module</span><span class="o">.</span><span class="n">NewObject</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="n">obj</span><span class="o">.</span><span class="n">GeneralArea</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">old</span><span class="p">[</span><span class="s2">"Area"</span><span class="p">]</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="n">old</span><span class="p">[</span><span class="s2">"Length"</span><span class="p">]</span>
+    <span class="n">_wrn</span><span class="p">(</span><span class="s2">"New proxy class used; properties migrated</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+<p>Lorsque nous installons la nouvelle classe, celle-ci doit définir la nouvelle valeur de l'attribut version, par exemple, <code>self.ver = "0.20"</code>.
+</p>
+<h2><span id="Addendum_C._M.C3.A9thode_3_sans_supprimer_les_anciennes_propri.C3.A9t.C3.A9s_qui_portent_le_m.C3.AAme_nom"></span><span class="mw-headline" id="Addendum_C._Méthode_3_sans_supprimer_les_anciennes_propriétés_qui_portent_le_même_nom">Addendum C. Méthode 3 sans supprimer les anciennes propriétés qui portent le même nom</span></h2>
+<p>Comme dans l'addendum A, nous pouvons écrire la nouvelle classe pour créer des propriétés uniquement si elles ne sont pas déjà présentes. En utilisant la méthode 3, nous sauvegardons les valeurs des anciennes propriétés, puis nous supprimons les anciennes propriétés. Cependant, si les nouvelles propriétés sont nommées de la même manière que les anciennes, il n'est pas nécessaire de supprimer les anciennes, nous pouvons simplement réutiliser la même propriété, car nous savons que la propriété ne sera pas dupliquée. Si nous utilisons l'addendum B, nous avons également un moyen d'interroger la version.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># old_module.py</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">objects.new_module</span> <span class="k">as</span> <span class="nn">new_module</span>
+<span class="n">_wrn</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintWarning</span>
+
+<span class="k">class</span> <span class="nc">OldObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">onDocumentRestored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s2">"Version"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">Version</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">Version</span> <span class="o">==</span> <span class="s2">"0.18"</span><span class="p">:</span>
+                <span class="n">_migrate_from_018</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_migrate_from_018</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="n">old</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">old</span><span class="p">[</span><span class="s2">"Area"</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Area</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">removeProperty</span><span class="p">(</span><span class="s2">"Area"</span><span class="p">)</span>
+
+    <span class="n">new_module</span><span class="o">.</span><span class="n">NewObject</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="n">obj</span><span class="o">.</span><span class="n">GeneralArea</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">old</span><span class="p">[</span><span class="s2">"Area"</span><span class="p">]</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">Version</span> <span class="o">=</span> <span class="s2">"0.20"</span>
+    <span class="n">_wrn</span><span class="p">(</span><span class="s2">"New proxy class used; properties migrated</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+<p>Comme nous le voyons dans l'exemple, l'ancienne propriété <code>Area</code> est supprimée et migrée vers la nouvelle propriété <code>GeneralArea</code> comme d'habitude. Nous n'avons pas besoin de supprimer <code>Length</code> ni <code>Version</code> parce que dans la nouvelle classe ils sont toujours utilisés avec le même nom, et ils ne seront pas créés à nouveau (addendum A). Comme nous ne voulons pas modifier <code>Length</code>, cette propriété n'est pas touchée du tout ; elle est migrée vers la nouvelle classe en silence. Par contre, nous mettons à jour <code>Version</code> avec la nouvelle valeur. Nous omettons la migration des propriétés de <a href="Viewprovider.html" title="Viewprovider/fr">viewprovider</a> mais elle suit le même schéma.
+</p><p>Cela devrait fonctionner comme la méthode 3, c'est-à-dire que les anciennes propriétés sont supprimées et que seules les nouvelles propriétés restent dans le nouvel objet. La seule différence est que nous omettons de supprimer et de recréer les propriétés qui portent le même nom. Ce processus devrait fonctionner tant que l'ancienne <a href="Property.html" title="Property/fr">propriété</a> et la nouvelle <a href="Property.html" title="Property/fr">propriété</a> ont le même type (par exemple, <code>App::PropertyLength</code> ou <code>App::PropertyArea</code>), de sorte que l'ancienne propriété peut transmettre sa valeur directement. Cependant, si la nouvelle propriété a un type différent de l'ancienne, l'ancienne propriété doit être supprimée, sinon l'ancienne propriété écrasera complètement la nouvelle, ce qui n'est probablement pas ce que nous voulons car la nouvelle classe s'attendra au nouveau type et non à l'ancien.
+</p>
+<h3><span id="Avantages_et_inconv.C3.A9nients_6"></span><span class="mw-headline" id="Avantages_et_inconvénients_6">Avantages et inconvénients</span></h3>
+<p><b>Avantages</b>
+</p>
+<ul><li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> Comme la méthode 3, cette méthode nous permet un contrôle complet de la migration des anciennes informations.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="24" src="../File/Edit_OK.svg" width="24"/></a></span> Nous évitons d'écrire du code qui supprime et recrée des propriétés dont le nom est identique.</li></ul>
+<p><b>Inconvénients</b>
+</p>
+<ul><li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="24" src="../File/Edit_Cancel.svg" width="24"/></a></span> Comme la méthode 3, cette méthode est encore très verbeuse car nous devons manipuler les propriétés avec soin.</li>
+<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="24" src="../File/Edit_Cancel.svg" width="24"/></a></span> Si une nouvelle <a href="Property.html" title="Property/fr">propriété</a> et une ancienne <a href="Property.html" title="Property/fr">propriété</a> partagent le même nom, la nouvelle propriété sera écrasée, ce qui peut être un comportement indésirable, surtout si les deux propriétés ont des types différents. Dans ce cas, la suppression de l'ancienne propriété et la migration manuelle de sa valeur sont toujours nécessaires.</li></ul>
+<h2><span id="R.C3.A9sum.C3.A9"></span><span class="mw-headline" id="Résumé">Résumé</span></h2>
+<p>Chacune des méthodes a une utilisation recommandée :
+</p>
+<ul><li>Méthode 1. Le module est déplacé ou renommé mais les propriétés sont les mêmes. Redirection simple des classes car les propriétés n'ont pas besoin d'être modifiées du tout.</li>
+<li>Méthode 2+A. Scénarios de migration simples. Affichage d'un message lorsque l'objet est migré d'une classe à une autre. Les propriétés sont du même type et n'ont pas besoin d'être modifiées du tout.</li>
+<li>Méthode 3, 3+A ou 3+B. Scénarios de migration complexes. Contrôle total des propriétés, suppression des anciennes propriétés et ajout de nouvelles propriétés. Un identifiant pour connaître la version de l'objet est utile pour choisir la bonne fonction pour effectuer la migration (Addendum B ou B2).</li></ul>
+<p>Évitez de préférence les méthodes suivantes :
+</p>
+<ul><li>Méthode 2. Les propriétés seront dupliquées si la nouvelle classe ne vérifie pas les propriétés existantes (Addendum A).</li>
+<li>Méthode 3+C. A n'utiliser que lorsque les anciennes propriétés et les nouvelles propriétés sont du même type. Sinon, utilisez la méthode 3 ou 3+B pour supprimer les anciennes propriétés, et traitez-les exactement comme il se doit.</li></ul>
+<h2><span class="mw-headline" id="Liens">Liens</span></h2>
+<ul><li><a class="external text" href="https://forum.freecadweb.org/viewtopic.php?t=42948" rel="nofollow">Migrer et mettre à jour les anciens objets scriptés</a></li>
+<li><a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=18&amp;t=46218" rel="nofollow">Migrer les anciens objets scriptés</a></li></ul>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Scripts FreeCAD :</b> <a href="Python.html" title="Python/fr">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/fr">Introduction à Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/fr">Tutoriel sur les scripts Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/fr">Débuter avec les scripts</a></li></ul>
+<hr/>
+<ul><li><b>Modules :</b> <a href="Builtin_modules.html" title="Builtin modules/fr">Modules intégrés</a>, <a href="Units.html" title="Units/fr">Unités</a>, <a href="Quantity.html" title="Quantity/fr">Quantity</a></li>
+<li><b>Ateliers :</b> <a href="Workbench_creation.html" title="Workbench creation/fr">Création d'atelier</a>, <a href="Gui_Command.html" title="Gui Command/fr">Commands Gui</a>, <a href="Command.html" title="Command/fr">Les commandes</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/fr">Installer des ateliers supplémentaires</a></li>
+<li><b>Maillages et objets Parts :</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/fr">Scripts Mesh</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/fr">Script de données topologiques</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/fr">Conversion objet Mesh en Part</a>, <a href="PythonOCC.html" title="PythonOCC/fr">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Objets paramétriques :</b> <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a>, <a href="Viewprovider.html" title="Viewprovider/fr">Viewproviders</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view/fr">Icône personnalisée dans l'arborescence</a>)</small></li>
+<li><b>Scénographie :</b> <a href="Scenegraph.html" title="Scenegraph/fr">Graphe de scène Coin (Inventor)</a>, <a href="Pivy.html" title="Pivy/fr">Pivy</a></li>
+<li><b>Interface graphique :</b> <a href="Interface_creation.html" title="Interface creation/fr">Création d'interface</a>, <a href="Dialog_creation.html" title="Dialog creation/fr">Création d'une boite de dialogue</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets/fr">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files/fr">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors/fr">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF/fr">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets/fr">5</a>)</small>, <a href="PySide.html" title="PySide/fr">PySide</a>, Exemples PySide <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples/fr">débutant</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/fr">intermédiaire</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples/fr">expérimenté</a></li>
+<li><b>Macros :</b> <a href="Macros.html" title="Macros/fr">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros/fr">Comment installer des macros</a></li>
+<li><b>Intégration :</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/fr">Intégrer FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/fr">Intégration de FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Autre :</b> <a href="Expressions.html" title="Expressions/fr">Expressions</a>, <a href="Code_snippets.html" title="Code snippets/fr">Extraits de codes</a>, <a href="Line_drawing_function.html" title="Line drawing function/fr">Fonction - tracer une ligne</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/fr">Bibliothèque mathématique vectorielle de FreeCAD</a> <small>(déprécié)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs :</b> <a href="User_hub.html" title="User hub/fr">Hub utilisateurs</a>, <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>, <a href="Developer_hub.html" title="Developer hub/fr">Hub développeurs</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129212913
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.173 seconds
+Real time usage: 2.970 seconds
+Preprocessor visited node count: 816/1000000
+Post‐expand include size: 10102/2097152 bytes
+Template argument size: 11675/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 24/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 50729/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 2841.688      1 -total
+ 99.55% 2828.946     24 Template:Code
+  0.10%    2.788      1 Template:Powerdocnavi/fr
+  0.07%    1.992     48 Template:Incode
+  0.05%    1.450      1 Template:Navigation_menu_2
+  0.02%    0.710      5 Template:FileName
+  0.02%    0.528      1 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:273001-0!canonical and timestamp 20241129212911 and revision id 1083524. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

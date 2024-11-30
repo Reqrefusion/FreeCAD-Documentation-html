@@ -1,0 +1,604 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Post-Processing of FEM Results with Paraview/it</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Post-Processing_of_FEM_Results_with_Paraview.html" lang="de" title="Nachbearbeitung von FEM Ergebnissen mit ParaView (100% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Post-Processing_of_FEM_Results_with_Paraview.html" lang="en" title="Post-Processing of FEM Results with Paraview (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Post-Processing_of_FEM_Results_with_Paraview.html" lang="fr" title="FEM Post-traitement des résultats FEM avec Paraview (100% translated)">français</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--stub" dir="ltr" lang="it">italiano</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Post-Processing_of_FEM_Results_with_Paraview.html" lang="pl" title="Post-Processing wyników MES za pomocą Paraview (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Post-Processing_of_FEM_Results_with_Paraview.html" lang="ru" title="Постобработка результатов анализа методом конечных элементов через Paraview (92% translated)">русский</a></li></ul></div>
+<div class="mw-translate-fuzzy">
+<table class="fcinfobox wikitable ct" style="width: 230px; float: right; margin-left: 1em">
+<tbody><tr>
+<td class="ctTitle" style="font-weight: bold; font-size: 125%;"><span typeof="mw:File"><span><img decoding="async" height="32" src="../File/Freecad.svg" width="32"/></span></span> Tutorial
+</td></tr>
+<tr>
+<th class="ctOdd">Argomento
+</th></tr>
+<tr>
+<td class="ctEven">Post-elaborazione dei risultati FEM con Paraview
+</td></tr>
+<tr>
+<th class="ctOdd">Livello di difficoltà
+</th></tr>
+<tr>
+<td class="ctEven">Intermedio
+</td></tr>
+<tr>
+<th class="ctOdd">Tempo di esecuzione
+</th></tr>
+<tr>
+<td class="ctEven">120 minuti
+</td></tr>
+<tr>
+<th class="ctOdd">Autori
+</th></tr>
+<tr>
+<td class="ctEven"><a class="external text" href="http://www.freecadweb.org/wiki/index.php?title=User:" rel="nofollow">HarryvL</a>
+</td></tr>
+<tr>
+<th class="ctOdd">Versione di FreeCAD
+</th></tr>
+<tr>
+<td class="ctEven">0.19
+</td></tr>
+<tr>
+<th class="ctOdd">Files di esempio
+</th></tr>
+<tr>
+<td class="ctEven"><a class="external text" href="https://forum.freecadweb.org/download/file.php?id=103403" rel="nofollow">beam</a> and <a class="external text" href="https://forum.freecadweb.org/download/file.php?id=103557" rel="nofollow">wall</a> found in this <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=18&amp;t=37253&amp;start=10#p367734" rel="nofollow">FC forum thread</a>
+</td></tr>
+<tr>
+<th class="ctOdd">Vedere anche
+</th></tr>
+<tr>
+<td class="ctEven"><i>Nessuno</i>
+</td></tr>
+<tr>
+<td class="ctToc"><br/><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduzione"><span class="tocnumber">1</span> <span class="toctext">Introduzione</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Prerequisites"><span class="tocnumber">2</span> <span class="toctext">Prerequisites</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Data_Transfer_from_FEM_workbench"><span class="tocnumber">3</span> <span class="toctext">Data Transfer from FEM workbench</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Data_Import_in_Paraview"><span class="tocnumber">4</span> <span class="toctext">Data Import in Paraview</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Saving/Loading_State"><span class="tocnumber">5</span> <span class="toctext">Saving/Loading State</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Visualise_FEM_Workbench_Results"><span class="tocnumber">6</span> <span class="toctext">Visualise FEM Workbench Results</span></a></li>
+<li class="toclevel-1 tocsection-7"><a href="#Base_Data_Displayed_on_Original_Geometry"><span class="tocnumber">7</span> <span class="toctext">Base Data Displayed on Original Geometry</span></a></li>
+<li class="toclevel-1 tocsection-8"><a href="#Applying_Filters_to_FEM_Workbench_results"><span class="tocnumber">8</span> <span class="toctext">Applying Filters to FEM Workbench results</span></a></li>
+<li class="toclevel-1 tocsection-9"><a href="#Applying_Filters_to_Derive_Compound_Results_from_Base_Import_Data"><span class="tocnumber">9</span> <span class="toctext">Applying Filters to Derive Compound Results from Base Import Data</span></a></li>
+<li class="toclevel-1 tocsection-10"><a href="#Integration_over_a_Slice"><span class="tocnumber">10</span> <span class="toctext">Integration over a Slice</span></a></li>
+<li class="toclevel-1 tocsection-11"><a href="#Integration_over_a_Line"><span class="tocnumber">11</span> <span class="toctext">Integration over a Line</span></a></li>
+<li class="toclevel-1 tocsection-12"><a href="#Representation_of_Vector_Results_with_the_Glyph_3D_Filter"><span class="tocnumber">12</span> <span class="toctext">Representation of Vector Results with the Glyph 3D Filter</span></a></li>
+<li class="toclevel-1 tocsection-13"><a href="#Export_of_Graphical_Results"><span class="tocnumber">13</span> <span class="toctext">Export of Graphical Results</span></a></li>
+</ul>
+</div>
+</td></tr></tbody></table>
+</div>
+<p><span id="Introduction"></span>
+</p>
+<h2><span class="mw-headline" id="Introduzione">Introduzione</span></h2>
+<p>Some forum posts and tutorials use Paraview (PV) to review and analyse FreeCAD <span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_FEM.svg"><img decoding="async" height="24" src="../File/Workbench_FEM.svg" width="24"/></a></span> <a href="FEM_Workbench.html" title="FEM Workbench">FEM Workbench</a> results. This tutorial explains the basics of transferring data from FEM Workbench to PV and shows some of the options and settings for displaying data.
+</p>
+<h2><span class="mw-headline" id="Prerequisites">Prerequisites</span></h2>
+<ul><li>FreeCAD using a version that is compatible with the designated version of this Tutorial.</li>
+<li><a class="external text" href="https://www.paraview.org" rel="nofollow">Paraview</a> downloaded directly from its <a class="external text" href="https://www.paraview.org/download/" rel="nofollow">website</a> or your preferred package manager.
+<ul><li>This tutorial is based on version Paraview 5.8.0 for Windows, which was the most recent version at the time of writing the tutorial.</li></ul></li>
+<li>The FreeCAD files used for this tutorial available in <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=18&amp;t=37253&amp;start=10#p367734" rel="nofollow">this</a> and <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=18&amp;t=37253&amp;p=368315#p368315" rel="nofollow">this</a> FC forum thread.</li></ul>
+<h2><span class="mw-headline" id="Data_Transfer_from_FEM_workbench">Data Transfer from FEM workbench</span></h2>
+<p>In FEM workbench highlight the CCX_Results object. Next, use menu option <b>File &gt; Export &gt; FEM result VTK (*.vtk *.vtu)</b> to export the VTK data.
+</p>
+<h2><span class="mw-headline" id="Data_Import_in_Paraview">Data Import in Paraview</span></h2>
+<p>The start-up screen shows an empty Pipeline Browser. This is where the imported VTK data objects and applied filter objects (for geometry or data) will be visible.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic1.png"><img decoding="async" height="459" src="../File/PVPic1.png" srcset="/images/thumb/d/d3/PVPic1.png/750px-PVPic1.png 1.5x, /images/thumb/d/d3/PVPic1.png/1000px-PVPic1.png 2x" width="500"/></a></span>
+</p><p>Use menu option <b>File &gt; Open &gt; *.vtk</b> to open the VTK file that was generated with FEM Workbench.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic2.png"><img decoding="async" height="302" src="../File/PVPic2.png" srcset="/images/thumb/3/34/PVPic2.png/750px-PVPic2.png 1.5x, /images/3/34/PVPic2.png 2x" width="500"/></a></span>
+</p><p>Press <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;">Apply</span> on the properties tab. By default, this will show a top view (looking down along z-axis) of the geometry.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic3.png"><img decoding="async" height="311" src="../File/PVPic3.png" srcset="/images/a/af/PVPic3.png 1.5x" width="400"/></a></span> ... <span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic0.png"><img decoding="async" height="318" src="../File/PVPic0.png" srcset="/images/thumb/b/b5/PVPic0.png/825px-PVPic0.png 1.5x, /images/thumb/b/b5/PVPic0.png/1100px-PVPic0.png 2x" width="550"/></a></span>
+</p><p>The gray geometry can be inspected by rotating the view. The left mouse button makes the geometry swivel, but unfortunately in a difficult-to-control way (compared to FreeCAD). To get a predictable rotation hold the <span style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #888888; border-radius: 0.3em; padding: 0px 5px 1px 5px;">X</span>, <span style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #888888; border-radius: 0.3em; padding: 0px 5px 1px 5px;">Y</span> or <span style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #888888; border-radius: 0.3em; padding: 0px 5px 1px 5px;">Z</span> key while dragging the mouse with left mouse button pressed to rotate the model around the X, Y or Z axis, respectively
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic5.png"><img decoding="async" height="281" src="../File/PVPic5.png" srcset="/images/thumb/8/81/PVPic5.png/750px-PVPic5.png 1.5x, /images/thumb/8/81/PVPic5.png/1000px-PVPic5.png 2x" width="500"/></a></span>
+</p>
+<h2><span id="Saving.2FLoading_State"></span><span class="mw-headline" id="Saving/Loading_State">Saving/Loading State</span></h2>
+<p>Rather than saving data, Paraview stores the status (state) of the actions performed on the imported VTK object. Therefore, to save your work use menu option <b>File &gt; Save State</b>. <b>NOTE</b>: there will be no warning when leaving Paraview to save the state and all work may be lost when exiting the program.
+</p><p>To continue where you left off in the previous session use <b>File &gt; Load State</b>. This prompts the user to specify a VTK file, which means that the actions performed in the last session can also be applied to a new VTK file. In this way, data from different FEM Workbench analyses can be displayed in exactly the same way, without any additional effort.
+</p>
+<h2><span class="mw-headline" id="Visualise_FEM_Workbench_Results">Visualise FEM Workbench Results</span></h2>
+<p>Paraview has many options and settings for displaying results. We will first have a look at displaying base import data on the original geometry and thereafter see how to apply filters to modify the geometry. Finally, we will use the calculator and integration filters to derive new results by combining base import data.
+</p>
+<h2><span class="mw-headline" id="Base_Data_Displayed_on_Original_Geometry">Base Data Displayed on Original Geometry</span></h2>
+<p>As the pipeline browser can contain several VTK objects and filter objects, first confirm that the right VTK object is highlighted in the pipeline browser. The selections and settings for displaying this VTK object can now be found on the Properties Tab. To make sure all settings are visible and aligned with this tutorial press the Advanced Settings button (the gear wheel icon on the below picture). 
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic6.png"><img decoding="async" height="229" src="../File/PVPic6.png" srcset="/images/6/63/PVPic6.png 1.5x" width="400"/></a></span>
+</p><p>The first setting that we can change is the way data is presented on the geometry. This is done on the Representation drop down menu. For now we will only use the Surface or Wireframe option. 
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic7.png"><img decoding="async" height="310" src="../File/PVPic7.png" srcset="/images/c/c5/PVPic7.png 1.5x" width="400"/></a></span>
+</p><p>So far no results are displayed. For this we need to change the Coloring option. The default is Solid Color, but the drop down menu shows all the scalar data that is available in the imported VTK file.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic8.png"><img decoding="async" height="105" src="../File/PVPic8.png" srcset="/images/0/0e/PVPic8.png 1.5x" width="400"/></a></span>
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic9.png"><img decoding="async" height="514" src="../File/PVPic9.png" srcset="/images/a/a3/PVPic9.png 1.5x" width="400"/></a></span>
+</p><p>For the purpose of this tutorial we choose ReinforcementRatio_x, but it is easy to change to any data type.
+</p><p>The RenderView window will now show an iso-plot of the selected data type and a Color Legend of the data range.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic10.png"><img decoding="async" height="269" src="../File/PVPic10.png" srcset="/images/thumb/5/51/PVPic10.png/1050px-PVPic10.png 1.5x, /images/thumb/5/51/PVPic10.png/1400px-PVPic10.png 2x" width="700"/></a></span>
+</p><p>The Color Legend can be dragged around the screen to a more convenient location and will change orientation when nearing any of the windows edges.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic11.png"><img decoding="async" height="398" src="../File/PVPic11.png" srcset="/images/thumb/a/ae/PVPic11.png/1050px-PVPic11.png 1.5x, /images/a/ae/PVPic11.png 2x" width="700"/></a></span>
+</p><p>Alternatively, the settings of the color legend can be controlled in great detail by opening the Edit Color Legend Properties dialogue from the Properties Tab (press last Icon to the right)
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic12.png"><img decoding="async" height="93" src="../File/PVPic12.png" srcset="/images/8/80/PVPic12.png 1.5x" width="400"/></a></span>
+</p><p>This opens the following window for the color legend settings
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic13.png"><img decoding="async" height="495" src="../File/PVPic13.png" srcset="/images/b/b4/PVPic13.png 1.5x" width="400"/></a></span>
+</p><p>The coloring of the iso map can be controlled through the Color Map Editor, which is activated by pressing the Edit button on the Properties Tab:
+</p><p><span class="mw-valign-text-top" typeof="mw:File"><a class="mw-file-description" href="../File/PVPic12.png"><img decoding="async" height="70" src="../File/PVPic12.png" srcset="/images/8/80/PVPic12.png 1.5x" width="300"/></a></span>  .  <span class="mw-valign-text-top" typeof="mw:File"><a class="mw-file-description" href="../File/PVPic15.png"><img decoding="async" height="648" src="../File/PVPic15.png" srcset="/images/5/57/PVPic15.png 1.5x" width="300"/></a></span>
+</p><p>The setting for Color Discretization is useful to limit the number of iso values, thus creating more practical ranges for design. The default number of ranges is 256, but here the number is set at 10.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic16.png"><img decoding="async" height="306" src="../File/PVPic16.png" srcset="/images/thumb/c/c0/PVPic16.png/1050px-PVPic16.png 1.5x, /images/thumb/c/c0/PVPic16.png/1400px-PVPic16.png 2x" width="700"/></a></span>
+</p>
+<h2><span class="mw-headline" id="Applying_Filters_to_FEM_Workbench_results">Applying Filters to FEM Workbench results</span></h2>
+<p>To modify the base data or geometry imported from FEM Workbench, filters can be applied.
+</p><p>Here only the Slice and Warp filters will be discussed. Filters for creating compound results from base data will be discussed in the next section.
+</p><p>To apply the Slice filter, highlight the VTK object that needs to be sliced and press the Slice Icon. Alternatively, find the Slice filter in the menu Filters &gt; Alphabetical. This adds the Slice filter object to the Pipeline Browser and the location in the tree shows that it is applied to the VTK object. The position in the tree matters, because filters can be applied to different VTK objects or even to other filter objects. The filter object cannot be dragged around in the tree to change the object it is applies to. The target object can only be changed through the menu (or by right-clicking) option Edit &gt; Change Input.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic17.png"><img decoding="async" height="394" src="../File/PVPic17.png" srcset="/images/thumb/d/d1/PVPic17.png/1050px-PVPic17.png 1.5x, /images/thumb/d/d1/PVPic17.png/1400px-PVPic17.png 2x" width="700"/></a></span>
+</p><p>The location and orientation of the slice can be modified by dragging the slice and its normal vector with the mouse or through the Properties tab. In the below figure the origin of the slice has been placed at the center of the beam (over the central support) and the normal to the plane points in the x-direction.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic18.png"><img decoding="async" height="307" src="../File/PVPic18.png" srcset="/images/c/c8/PVPic18.png 1.5x" width="400"/></a></span>
+</p><p>To get rid of the bounding boxes deselect the Show Plane box at the top of the Plane Parameters dialogue.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic19.png"><img decoding="async" height="396" src="../File/PVPic19.png" srcset="/images/thumb/1/1d/PVPic19.png/1050px-PVPic19.png 1.5x, /images/1/1d/PVPic19.png 2x" width="700"/></a></span>
+</p><p>The Warp by Vector filter can be used to display the deformed geometry. Highlight the VTK object and press the Warp by Vector Icon. This adds the filter to the Pipeline Browser. Alternatively look for the filter in the menu Filters &gt; Alphabetical. Next select Displacement in the Vectors drop-down menu of the Properties tab and set an appropriate scale factor. Don’t forget to press the Apply button after changing the settings.
+</p><p><span class="mw-valign-text-top" typeof="mw:File"><a class="mw-file-description" href="../File/PVPic20.png"><img decoding="async" height="215" src="../File/PVPic20.png" srcset="/images/a/a0/PVPic20.png 1.5x" width="400"/></a></span> . <span class="mw-valign-text-top" typeof="mw:File"><a class="mw-file-description" href="../File/PVPic21.png"><img decoding="async" height="379" src="../File/PVPic21.png" srcset="/images/thumb/c/cf/PVPic21.png/1050px-PVPic21.png 1.5x, /images/thumb/c/cf/PVPic21.png/1400px-PVPic21.png 2x" width="700"/></a></span>
+</p><p>The maximum displacement value is 0.98 mm.
+</p><p>To show the deformed geometry superimposed on the undeformed geometry, simply make both the VTK object and Warp filter object visible by clicking the eye icon next to it. In the following picture the Representation setting for the VTK object was changed to Wireframe and the Opacity reduced to 0.5 to prevent it from obscuring the Deformed geometry.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic22.png"><img decoding="async" height="379" src="../File/PVPic22.png" srcset="/images/thumb/c/c3/PVPic22.png/1050px-PVPic22.png 1.5x, /images/thumb/c/c3/PVPic22.png/1400px-PVPic22.png 2x" width="700"/></a></span>
+</p><p><b>NOTE</b>: As more objects are added to the Pipeline Browser and more display windows are open, it becomes increasingly important to ensure that the right object is selected in the Pipeline Browser and the right Window has focus when making changes to the Properties Tab. Otherwise much time can be spent on finding the right property or changes to properties may not seem to take effect.
+</p>
+<h2><span class="mw-headline" id="Applying_Filters_to_Derive_Compound_Results_from_Base_Import_Data">Applying Filters to Derive Compound Results from Base Import Data</span></h2>
+<p>If we want to know the amount of reinforcement steel in the beam as a whole or the amount passing though a particular cross section we need to perform integration (summation over the geometry) of the base data.
+</p><p>For example, the total volume of reinforcement bars in the beam running in x-direction is obtained from the integral <code>INTEGRATE(ReinforcementRatio_x * dx * dy * dz)</code> over the full geometry and the total area of reinforcement steel running though a particular beam cross section is obtained from <code>INTEGRATE(ReinforcementRatio_x * dy * dz)</code> over a slice.
+</p><p>In Paraview, integration can be done with an Integration Filter. This filter can be applied to the entire VTK object (the beam) or to a Slice (the cross section).
+</p><p>NOTE: due to a mismatch of node ordering between FCFEM and PV, integration over a volume renders negative results, i.e. <code>INTEGRATE( 1.0 * dx * dy *dz)</code> = - Volume instead of + Volume.
+</p><p>To calculate integrals we need to apply an Integration Filter, which can be found in the menu item Filters &gt; Alphabetical. Highlight the VTK object and apply the filter.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic23.png"><img decoding="async" height="379" src="../File/PVPic23.png" srcset="/images/thumb/f/f5/PVPic23.png/1050px-PVPic23.png 1.5x, /images/thumb/f/f5/PVPic23.png/1400px-PVPic23.png 2x" width="700"/></a></span>
+</p><p>Press the <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;">Apply</span> button in the Properties tab and the results will open in a separate window to the right of the Renderview. 
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic24.png"><img decoding="async" height="379" src="../File/PVPic24.png" srcset="/images/thumb/9/9a/PVPic24.png/1050px-PVPic24.png 1.5x, /images/thumb/9/9a/PVPic24.png/1400px-PVPic24.png 2x" width="700"/></a></span>
+</p><p>Before we tidy this up to find the desired result, i.e. <code>INTEGRATE(ReinforcementRatio_x * dx * dy * dz)</code>, lets first see how we can control where the window is placed and what it contains.
+</p><p>First close the SpreadSheetView window that has opened to the right. Then press the horizontal split icon on the Renderview window and a new window will open with a menu of display options. Before selecting an option, make sure the Integration filter object is highlighted in the Pipeline Browser.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic25.png"><img decoding="async" height="379" src="../File/PVPic25.png" srcset="/images/thumb/9/93/PVPic25.png/1050px-PVPic25.png 1.5x, /images/thumb/9/93/PVPic25.png/1400px-PVPic25.png 2x" width="700"/></a></span>
+</p><p>To display numerical results we need to select SpreadSheet View at the bottom of the Create View list. This generates a spreadsheet of all available results in the VTK object integrated over the volume. 
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic26.png"><img decoding="async" height="71" src="../File/PVPic26.png" srcset="/images/thumb/1/15/PVPic26.png/600px-PVPic26.png 1.5x, /images/1/15/PVPic26.png 2x" width="400"/></a></span>
+</p><p>To inspect <code>INTEGRATE(ReinforcementRatio_x * dx * dy * dz)</code> we could scroll to the right through the table, but we can also remove all unwanted results by deselecting them, i.e. deselect All Columns and select <b>ReinforcementRatio_x</b>.
+</p><p><span class="mw-valign-text-top" typeof="mw:File"><a class="mw-file-description" href="../File/PVPic27.png"><img decoding="async" height="142" src="../File/PVPic27.png" srcset="/images/9/98/PVPic27.png 1.5x" width="300"/></a></span> . <span class="mw-valign-text-top" typeof="mw:File"><a class="mw-file-description" href="../File/PVPic28.png"><img decoding="async" height="555" src="../File/PVPic28.png" srcset="/images/6/6d/PVPic28.png 1.5x" width="500"/></a></span>
+</p><p>Now we are left with just one value in the table of integration results
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic29.png"><img decoding="async" height="182" src="../File/PVPic29.png" srcset="/images/9/92/PVPic29.png 1.5x" width="300"/></a></span>
+</p><p>As explained before this is the negative value of the integral we are looking for. So the indicative total volume of steel required in x direction is 2.27e+06 mm3 (= 2272 cm3) or 2272 cm3  * 7.6 g/cm3 = 17267 g (= 17.3 kg). In practice the number will be higher due to practical considerations (e.g. anchoring requirements, minimum reinforcement requirements, etc.). Nevertheless, this result can be used to compare conceptual designs
+</p><p>The above was an example of the integration of a variable directly exported by FEM Workbench. In some cases we may want to combine VTK variables to obtain new results. This can be done in several ways, but here I will only discuss the simplest, i.e. with the Calculator Filter.
+</p><p>For example, if we want to know the total reinforcement requirement in all three coordinate directions we would have to sum  ReinforcementRatio_x,  ReinforcementRatio_y and  ReinforcementRatio_z.
+</p><p>The Calculator filter can be found as an icon on the left of the filter bar or via the menu Filters &gt; Alphabetical. The name for the resulting variable can be entered in field Result Array Name. Here we name the result Total_Reinforcement_Ratio. The formula can be composed in the box below the Result Array Name field. Input values can be selected from the Scalars drop down menu and they can be combined into a formula for the result using the operators given. After pressing the Apply button, the result will be available as a new variable in any subsequent operations (e.g. an Integration Filter) or views (e.g. RenderView or SpreadSheetView, see below). 
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic30.png"><img decoding="async" height="379" src="../File/PVPic30.png" srcset="/images/thumb/1/10/PVPic30.png/1050px-PVPic30.png 1.5x, /images/thumb/1/10/PVPic30.png/1400px-PVPic30.png 2x" width="700"/></a></span>
+</p><p>For example, we can now apply the integration filter to the new variable Total Reinforcement Ratio
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic31.png"><img decoding="async" height="355" src="../File/PVPic31.png" srcset="/images/thumb/b/b8/PVPic31.png/1050px-PVPic31.png 1.5x, /images/b/b8/PVPic31.png 2x" width="700"/></a></span>
+</p><p>This shows how the total reinforcement requirement compares to those in the individual coordinate directions.
+</p>
+<h2><span class="mw-headline" id="Integration_over_a_Slice">Integration over a Slice</span></h2>
+<p>In the previous section we discussed the Integration filter and its application to the entire VTK object. To demonstrate integration over a slice we will in this section determine the total reinforcement requirement and its center of gravity for the central cross section of the beam. The end result is shown in the picture below. The interaction of various objects can be inspected in the Pipeline Browser. The slice filter is applied to the beam VTK object and two Calculator filters are applied to the slice filter to derive the new variables “Reinforcement_ratio_x * z” and “Reinforcement_ratio_x * y” from the base data. These variables need to be integrated to determine the center of gravity of the reinforcement. Finally, Integration filters are applied to each Calculator to integrate results over the Slice. Please refer to the previous section for a general introduction of the Integration filter and its settings.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPicSlice1.png"><img decoding="async" height="379" src="../File/PVPicSlice1.png" srcset="/images/thumb/c/c0/PVPicSlice1.png/1050px-PVPicSlice1.png 1.5x, /images/thumb/c/c0/PVPicSlice1.png/1400px-PVPicSlice1.png 2x" width="700"/></a></span>
+</p><p>Apply the following Settings in the Properties tab for the VTK object:
+</p>
+<table class="wikitable">
+<tbody><tr>
+<th>Properties Tab Settings
+</th>
+<th>Comment
+</th></tr>
+<tr>
+<td>Representation: Wireframe
+</td>
+<td>So the Slice is visible
+</td></tr>
+<tr>
+<td>Coloring: ReinforcementRatio_x
+</td>
+<td>Or any other color
+</td></tr>
+<tr>
+<td>Styling &gt; Line Width: 2
+</td>
+<td>Or any other setting that gives a pleasing result
+</td></tr></tbody></table>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPicSlice2.png"><img decoding="async" height="700" src="../File/PVPicSlice2.png" srcset="/images/a/a5/PVPicSlice2.png 1.5x" width="400"/></a></span>
+</p><p>Next highlight the VTK object and apply a Slice filter with the following settings on the Properties tab:
+</p>
+<table class="wikitable">
+<tbody><tr>
+<th>Properties Tab Settings
+</th>
+<th>Comment
+</th></tr>
+<tr>
+<td>Plane Parameters &gt; Show Plane: deselect
+</td>
+<td>Remove the bounding boxes
+</td></tr>
+<tr>
+<td>Plane Parameters &gt; Origin: 4000 / 100 / 200
+</td>
+<td>Position of central section
+</td></tr>
+<tr>
+<td>Plane Parameters &gt; Normal: 1 /0 /0
+</td>
+<td>Normal of Slice points in x -direction
+</td></tr>
+<tr>
+<td>Coloring: ReinforcementRatio_x
+</td>
+<td>Optional
+</td></tr>
+<tr>
+<td>Styling &gt; Line Width: 2
+</td>
+<td>Or any other setting that gives a pleasing result
+</td></tr></tbody></table>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPicSlice3.png"><img decoding="async" height="652" src="../File/PVPicSlice3.png" srcset="/images/7/79/PVPicSlice3.png 1.5x" width="400"/></a></span>
+</p><p><b>Settings Calculator 1</b>
+</p><p>Calculator 1 computes the new variable ReinforcementRatio_x * y which needs to be integrated to obtain the y-coordinate of the reinforcement’s center of gravity.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPicSlice4.png"><img decoding="async" height="640" src="../File/PVPicSlice4.png" srcset="/images/c/c2/PVPicSlice4.png 1.5x" width="400"/></a></span>
+</p><p>After pressing Apply, a new variable named “ReinforcementRatio_x * y” is available for display or further processing.
+</p><p><br/>
+<b>Settings Calculator 2</b>
+</p><p>Calculator 2 computes the new variable ReinforcementRatio_x * z which needs to be integrated to obtain the z-coordinate of the reinforcement’s center of gravity.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPicSlice5.png"><img decoding="async" height="707" src="../File/PVPicSlice5.png" srcset="/images/b/b0/PVPicSlice5.png 1.5x" width="400"/></a></span>
+</p><p>After pressing Apply, a new variable named “ReinforcementRatio_x * z” is available for display or further processing.
+</p><p>Finally, two Integration filters are applied, one on Calculator1 to integrate variable  ReinforcementRatio_x * y and on Calculator2 to integrate  ReinforcementRatio_x * z. Each are displayed in their own window with SpreadSheetView selected. The way to deselect all other results is explained earlier.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPicSlice6.png"><img decoding="async" height="110" src="../File/PVPicSlice6.png" srcset="/images/thumb/2/2d/PVPicSlice6.png/1050px-PVPicSlice6.png 1.5x, /images/thumb/2/2d/PVPicSlice6.png/1400px-PVPicSlice6.png 2x" width="700"/></a></span>
+</p><p>Finally the Center of Gravity can be calculated from the above results as:
+</p><p>CoG_y = 55744.2 / 556.277 = 100.2 mm (exact value: 100 mm)
+</p><p>CoG_z = 187144 / 556.277 = 336.4 mm (exact value: 5/6 * 400 mm)
+</p>
+<h2><span class="mw-headline" id="Integration_over_a_Line">Integration over a Line</span></h2>
+<p>To demonstrate visualisation and integration of results over a line we use the 2D example of a heavy wall as introduced in <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=18&amp;t=33049" rel="nofollow">this FC forum thread</a>. The FreeCAD file for this example can be downloaded in <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=18&amp;t=37253&amp;start=10#p367734" rel="nofollow">this FC forum thread</a>. The challenge is to visualise reinforcement ratio across various vertical cross sections and to determine the required area of steel from integration of those results.
+</p><p>Techniques introduced in previous sections of this tutorial will not be repeated here. It is also important to note again that as more objects are added to the Pipeline Browser and more display windows are open, it becomes increasingly important to ensure that the right object is selected in the Pipeline Browser and the right Window has focus when making changes to the Properties Tab. Otherwise much time can be spent on finding the right property or changes to properties may not seem to take effect. 
+</p><p>Starting with the VTK object imported from FEM Workbench, we note that the PV controls operate slightly differently on a 2 dimensional object. The left mouse button drags the geometry and the middle mouse button rotates it. To position the geometry in the plane of analysis (i.e. x-y), press the icon that puts the view along the negative z axis:
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPicLine1.png"><img decoding="async" height="81" src="../File/PVPicLine1.png" width="75"/></a></span>
+</p><p>For the picture below the Coloring property on the Properties tab for the VTK object was set to ReinforcementRatio_x.
+</p><p>The only additional object required to visualise a variable along a straight line is a Plot Over Line filter. This can be activated from the icon bar or the menu option Filters &gt; Alphabetical.
+</p><p>We next want to display the horizontal reinforcement requirements in the vertical cross section under the column. To achieve this in the way shown below, the following settings need to be changed in the Properties tab of the Plot Over Line filter (make sure the LineChartView window and the Plot Over Line object both have the focus) 
+</p>
+<table class="wikitable">
+<tbody><tr>
+<th>Properties Tab Settings
+</th>
+<th>Comment
+</th></tr>
+<tr>
+<td>Line Parameters &gt; Point 1: 4000 / 0 / 0
+</td>
+<td>Point at bottom of wall under the column
+</td></tr>
+<tr>
+<td>Line Parameters &gt; Point 2: 4000 / 4000 / 0
+</td>
+<td>Point at top of wall under the column
+</td></tr>
+<tr>
+<td>x Axis Parameters &gt; x Array Name: ReinforcementRatio_x
+</td>
+<td>Displays ReinforcementRatio_x on the horizontal axis
+</td></tr>
+<tr>
+<td>Series Parameters: tick “arc length” only
+</td>
+<td>This is the length parameter along the line
+</td></tr>
+<tr>
+<td>Title &gt; Chart Title: Mid Section
+</td>
+<td>
+</td></tr>
+<tr>
+<td>Annotation &gt; Show Legend: deselect
+</td>
+<td>Meaningless for the current choice of vertical axis
+</td></tr>
+<tr>
+<td>Left Axis &gt; Left Axis Title: Height Across Beam
+</td>
+<td>
+</td></tr>
+<tr>
+<td>Left Axis Range &gt; Use Custom Range: deselect
+</td>
+<td>Deselect to maximise the data range along the axis
+</td></tr>
+<tr>
+<td>Bottom Axis &gt; Bottom Axis Title: Reinforcement Ratio in x-Direction
+</td>
+<td>
+</td></tr>
+<tr>
+<td>Bottom Axis Range &gt; Use Custom Range: deselect
+</td>
+<td>Deselect to maximise the data range along the axis
+</td></tr></tbody></table>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPicLine2.png"><img decoding="async" height="379" src="../File/PVPicLine2.png" srcset="/images/thumb/6/6a/PVPicLine2.png/1050px-PVPicLine2.png 1.5x, /images/thumb/6/6a/PVPicLine2.png/1400px-PVPicLine2.png 2x" width="700"/></a></span>
+</p><p><br/>
+Note that the distance along the line (arc length) is usually on the horizontal axis and the variable that we want to display (here ReinforcementRatio_x) on the vertical axis. However, as the wall section in this example is vertical and we want to see the reinforcement requirement over the height of the wall, it is more natural to inverse the axes. This, however, comes at the expense of a lot more changes to the settings in the Properties tab for the Plot Over Line filter.
+</p><p><br/>
+In the next two picture only the location of the line was changed. Note however that this relocation will automatically change the Left Axis Range &gt; Use Custom Range setting to “select”. This may mean that the graph does not properly fit in the LineChartView window. It is therefore necessary to deselect this option every time the position of the line is changed. Other settings are as per the above table.
+</p>
+<table class="wikitable">
+<tbody><tr>
+<th>Properties Tab Settings
+</th>
+<th>Comment
+</th></tr>
+<tr>
+<td>Line Parameters &gt; Point 1: 6700 / 0 / 0
+</td>
+<td>Point at bottom of wall under left side of cut-out
+</td></tr>
+<tr>
+<td>Line Parameters &gt; Point 2: 6700 / 4000 / 0
+</td>
+<td>Point at top of wall above left side of cut-out
+</td></tr>
+<tr>
+<td>Title &gt; Chart Title: Section left of Cut-out
+</td>
+<td>
+</td></tr>
+<tr>
+<td>Left Axis Range &gt; Use Custom Range: deselect
+</td>
+<td>Deselect to maximise the data range along the axis
+</td></tr>
+<tr>
+<td>Bottom Axis Range &gt; Use Custom Range: deselect
+</td>
+<td>Deselect to maximise the data range along the axis
+</td></tr></tbody></table>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPicLine3.png"><img decoding="async" height="379" src="../File/PVPicLine3.png" srcset="/images/thumb/f/f7/PVPicLine3.png/1050px-PVPicLine3.png 1.5x, /images/thumb/f/f7/PVPicLine3.png/1400px-PVPicLine3.png 2x" width="700"/></a></span>
+</p>
+<table class="wikitable">
+<tbody><tr>
+<th>Properties Tab Settings
+</th>
+<th>Comment
+</th></tr>
+<tr>
+<td>Line Parameters &gt; Point 1: 10950 / 0 / 0
+</td>
+<td>Point at bottom of wall at right-hand support
+</td></tr>
+<tr>
+<td>Line Parameters &gt; Point 2: 10950 / 4000 / 0
+</td>
+<td>Point at top of wall at right-hand support
+</td></tr>
+<tr>
+<td>Title &gt; Chart Title: Section at Support
+</td>
+<td>
+</td></tr>
+<tr>
+<td>Left Axis Range &gt; Use Custom Range: deselect
+</td>
+<td>Deselect to maximise the data range along the axis
+</td></tr>
+<tr>
+<td>Bottom Axis Range &gt; Use Custom Range: deselect
+</td>
+<td>Deselect to maximise the data range along the axis
+</td></tr></tbody></table>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPicLine4.png"><img decoding="async" height="379" src="../File/PVPicLine4.png" srcset="/images/thumb/f/f5/PVPicLine4.png/1050px-PVPicLine4.png 1.5x, /images/thumb/f/f5/PVPicLine4.png/1400px-PVPicLine4.png 2x" width="700"/></a></span>
+</p><p>The total horizontal reinforcement requirement in the last cross section can now simply be obtained by applying an Integration filter to the Plot Over Line object, i.e. highlight the Plot Over Line object in the Pipeline Browser and add an Integration filter from the menu option Filters &gt; Alphabetical.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPicLine5.png"><img decoding="async" height="379" src="../File/PVPicLine5.png" srcset="/images/thumb/d/de/PVPicLine5.png/1050px-PVPicLine5.png 1.5x, /images/thumb/d/de/PVPicLine5.png/1400px-PVPicLine5.png 2x" width="700"/></a></span>
+</p><p>In the usual way deselect all but the ReinforcementRatio_x result in the SpreadSheetView and read off the result as 23.11 mm2 / mm. To obtain the total cross sectional area of steel, we still need to multiply with the thickness of the wall, which in this example is (an impressive) 600 mm. So the total cross sectional area of steel running through the cross section near the right hand support is 23.11 * 600 = 13866 mm2 = 139 cm2
+</p><p>To achieve a more practical distribution of reinforcement we could integrate the above graph in parts. For example, if we want to know the required cross sectional area of steel in the top 400mm of the wall then we should adjust the properties of the Plot Over Line object as follows
+</p>
+<table class="wikitable">
+<tbody><tr>
+<th>Properties Tab Settings
+</th>
+<th>Comment
+</th></tr>
+<tr>
+<td>Line Parameters &gt; Point 1: 10950 / 3600 / 0
+</td>
+<td>Point near top of wall at right-hand support
+</td></tr>
+<tr>
+<td>Line Parameters &gt; Point 2: 10950 / 4000 / 0
+</td>
+<td>Point at top of wall at right-hand support
+</td></tr>
+<tr>
+<td>Left Axis Range &gt; Use Custom Range: deselect
+</td>
+<td>Deselect to maximise the data range along the axis
+</td></tr>
+<tr>
+<td>Bottom Axis Range &gt; Use Custom Range: deselect
+</td>
+<td>Deselect to maximise the data range along the axis
+</td></tr></tbody></table>
+<p>This yields the following result
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPicLine6.png"><img decoding="async" height="379" src="../File/PVPicLine6.png" srcset="/images/thumb/7/7c/PVPicLine6.png/1050px-PVPicLine6.png 1.5x, /images/thumb/7/7c/PVPicLine6.png/1400px-PVPicLine6.png 2x" width="700"/></a></span>
+</p><p>The result for the top 400 mm of the wall is thus 8.436 mm2 / mm. So the top 10% of the wall requires 8.44 / 23.11 * 100% = 37% of the reinforcement steel.
+</p><p>This procedure could be repeated to divide the wall in zones of constant reinforcement.
+</p>
+<h2><span class="mw-headline" id="Representation_of_Vector_Results_with_the_Glyph_3D_Filter">Representation of Vector Results with the Glyph 3D Filter</span></h2>
+<p>So far we have only dealt with Scalar values, like reinforcement ratio and displacement magnitude. Visualization of vector results, like Principal Stress vectors, is done with Glyphs.
+</p><p>Let’s return to the VTK data object for the beam with central support and visualize maximum and minimum principal stress vectors.
+</p><p>Highlight the VTK data object in the Pipeline Browser and select the Glyph Filter from the Filter Icon bar or from the menu option Filter &gt; Alphabetical. Then apply the following settings in the Properties tab of the Glyph Filter object (see table and picture):
+</p>
+<table class="wikitable">
+<tbody><tr>
+<th>Properties Tab Settings
+</th>
+<th>Comment
+</th></tr>
+<tr>
+<td>Glyph Source &gt; Glyph Type: Line
+</td>
+<td>Unfortunately there is no option for a double sided arrow
+</td></tr>
+<tr>
+<td>Orientation &gt; Orientation: Major Principal Stress
+</td>
+<td>The Glyph takes the principal stress direction
+</td></tr>
+<tr>
+<td>Scale &gt; Scale Array: Major Principal Stress
+</td>
+<td>The length of the line will represent the magnitude of the principal stress
+</td></tr>
+<tr>
+<td>Scale &gt; Vector Scale Mode: Scale by Magnitude
+</td>
+<td>
+</td></tr>
+<tr>
+<td>Scale &gt; Scale Factor: 100
+</td>
+<td>Or any other setting that gives a pleasing result
+</td></tr>
+<tr>
+<td>Masking &gt; Glyph Mode: All Points
+</td>
+<td>To make sure the stress in every node is displayed
+</td></tr>
+<tr>
+<td>Coloring &gt; Solid Color
+</td>
+<td>A single color gives greatest clarity of “stress flow”
+</td></tr>
+<tr>
+<td>Coloring &gt; Edit &gt; Green
+</td>
+<td>Or any other setting that gives a pleasing result
+</td></tr>
+<tr>
+<td>Styling &gt; Line Width &gt; 2
+</td>
+<td>Or any other setting that gives a pleasing result
+</td></tr></tbody></table>
+<p><span class="mw-valign-text-top" typeof="mw:File"><a class="mw-file-description" href="../File/PVPic32.png"><img decoding="async" height="592" src="../File/PVPic32.png" srcset="/images/c/cb/PVPic32.png 1.5x" width="400"/></a></span>; <span class="mw-valign-text-top" typeof="mw:File"><a class="mw-file-description" href="../File/PVPic33.png"><img decoding="async" height="591" src="../File/PVPic33.png" srcset="/images/9/9c/PVPic33.png 1.5x" width="400"/></a></span>
+</p><p>If all goes well you should see the following result for the example file.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic34.png"><img decoding="async" height="379" src="../File/PVPic34.png" srcset="/images/thumb/b/b3/PVPic34.png/1050px-PVPic34.png 1.5x, /images/thumb/b/b3/PVPic34.png/1400px-PVPic34.png 2x" width="700"/></a></span>
+</p><p>Next add another Glyph Filter with the following settings for the Minor Principal Stress (don’t forget to first highlight the VTK data object in the Pipeline Browser):
+</p>
+<table class="wikitable">
+<tbody><tr>
+<th>Properties Tab Settings
+</th>
+<th>Comment
+</th></tr>
+<tr>
+<td>Glyph Source &gt; Glyph Type: Line
+</td>
+<td>Unfortunately there is no option for a double sided arrow
+</td></tr>
+<tr>
+<td>Orientation &gt; Orientation: Minor Principal Stress
+</td>
+<td>The Glyph takes the principal stress direction
+</td></tr>
+<tr>
+<td>Scale &gt; Scale Array: Minor Principal Stress
+</td>
+<td>The length of the line will represent the magnitude of the principal stress
+</td></tr>
+<tr>
+<td>Scale &gt; Vector Scale Mode: Scale by Magnitude
+</td>
+<td>
+</td></tr>
+<tr>
+<td>Scale &gt; Scale Factor: 100
+</td>
+<td>Or any other setting that gives a pleasing result
+</td></tr>
+<tr>
+<td>Masking &gt; Glyph Mode: All Points
+</td>
+<td>To make sure the stress in every node is displayed
+</td></tr>
+<tr>
+<td>Coloring &gt; Solid Color
+</td>
+<td>A single color gives greatest clarity of “stress flow”
+</td></tr>
+<tr>
+<td>Coloring &gt; Edit &gt; Red
+</td>
+<td>Or any other setting that gives a pleasing result
+</td></tr>
+<tr>
+<td>Styling &gt; Line Width &gt; 2
+</td>
+<td>Or any other setting that gives a pleasing result
+</td></tr></tbody></table>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/PVPic35.png"><img decoding="async" height="379" src="../File/PVPic35.png" srcset="/images/thumb/4/4c/PVPic35.png/1050px-PVPic35.png 1.5x, /images/thumb/4/4c/PVPic35.png/1400px-PVPic35.png 2x" width="700"/></a></span>
+</p><p>The final result shows the major and minor principal stress vectors superimposed on the beam with ReinforcementRatio_x.
+</p>
+<h2><span class="mw-headline" id="Export_of_Graphical_Results">Export of Graphical Results</span></h2>
+<p>To export a RenderView window highlight the window and use menu option <b>File &gt; Save Screenshot</b>
+</p><p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_FEM.svg"><img decoding="async" height="24" src="../File/Workbench_FEM.svg" width="24"/></a></span> <a href="FEM_Workbench.html" title="FEM Workbench/it">FEM</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><a href="FEM_Analysis.html" title="FEM Analysis/it">FEM Analysis</a></li></ul>
+<ul><li><b>Materials:</b> <a href="FEM_MaterialSolid.html" title="FEM MaterialSolid/it">Solid</a>, <a href="FEM_MaterialFluid.html" title="FEM MaterialFluid/it">Fluid</a>, <a href="FEM_MaterialMechanicalNonlinear.html" title="FEM MaterialMechanicalNonlinear/it">Nonlinear mechanical</a>, <a href="FEM_MaterialReinforced.html" title="FEM MaterialReinforced/it">Reinforced (concrete)</a>; <a href="FEM_MaterialEditor.html" title="FEM MaterialEditor/it">Material editor</a></li></ul>
+<ul><li><b>Element geometry:</b> <a href="FEM_ElementGeometry1D.html" title="FEM ElementGeometry1D/it">Beam (1D)</a>, <a href="FEM_ElementRotation1D.html" title="FEM ElementRotation1D/it">Beam rotation (1D)</a>, <a href="FEM_ElementGeometry2D.html" title="FEM ElementGeometry2D/it">Shell (2D)</a>, <a href="FEM_ElementFluid1D.html" title="FEM ElementFluid1D/it">Fluid flow (1D)</a></li></ul>
+<hr/>
+<p><b>Constraints</b>
+</p>
+<ul><li><b>Electromagnetic:</b> <a href="FEM_ConstraintElectrostaticPotential.html" title="FEM ConstraintElectrostaticPotential/it">Electrostatic potential</a>, <a class="new" href="index.php?title=FEM_ConstraintCurrentDensity_it&amp;action=edit&amp;redlink=1.html" title="FEM ConstraintCurrentDensity/it (page does not exist)">Current density</a>, <a class="new" href="index.php?title=FEM_ConstraintMagnetization_it&amp;action=edit&amp;redlink=1.html" title="FEM ConstraintMagnetization/it (page does not exist)">Magnetization</a></li></ul>
+<ul><li><b>Fluid:</b> <a href="FEM_ConstraintInitialFlowVelocity.html" title="FEM ConstraintInitialFlowVelocity/it">Initial flow velocity</a>, <a class="new" href="index.php?title=FEM_ConstraintInitialPressure_it&amp;action=edit&amp;redlink=1.html" title="FEM ConstraintInitialPressure/it (page does not exist)">Initial pressure</a>, <a href="FEM_ConstraintFlowVelocity.html" title="FEM ConstraintFlowVelocity/it">Flow velocity</a></li></ul>
+<ul><li><b>Geometrical:</b> <a href="FEM_ConstraintPlaneRotation.html" title="FEM ConstraintPlaneRotation/it">Plane rotation</a>, <a href="FEM_ConstraintSectionPrint.html" title="FEM ConstraintSectionPrint/it">Section print</a>, <a href="FEM_ConstraintTransform.html" title="FEM ConstraintTransform/it">Transform</a></li></ul>
+<ul><li><b>Mechanical:</b> <a href="FEM_ConstraintFixed.html" title="FEM ConstraintFixed/it">Fixed</a>, <a href="FEM_ConstraintDisplacement.html" title="FEM ConstraintDisplacement/it">Displacement</a>, <a href="FEM_ConstraintContact.html" title="FEM ConstraintContact/it">Contact</a>, <a href="FEM_ConstraintTie.html" title="FEM ConstraintTie/it">Tie</a>, <a class="new" href="index.php?title=FEM_ConstraintSpring_it&amp;action=edit&amp;redlink=1.html" title="FEM ConstraintSpring/it (page does not exist)">Spring</a>, <a href="FEM_ConstraintForce.html" title="FEM ConstraintForce/it">Force</a>, <a href="FEM_ConstraintPressure.html" title="FEM ConstraintPressure/it">Pressure</a>, <a class="new" href="index.php?title=FEM_ConstraintCentrif_it&amp;action=edit&amp;redlink=1.html" title="FEM ConstraintCentrif/it (page does not exist)">Centrif</a>, <a href="FEM_ConstraintSelfWeight.html" title="FEM ConstraintSelfWeight/it">Self weight</a></li></ul>
+<ul><li><b>Thermal:</b> <a href="FEM_ConstraintInitialTemperature.html" title="FEM ConstraintInitialTemperature/it">Initial temperature</a>, <a href="FEM_ConstraintHeatflux.html" title="FEM ConstraintHeatflux/it">Heat flux</a>, <a href="FEM_ConstraintTemperature.html" title="FEM ConstraintTemperature/it">Temperature</a>, <a href="FEM_ConstraintBodyHeatSource.html" title="FEM ConstraintBodyHeatSource/it">Body heat source</a></li></ul>
+<ul><li><b>Overwrite Constants:</b> <a href="FEM_ConstantVacuumPermittivity.html" title="FEM ConstantVacuumPermittivity/it">Constant vacuum permittivity</a></li></ul>
+<hr/>
+<ul><li><b>Mesh:</b> <a href="FEM_MeshNetgenFromShape.html" title="FEM MeshNetgenFromShape/it">Mesh Netgen</a>, <a href="FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape/it">Mesh GMSH</a>, <a href="FEM_MeshBoundaryLayer.html" title="FEM MeshBoundaryLayer/it">Mesh boundary layer</a>, <a href="FEM_MeshRegion.html" title="FEM MeshRegion/it">Mesh region</a>, <a href="FEM_MeshGroup.html" title="FEM MeshGroup/it">Mesh group</a>, <a href="FEM_CreateNodesSet.html" title="FEM CreateNodesSet/it">Nodes set</a>, <a href="FEM_FemMesh2Mesh.html" title="FEM FemMesh2Mesh/it">Mesh to mesh</a></li></ul>
+<ul><li><b>Solve:</b> <a href="FEM_SolverCalculixCxxtools.html" title="FEM SolverCalculixCxxtools/it">CalculiX Standard</a>, <a href="FEM_SolverElmer.html" title="FEM SolverElmer/it">Elmer</a>, <a class="new" href="index.php?title=FEM_SolverMystran_it&amp;action=edit&amp;redlink=1.html" title="FEM SolverMystran/it (page does not exist)">Mystran</a>, <a href="FEM_SolverZ88.html" title="FEM SolverZ88/it">Z88</a>; <b>Equations:</b> <a class="new" href="index.php?title=FEM_EquationDeformation_it&amp;action=edit&amp;redlink=1.html" title="FEM EquationDeformation/it (page does not exist)">Deformation</a>, <a href="FEM_EquationElasticity.html" title="FEM EquationElasticity/it">Elasticity</a>, <a href="FEM_EquationElectrostatic.html" title="FEM EquationElectrostatic/it">Electrostatic</a>, <a class="new" href="index.php?title=FEM_EquationElectricforce_it&amp;action=edit&amp;redlink=1.html" title="FEM EquationElectricforce/it (page does not exist)">Electricforce</a>, <a class="new" href="index.php?title=FEM_EquationMagnetodynamic_it&amp;action=edit&amp;redlink=1.html" title="FEM EquationMagnetodynamic/it (page does not exist)">Magnetodynamic</a>, <a class="new" href="index.php?title=FEM_EquationMagnetodynamic2D_it&amp;action=edit&amp;redlink=1.html" title="FEM EquationMagnetodynamic2D/it (page does not exist)">Magnetodynamic 2D</a>, <a href="FEM_EquationFlow.html" title="FEM EquationFlow/it">Flow</a>, <a href="FEM_EquationFlux.html" title="FEM EquationFlux/it">Flux</a>, <a href="FEM_EquationHeat.html" title="FEM EquationHeat/it">Heat</a>; <b>Solver:</b> <a href="FEM_SolverControl.html" title="FEM SolverControl/it">Solver control</a>, <a href="FEM_SolverRun.html" title="FEM SolverRun/it">Solver run</a></li></ul>
+<ul><li><b>Results:</b> <a href="FEM_ResultsPurge.html" title="FEM ResultsPurge/it">Purge</a>, <a href="FEM_ResultShow.html" title="FEM ResultShow/it">Show</a>; <b>Postprocessing:</b> <a href="FEM_PostApplyChanges.html" title="FEM PostApplyChanges/it">Apply changes</a>, <a href="FEM_PostPipelineFromResult.html" title="FEM PostPipelineFromResult/it">Pipeline from result</a>, <a href="FEM_PostFilterWarp.html" title="FEM PostFilterWarp/it">Warp filter</a>, <a href="FEM_PostFilterClipScalar.html" title="FEM PostFilterClipScalar/it">Scalar clip filter</a>, <a href="FEM_PostFilterCutFunction.html" title="FEM PostFilterCutFunction/it">Function cut filter</a>, <a href="FEM_PostFilterClipRegion.html" title="FEM PostFilterClipRegion/it">Region clip filter</a>, <a class="new" href="index.php?title=FEM_PostFilterContours_it&amp;action=edit&amp;redlink=1.html" title="FEM PostFilterContours/it (page does not exist)">Contours filter</a>, <a href="FEM_PostFilterDataAlongLine.html" title="FEM PostFilterDataAlongLine/it">Line clip filter</a>, <a href="FEM_PostFilterLinearizedStresses.html" title="FEM PostFilterLinearizedStresses/it">Stress linearization plot</a>, <a href="FEM_PostFilterDataAtPoint.html" title="FEM PostFilterDataAtPoint/it">Data at point clip filter</a>, <a class="new" href="index.php?title=FEM_PostCreateFunctionPlane_it&amp;action=edit&amp;redlink=1.html" title="FEM PostCreateFunctionPlane/it (page does not exist)">Filter function plane</a>, <a class="new" href="index.php?title=FEM_PostCreateFunctionSphere_it&amp;action=edit&amp;redlink=1.html" title="FEM PostCreateFunctionSphere/it (page does not exist)">Filter function sphere</a>, <a class="new" href="index.php?title=FEM_PostCreateFunctionCylinder_it&amp;action=edit&amp;redlink=1.html" title="FEM PostCreateFunctionCylinder/it (page does not exist)">Filter function cylinder</a>, <a class="new" href="index.php?title=FEM_PostCreateFunctionBox_it&amp;action=edit&amp;redlink=1.html" title="FEM PostCreateFunctionBox/it (page does not exist)">Filter function box</a></li></ul>
+<ul><li><b>Utilities:</b> <a href="FEM_ClippingPlaneAdd.html" title="FEM ClippingPlaneAdd/it">Clipping plane</a>, <a href="FEM_ClippingPlaneRemoveAll.html" title="FEM ClippingPlaneRemoveAll/it">Remove clipping planes</a>, <a href="FEM_Examples.html" title="FEM Examples/it">Open FEM examples</a>; <a href="FEM_MeshClear.html" title="FEM MeshClear/it">Mesh clear</a>, <a href="FEM_MeshDisplayInfo.html" title="FEM MeshDisplayInfo/it">Mesh display info</a></li></ul>
+<hr/>
+<ul><li><b>Additional:</b> <a href="FEM_Preferences.html" title="FEM Preferences/it">Preferences</a>; <a href="FEM_Install.html" title="FEM Install/it">FEM Install</a>, <a href="FEM_Mesh.html" title="FEM Mesh/it">FEM Mesh</a>, <a href="FEM_Solver.html" title="FEM Solver/it">FEM Solver</a>, <a href="FEM_CalculiX.html" title="FEM CalculiX/it">FEM CalculiX</a>, <a href="FEM_Concrete.html" title="FEM Concrete/it">FEM Concrete</a>; <a href="FEM_Element_Types.html" title="FEM Element Types/it">FEM Element Types</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/User_hub.png"><img decoding="async" height="24" src="../File/User_hub.png" srcset="/images/thumb/9/94/User_hub.png/36px-User_hub.png 1.5x, /images/thumb/9/94/User_hub.png/48px-User_hub.png 2x" width="24"/></a></span> <a href="User_hub.html" title="User hub/it">User documentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started/it">Getting started</a></b></li>
+<li><b>Installation:</b> <a href="Download.html" title="Download/it">Download</a>, <a href="Installing_on_Windows.html" title="Installing on Windows/it">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux/it">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac/it">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components/it">Additional components</a>, <a href="Compile_on_Docker.html" title="Compile on Docker/it">Docker</a>, <a href="AppImage.html" title="AppImage/it">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap/it">Ubuntu Snap</a></li>
+<li><b>Basics:</b> <a href="About_FreeCAD.html" title="About FreeCAD/it">About FreeCAD</a>, <a href="Interface.html" title="Interface/it">Interface</a>, <a href="Mouse_navigation.html" title="Mouse navigation/it">Mouse navigation</a>, <a href="Selection_methods.html" title="Selection methods/it">Selection methods</a>, <a href="Object_name.html" title="Object name/it">Object name</a>, <a href="Preferences_Editor.html" title="Preferences Editor/it">Preferences</a>, <a href="Workbenches.html" title="Workbenches/it">Workbenches</a>, <a href="Document_structure.html" title="Document structure/it">Document structure</a>, <a href="Property.html" title="Property/it">Properties</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD/it">Help FreeCAD</a>, <a href="Donate.html" title="Donate/it">Donate</a></li></ul>
+<hr/>
+<ul><li><b>Help:</b> <a href="Tutorials.html" title="Tutorials/it">Tutorials</a>, <a href="Video_tutorials.html" title="Video tutorials/it">Video tutorials</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches/it">Workbenches</a>:</b> <a href="Std_Base.html" title="Std Base/it">Std Base</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench/it">Assembly</a>, <a href="BIM_Workbench.html" title="BIM Workbench/it">BIM</a>, <a href="CAM_Workbench.html" title="CAM Workbench/it">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench/it">Draft</a>, <a href="FEM_Workbench.html" title="FEM Workbench/it">FEM</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench/it">Inspection</a>, <a href="Material_Workbench.html" title="Material Workbench/it">Material</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench/it">Mesh</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench/it">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench/it">Part</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench/it">PartDesign</a>, <a href="Points_Workbench.html" title="Points Workbench/it">Points</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/it">Reverse Engineering</a>, <a href="Robot_Workbench.html" title="Robot Workbench/it">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench/it">Sketcher</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench/it">Spreadsheet</a>, <a href="Surface_Workbench.html" title="Surface Workbench/it">Surface</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench/it">TechDraw</a>, <a href="Testing.html" title="Testing/it">Test Framework</a></li></ul>
+<hr/>
+<ul><li><b><a href="Addon.html" title="Addon/it">Addons</a>:</b> <a href="Std_AddonMgr.html" title="Std AddonMgr/it">Addon Manager</a>, <a href="External_workbenches.html" title="External workbenches/it">External workbenches</a>, <a href="Scripting_and_macros.html" title="Scripting and macros/it">Scripting and macros</a></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub/it">User hub</a>, <a href="Power_users_hub.html" title="Power users hub/it">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub/it">Developer hub</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129210958
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.138 seconds
+Real time usage: 0.288 seconds
+Preprocessor visited node count: 376/1000000
+Post‐expand include size: 18232/2097152 bytes
+Template argument size: 6686/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 1502/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   21.910      1 -total
+ 31.00%    6.793      1 Template:FEM_Tools_navi/it
+ 27.21%    5.961      2 Template:Navigation_menu_2
+ 21.09%    4.621      1 Template:Userdocnavi/it
+ 18.90%    4.141      3 Template:KEY
+  8.11%    1.777      5 Template:MenuCommand
+  8.00%    1.752      1 Template:TutorialInfo/it
+  4.31%    0.944      5 Template:Incode
+  3.73%    0.817      2 Template:Button
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:183843-0!canonical and timestamp 20241129210957 and revision id 1342684. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

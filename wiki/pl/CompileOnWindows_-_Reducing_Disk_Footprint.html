@@ -1,0 +1,178 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">CompileOnWindows - Reducing Disk Footprint/pl</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="CompileOnWindows_-_Reducing_Disk_Footprint.html" lang="en" title="CompileOnWindows - Reducing Disk Footprint (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="CompileOnWindows_-_Reducing_Disk_Footprint.html" lang="fr" title="Compiler sous Windows - Réduire l'espace disque (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="CompileOnWindows_-_Reducing_Disk_Footprint.html" lang="it" title="Compilare in Windows - Occupare meno spazio (3% translated)">italiano</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="pl">polski</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="CompileOnWindows_-_Reducing_Disk_Footprint.html" lang="pt-BR" title="CompileOnWindows - Reduzindo o espaço ocupado pelo disco (3% translated)">português do Brasil</a></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Ustawianie_kompilatora_MSVC2013_bez_instalowania_Visual_Studio"><span class="tocnumber">1</span> <span class="toctext">Ustawianie kompilatora MSVC2013 bez instalowania Visual Studio</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Pobieranie_kompilatora"><span class="tocnumber">1.1</span> <span class="toctext">Pobieranie kompilatora</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#Kompilator_w_Qt_Creator"><span class="tocnumber">1.2</span> <span class="toctext">Kompilator w Qt Creator</span></a>
+<ul>
+<li class="toclevel-3 tocsection-4"><a href="#32-bit"><span class="tocnumber">1.2.1</span> <span class="toctext">32-bit</span></a></li>
+<li class="toclevel-3 tocsection-5"><a href="#64-bit"><span class="tocnumber">1.2.2</span> <span class="toctext">64-bit</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-6"><a href="#Testowanie_kompilatora_i_kompilacja_FreeCAD"><span class="tocnumber">1.3</span> <span class="toctext">Testowanie kompilatora i kompilacja FreeCAD</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-7"><a href="#Unikanie_kopiowania_jakichkolwiek_plików_libpack_w_celu_uruchomienia_FreeCAD"><span class="tocnumber">2</span> <span class="toctext">Unikanie kopiowania jakichkolwiek plików libpack w celu uruchomienia FreeCAD</span></a></li>
+</ul>
+</div>
+</div>
+<p>Oto techniki zmniejszania przestrzeni dyskowej wymaganej do budowania FreeCAD w systemie Windows. Poradnik ten może być przydatny dla tych, którzy mają ograniczoną przestrzeń dyskową <i>(na przykład z powodu dysku SSD)</i> oraz dla tych, którzy chcą uniknąć instalowania pełnego Visual Studio.
+</p><p>Zaleca się, aby przed podjęciem tej próby poznać w praktyce sposób <a href="Compile_on_Windows.html" title="Compile on Windows/pl">kompilacji w Windows</a> z Qt Creator.
+</p><p><span id="Setting_up_MSVC2013_compiler_without_installing_Visual_Studio"></span>
+</p>
+<h2><span class="mw-headline" id="Ustawianie_kompilatora_MSVC2013_bez_instalowania_Visual_Studio">Ustawianie kompilatora MSVC2013 bez instalowania Visual Studio</span></h2>
+<p>Wymagania:
+</p>
+<ul><li>inny komputer, na którym jest / może być zainstalowane kompletne Visual Studio <i>(teoretycznie można to osiągnąć rozpakowując instalatory VS, ale nie ma tutaj wskazówek na ten temat)</i>.</li></ul>
+<p><span id="Getting_the_compiler"></span>
+</p>
+<h3><span class="mw-headline" id="Pobieranie_kompilatora">Pobieranie kompilatora</span></h3>
+<p>0. Aby uzyskać pliki kompilatora, należy przejść do innego komputera i zlokalizować rzeczywisty kompilator. Przykładowa ścieżka do kompilatora: drive:\path\to\visual\studio\VC\bin.
+</p><p>1. Skopiuj pliki binarne kompilatora i standardowe biblioteki na inny komputer. To znaczy, skopiuj następujące foldery do C:\Qt\msvc12rip:
+</p>
+<ul><li>drive:\path\to\visual\studio\VC\<i>bin</i></li>
+<li>drive:\path\to\visual\studio\VC\<i>lib</i></li>
+<li>drive:\path\to\visual\studio\VC\<i>include</i></li></ul>
+<p>2. Zainstaluj <a class="external text" href="https://developer.microsoft.com/en-us/windows/downloads/sdk-archive/" rel="nofollow">Windows SDK</a>. Dla tych, którzy nie wiedzą, jest to zestaw nagłówków, bibliotek i narzędzi do kompilacji programów Windows. Zwróć uwagę, gdzie jest zainstalowany. Przykładowa ścieżka: C:\Program Files (x86)\Windows Kits\8.1
+</p><p>3. Zainstaluj CMake i Qt Creator <i>(tylko kreator, tj. środowisko, a nie rzeczywiste Qt, aby zaoszczędzić miejsce)</i>.
+</p><p>4. Skonfiguruj niestandardowy kompilator w Qt Creator. Czytaj dalej, aby dowiedzieć się jak to zrobić.
+</p><p><span id="Compiler_in_Qt_Creator"></span>
+</p>
+<h3><span class="mw-headline" id="Kompilator_w_Qt_Creator">Kompilator w Qt Creator</span></h3>
+<h4><span class="mw-headline" id="32-bit">32-bit</span></h4>
+<p>Ustawienie kompilatora na wersję 32-bitową jest dość proste.
+</p><p>4.1. Skonfiguruj kompilator w zakładce Kompilatory w ustawieniach: Dodaj <b>niestandardowy</b> kompilator:
+</p>
+<ul><li>Nazwa = msvcrip <i>(nazwa nie ma znaczenia, zależy od Ciebie)</i>,</li>
+<li>Ścieżka kompilatora: C:\Qt\msvc12rip\VC\bin\cl.exe</li>
+<li>Ścieżka Make: C:\Qt\msvc12rip\VC\bin\nmake.exe</li>
+<li>ABI: x86-windows-msvc2013-pe-32bit</li>
+<li>Ścieżki nagłówków - nic,</li>
+<li>Parser błędów: MSVC.</li></ul>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/Msvc-no-vs_compiler-setup-32.png"><img decoding="async" height="353" src="../File/Msvc-no-vs_compiler-setup-32.png" srcset="/images/thumb/5/52/Msvc-no-vs_compiler-setup-32.png/900px-Msvc-no-vs_compiler-setup-32.png 1.5x, /images/thumb/5/52/Msvc-no-vs_compiler-setup-32.png/1200px-Msvc-no-vs_compiler-setup-32.png 2x" width="600"/></a></span>
+</p><p>4.2. W zakładce zestawy dodałem zestaw i skonfigurowałem go w następujący sposób:
+</p>
+<ul><li>Nazwa: FreeCAD32 <i>(znów do wyboru)</i>,</li>
+<li>Typ urządzenia: Desktop,</li>
+<li>Urządzenie: Lokalny PC,</li>
+<li>Kompilator: msvcrip <i>(lub jakkolwiek go nazwałeś w kroku 1)</i>,</li>
+<li>Środowisko: <i>(popraw ścieżki do swojej konfiguracji)</i>.</li></ul>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">INCLUDE</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">Program</span> <span class="n">Files</span> <span class="p">(</span><span class="n">x86</span><span class="p">)</span>\<span class="n">Windows</span> <span class="n">Kits</span>\<span class="mf">8.1</span>\<span class="n">Include</span>\<span class="n">um</span>\<span class="p">;</span><span class="n">C</span><span class="p">:</span>\<span class="n">Qt</span>\<span class="n">msvc12rip</span>\<span class="n">VC</span>\<span class="n">include</span>\
+<span class="n">LIB</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">Qt</span>\<span class="n">msvc12rip</span>\<span class="n">VC</span>\<span class="n">lib</span>\<span class="p">;</span><span class="n">C</span><span class="p">:</span>\<span class="n">Program</span> <span class="n">Files</span> <span class="p">(</span><span class="n">x86</span><span class="p">)</span>\<span class="n">Windows</span> <span class="n">Kits</span>\<span class="mf">8.1</span>\<span class="n">Lib</span>\<span class="n">winv6</span><span class="mf">.3</span>\<span class="n">um</span>\<span class="n">x86</span>\
+<span class="n">LIBPATH</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">Qt</span>\<span class="n">msvc12rip</span>\<span class="n">VC</span>\<span class="n">lib</span>\<span class="p">;</span><span class="n">C</span><span class="p">:</span>\<span class="n">Program</span> <span class="n">Files</span> <span class="p">(</span><span class="n">x86</span><span class="p">)</span>\<span class="n">Windows</span> <span class="n">Kits</span>\<span class="mf">8.1</span>\<span class="n">Lib</span>\<span class="n">winv6</span><span class="mf">.3</span>\<span class="n">um</span>\<span class="n">x86</span>\
+<span class="n">PATH</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">Qt</span>\<span class="n">msvc12rip</span>\<span class="n">VC</span>\<span class="nb">bin</span>\<span class="p">;</span><span class="n">C</span><span class="p">:</span>\<span class="n">Program</span> <span class="n">Files</span> <span class="p">(</span><span class="n">x86</span><span class="p">)</span>\<span class="n">Windows</span> <span class="n">Kits</span>\<span class="mf">8.1</span>\<span class="nb">bin</span>\<span class="n">x86</span>\<span class="p">;</span><span class="n">C</span><span class="p">:</span>\<span class="n">Qt</span>\<span class="n">git</span>\<span class="nb">bin</span>\
+</pre></div>
+<p>Zwróć uwagę na ścieżkę do git.exe w PATH. Jest to opcjonalne, ale jeśli nie zostanie określone, informacje o wersji będą niekompletne w "O programie" FreeCAD.
+</p>
+<ul><li>Debugger: <i>(opcjonalnie)</i> ustawiony na 32-bitowy (x86),</li>
+<li>Wersja Qt: Brak.</li></ul>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/Msvc-no-vs_kit-setup-32.png"><img decoding="async" height="400" src="../File/Msvc-no-vs_kit-setup-32.png" srcset="/images/thumb/a/a0/Msvc-no-vs_kit-setup-32.png/900px-Msvc-no-vs_kit-setup-32.png 1.5x, /images/thumb/a/a0/Msvc-no-vs_kit-setup-32.png/1200px-Msvc-no-vs_kit-setup-32.png 2x" width="600"/></a></span>
+</p><p>Najwięcej problemów sprawiła mi konfiguracja części środowiskowej ustawień.
+</p>
+<h4><span class="mw-headline" id="64-bit">64-bit</span></h4>
+<p>Jest to nieco bardziej skomplikowane niż w przypadku kompilatora 32-bitowego. Głównym problemem było to, że nie ma pliku wykonywalnego nmake w C:\Qt\msvc12rip\VC\bin\<i>x86_amd64</i>, a nmake ciągle używa 32-bitowego kompilatora. Aby przeciwdziałać temu problemowi, należy utworzyć specjalny folder "C:\Qt\msvc12rip\VC\bin\<i>x86_amd64_sa</i>", w którym połączone są mnake i 64-bitowy cl. Czytaj dalej, aby uzyskać instrukcje krok po kroku.
+</p><p>4.1. w C:\Qt\msvc12rip\VC\bin, utwórz folder o nazwie <b>x86_amd64_sa</b> <i>(sa oznacza Stand-Alone, użyj dowolnej nazwy)</i>.
+</p><p>4.2. skopiuj zawartość folderu C:\Qt\msvc12rip\VC\bin do folderu x86_amd64_sa <i>(teraz masz tam 32-bitowy kompilator)</i>.
+</p><p>4.3. Skopiuj zawartość folderu x86_amd64 do x86_amd64_sa, zastępując przy tym pliki. Teraz masz 64-bitowy kompilator z nmake.
+</p><p>4.4. Skonfiguruj kompilator w zakładce Kompilatory w ustawieniach: Dodaj <b>niestandardowy</b> kompilator:
+</p>
+<ul><li>Nazwa = msvcrip'<i>64</i> <i>(nazwa nie ma znaczenia, zależy od Ciebie)</i>,</li>
+<li>Ścieżka kompilatora: C:\Qt\msvc12rip\VC\bin\x86_amd64_sa\cl.exe</li>
+<li>Ścieżka Make: C:\Qt\msvc12rip\VC\bin\x86_amd64_sa\nmake.exe</li>
+<li>ABI: x86-windows-msvc2013-pe-<b>64bit</b>,</li>
+<li>Ścieżki nagłówka - nic,</li>
+<li>Parser błędów: MSVC.</li></ul>
+<p>4.5. W zakładce zestawy dodaj zestaw i skonfiguruj go w następujący sposób:
+</p>
+<ul><li>Nazwa: FreeCAD'<i>64</i> <i>(ponownie, zależy od Ciebie)</i>,</li>
+<li>Typ urządzenia: Desktop,</li>
+<li>Urządzenie: Lokalny PC,</li>
+<li>Kompilator: msvcrip'<i>64</i> <i>(lub jakkolwiek go nazwałeś w kroku 4.4)</i>,</li>
+<li>Środowisko: <i>(popraw ścieżki do swojej konfiguracji)</i> <i>(w porównaniu do 32-bitowego, amd64/x64 pojawiło się lub zastąpiło x86 w kilku miejscach)</i>.</li></ul>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">INCLUDE</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">Program</span> <span class="n">Files</span> <span class="p">(</span><span class="n">x86</span><span class="p">)</span>\<span class="n">Windows</span> <span class="n">Kits</span>\<span class="mf">8.1</span>\<span class="n">include</span>\<span class="n">shared</span>\<span class="p">;</span><span class="n">C</span><span class="p">:</span>\<span class="n">Program</span> <span class="n">Files</span> <span class="p">(</span><span class="n">x86</span><span class="p">)</span>\<span class="n">Windows</span> <span class="n">Kits</span>\<span class="mf">8.1</span>\<span class="n">include</span>\<span class="n">um</span>\<span class="p">;</span><span class="n">C</span><span class="p">:</span>\<span class="n">Qt</span>\<span class="n">msvc12rip</span>\<span class="n">VC</span>\<span class="n">include</span>
+<span class="n">LIB</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">Program</span> <span class="n">Files</span> <span class="p">(</span><span class="n">x86</span><span class="p">)</span>\<span class="n">Windows</span> <span class="n">Kits</span>\<span class="mf">8.1</span>\<span class="n">lib</span>\<span class="n">winv6</span><span class="mf">.3</span>\<span class="n">um</span>\<span class="n">x64</span>\<span class="p">;</span><span class="n">C</span><span class="p">:</span>\<span class="n">Qt</span>\<span class="n">msvc12rip</span>\<span class="n">VC</span>\<span class="n">lib</span>\<span class="n">amd64</span>\
+<span class="n">LIBPATH</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">Program</span> <span class="n">Files</span> <span class="p">(</span><span class="n">x86</span><span class="p">)</span>\<span class="n">Windows</span> <span class="n">Kits</span>\<span class="mf">8.1</span>\<span class="n">References</span>\<span class="n">CommonConfiguration</span>\<span class="n">Neutral</span>\
+<span class="n">PATH</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">Qt</span>\<span class="n">msvc12rip</span>\<span class="n">VC</span>\<span class="nb">bin</span>\<span class="n">x86_amd64_sa</span>\<span class="p">;</span><span class="n">C</span><span class="p">:</span>\<span class="n">Program</span> <span class="n">Files</span> <span class="p">(</span><span class="n">x86</span><span class="p">)</span>\<span class="n">Windows</span> <span class="n">Kits</span>\<span class="mf">8.1</span>\<span class="nb">bin</span>\<span class="n">x64</span>\<span class="p">;</span><span class="n">C</span><span class="p">:</span>\<span class="n">Qt</span>\<span class="n">git</span>\<span class="nb">bin</span>\
+</pre></div>
+<p>Zwróć uwagę na ścieżkę do git.exe w PATH. Jest to opcjonalne, ale jeśli nie zostanie określone, informacje o wersji będą niekompletne w "O programie" FreeCAD.
+</p>
+<ul><li>Debugger: <i>(opcjonalnie)</i> ustawiony na <b>64</b>-bit (x64),</li>
+<li>Wersja Qt: Brak.</li></ul>
+<p>Wskazówka: skonfiguruj inną parę zestaw+kompilator do używania jom zamiast nmake, aby umożliwić kompilację wielordzeniową. Konfiguracja jest identyczna z 64-bitową z nmake, z wyjątkiem tego, że Make w zakładce kompilatora powinien wskazywać na jom.exe. Przykładowa ścieżka do jom: C:\Qt\Qt542\Tools\QtCreator\bin\jom.exe <i>(powinieneś być w stanie znaleźć jom w lokalizacji, w którym zainstalowany jest twój Qt creator)</i>.
+</p><p>Cała reszta jest identyczna z normalnym sposobem kompilacji FreeCAD.
+</p><p><span id="Testing_compiler_and_building_FreeCAD"></span>
+</p>
+<h3><span class="mw-headline" id="Testowanie_kompilatora_i_kompilacja_FreeCAD">Testowanie kompilatora i kompilacja FreeCAD</span></h3>
+<p>Wymagania:
+</p>
+<ul><li>Kod źródłowy FreeCAD <i>(patrz <a href="Compile_on_Windows.html" title="Compile on Windows/pl">Kompilacja w Windows</a>)</i>.</li>
+<li>Poprawny libpack, wyodrębniony. <i>("poprawny" oznacza, że musi pasować do kompilatora i bit-ness)</i> <i>(patrz <a href="Compile_on_Windows.html" title="Compile on Windows/pl">Kompilacja w Windows</a>)</i>.</li></ul>
+<p>Utuchom FreeCAD (CMakeLists.txt) za pomocą Qt creatora, a on zaprosi Cię do uruchomienia cmake. Uruchom go. <b>CMake zbuduje program testowy, aby sprawdzić, czy kompilator działa</b>. Jeśli kompilator nie działa, zostanie wyświetlony błąd informujący o tym i zawierający listę danych wyjściowych kompilacji. Dane wyjściowe kompilacji powinny pomóc zidentyfikować, co idzie nie tak. Oto mała lista typowych błędów:
+</p>
+<ul><li><i>Can't open Kernel32.lib</i> - coś jest nie tak ze zmiennymi środowiskowymi LIB lub LIBPATH (uwaga: ustawia się je w zakładce kits w Qt, nie w Windowsie!).</li>
+<li><i>Can't resolve external symbol</i> - coś jest nie tak z LIB lub LIBPATH <i>(prawdopodobnie wskazują na .lib-s o niewłaściwej bitowości)</i>.</li>
+<li><i>Manifest-related error</i> - PATH nie wskazuje na lokalizację, w której znajduje się kompilator zasobów (rc.exe) o odpowiedniej bitowości.</li>
+<li><i>Can't locate include</i> - lista lokalizacji include powinna zawierać ścieżkę do standardowych nagłówków <i>(C:\Qt\msvc12rip\VC\include na moim komputerze)</i>.</li></ul>
+<p>Aby uruchomić FreeCAD skompilowany z typem "Debug", debugowane wersje redystrybucyjnych bibliotek MSVC2013 <i>(msvcp120d.dll, msvcr120d.dll)</i> muszą być obecne gdzieś, gdzie można uzyskać dostęp za pośrednictwem PATH <i>(tym razem w całym systemie</i>).
+</p><p>Możesz uzyskać te pliki dll z drugiego komputera, na którym znajduje się Visual Studio, z którego pobrałeś kompilator. Alternatywnie, te pliki dll można wyodrębnić bezpośrednio z instalatora Visual Studio, co jest bardzo proste:
+</p>
+<ul><li>zamontować pobrany obraz .iso jako dysk (dysk D: w moim systemie)</li>
+<li>zlokalizować pliki:
+<ul><li>D:\packages\vc_librarycore86\cab3.cab/F_REDIST_DLL_APPLOCAL_<b>msvcp120d_x64</b> <i>(← lub x86, jeśli budujesz 32-bit)</i></li>
+<li>D:\packages\vc_librarycore86\cab3.cab/F_REDIST_DLL_APPLOCAL_<i>msvcr120d_x64</i></li></ul></li>
+<li>rozpakuj pliki i nazwij je "msvcp120d.dll", "msvcr120d.dll"</li>
+<li>skopiuj pliki do folderu libpack, do bin</li></ul>
+<p><span id="Avoiding_copying_any_libpack_files_to_launch_FreeCAD"></span>
+</p>
+<h2><span id="Unikanie_kopiowania_jakichkolwiek_plik.C3.B3w_libpack_w_celu_uruchomienia_FreeCAD"></span><span class="mw-headline" id="Unikanie_kopiowania_jakichkolwiek_plików_libpack_w_celu_uruchomienia_FreeCAD">Unikanie kopiowania jakichkolwiek plików libpack w celu uruchomienia FreeCAD</span></h2>
+<p>Wymagania:
+</p>
+<ul><li>Windows Vista i nowsze.</li>
+<li>System plików NTFS <i>(? może nie...)</i>.</li></ul>
+<p>Idea jest bardzo prosta: zamiast kopiować pliki - utwórz linki. W systemie Windows dostępne są do tego celu dowiązania symboliczne. Dowiązanie sprawia, że linkowany plik wydaje się być tam, gdzie jest dowiązanie, ale plik jest faktycznie przechowywany gdzie indziej. Linki można tworzyć za pomocą polecenia wsadowego <b><a class="external text" href="https://technet.microsoft.com/en-us/library/cc753194(v=ws.10).aspx" rel="nofollow">mklink</a></b>.
+</p><p>Ponieważ istnieje zbyt wiele plików, aby tworzyć linki ręcznie, należy użyć skryptu wsadowego. Oto przykład takiego skryptu:
+</p><p>links_libpack.bat:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nd">@set</span> <span class="n">libpackpath</span><span class="o">=</span><span class="n">C</span><span class="p">:</span>\<span class="n">_vt</span>\<span class="n">dev</span>\<span class="n">PC</span>\<span class="n">Qt</span>\<span class="n">FreeCAD</span>\<span class="n">libpack</span>\<span class="n">active</span>
+<span class="nd">@set</span> <span class="n">builddir</span><span class="o">=%</span><span class="mi">1</span>
+<span class="n">pushd</span> <span class="o">%</span><span class="n">libpackpath</span><span class="o">%</span>\<span class="nb">bin</span>
+<span class="k">for</span> <span class="o">%%</span><span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="n">do</span> <span class="n">mklink</span> <span class="s2">"%builddir%</span><span class="se">\b</span><span class="s2">in\</span><span class="si">%%</span><span class="s2">i"</span> <span class="s2">"</span><span class="si">%li</span><span class="s2">bpackpath%</span><span class="se">\b</span><span class="s2">in\</span><span class="si">%%</span><span class="s2">i"</span>
+<span class="k">for</span> <span class="o">/</span><span class="n">D</span> <span class="o">%%</span><span class="n">s</span> <span class="ow">in</span> <span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="n">do</span> <span class="n">mklink</span> <span class="o">/</span><span class="n">d</span> <span class="s2">"%builddir%</span><span class="se">\b</span><span class="s2">in\</span><span class="si">%%</span><span class="s2">s"</span> <span class="s2">"</span><span class="si">%li</span><span class="s2">bpackpath%</span><span class="se">\b</span><span class="s2">in\</span><span class="si">%%</span><span class="s2">s"</span>
+<span class="n">popd</span>
+<span class="n">pause</span>
+</pre></div>
+<p>Pierwsza pętla for tworzy linki do plików, druga pętla - linki do folderów.<br/>
+Będziesz musiał zmodyfikować ścieżkę do libpack, aby pasowała do twojej. Używaj ścieżek bezwzględnych. Następnie podaj ścieżkę folderu kompilacji FreeCAD <i>(pełną ścieżkę!)</i> do skryptu jako argument. 
+</p><p>Ta partia musi być uruchomiona z uprawnieniami administratora <i>(lub można ustawić zezwolenie użytkownikom na korzystanie z mklink w lokalnych ustawieniach zasad bezpieczeństwa w systemie Windows)</i>. Partia może się nie powieść, jeśli w ścieżkach znajdują się spacje <i>(może działać, ale nie zostało to przetestowane)</i>. Wskazówka: utwórz skrót do pliku links_libpack.bat, skonfiguruj go do uruchamiania jako administrator <i>(we właściwościach skrótu)</i> i przeciągnij folder kompilacji na skrót.
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20241129211852
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.061 seconds
+Real time usage: 0.428 seconds
+Preprocessor visited node count: 78/1000000
+Post‐expand include size: 381/2097152 bytes
+Template argument size: 1044/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 3/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 8930/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  344.421      1 -total
+ 98.96%  340.844      3 Template:Code
+  0.93%    3.204      1 Template:TOCright
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:275716-0!canonical and timestamp 20241129211852 and revision id 1477439. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

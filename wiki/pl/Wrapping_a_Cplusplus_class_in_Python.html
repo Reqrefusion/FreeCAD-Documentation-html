@@ -1,0 +1,188 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Wrapping a Cplusplus class in Python/pl</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Wrapping_a_Cplusplus_class_in_Python.html" lang="de" title="Eine Cplusplus Klasse in Python einbinden (8% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Wrapping_a_Cplusplus_class_in_Python.html" lang="en" title="Wrapping a Cplusplus class in Python (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Wrapping_a_Cplusplus_class_in_Python.html" lang="fr" title="Encapsuler une classe Cplusplus dans Python (100% translated)">français</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="pl">polski</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Wrapping_a_Cplusplus_class_in_Python.html" lang="pt-BR" title="Envolvendo uma classe C++ em Python (4% translated)">português do Brasil</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Wrapping_a_Cplusplus_class_in_Python.html" lang="ru" title="Обертывание C++ класса в Python (21% translated)">русский</a></li></ul></div>
+<div id="itsfree" style="text-align:center;color:black;background:#FDE0A8;margin:1em 7em;padding:0.5em 2em;border:2px solid #FF5706;">Ten artykuł to jedynie zalążek. Prosimy o uzupełnienie wiedzy!</div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Kontekst"><span class="tocnumber">1</span> <span class="toctext">Kontekst</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Opis_klasy_Plik_XML"><span class="tocnumber">2</span> <span class="toctext">Opis klasy Plik XML</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Implementacja_pliku_Cplusplus"><span class="tocnumber">3</span> <span class="toctext">Implementacja pliku Cplusplus</span></a>
+<ul>
+<li class="toclevel-2 tocsection-4"><a href="#Dołączanie_plików"><span class="tocnumber">3.1</span> <span class="toctext">Dołączanie plików</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Konstruktor"><span class="tocnumber">3.2</span> <span class="toctext">Konstruktor</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-6"><a href="#Odnośniki_internetowe"><span class="tocnumber">4</span> <span class="toctext">Odnośniki internetowe</span></a></li>
+</ul>
+</div>
+</div>
+<p><span id="Background"></span>
+</p>
+<h2><span class="mw-headline" id="Kontekst">Kontekst</span></h2>
+<p>FreeCAD używa niestandardowego systemu opartego na XML do tworzenia opakowania Pythona dla klasy C++. Aby opakować klasę C++ do użytku w środowisku Python, należy ręcznie utworzyć dwa pliki, a dwa pliki są automatycznie generowane przez system kompilacji CMake <i>(oprócz plików nagłówkowych i implementacyjnych C++ dla klasy)</i>.
+</p><p>Musisz utworzyć:
+</p>
+<ul><li><code>[YourClass]Py.xml</code></li>
+<li><code>[YourClass]PyImp.cpp</code>.</li></ul>
+<p>Edytuj odpowiedni plik <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">CMakeLists.txt</span>, aby dodać odniesienia do tych dwóch plików. Z pliku XML system kompilacji utworzy następnie:
+</p>
+<ul><li><code>[YourClass]Py.cpp</code></li>
+<li><code>[YourClass]Py.h</code>.</li></ul>
+<p><span id="Class_Description_XML_File"></span>
+</p>
+<h2><span class="mw-headline" id="Opis_klasy_Plik_XML">Opis klasy Plik XML</span></h2>
+<p>Plik XML <code>[YourClass]Py.xml</code> zawiera informacje o funkcjach i atrybutach, które implementuje klasa Python, a także dokumentację użytkownika dla tych elementów, która wyświetla się w <a href="Python_console.html" title="Python console/pl">konsoli FreeCAD</a>.
+</p><p>W tym przykładzie przyjrzymy się wrapperowi dla klasy Axis C++. Plik opisu XML zaczyna się od:
+</p>
+<div class="mw-highlight mw-highlight-lang-xml mw-content-ltr" dir="ltr"><pre><span></span><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;GenerateModel</span> <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span> <span class="na">xsi:noNamespaceSchemaLocation=</span><span class="s">"generateMetaModel_Module.xsd"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;PythonExport</span>
+        <span class="na">Father=</span><span class="s">"PyObjectBase"</span>
+        <span class="na">Name=</span><span class="s">"AxisPy"</span>
+        <span class="na">Twin=</span><span class="s">"Axis"</span>
+        <span class="na">TwinPointer=</span><span class="s">"Axis"</span>
+        <span class="na">Include=</span><span class="s">"Base/Axis.h"</span>
+        <span class="na">FatherInclude=</span><span class="s">"Base/PyObjectBase.h"</span>
+        <span class="na">Namespace=</span><span class="s">"Base"</span>
+        <span class="na">Constructor=</span><span class="s">"true"</span>
+        <span class="na">Delete=</span><span class="s">"true"</span>
+        <span class="na">FatherNamespace=</span><span class="s">"Base"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Documentation&gt;</span>
+        <span class="nt">&lt;Author</span> <span class="na">Licence=</span><span class="s">"LGPL"</span> <span class="na">Name=</span><span class="s">"Juergen Riegel"</span> <span class="na">EMail=</span><span class="s">"FreeCAD@juergen-riegel.net"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;UserDocu&gt;</span>User documentation here
+        <span class="nt">&lt;/UserDocu&gt;</span>
+        <span class="nt">&lt;DeveloperDocu&gt;</span>Developer documentation here<span class="nt">&lt;/DeveloperDocu&gt;</span>
+    <span class="nt">&lt;/Documentation&gt;</span>
+</pre></div>
+<p>Po tej preambule podana jest lista metod i atrybutów. Format metody jest następujący:
+</p>
+<div class="mw-highlight mw-highlight-lang-xml mw-content-ltr" dir="ltr"><pre><span></span><span class="nt">&lt;Methode</span> <span class="na">Name=</span><span class="s">"move"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Documentation&gt;</span>
+        <span class="nt">&lt;UserDocu&gt;</span>
+        move(Vector)
+        Move the axis base along the vector
+        <span class="nt">&lt;/UserDocu&gt;</span>
+    <span class="nt">&lt;/Documentation&gt;</span>
+<span class="nt">&lt;/Methode&gt;</span>
+</pre></div>
+<p>Format atrybutu jest następujący:
+</p>
+<div class="mw-highlight mw-highlight-lang-xml mw-content-ltr" dir="ltr"><pre><span></span><span class="nt">&lt;Attribute</span> <span class="na">Name=</span><span class="s">"Direction"</span> <span class="na">ReadOnly=</span><span class="s">"false"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;Documentation&gt;</span>
+        <span class="nt">&lt;UserDocu&gt;</span>Direction vector of the Axis<span class="nt">&lt;/UserDocu&gt;</span>
+    <span class="nt">&lt;/Documentation&gt;</span>
+    <span class="nt">&lt;Parameter</span> <span class="na">Name=</span><span class="s">"Direction"</span> <span class="na">Type=</span><span class="s">"Object"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/Attribute&gt;</span>
+</pre></div>
+<p>W przypadku atrybutu, jeśli "ReadOnly" ma wartość false, należy podać zarówno funkcję pobierającą, jak i ustawiającą. Jeśli natomiast ma wartość true, dozwolona jest tylko funkcja getter. W tym przypadku będziemy musieli dostarczyć dwie funkcje w pliku implementacji C++:
+</p>
+<div class="mw-highlight mw-highlight-lang-cpp mw-content-ltr" dir="ltr"><pre><span></span><span class="n">Py</span><span class="o">::</span><span class="n">Object</span><span class="w"> </span><span class="n">AxisPy</span><span class="o">::</span><span class="n">getDirection</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</pre></div>
+<p>oraz:
+</p>
+<div class="mw-highlight mw-highlight-lang-cpp mw-content-ltr" dir="ltr"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="n">AxisPy</span><span class="o">::</span><span class="n">setDirection</span><span class="p">(</span><span class="n">Py</span><span class="o">::</span><span class="n">Object</span><span class="w"> </span><span class="n">arg</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+<p><span id="Implementation_Cplusplus_File"></span>
+</p>
+<h2><span class="mw-headline" id="Implementacja_pliku_Cplusplus">Implementacja pliku Cplusplus</span></h2>
+<p>Plik implementacji C++ <code>[YourClass]PyImp.cpp</code> zapewnia "klej", który łączy ze sobą struktury C++ i Python, skutecznie tłumacząc z jednego języka na drugi. System FreeCAD C++-to-Python zapewnia szereg klas C++, które mapują się na odpowiadające im typy Pythona. Najbardziej podstawową z nich jest klasa <code>Py::Object</code> - rzadko tworzona bezpośrednio, klasa ta stanowi podstawę drzewa dziedziczenia i jest używana jako typ zwracany dla każdej funkcji zwracającej dane z języka Python.
+</p><p><span id="Include_Files"></span>
+</p>
+<h3><span id="Do.C5.82.C4.85czanie_plik.C3.B3w"></span><span class="mw-headline" id="Dołączanie_plików">Dołączanie plików</span></h3>
+<p>Twój plik implementacyjny C++ będzie zawierać następujące pliki:
+</p>
+<div class="mw-highlight mw-highlight-lang-cpp mw-content-ltr" dir="ltr"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"PreCompiled.h"</span><span class="cp"></span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"[YourClass].h"</span><span class="cp"></span>
+
+<span class="c1">// Inclusion of the generated files (generated out of [YourClass]Py.xml)</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"[YourClass]Py.h"</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">"[YourClass]Py.cpp"</span><span class="cp"></span>
+</pre></div>
+<p>Oczywiście można dołączyć wszelkie inne nagłówki C++, których kod wymaga do działania.
+</p><p><span id="Constructor"></span>
+</p>
+<h3><span class="mw-headline" id="Konstruktor">Konstruktor</span></h3>
+<p>Twoja implementacja C++ musi zawierać definicję funkcji PyInit: na przykład dla wrappera klasy Axis jest to:
+</p>
+<div class="mw-highlight mw-highlight-lang-cpp mw-content-ltr" dir="ltr"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">AxisPy</span><span class="o">::</span><span class="n">PyInit</span><span class="p">(</span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="cm">/*kwd*/</span><span class="p">)</span><span class="w"></span>
+</pre></div>
+<p>W ramach tej funkcji najprawdopodobniej będziesz musiał przeanalizować argumenty przychodzące do konstruktora: najważniejszą funkcją do tego celu jest dostarczona przez środowisko Python <code>PyArg_ParseTuple</code>. Przyjmuje ona przekazaną listę argumentów, deskryptor oczekiwanych argumentów, które powinna przeanalizować, oraz informacje o typie i lokalizacje przechowywania przeanalizowanych wyników. Na przykład:
+</p>
+<div class="mw-highlight mw-highlight-lang-cpp mw-content-ltr" dir="ltr"><pre><span></span><span class="n">PyObject</span><span class="o">*</span><span class="w"> </span><span class="n">d</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">PyArg_ParseTuple</span><span class="p">(</span><span class="n">args</span><span class="p">,</span><span class="w"> </span><span class="s">"O!O"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">(</span><span class="n">Base</span><span class="o">::</span><span class="n">VectorPy</span><span class="o">::</span><span class="n">Type</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">o</span><span class="p">,</span><span class="w"></span>
+<span class="w">                                      </span><span class="o">&amp;</span><span class="p">(</span><span class="n">Base</span><span class="o">::</span><span class="n">VectorPy</span><span class="o">::</span><span class="n">Type</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">d</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="c1">// NOTE: The first parameter defines the base (origin) and the second the direction.</span>
+<span class="w">        </span><span class="o">*</span><span class="n">getAxisPtr</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Base</span><span class="o">::</span><span class="n">Axis</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Base</span><span class="o">::</span><span class="n">VectorPy</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">(),</span><span class="w"></span>
+<span class="w">                                   </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="n">Base</span><span class="o">::</span><span class="n">VectorPy</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">());</span><span class="w"></span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+</pre></div>
+<p>Pełna lista specyfikatorów formatu znajduje się na stronie <a class="external text" href="https://docs.python.org/3/c-api/arg.html" rel="nofollow">dokumentacja Python C API</a>. Należy pamiętać, że zdefiniowano również kilka powiązanych funkcji, które pozwalają na użycie słów kluczowych itp. Kompletny zestaw to:
+</p>
+<div class="mw-highlight mw-highlight-lang-cpp mw-content-ltr" dir="ltr"><pre><span></span><span class="n">PyAPI_FUNC</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="n">PyArg_Parse</span><span class="w"> </span><span class="p">(</span><span class="n">PyObject</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span><span class="w"></span>
+<span class="n">PyAPI_FUNC</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="n">PyArg_ParseTuple</span><span class="w"> </span><span class="p">(</span><span class="n">PyObject</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span><span class="w"></span>
+<span class="n">PyAPI_FUNC</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="n">PyArg_ParseTupleAndKeywords</span><span class="w"> </span><span class="p">(</span><span class="n">PyObject</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">PyObject</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="p">,</span><span class="w"> </span><span class="p">...);</span><span class="w"></span>
+<span class="n">PyAPI_FUNC</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="n">PyArg_VaParse</span><span class="w"> </span><span class="p">(</span><span class="n">PyObject</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">va_list</span><span class="p">);</span><span class="w"></span>
+<span class="n">PyAPI_FUNC</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="w"> </span><span class="n">PyArg_VaParseTupleAndKeywords</span><span class="w"> </span><span class="p">(</span><span class="n">PyObject</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="n">PyObject</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="p">,</span><span class="w"> </span><span class="kt">va_list</span><span class="p">);</span><span class="w"></span>
+</pre></div>
+<p><span id="Links"></span>
+</p>
+<h2><span id="Odno.C5.9Bniki_internetowe"></span><span class="mw-headline" id="Odnośniki_internetowe">Odnośniki internetowe</span></h2>
+<ul><li><a href="Exposing_Cplusplus_to_Python.html" title="Exposing Cplusplus to Python">Udostępnianie Cplusplus w środowisku Python</a></li>
+<li><a class="external text" href="https://github.com/FreeCAD/FreeCAD/commit/20b86e55b8dd1873f4c19e036d047528c9ff7f4e" rel="nofollow">Commit 20b86e5, eksponujący precyzyjne metody OCC w środowisku Python</a>.</li></ul>
+<p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><a href="Power_users_hub.html" title="Power users hub/pl">Centrum Power użytkowników</a> <span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Tworzenie skryptów FreeCAD:</b> <a href="Python.html" title="Python/pl">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/pl">Wprowadzenie do środowiska Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/pl">Poradnik: Tworzenie skryptów Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/pl">Podstawy tworzenia skryptów FreeCAD</a></li></ul>
+<hr/>
+<ul><li><b>Moduły:</b> <a href="Builtin_modules.html" title="Builtin modules/pl">Moduły wbudowane</a>, <a href="Units.html" title="Units/pl">Jednostki miar</a>, <a href="Quantity.html" title="Quantity">Ilość</a></li>
+<li><b>Środowiska pracy:</b> <a href="Workbench_creation.html" title="Workbench creation/pl">Tworzenie Środowiska pracy</a>, <a href="Gui_Command.html" title="Gui Command/pl">Polecenia Gui</a>, <a href="Command.html" title="Command">Polecenia</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/pl">Instalacja większej liczby Środowisk pracy</a></li>
+<li><b>Siatki i elementy:</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/pl">Skrytpy w Środowisku Siatek</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/pl">v</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/pl">Konwerska Mesh na Part</a>, <a href="PythonOCC.html" title="PythonOCC/pl">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Obiekty parametryczne:</b> <a href="Scripted_objects.html" title="Scripted objects/pl">Obiekty tworzone skryptami</a>, <a href="Viewprovider.html" title="Viewprovider">Obsługa obrazu</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view">Ikonka niestandardowa w widoku drzewa</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="Scenegraph.html" title="Scenegraph/pl">Coin (Inventor) scenegraph</a>, <a href="Pivy.html" title="Pivy/pl">Pivy</a></li>
+<li><b>Interfejs graficzny:</b> <a href="Interface_creation.html" title="Interface creation">Stworzenie interfejsu</a>, <a href="Dialog_creation.html" title="Dialog creation/pl">Kompletne stworzenie interfejsu w środowisku Python</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets">5</a>)</small>, <a href="PySide.html" title="PySide/pl">PySide</a>, PySide examples <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples">początkujący</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples">średniozaawansowany</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples">zaawansowany</a></li>
+<li><b>Makrodefinicje:</b> <a href="Macros.html" title="Macros/pl">Makrodefinicje</a>, <a href="How_to_install_macros.html" title="How to install macros/pl">Instalacja makrodefinicji</a></li>
+<li><b>Osadzanie programu:</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/pl">Osadzanie programu FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/pl">Osadzanie GUI FreeCAD</a></li></ul>
+<hr/>
+<ul><li><b>Pozostałe:</b> <a href="Expressions.html" title="Expressions/pl">Wyrażenia</a>, <a href="Code_snippets.html" title="Code snippets/pl">Wycinki kodu</a>, <a href="Line_drawing_function.html" title="Line drawing function/pl">Funkcja kreślenia linii</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/pl">Biblioteka matematyczna FreeCAD dla wektorów</a> <small>(deprecated)</small></li></ul>
+<hr/>
+<ul><li><b>Węzły użytkowników:</b> <a href="User_hub.html" title="User hub/pl">Centrum użytkownika</a>, <a href="Power_users_hub.html" title="Power users hub/pl">Centrum Power użytkowników</a>, <a href="Developer_hub.html" title="Developer hub/pl">Centrum programisty</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211122
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.064 seconds
+Real time usage: 0.114 seconds
+Preprocessor visited node count: 238/1000000
+Post‐expand include size: 7697/2097152 bytes
+Template argument size: 4866/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 9/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 13718/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   16.356      1 -total
+ 48.77%    7.977      9 Template:Code
+ 10.19%    1.667      1 Template:Powerdocnavi/pl
+  9.42%    1.541      1 Template:VeryImportantMessage
+  9.38%    1.534      8 Template:Incode
+  8.91%    1.457      1 Template:TOCright
+  5.53%    0.905      1 Template:FileName
+  4.17%    0.682      1 Template:Navigation_menu_2
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:275740-0!canonical and timestamp 20241129211122 and revision id 1319957. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

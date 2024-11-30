@@ -1,0 +1,132 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">FeaturePython methods/fr</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="FeaturePython_methods.html" lang="de" title="FeaturePython Methoden (29% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FeaturePython_methods.html" lang="en" title="FeaturePython methods (100% translated)">English</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="fr">français</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FeaturePython_methods.html" lang="it" title="Metodi FeaturePython (100% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FeaturePython_methods.html" lang="pl" title="Metody FeaturePython (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FeaturePython_methods.html" lang="ru" title="Методы класса FeaturePython (93% translated)">русский</a></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Référence_primaire"><span class="tocnumber">2</span> <span class="toctext">Référence primaire</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Méthodes_supplémentaires"><span class="tocnumber">3</span> <span class="toctext">Méthodes supplémentaires</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Déterminer_les_méthodes_Python_disponibles"><span class="tocnumber">4</span> <span class="toctext">Déterminer les méthodes Python disponibles</span></a>
+<ul>
+<li class="toclevel-2 tocsection-5"><a href="#Voir_aussi"><span class="tocnumber">4.1</span> <span class="toctext">Voir aussi</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>Cette page sert de référence pour les méthodes de contournement disponibles pour <a href="Create_a_FeaturePython_object_part_I.html" title="Create a FeaturePython object part I/fr">Créer un objet FeaturePython partie I</a> ou <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a>.
+</p>
+<h2><span id="R.C3.A9f.C3.A9rence_primaire"></span><span class="mw-headline" id="Référence_primaire">Référence primaire</span></h2>
+<p>Les méthodes ci-dessous représentent ~ 99% des cas d'utilisation que les utilisateurs expérimentés peuvent avoir pour les classes proxy Python.
+</p>
+<table cellpadding="5px" class="wikitable" width="100%">
+<tbody><tr>
+<td style="width:25%"><code>execute(self, obj)</code>
+</td>
+<td style="width:25%">Appelé pendant le recalcul du document
+</td>
+<td style="width:50%">N'appelez pas <code>recompute()</code> depuis cette méthode (ou n'importe quelle méthode appelée depuis  <code>execute()</code>) car cela provoque un recalcul imbriqué.
+</td></tr>
+<tr>
+<td><code>onBeforeChange(self, obj, prop)</code>
+</td>
+<td>Appelé avant la modification d'une valeur de propriété
+</td>
+<td><code>prop</code> est le nom de la propriété à modifier, pas l'objet de propriété lui-même. Les modifications de propriété ne peuvent pas être annulées. Les valeurs de propriétés précédentes/suivantes ne sont pas disponibles simultanément pour la comparaison.
+</td></tr>
+<tr>
+<td><code>onChanged(self, obj, prop)</code>
+</td>
+<td>Appelé après la modification d'une propriété
+</td>
+<td><code>prop</code> est le nom de la propriété à modifier, pas l'objet de propriété lui-même.
+</td></tr>
+<tr>
+<td><code>onDocumentRestored(self, obj)</code>
+</td>
+<td>Appelé après la restauration d'un document ou la copie d'un objet FeaturePython.
+</td>
+<td>Parfois, les références à l'objet FeaturePython de la classe ou à la classe de l'objet FeaturePython peuvent être cassées, car la méthode des classes <code>__init__()</code> n'est pas appelée lors de la reconstruction de l'objet. L'ajout de <code>self.Object = obj</code> ou <code>obj.Proxy = self</code> résout souvent ces problèmes.
+</td></tr></tbody></table>
+<p>Il n'est pas rare de rencontrer une situation où les rappels Python ne sont pas déclenchés comme ils le devraient. Les débutants dans ce domaine peuvent être assurés que le système de rappel FeaturePython n'est pas fragile ou cassé. Invariablement, lorsque les rappels ne s'exécutent pas, c'est parce qu'une référence est perdue ou indéfinie dans le code sous-jacent. Si, cependant, les rappels semblent interrompre sans explication, fournir des références d'objet/proxy dans le rappel <code>onDocumentRestored()</code> (comme indiqué dans le premier tableau ci-dessus) peut atténuer ces problèmes. Tant que vous n'êtes pas à l'aise avec le système de rappel, il peut être utile d'ajouter des instructions d'impression dans chaque rappel pour imprimer des messages sur la console pendant le développement.
+</p>
+<h2><span id="M.C3.A9thodes_suppl.C3.A9mentaires"></span><span class="mw-headline" id="Méthodes_supplémentaires">Méthodes supplémentaires</span></h2>
+<p>Les méthodes ci-dessous sont destinées à une utilisation <b>avancée</b> des classes proxy Python et vous n'en aurez pas besoin la plupart du temps.
+</p>
+<ul><li>mustExecute</li>
+<li>getViewProviderName</li>
+<li>getSubObject</li>
+<li>getSubObjects</li>
+<li>getLinkedObject</li>
+<li>hasChildElement</li>
+<li>isElementVisible</li>
+<li>canLinkProperties</li>
+<li>allowDuplicateLabel</li>
+<li>redirectSubName</li>
+<li>canLoadPartial</li>
+<li>onBeforeChangeLabel</li></ul>
+<h2><span id="D.C3.A9terminer_les_m.C3.A9thodes_Python_disponibles"></span><span class="mw-headline" id="Déterminer_les_méthodes_Python_disponibles">Déterminer les méthodes Python disponibles</span></h2>
+<p>Dans le <a class="external text" href="https://github.com/FreeCAD/FreeCAD/blob/76e74294894bbce46d006e149315c6274d206278/src/App/FeaturePython.h#L161-L351" rel="nofollow">modèle de classe FeaturePython</a>, il existe plusieurs appels <code>imp-&gt;&lt;method name&gt;()</code>.
+</p><p>Chacun d'entre eux correspond à une méthode Python liée disponible.
+</p><p>Par exemple, <code>imp-&gt;execute()</code> <a class="external text" href="https://github.com/FreeCAD/FreeCAD/blob/76e74294894bbce46d006e149315c6274d206278/src/App/FeaturePython.h#L193" rel="nofollow">en ligne 193</a> signifie que la méthode <code>execute</code> est disponible.
+</p><p>Remarquez que <code>getPyObject()</code> et <code>init()</code> sont des cas particuliers et ne suivent pas l'heuristique ci-dessus.
+</p>
+<h3><span class="mw-headline" id="Voir_aussi">Voir aussi</span></h3>
+<ul><li><a class="external text" href="https://github.com/FreeCAD/FreeCAD/blob/76e74294894bbce46d006e149315c6274d206278/src/App/FeaturePython.h#L44-L86" rel="nofollow">FreeCAD GitHub: FeaturePython.h - public API</a></li>
+<li><a class="external text" href="https://github.com/FreeCAD/FreeCAD/blob/76e74294894bbce46d006e149315c6274d206278/src/App/FeaturePython.h#L167" rel="nofollow">FreeCAD GitHub: FeaturePythonT template class</a></li>
+<li><a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=22&amp;t=49194" rel="nofollow">FreeCAD Forum Discussion: Scripted Objects Complete Method Reference</a></li></ul>
+<p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Scripts FreeCAD :</b> <a href="Python.html" title="Python/fr">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/fr">Introduction à Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/fr">Tutoriel sur les scripts Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/fr">Débuter avec les scripts</a></li></ul>
+<hr/>
+<ul><li><b>Modules :</b> <a href="Builtin_modules.html" title="Builtin modules/fr">Modules intégrés</a>, <a href="Units.html" title="Units/fr">Unités</a>, <a href="Quantity.html" title="Quantity/fr">Quantity</a></li>
+<li><b>Ateliers :</b> <a href="Workbench_creation.html" title="Workbench creation/fr">Création d'atelier</a>, <a href="Gui_Command.html" title="Gui Command/fr">Commands Gui</a>, <a href="Command.html" title="Command/fr">Les commandes</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/fr">Installer des ateliers supplémentaires</a></li>
+<li><b>Maillages et objets Parts :</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/fr">Scripts Mesh</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/fr">Script de données topologiques</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/fr">Conversion objet Mesh en Part</a>, <a href="PythonOCC.html" title="PythonOCC/fr">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Objets paramétriques :</b> <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a>, <a href="Viewprovider.html" title="Viewprovider/fr">Viewproviders</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view/fr">Icône personnalisée dans l'arborescence</a>)</small></li>
+<li><b>Scénographie :</b> <a href="Scenegraph.html" title="Scenegraph/fr">Graphe de scène Coin (Inventor)</a>, <a href="Pivy.html" title="Pivy/fr">Pivy</a></li>
+<li><b>Interface graphique :</b> <a href="Interface_creation.html" title="Interface creation/fr">Création d'interface</a>, <a href="Dialog_creation.html" title="Dialog creation/fr">Création d'une boite de dialogue</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets/fr">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files/fr">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors/fr">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF/fr">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets/fr">5</a>)</small>, <a href="PySide.html" title="PySide/fr">PySide</a>, Exemples PySide <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples/fr">débutant</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/fr">intermédiaire</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples/fr">expérimenté</a></li>
+<li><b>Macros :</b> <a href="Macros.html" title="Macros/fr">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros/fr">Comment installer des macros</a></li>
+<li><b>Intégration :</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/fr">Intégrer FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/fr">Intégration de FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Autre :</b> <a href="Expressions.html" title="Expressions/fr">Expressions</a>, <a href="Code_snippets.html" title="Code snippets/fr">Extraits de codes</a>, <a href="Line_drawing_function.html" title="Line drawing function/fr">Fonction - tracer une ligne</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/fr">Bibliothèque mathématique vectorielle de FreeCAD</a> <small>(déprécié)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs :</b> <a href="User_hub.html" title="User hub/fr">Hub utilisateurs</a>, <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>, <a href="Developer_hub.html" title="Developer hub/fr">Hub développeurs</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211140
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.051 seconds
+Real time usage: 0.065 seconds
+Preprocessor visited node count: 167/1000000
+Post‐expand include size: 6881/2097152 bytes
+Template argument size: 2609/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 1182/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    9.419      1 -total
+ 52.58%    4.952      1 Template:Powerdocnavi/fr
+ 21.59%    2.034      1 Template:Navigation_menu_2
+ 17.41%    1.640      1 Template:TOCright
+ 16.75%    1.578     12 Template:Incode
+  5.03%    0.474      1 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:208149-0!canonical and timestamp 20241129211140 and revision id 870811. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

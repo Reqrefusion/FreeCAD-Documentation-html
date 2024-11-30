@@ -1,0 +1,533 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Embedding FreeCADGui/fr</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Embedding_FreeCADGui.html" lang="de" title="Einbetten von FreeCADGui (9% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Embedding_FreeCADGui.html" lang="en" title="Embedding FreeCADGui (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Embedding_FreeCADGui.html" lang="tr" title="Embedding FreeCADGui/tr (5% translated)">Türkçe</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--med" dir="ltr" href="Embedding_FreeCADGui.html" lang="es" title="Embedding FreeCADGui (50% translated)">español</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="fr">français</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Embedding_FreeCADGui.html" lang="it" title="Incorporare l'interfaccia grafica di FreeCAD (100% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Embedding_FreeCADGui.html" lang="pl" title="Osadzanie GUI programu FreeCAD (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Embedding_FreeCADGui.html" lang="ro" title="Embedding FreeCADGui/ro (5% translated)">română</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Embedding_FreeCADGui.html" lang="sv" title="Embedding FreeCADGui (5% translated)">svenska</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Embedding_FreeCADGui.html" lang="cs" title="Embedding FreeCADGui/cs (0% translated)">čeština</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Embedding_FreeCADGui.html" lang="ru" title="Внедрение FreeCADGui (5% translated)">русский</a></li></ul></div>
+<div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#En_utilisant_directement_le_widget_vue_3D_de_FreeCAD"><span class="tocnumber">2</span> <span class="toctext">En utilisant directement le widget vue 3D de FreeCAD</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Création_d'un_examinateur_&quot;soGui_Examiner_Viewer&quot;"><span class="tocnumber">3</span> <span class="toctext">Création d'un examinateur "soGui Examiner Viewer"</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Utilisation_d'un_module_tiers"><span class="tocnumber">4</span> <span class="toctext">Utilisation d'un module tiers</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Sans_exécuter_le_Gui_de_FreeCAD"><span class="tocnumber">5</span> <span class="toctext">Sans exécuter le Gui de FreeCAD</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Informations_supplémentaires"><span class="tocnumber">6</span> <span class="toctext">Informations supplémentaires</span></a></li>
+</ul>
+</div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>Il est possible d'<a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/fr">importer le module FreeCAD</a> dans une application <a href="Python.html" title="Python/fr">Python</a> et d'utiliser tous les outils de l'application hôte. Mais l'interface graphique pour utilisateur FreeCAD (GUI) peut également être importée en tant que module Python.
+Normalement, vous pouvez importer l'interface complète dans son ensemble, et non pas des portions de celui-ci. C'est parce que le système d'interface FreeCAD n'est pas seulement faite de widgets indépendants et de barres d'outils mais est une construction complexe où plusieurs composants invisibles (tels que le système de sélection, etc.) sont nécessaires pour que la <a href="3D_view.html" title="3D view/fr">vue 3D</a> puisse fonctionner.
+</p><p>Mais, avec un peu de "hacking", il est possible d'importer toute l'interface de FreeCAD, alors déplacez la vue 3D de FreeCAD dans votre propre application Qt.
+</p><p>Nous vous montrons ici, 3 méthodes différentes.
+</p>
+<h2><span class="mw-headline" id="En_utilisant_directement_le_widget_vue_3D_de_FreeCAD">En utilisant directement le widget vue 3D de FreeCAD</span></h2>
+<p>Soyez conscient qu'il y a d'<b>énormes problèmes</b> dans cette approche. La gestion des événements <b>Qt</b> ne semble pas fonctionner (pourquoi ?? aucune idée !), et, si vous utilisez la vue 3D, du menu contextuel, l'application se bloque. Une meilleure façon serait de créer votre propre vue 3D <b>SoQtExaminerViewer</b> ou <b>SoQtViewer</b> et "pousser" le contenu de la vue 3d de FreeCAD dans votre code, comme indiqué dans les sections ci-dessous.
+</p><p>Tout d'abord, obtenir la fenêtre principale via <a href="PySide.html" title="PySide/fr">PySide</a>:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span>
+
+<span class="k">def</span> <span class="nf">getMainWindow</span><span class="p">():</span>
+   <span class="n">toplevel</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">topLevelWidgets</span><span class="p">()</span>
+   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">toplevel</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">metaObject</span><span class="p">()</span><span class="o">.</span><span class="n">className</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"Gui::MainWindow"</span><span class="p">:</span>
+         <span class="k">return</span> <span class="n">i</span>
+   <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"No main window found"</span><span class="p">)</span>
+
+<span class="n">mw</span> <span class="o">=</span> <span class="n">getMainWindow</span><span class="p">()</span>
+</pre></div>
+<p>Ensuite, récupérez les <b>View3DInventor</b> de la même façon :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">get3dview</span><span class="p">(</span><span class="n">mw</span><span class="p">):</span>
+      <span class="n">childs</span><span class="o">=</span><span class="n">mw</span><span class="o">.</span><span class="n">findChildren</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">)</span>
+      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">childs</span><span class="p">:</span>
+         <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">metaObject</span><span class="p">()</span><span class="o">.</span><span class="n">className</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"Gui::View3DInventor"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">i</span>
+      <span class="k">return</span> <span class="kc">None</span>
+
+<span class="n">v</span> <span class="o">=</span> <span class="n">get3dview</span><span class="p">(</span><span class="n">mw</span><span class="p">)</span>
+</pre></div>
+<p>Le code suivant est généré automatiquement, par la création d'un fichier <a href="Dialog_creation.html" title="Dialog creation/fr">création d'un fichier UI avec QtDesigner</a>, et de le convertir en code Python avec l'outil pyuic:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Form implementation generated from reading ui file 'mainwindow.ui'</span>
+<span class="c1">#</span>
+<span class="c1"># Created: Sun Dec 27 11:18:56 2009</span>
+<span class="c1">#      by: PySide UI code generator 4.6</span>
+<span class="c1">#</span>
+<span class="c1"># Modify for PySide 11/02/2015</span>
+<span class="c1">#      Python version: 2.7.8</span>
+<span class="c1">#      Qt version: 4.8.6</span>
+<span class="c1">#</span>
+<span class="c1"># WARNING! All changes made in this file will be lost!</span>
+
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+
+<span class="k">class</span> <span class="nc">Ui_MainWindow</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MainWindow</span><span class="p">):</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">)</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">508</span><span class="p">,</span> <span class="mi">436</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centralwidget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">centralwidget</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">"centralwidget"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gridLayout</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QGridLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralwidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gridLayout</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">"gridLayout"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdiArea</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMdiArea</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralwidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdiArea</span><span class="o">.</span><span class="n">setViewMode</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMdiArea</span><span class="o">.</span><span class="n">TabbedView</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdiArea</span><span class="o">.</span><span class="n">setTabPosition</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTabWidget</span><span class="o">.</span><span class="n">South</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mdiArea</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">"mdiArea"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gridLayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mdiArea</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">centralwidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menubar</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMenuBar</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menubar</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">508</span><span class="p">,</span> <span class="mi">27</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">menubar</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">"menubar"</span><span class="p">)</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setMenuBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">menubar</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statusbar</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStatusBar</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statusbar</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">"statusbar"</span><span class="p">)</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setStatusBar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statusbar</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">retranslateUi</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+        <span class="n">QtCore</span><span class="o">.</span><span class="n">QMetaObject</span><span class="o">.</span><span class="n">connectSlotsByName</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">retranslateUi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MainWindow</span><span class="p">):</span>
+        <span class="n">MainWindow</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">"MainWindow"</span><span class="p">,</span> <span class="s2">"MainWindow"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">UnicodeUTF8</span><span class="p">))</span>
+</pre></div>
+<p>Ensuite, créez une fenêtre principale qui devrait être la fenêtre principale de votre application. Appliquez-lui la configuration de l'interface utilisateur ci-dessus afin d'ajouter une zone MDI et "déplacez" notre <a href="3D_view.html" title="3D view/fr">vue 3D</a> dessus.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">ui</span> <span class="o">=</span> <span class="n">Ui_MainWindow</span><span class="p">()</span>
+<span class="n">my_mw</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">()</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="n">my_mw</span><span class="p">)</span>
+<span class="n">ui</span><span class="o">.</span><span class="n">mdiArea</span><span class="o">.</span><span class="n">addSubWindow</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="n">my_mw</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+<h2><span id="Cr.C3.A9ation_d.27un_examinateur_.22soGui_Examiner_Viewer.22"></span><span class="mw-headline" id="Création_d'un_examinateur_&quot;soGui_Examiner_Viewer&quot;">Création d'un examinateur "soGui Examiner Viewer"</span></h2>
+<p>Alternativement, vous pouvez également utiliser le module FreeCADGui pour extraire une représentation OpenInventor (Coin) des objets de votre scène puis utiliser ces données dans une visionneuse externe (votre application). Voici un moyen simple d'obtenir la représentation 3D d'un objet.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">pivy</span> <span class="kn">import</span> <span class="n">coin</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+
+<span class="n">box</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::Box"</span><span class="p">,</span> <span class="s2">"myBox"</span><span class="p">)</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">box</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span>  <span class="c1"># store as string</span>
+<span class="n">inp</span> <span class="o">=</span> <span class="n">coin</span><span class="o">.</span><span class="n">SoInput</span><span class="p">()</span>
+<span class="n">inp</span><span class="o">.</span><span class="n">setBuffer</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="n">myNode</span> <span class="o">=</span> <span class="n">coin</span><span class="o">.</span><span class="n">SoDB</span><span class="o">.</span><span class="n">readAll</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>  <span class="c1"># restore from string</span>
+</pre></div>
+<p>Ensuite, créez un visualiseur autonome avec <a href="Pivy.html" title="Pivy/fr">Pivy</a>:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">pivy.sogui</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">pivy.coin</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="k">def</span> <span class="nf">myViewer</span><span class="p">():</span>
+    <span class="c1"># Initialize Coin. This returns a main window to use.</span>
+    <span class="c1"># If unsuccessful, exit.</span>
+    <span class="n">myWindow</span> <span class="o">=</span> <span class="n">SoGui</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">myWindow</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># Make an empty scene and add our node to it</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">SoSeparator</span><span class="p">()</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">addChild</span><span class="p">(</span><span class="n">myNode</span><span class="p">)</span>
+
+    <span class="c1"># Create a viewer in which to see our scene graph.</span>
+    <span class="n">viewer</span> <span class="o">=</span> <span class="n">SoGuiExaminerViewer</span><span class="p">(</span><span class="n">myWindow</span><span class="p">)</span>
+
+    <span class="c1"># Put our scene into viewer, change the title</span>
+    <span class="n">viewer</span><span class="o">.</span><span class="n">setSceneGraph</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">viewer</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="s2">"FreeCAD Object Viewer"</span><span class="p">)</span>
+    <span class="n">viewer</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="n">SoGui</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">myWindow</span><span class="p">)</span> <span class="c1"># Display main window</span>
+    <span class="n">SoGui</span><span class="o">.</span><span class="n">mainLoop</span><span class="p">()</span>     <span class="c1"># Main Coin event loop</span>
+</pre></div>
+<p>Ensuite, il vous suffit de lancer votre visualiseur :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">myViewer</span><span class="p">()</span>
+</pre></div>
+<h2><span id="Utilisation_d.27un_module_tiers"></span><span class="mw-headline" id="Utilisation_d'un_module_tiers">Utilisation d'un module tiers</span></h2>
+<p>Au lieu d'utiliser le visualiseur <b>Sogui</b>, vous pouvez aussi utiliser un module tiers plus moderne. C'est probablement la meilleure des 3 solutions.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+ 
+<span class="c1">###</span>
+<span class="c1"># Copyright (c) 2002-2008 Kongsberg SIM</span>
+<span class="c1">#</span>
+<span class="c1"># Permission to use, copy, modify, and distribute this software for any</span>
+<span class="c1"># purpose with or without fee is hereby granted, provided that the above</span>
+<span class="c1"># copyright notice and this permission notice appear in all copies.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES</span>
+<span class="c1"># WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF</span>
+<span class="c1"># MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR</span>
+<span class="c1"># ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES</span>
+<span class="c1"># WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN</span>
+<span class="c1"># ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF</span>
+<span class="c1"># OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</span>
+<span class="c1">#</span>
+ 
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+ 
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="kn">import</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QWorkspace</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QFileDialog</span><span class="p">,</span> <span class="n">QApplication</span>
+ 
+<span class="kn">from</span> <span class="nn">pivy.coin</span> <span class="kn">import</span> <span class="n">SoInput</span><span class="p">,</span> <span class="n">SoDB</span>
+<span class="kn">from</span> <span class="nn">pivy.quarter</span> <span class="kn">import</span> <span class="n">QuarterWidget</span>
+ 
+<span class="kn">import</span> <span class="nn">FreeCAD</span><span class="o">,</span> <span class="nn">FreeCADGui</span>
+ 
+<span class="k">def</span> <span class="nf">getMainWindow</span><span class="p">():</span>
+   <span class="n">toplevel</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">topLevelWidgets</span><span class="p">()</span>
+   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">toplevel</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">metaObject</span><span class="p">()</span><span class="o">.</span><span class="n">className</span><span class="p">()</span> <span class="o">==</span> <span class="s2">"Gui::MainWindow"</span><span class="p">:</span>
+         <span class="k">return</span> <span class="n">i</span>
+   <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"No main window found"</span><span class="p">)</span>
+ 
+<span class="k">class</span> <span class="nc">MdiQuarterWidget</span><span class="p">(</span><span class="n">QuarterWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">sharewidget</span><span class="p">):</span>
+        <span class="n">QuarterWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="n">sharewidget</span><span class="o">=</span><span class="n">sharewidget</span><span class="p">)</span>
+ 
+    <span class="k">def</span> <span class="nf">loadFile</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">in_</span> <span class="o">=</span> <span class="n">SoInput</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">in_</span><span class="o">.</span><span class="n">openFile</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">toLatin1</span><span class="p">()))):</span>
+            <span class="n">root</span> <span class="o">=</span> <span class="n">SoDB</span><span class="o">.</span><span class="n">readAll</span><span class="p">(</span><span class="n">in_</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">root</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setSceneGraph</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">currentfile</span> <span class="o">=</span> <span class="n">filename</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span>
+ 
+    <span class="k">def</span> <span class="nf">currentFile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">currentfile</span>
+ 
+    <span class="k">def</span> <span class="nf">minimumSizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="mi">640</span><span class="p">,</span> <span class="mi">480</span><span class="p">)</span>
+ 
+<span class="k">class</span> <span class="nc">MdiMainWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qApp</span><span class="p">):</span>
+        <span class="n">QMainWindow</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span> <span class="o">=</span> <span class="n">QWorkspace</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAcceptDrops</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">"Pivy Quarter MDI example"</span><span class="p">)</span>
+ 
+        <span class="n">filemenu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">"&amp;File"</span><span class="p">)</span>
+        <span class="n">windowmenu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">"&amp;Windows"</span><span class="p">)</span>
+ 
+        <span class="n">fileopenaction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">"&amp;Create Box"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">fileexitaction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">"E&amp;xit"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">tileaction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">"Tile"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">cascadeaction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">"Cascade"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+ 
+        <span class="n">filemenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">fileopenaction</span><span class="p">)</span>
+        <span class="n">filemenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">fileexitaction</span><span class="p">)</span>
+        <span class="n">windowmenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">tileaction</span><span class="p">)</span>
+        <span class="n">windowmenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">cascadeaction</span><span class="p">)</span>
+ 
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fileopenaction</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"triggered()"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">createBoxInFreeCAD</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fileexitaction</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"triggered()"</span><span class="p">),</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">closeAllWindows</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">tileaction</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"triggered()"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">tile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">cascadeaction</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"triggered()"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">cascade</span><span class="p">)</span>
+ 
+        <span class="n">windowmapper</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSignalMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">windowmapper</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"mapped(QWidget *)"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">setActiveWindow</span><span class="p">)</span>
+ 
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">curdir</span>       
+ 
+    <span class="k">def</span> <span class="nf">dragEnterEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="c1"># just accept anything...</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">acceptProposedAction</span><span class="p">()</span>
+ 
+    <span class="k">def</span> <span class="nf">dropEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">mimedata</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">mimeData</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">mimedata</span><span class="o">.</span><span class="n">hasUrls</span><span class="p">():</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">mimedata</span><span class="o">.</span><span class="n">urls</span><span class="p">()</span><span class="o">.</span><span class="n">takeFirst</span><span class="p">()</span><span class="o">.</span><span class="n">path</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">open_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+ 
+    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">closeAllWindows</span><span class="p">()</span>
+ 
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">open_path</span><span class="p">(</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getOpenFileName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dirname</span><span class="p">))</span>
+ 
+    <span class="k">def</span> <span class="nf">open_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="o">.</span><span class="n">toLatin1</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">isEmpty</span><span class="p">():</span>
+            <span class="n">existing</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">findMdiChild</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">existing</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">setActiveWindow</span><span class="p">(</span><span class="n">existing</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">createMdiChild</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">loadFile</span><span class="p">(</span><span class="n">filename</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">statusBar</span><span class="p">()</span><span class="o">.</span><span class="n">showMessage</span><span class="p">(</span><span class="s2">"File loaded"</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">child</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+ 
+    <span class="k">def</span> <span class="nf">findMdiChild</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">canonicalpath</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QFileInfo</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">canonicalFilePath</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">windowList</span><span class="p">():</span>
+            <span class="n">mdiwidget</span> <span class="o">=</span> <span class="n">window</span>
+            <span class="k">if</span> <span class="n">mdiwidget</span><span class="o">.</span><span class="n">currentFile</span><span class="p">()</span> <span class="o">==</span> <span class="n">canonicalpath</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">mdiwidget</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+ 
+    <span class="k">def</span> <span class="nf">createMdiChild</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="n">MdiQuarterWidget</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">addWindow</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span> <span class="o">=</span> <span class="n">widget</span>
+        <span class="k">return</span> <span class="n">widget</span>
+ 
+    <span class="k">def</span> <span class="nf">createBoxInFreeCAD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="n">MdiQuarterWidget</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">addWindow</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span> <span class="o">=</span> <span class="n">widget</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>
+        <span class="n">doc</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::Box"</span><span class="p">,</span><span class="s2">"myBox"</span><span class="p">)</span>
+        <span class="n">iv_</span><span class="o">=</span><span class="n">FreeCADGui</span><span class="o">.</span><span class="n">getDocument</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s2">"myBox"</span><span class="p">)</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span>
+        <span class="n">in_</span> <span class="o">=</span> <span class="n">SoInput</span><span class="p">()</span>
+        <span class="n">in_</span><span class="o">.</span><span class="n">setBuffer</span><span class="p">(</span><span class="n">iv_</span><span class="p">)</span>
+        <span class="n">root</span> <span class="o">=</span> <span class="n">SoDB</span><span class="o">.</span><span class="n">readAll</span><span class="p">(</span><span class="n">in_</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">root</span><span class="p">):</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">setSceneGraph</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+ 
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> 
+    <span class="n">mdi</span> <span class="o">=</span> <span class="n">MdiMainWindow</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>   
+    <span class="n">mdi</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">showMainWindow</span><span class="p">()</span> <span class="c1"># setup the GUI stuff of FreeCAD</span>
+    <span class="n">mw</span><span class="o">=</span><span class="n">getMainWindow</span><span class="p">()</span>
+    <span class="n">mw</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span> <span class="c1"># hide all</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">:</span>
+        <span class="n">mdi</span><span class="o">.</span><span class="n">open_path</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QString</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">())</span>
+ 
+<span class="k">def</span> <span class="nf">show</span><span class="p">():</span>
+    <span class="n">mdi</span> <span class="o">=</span> <span class="n">MdiMainWindow</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="p">)</span>   
+    <span class="n">mdi</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">mw</span><span class="o">=</span><span class="n">getMainWindow</span><span class="p">()</span>
+    <span class="c1">#mw.hide() # hide all</span>
+ 
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+<h2><span id="Sans_ex.C3.A9cuter_le_Gui_de_FreeCAD"></span><span class="mw-headline" id="Sans_exécuter_le_Gui_de_FreeCAD">Sans exécuter le Gui de FreeCAD</span></h2>
+<p>A partir de FreeCAD rev2760, (2010, <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=8&amp;t=203&amp;start=20#p1226" rel="nofollow">1</a>), il est maintenant possible d'obtenir la représentation des coin de n'importe quel objet FreeCAD sans ouvrir la fenêtre principale. Il est donc extrêmement facile de mettre en œuvre son propre visualiseur et de rester transparent pour les mises à jour de FreeCAD. Après avoir importé <code>FreeCADGui</code>, vous devez le mettre à niveau avec la méthode <code>setupWithoutGUI()</code>, après quoi, vous pouvez utiliser tous les fournisseurs de vue de FreeCAD, pour obtenir les nœuds OpenInventor (Coin).
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">FreeCAD</span><span class="o">,</span> <span class="nn">FreeCADGui</span>
+<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt4.QtGui</span> <span class="kn">import</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QWorkspace</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QFileDialog</span><span class="p">,</span> <span class="n">QApplication</span>
+<span class="kn">from</span> <span class="nn">pivy.coin</span> <span class="kn">import</span> <span class="n">SoInput</span><span class="p">,</span> <span class="n">SoDB</span><span class="p">,</span> <span class="n">sogui</span>
+ 
+<span class="k">class</span> <span class="nc">MdiMainWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qApp</span><span class="p">):</span>
+        <span class="n">QMainWindow</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span> <span class="o">=</span> <span class="n">QWorkspace</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAcceptDrops</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">"Pivy Quarter MDI example"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewers</span><span class="o">=</span><span class="p">[]</span>
+ 
+        <span class="n">filemenu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">"&amp;File"</span><span class="p">)</span>
+        <span class="n">windowmenu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">"&amp;Windows"</span><span class="p">)</span>
+ 
+        <span class="n">fileopenaction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">"&amp;Create Box"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">fileexitaction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">"E&amp;xit"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">tileaction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">"Tile"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">cascadeaction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">"Cascade"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+ 
+        <span class="n">filemenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">fileopenaction</span><span class="p">)</span>
+        <span class="n">filemenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">fileexitaction</span><span class="p">)</span>
+        <span class="n">windowmenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">tileaction</span><span class="p">)</span>
+        <span class="n">windowmenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">cascadeaction</span><span class="p">)</span>
+ 
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fileopenaction</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"triggered()"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">createBoxInFreeCAD</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fileexitaction</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"triggered()"</span><span class="p">),</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">closeAllWindows</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">tileaction</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"triggered()"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">tile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">cascadeaction</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"triggered()"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">cascade</span><span class="p">)</span>
+ 
+        <span class="n">windowmapper</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSignalMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">windowmapper</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"mapped(QWidget *)"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">setActiveWindow</span><span class="p">)</span>
+ 
+    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">closeAllWindows</span><span class="p">()</span>
+ 
+    <span class="k">def</span> <span class="nf">createBoxInFreeCAD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span><span class="p">)</span>
+        <span class="n">viewer</span> <span class="o">=</span> <span class="n">sogui</span><span class="o">.</span><span class="n">SoGuiExaminerViewer</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">addWindow</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span> <span class="o">=</span> <span class="n">widget</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">viewers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">viewer</span><span class="p">)</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>
+        <span class="n">obj</span><span class="o">=</span><span class="n">doc</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::Box"</span><span class="p">,</span><span class="s2">"myBox"</span><span class="p">)</span>
+        <span class="n">doc</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+        <span class="n">root</span><span class="o">=</span><span class="n">FreeCADGui</span><span class="o">.</span><span class="n">subgraphFromObject</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="n">viewer</span><span class="o">.</span><span class="n">setSceneGraph</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+ 
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">mdi</span> <span class="o">=</span> <span class="n">MdiMainWindow</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>   
+    <span class="n">mdi</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">setupWithoutGUI</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">())</span>
+ 
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+<p>Ou, si vous utilisez le module <b>pivy Sogui</b> et qu'il ne fonctionne pas chez vous, (le module <b>Sogui</b> devient obsolète, et, les développeurs, désormais favorisent la bibliothèque <b>coin</b>, qui a une interaction bien meilleure avec qt), c'est le même scénario, mais avec une aide tierce :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+ 
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+ 
+<span class="kn">from</span> <span class="nn">PyQt4</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">PyQt4.QtGui</span> <span class="kn">import</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QWorkspace</span><span class="p">,</span> <span class="n">QAction</span><span class="p">,</span> <span class="n">QApplication</span>
+ 
+<span class="kn">from</span> <span class="nn">pivy.coin</span> <span class="kn">import</span> <span class="n">SoInput</span><span class="p">,</span> <span class="n">SoDB</span>
+<span class="kn">from</span> <span class="nn">pivy.quarter</span> <span class="kn">import</span> <span class="n">QuarterWidget</span>
+<span class="kn">import</span> <span class="nn">FreeCADGui</span>
+ 
+ 
+<span class="k">class</span> <span class="nc">MdiQuarterWidget</span><span class="p">(</span><span class="n">QuarterWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">sharewidget</span><span class="p">):</span>
+        <span class="n">QuarterWidget</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">,</span> <span class="n">sharewidget</span><span class="o">=</span><span class="n">sharewidget</span><span class="p">)</span>
+ 
+    <span class="k">def</span> <span class="nf">minimumSizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="mi">640</span><span class="p">,</span> <span class="mi">480</span><span class="p">)</span>
+ 
+ 
+<span class="k">class</span> <span class="nc">MdiMainWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qApp</span><span class="p">):</span>
+        <span class="n">QMainWindow</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span> <span class="o">=</span> <span class="n">QWorkspace</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setAcceptDrops</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">"Pivy Quarter MDI example"</span><span class="p">)</span>
+ 
+        <span class="n">filemenu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">"&amp;File"</span><span class="p">)</span>
+        <span class="n">windowmenu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">"&amp;Windows"</span><span class="p">)</span>
+ 
+        <span class="n">fileopenaction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">"&amp;Create Box"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">fileexitaction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">"E&amp;xit"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">tileaction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">"Tile"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">cascadeaction</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="s2">"Cascade"</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+ 
+        <span class="n">filemenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">fileopenaction</span><span class="p">)</span>
+        <span class="n">filemenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">fileexitaction</span><span class="p">)</span>
+        <span class="n">windowmenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">tileaction</span><span class="p">)</span>
+        <span class="n">windowmenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">cascadeaction</span><span class="p">)</span>
+ 
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fileopenaction</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"triggered()"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">createBoxInFreeCAD</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">fileexitaction</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"triggered()"</span><span class="p">),</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">closeAllWindows</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">tileaction</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"triggered()"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">tile</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">cascadeaction</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"triggered()"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">cascade</span><span class="p">)</span>
+ 
+        <span class="n">windowmapper</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSignalMapper</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">windowmapper</span><span class="p">,</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">(</span><span class="s2">"mapped(QWidget *)"</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">setActiveWindow</span><span class="p">)</span>
+ 
+        <span class="bp">self</span><span class="o">.</span><span class="n">dirname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">curdir</span>       
+ 
+    <span class="k">def</span> <span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">closeAllWindows</span><span class="p">()</span>
+ 
+    <span class="k">def</span> <span class="nf">createBoxInFreeCAD</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d</span><span class="o">=</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>
+        <span class="n">o</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::Box"</span><span class="p">)</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+        <span class="n">s</span><span class="o">=</span><span class="n">FreeCADGui</span><span class="o">.</span><span class="n">subgraphFromObject</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+        <span class="n">child</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">createMdiChild</span><span class="p">()</span>
+        <span class="n">child</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="n">child</span><span class="o">.</span><span class="n">setSceneGraph</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+ 
+    <span class="k">def</span> <span class="nf">createMdiChild</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="n">MdiQuarterWidget</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_workspace</span><span class="o">.</span><span class="n">addWindow</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_firstwidget</span> <span class="o">=</span> <span class="n">widget</span>
+        <span class="k">return</span> <span class="n">widget</span>
+ 
+ 
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">setupWithoutGUI</span><span class="p">()</span>        
+    <span class="n">mdi</span> <span class="o">=</span> <span class="n">MdiMainWindow</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>   
+    <span class="n">mdi</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">())</span>
+ 
+ 
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+<h2><span id="Informations_suppl.C3.A9mentaires"></span><span class="mw-headline" id="Informations_supplémentaires">Informations supplémentaires</span></h2>
+<ul><li><a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=8&amp;t=203" rel="nofollow">Embedding a view to another (QT) application?</a></li>
+<li><a class="external text" href="https://forum.freecadweb.org/viewtopic.php?t=12575" rel="nofollow">Using Gui functions without Gui.showMainWindow() in python script</a></li>
+<li><a class="external text" href="https://forum.freecadweb.org/viewtopic.php?t=14912" rel="nofollow">Acess Scenegraph through python API in without Gui mode</a></li>
+<li><a class="external text" href="https://forum.freecadweb.org/viewtopic.php?p=190353" rel="nofollow">FreeCAD Hangs When Called from Python</a></li>
+<li><a class="external text" href="https://forum.freecadweb.org/viewtopic.php?t=41697" rel="nofollow">Problem with FreeCADGui</a></li></ul>
+<p>Dans le code source, il existe des exemples d'intégration de FreeCAD avec diverses boîtes à outils graphiques:
+</p>
+<ul><li><a class="external text" href="https://github.com/FreeCAD/FreeCAD/tree/master/src/Tools/embedded" rel="nofollow">src/Tools/embedded</a></li></ul>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Scripts FreeCAD :</b> <a href="Python.html" title="Python/fr">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/fr">Introduction à Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/fr">Tutoriel sur les scripts Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/fr">Débuter avec les scripts</a></li></ul>
+<hr/>
+<ul><li><b>Modules :</b> <a href="Builtin_modules.html" title="Builtin modules/fr">Modules intégrés</a>, <a href="Units.html" title="Units/fr">Unités</a>, <a href="Quantity.html" title="Quantity/fr">Quantity</a></li>
+<li><b>Ateliers :</b> <a href="Workbench_creation.html" title="Workbench creation/fr">Création d'atelier</a>, <a href="Gui_Command.html" title="Gui Command/fr">Commands Gui</a>, <a href="Command.html" title="Command/fr">Les commandes</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/fr">Installer des ateliers supplémentaires</a></li>
+<li><b>Maillages et objets Parts :</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/fr">Scripts Mesh</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/fr">Script de données topologiques</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/fr">Conversion objet Mesh en Part</a>, <a href="PythonOCC.html" title="PythonOCC/fr">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Objets paramétriques :</b> <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a>, <a href="Viewprovider.html" title="Viewprovider/fr">Viewproviders</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view/fr">Icône personnalisée dans l'arborescence</a>)</small></li>
+<li><b>Scénographie :</b> <a href="Scenegraph.html" title="Scenegraph/fr">Graphe de scène Coin (Inventor)</a>, <a href="Pivy.html" title="Pivy/fr">Pivy</a></li>
+<li><b>Interface graphique :</b> <a href="Interface_creation.html" title="Interface creation/fr">Création d'interface</a>, <a href="Dialog_creation.html" title="Dialog creation/fr">Création d'une boite de dialogue</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets/fr">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files/fr">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors/fr">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF/fr">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets/fr">5</a>)</small>, <a href="PySide.html" title="PySide/fr">PySide</a>, Exemples PySide <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples/fr">débutant</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/fr">intermédiaire</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples/fr">expérimenté</a></li>
+<li><b>Macros :</b> <a href="Macros.html" title="Macros/fr">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros/fr">Comment installer des macros</a></li>
+<li><b>Intégration :</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/fr">Intégrer FreeCAD</a>, <a class="mw-selflink selflink">Intégration de FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Autre :</b> <a href="Expressions.html" title="Expressions/fr">Expressions</a>, <a href="Code_snippets.html" title="Code snippets/fr">Extraits de codes</a>, <a href="Line_drawing_function.html" title="Line drawing function/fr">Fonction - tracer une ligne</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/fr">Bibliothèque mathématique vectorielle de FreeCAD</a> <small>(déprécié)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs :</b> <a href="User_hub.html" title="User hub/fr">Hub utilisateurs</a>, <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>, <a href="Developer_hub.html" title="Developer hub/fr">Hub développeurs</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129210947
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.137 seconds
+Real time usage: 0.676 seconds
+Preprocessor visited node count: 234/1000000
+Post‐expand include size: 7257/2097152 bytes
+Template argument size: 16222/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 10/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 69682/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  538.842      1 -total
+ 98.74%  532.027     10 Template:Code
+  0.54%    2.899      1 Template:Powerdocnavi/fr
+  0.33%    1.757      1 Template:Navigation_menu_2
+  0.20%    1.092      2 Template:Incode
+  0.15%    0.822      1 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:2769-0!canonical and timestamp 20241129210946 and revision id 742253. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

@@ -1,0 +1,82 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">FreeCAD GUI Widgets toolkit</span></h1><div class="mw-parser-output"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Background"><span class="tocnumber">1</span> <span class="toctext">Background</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Introduction"><span class="tocnumber">2</span> <span class="toctext">Introduction</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#FreeCAD_GUI_Widgets_toolkit"><span class="tocnumber">2.1</span> <span class="toctext">FreeCAD GUI Widgets toolkit</span></a>
+<ul>
+<li class="toclevel-3 tocsection-4"><a href="#Simple_example_showing_a_drawing"><span class="tocnumber">2.1.1</span> <span class="toctext">Simple example showing a drawing</span></a></li>
+<li class="toclevel-3 tocsection-5"><a href="#Another_example"><span class="tocnumber">2.1.2</span> <span class="toctext">Another example</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-6"><a href="#Installing_the_GUI_toolkit"><span class="tocnumber">2.2</span> <span class="toctext">Installing the GUI toolkit</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#Fr_Widget_Basics"><span class="tocnumber">2.3</span> <span class="toctext">Fr Widget Basics</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Fr_Widget_Common_Widgets"><span class="tocnumber">2.4</span> <span class="toctext">Fr Widget Common Widgets</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2><span class="mw-headline" id="Background">Background</span></h2>
+<p><a href="Design456_Workbench.html" title="Design456 Workbench">Design456</a> is an external workbench that aims to provide a Direct Modeling solution within FreeCAD.
+</p>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<h3><span class="mw-headline" id="FreeCAD_GUI_Widgets_toolkit">FreeCAD GUI Widgets toolkit</span></h3>
+<p>In the effort of making new tools for direct modeling, a graphical user interface (GUI) is needed. A widget system is required to let the user interact with the <a href="3D_view.html" title="3D view">3D view</a>. Often FreeCAD implemented this interactive part as a <a href="Viewprovider.html" title="Viewprovider">ViewProvider</a>. These ViewProviders are made for each tool and  are specific for each tools.
+</p><p>This doesn't serve Design456's agenda as it would make producing new tools difficult. That is why the necessity to figure out how <a class="external text" href="https://github.com/coin3d/coin/wiki" rel="nofollow">Coin3D</a> works, in other words how drawings directly to the <a href="Scenegraph.html" title="Scenegraph">scenegraph</a> is implemented.
+</p><p>This GUI toolkit will in the beginning try to produce different kind of primitive drawings which then can be adapted by different widgets (i.e square, circle, triangle, ellipse etc...). For example an arrow that a user can push/pull to get the effect of extruding or pushing a face of a 3D object.
+</p><p>As I am inspired totally by the simplicity of <a class="external text" href="https://www.fltk.org/" rel="nofollow">FLTK GUI Toolkit</a> used for making Windows/macOS/Linux GUI interfaces in cplusplus and other languages. The <a class="mw-selflink selflink">FreeCAD GUI Widgets toolkit</a> will be inspired by FLTK so understanding the toolkit shouldn't present much difficulty. 
+</p>
+<h5><span class="mw-headline" id="Simple_example_showing_a_drawing">Simple example showing a drawing</span></h5>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">pivy</span> <span class="kn">import</span> <span class="n">coin</span>
+<span class="kn">import</span> <span class="nn">fr_draw</span> <span class="k">as</span> <span class="nn">d</span> 
+
+<span class="n">sg</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ActiveView</span><span class="o">.</span><span class="n">getSceneGraph</span><span class="p">()</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">draw_circle</span><span class="p">()</span>
+<span class="n">sg</span><span class="o">.</span><span class="n">addChild</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+</pre></div>
+<h5><span class="mw-headline" id="Another_example">Another example</span></h5>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">pivy</span> <span class="kn">import</span> <span class="n">coin</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">fr_draw</span> <span class="k">as</span> <span class="nn">d</span> 
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span><span class="n">QtGui</span>
+<span class="n">sg</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ActiveView</span><span class="o">.</span><span class="n">getSceneGraph</span><span class="p">()</span>
+      <span class="c1">#draw_DoubleSidedArrow(_Points=[], _color=FR_COLOR.FR_BLACK, _ArrSize=1.0, _rotation=[0.0, 0.0, 1.0, 0.0]):</span>
+<span class="n">root</span><span class="o">=</span><span class="n">d</span><span class="o">.</span><span class="n">draw_DoubleSidedArrow</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="mi">1</span><span class="p">,[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">180</span><span class="p">])</span>
+<span class="n">sg</span><span class="o">.</span><span class="n">addChild</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+</pre></div>
+<h3><span class="mw-headline" id="Installing_the_GUI_toolkit">Installing the GUI toolkit</span></h3>
+<p>The <a href="Design456_Workbench.html" title="Design456 Workbench">Design456 Workbench</a> is a prerequisite to be able to use this widget system. There is an option to specifically import the toolkit via Python code, but Design456 Workbench is still required.
+</p>
+<h3><span class="mw-headline" id="Fr_Widget_Basics">Fr Widget Basics</span></h3>
+<p>See <a href="Fr_Widget_Basics.html" title="Fr Widget Basics">Fr Widget Basics</a>.
+</p>
+<h3><span class="mw-headline" id="Fr_Widget_Common_Widgets">Fr Widget Common Widgets</span></h3>
+<p>There are some basic drawings written at the moment. Later I will list down them. But you can look at fr_draw.py to find them. Some are used for developing direct modeling commands.
+</p><p>To be continued ..
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20241129211431
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.019 seconds
+Real time usage: 0.349 seconds
+Preprocessor visited node count: 56/1000000
+Post‐expand include size: 172/2097152 bytes
+Template argument size: 509/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 2/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 3081/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  341.197      1 -total
+ 99.93%  340.975      2 Template:Code
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:255498-0!canonical and timestamp 20241129211431 and revision id 1220421. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>

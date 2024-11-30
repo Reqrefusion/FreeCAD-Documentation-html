@@ -1,0 +1,319 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Sandbox:Edwilliams16</span></h1><div class="mw-parser-output"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Manipulating_Vectors_in_FreeCAD"><span class="tocnumber">1</span> <span class="toctext">Manipulating Vectors in FreeCAD</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Dot_and_cross_products_of_vectors"><span class="tocnumber">1.1</span> <span class="toctext">Dot and cross products of vectors</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#Rotations"><span class="tocnumber">1.2</span> <span class="toctext">Rotations</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Successive_rotations_and_Euler_Angles"><span class="tocnumber">1.3</span> <span class="toctext">Successive rotations and Euler Angles</span></a>
+<ul>
+<li class="toclevel-3 tocsection-5"><a href="#slerp_(Spherical_Linear_Interpolation.)"><span class="tocnumber">1.3.1</span> <span class="toctext">slerp (Spherical Linear Interpolation.)</span></a></li>
+<li class="toclevel-3 tocsection-6"><a href="#sclerp_(Interpolating_Placements)"><span class="tocnumber">1.3.2</span> <span class="toctext">sclerp (Interpolating Placements)</span></a></li>
+<li class="toclevel-3 tocsection-7"><a href="#Offset_rotations"><span class="tocnumber">1.3.3</span> <span class="toctext">Offset rotations</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-8"><a href="#Some_other_Vector_Methods"><span class="tocnumber">1.4</span> <span class="toctext">Some other Vector Methods</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="#Vectors_in_2D"><span class="tocnumber">1.5</span> <span class="toctext">Vectors in 2D</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-10"><a href="#Placement"><span class="tocnumber">2</span> <span class="toctext">Placement</span></a>
+<ul>
+<li class="toclevel-2 tocsection-11"><a href="#Compound_placement"><span class="tocnumber">2.1</span> <span class="toctext">Compound placement</span></a></li>
+<li class="toclevel-2 tocsection-12"><a href="#Manipulating_global_Placement."><span class="tocnumber">2.2</span> <span class="toctext">Manipulating global Placement.</span></a></li>
+<li class="toclevel-2 tocsection-13"><a href="#Interpolating_Placements."><span class="tocnumber">2.3</span> <span class="toctext">Interpolating Placements.</span></a></li>
+<li class="toclevel-2 tocsection-14"><a href="#Vertex_Coordinates"><span class="tocnumber">2.4</span> <span class="toctext">Vertex Coordinates</span></a></li>
+<li class="toclevel-2 tocsection-15"><a href="#References"><span class="tocnumber">2.5</span> <span class="toctext">References</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2><span class="mw-headline" id="Manipulating_Vectors_in_FreeCAD">Manipulating Vectors in FreeCAD</span></h2>
+<p>Vectors are ubiquitous in FreeCAD, describing point locations and displacements.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">FreeCAD</span> <span class="kn">import</span> <span class="n">Vector</span> 
+<span class="n">v1</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> 
+<span class="n">v2</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</pre></div>
+<p>creates a vector <code>v1</code> whose x-, y-, and z-components are 1, 2, 3 , respectively.
+</p><p>The result of adding the two vectors, tip to tail is given by
+</p><p><code>v1.add(v2)</code>
+</p><p>but much more conveniently by:
+</p><p><code>v1 + v2</code>
+</p><p>because the + operator has been overloaded, resulting in the vector <code>Vector(5, 7, 9)</code>
+</p><p>We can also subtract vectors, and multiply or divide them by scalars, so we can write:
+</p><p><code>2*v2 - v1/2</code>
+</p><p>obtaining <code>Vector(7.5, 9, 10.5)</code>
+</p><p>The length of the vector v1 is given by Pythagoras' theorem (in 3D):
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">math</span> 
+<span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">v1</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">v1</span><span class="o">.</span><span class="n">y</span> <span class="o">*</span> <span class="n">v1</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">v1</span><span class="o">.</span><span class="n">z</span> <span class="o">*</span> <span class="n">v1</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+</pre></div>
+<p>or much more conveniently by the builtin method
+</p><p><code>v1.Length</code>
+</p><p>We can use a vector to represent a direction in space. For this purpose, since the (non-zero!) length of the vector is then immaterial, it is customary to use unit vectors, whose length is 1. (In FreeCAD dialogs for axes, you can use un-normalized directions. The code normalizes them for you.) We can create a unit vector by normalizing any vector in the desired direction:
+</p><p><code>v1.normalize() # unit vector in the direction of v1</code>
+</p><p>This gives us alternative way of creating vectors. If we'd like, for instance, to create a vector in the direction of <code>v1</code> with the length of <code>v2</code>, we could use:
+</p><p><code>v2.Length * v1.normalize()</code>
+</p>
+<h3><span class="mw-headline" id="Dot_and_cross_products_of_vectors">Dot and cross products of vectors</span></h3>
+<p>Other than addition and subtraction, there are other geometrically meaningful ways of combining two vectors.
+</p><p>One is the  <a class="external text" href="https://en.wikipedia.org/wiki/Dot_product" rel="nofollow">dot product</a>
+</p><p><code>v1.dot(v2)  # or v2.dot(v1)</code>
+</p><p>In terms of components, if <code>v1 = Vector(v1x, v1y, v1z)</code> and <code>v2 = Vector(v2x, v2y, v2z)</code>, then <code>v1.dot(v2) = v1x*v2x + v1y*v2y + v1z*v2z</code> Alternatively, this can be shown to be equal to the product of their two lengths with the cosine of the angle between them. It is thus, in some sense, the projection of one vector on the other. It can be used to calculate the angle between the two (non-zero) vectors:
+</p><p><code>angle = math.acos(v1.dot(v2)/(v1.Length * v2.Length))</code>
+</p><p>giving the angle in radians.
+</p><p>this method is built in to FreeCAD as
+</p><p><code>angle = v1.getAngle(v2)</code>
+</p><p>The <a class="external text" href="https://en.wikipedia.org/wiki/Cross_product" rel="nofollow">cross product</a> of two vectors <code>v1</code> and <code>v2</code> creates a third vector, perpendicular to both of them, that is, normal to the plane containing <code>v1</code> and <code>v2</code> 
+In component form, <code>v1.cross(v2) = Vector(v1y*v2z - v1z*v2y, v1z*v2x - v1x*v2z, v1x*v2y - v1y*v2x)</code>
+Its length is given by the product of the lengths of <code>v1</code> and <code>v2</code> with the sine of the angle between them. It thus vanishes if <code>v1</code> and <code>v2</code> are parallel.
+</p><p>Another way of visualizing this is that the length of <code>v1.cross(v2)</code> is the area of the parallelogram defined by <code>v1</code> and <code>v2</code>. Note that <code>v1.cross(v2)</code>and <code>v2.cross(v1)</code> have opposite signs, but <code>v1.dot(v2)</code> and <code>v2.dot(v1)</code>are equal.
+</p><p>A test to check if, within numerical error, two (non-zero) vectors are parallel could be written:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">isParallel</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">):</span>     
+    <span class="k">return</span> <span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v2</span><span class="p">))</span><span class="o">.</span><span class="n">Length</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">=</span> <span class="mf">1e-7</span> <span class="o">*</span> <span class="n">v1</span><span class="o">.</span><span class="n">Length</span> <span class="o">*</span>  <span class="n">v2</span><span class="o">.</span><span class="n">Length</span>
+</pre></div>
+<p>Similarly, 
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">isPerpendicular</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">v1</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">=</span> <span class="mf">1e-7</span> <span class="o">*</span> <span class="n">v1</span><span class="o">.</span><span class="n">Length</span> <span class="o">*</span> <span class="n">v2</span><span class="o">.</span><span class="n">Length</span>
+</pre></div>
+<p>tests for orthogonality.
+</p><p>These tests both return <code>True</code> if either vector has zero length. If you require <code>False</code>, replace <code>&lt;=</code> with <code>&lt;</code>.
+</p>
+<h3><span class="mw-headline" id="Rotations">Rotations</span></h3>
+<p>Another operation we might want to perform on a vector is to rotate it. There are many ways to specify a rotation.
+</p><p>-- Rotation object-- four floats (a quaternion)
+</p><p>FreeCAD's internal representation of rotations (a, b, c, d) = a <b>i</b> + b <b>j</b> + c <b>k</b> + d
+</p><p>where d = cos(theta/2), (a,b,c) = sin(theta/2)*unit_vector
+</p><p>represents a rotation of theta about the unit_vector axis. It is unlikely you will need to work with these directly.
+</p><p>-- three floats (yaw, pitch, roll)
+</p><p>Uses Euler Angles. (see below)
+</p><p>​ <a class="external free" href="https://wiki.freecadweb.org/Placement" rel="nofollow">https://wiki.freecadweb.org/Placement</a>
+</p><p>-- Vector (rotation axis) and float (rotation angle)
+</p><p>see below
+</p><p>-- two Vectors (two axes)
+</p><p><code>Rotation(v1, v2)</code>rotates <code>v1</code> into <code>v2</code> <b>in the v1 - v2 plane</b>. (There are an infinity of other possible rotation axes)
+</p><p>-- Matrix object -- 16 floats (4x4 matrix)
+</p><p>The 3x3 submatrix in the top-left is the rotation part. The rest represents (unused) translation.
+</p><p>-- 9 floats (3x3 matrix)
+</p><p>See <a class="external free" href="https://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions" rel="nofollow">https://en.wikipedia.org/wiki/Rotation_matrix#In_three_dimensions</a>
+</p><p>-- 3 vectors + optional string
+</p><p><code>rot = FreeCAD.Rotation(Vector(0,1,0),Vector(-1,0,0),Vector(0,0,1),'ZXY')</code>
+</p><p>for example, rotates x-&gt;y, y-&gt;-x and z-&gt;z . The target triad need not be orthogonal (or even normalized), the optional string 'ZXY' gives the priority order of the calculation. Here the Z-axis is mapped as given by the third argument, the X-axis target is orthogonalized to the result, and the Y axis target is ignored. The new Y-axis is constructed by the right hand rule from the constructed axes.
+</p><p><br/>
+Of these, axis and angle is the most commonly used rotation constructor. To rotate <code>v1</code> around the axis given by <code>v2</code> by 30 degrees, we would use:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">FreeCAD</span> <span class="kn">import</span> <span class="n">Rotation</span> 
+<span class="n">rot</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span><span class="n">v2</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span> 
+<span class="n">rotVec</span> <span class="o">=</span> <span class="n">rot</span><span class="o">.</span><span class="n">multVec</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span>
+</pre></div>
+<p>Note that we input the angle in degrees, but if we query it with <code>rot.Angle</code> we get the internal value in radians.
+</p>
+<h3><span class="mw-headline" id="Successive_rotations_and_Euler_Angles">Successive rotations and Euler Angles</span></h3>
+<p>See <a class="external free" href="https://wiki.freecadweb.org/Placement#Position_and_Yaw.2C_Pitch_and_Roll" rel="nofollow">https://wiki.freecadweb.org/Placement#Position_and_Yaw.2C_Pitch_and_Roll</a>
+</p><p>One of the properties of quaternions that makes them so useful is that the product of two quaternions represents the result of succesive rotations to which they correspond. The order matters! The result of two rotations is generally not the same if the rotations are made in the reverse order.
+</p><p>Yaw, pitch and roll through three <i>Euler</i> angles is a decomposition of a general rotation into three successive rotations about coordinate axes. This is commonly used in aerodynamics and rigid body mechanics.
+</p><p>-- First we rotate by the yaw angle about the z-axis.
+</p><p>-- Then pitch up by pitch angle about the <i>new</i> y-axis.
+</p><p>-- Finally, we roll about the <i>new</i> x axis by the roll angle. In FreeCAD
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">rot</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span> <span class="p">,</span><span class="mi">30</span><span class="p">)</span> <span class="c1"># create rotation with yaw =10, pitch = 20 and roll = 30 degrees </span>
+<span class="n">ryaw</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span> 
+<span class="n">rpitch</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">20</span><span class="p">)</span> 
+<span class="n">rroll</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">30</span><span class="p">)</span> 
+<span class="n">rypr</span> <span class="o">=</span> <span class="n">ryaw</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">rpitch</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">rroll</span><span class="p">))</span> <span class="c1">#creating rotation by multiplying quaternions </span>
+<span class="n">rot</span><span class="o">.</span><span class="n">isSame</span><span class="p">(</span><span class="n">rypr</span><span class="p">,</span> <span class="mf">1e-15</span><span class="p">)</span> <span class="c1"># True</span>
+</pre></div>
+<p>What is easily confused here is that in above case the successive rotations are about the <i>new</i> rotated axes, that is the axes are fixed in the body. If instead, we make successive rotations about the fixed coordinate axes, <i>not</i> following the body, the multiplications are made in the opposite order!
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">rz</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">90</span><span class="p">)</span>
+<span class="n">rx</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span> <span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">90</span><span class="p">)</span>
+<span class="n">rzx</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">120</span><span class="p">)</span> <span class="c1">#this is you what you should get if you do rz followed by rx</span>
+<span class="n">rzx1</span> <span class="o">=</span> <span class="n">rx</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">rz</span><span class="p">)</span>  <span class="c1"># note the opposite order</span>
+<span class="n">rzx</span><span class="o">.</span><span class="n">isSame</span><span class="p">(</span><span class="n">rzx1</span><span class="p">,</span> <span class="mf">1e-15</span><span class="p">)</span> <span class="c1"># True  1e-15 is a tolerance that allows for finite precision error</span>
+</pre></div>
+<p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="File/Cube_R0.png"><img decoding="async" height="284" src="File/Cube_R0.png" width="302"/></a></span>
+</p>
+<pre> Axis cube prior to rotation.
+</pre>
+<p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="File/Cube_Rz.png"><img decoding="async" height="266" src="File/Cube_Rz.png" width="302"/></a></span>
+</p>
+<pre>After rz - 90 degrees around global z axis
+</pre>
+<p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="File/Cube_Rzx.png"><img decoding="async" height="248" src="File/Cube_Rzx.png" width="303"/></a></span>
+</p>
+<pre>After rzx - 90 degrees around global z axis, followed by 90 degrees around global x-axis. This configuration could have been reached by a single 120 degree rotation about the top front right corner (the (1,-1,1) axis.
+</pre>
+<p>Note that since rotation axes are stored normalized, <code>rzx.Axis</code> returns <code>Vector(0.57735026919, -0.57735026919, 0.57735026919))</code>, not <code>Vector(1, -1, 1)</code>. This is likewise the case for the<code>Placement.Rotation.Axis</code>property of a Placement. When you enter an axis into a placement rotation dialog, it need not be normalized. The code replaces your entry with the normalized version.
+</p><p>Note that the <code>rot1.isSame(rot2, tolerance)</code> method tests <code>True</code> if <code>rot1</code> and <code>rot2</code> create the same result. For instance, <code>Rotation(Vector(0, 0, 1), 90)</code>, <code>Rotation(Vector(0, 0, 1), -270)</code>and <code>Rotation(Vector(0, 0, -1), 270)</code> test <code>True</code> with <code>isSame</code>even though their <code>Axis</code> and <code>Angle</code>properties differ, and are stored as created.
+</p>
+<h4><span id="slerp_.28Spherical_Linear_Interpolation..29"></span><span class="mw-headline" id="slerp_(Spherical_Linear_Interpolation.)">slerp (Spherical Linear Interpolation.)</span></h4>
+<p>This is a function widely used in animation. Suppose you wanted to smoothly rotate an object from one orientation, <code>rot1</code> to another, <code>rot2</code>. You would need to create a series of intermediate orientations. <code>rot1.slerp(rot2, 0.3)</code> creates a rotation 30% of the way between the two. As a simple example:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">rot1</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">30</span><span class="p">)</span> 
+<span class="n">rot2</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">80</span><span class="p">)</span> 
+<span class="n">rotbetween</span> <span class="o">=</span> <span class="n">rot1</span><span class="o">.</span><span class="n">slerp</span><span class="p">(</span><span class="n">rot2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>  
+<span class="n">rotbetween</span><span class="o">.</span><span class="n">Angle</span> <span class="c1"># pi/4 = 45 degrees = 30 + 0.3*(80 - 30)</span>
+</pre></div>
+<p><br/>
+This example is simple because <code>rot1</code> and <code>rot2</code> happen to have the same axis. Slerp works in the general case. <a class="external autonumber" href="https://en.wikipedia.org/wiki/Slerp" rel="nofollow">[1]</a>
+</p>
+<h4><span id="sclerp_.28Interpolating_Placements.29"></span><span class="mw-headline" id="sclerp_(Interpolating_Placements)">sclerp (Interpolating Placements)</span></h4>
+<p>This function interpolates both rotation and displacement - again invaluable for animation.  For example:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">p1</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Placement</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">App</span><span class="o">.</span><span class="n">Rotation</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">p2</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Placement</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">App</span><span class="o">.</span><span class="n">Rotation</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">))</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">p1</span><span class="o">.</span><span class="n">sclerp</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span> <span class="c1"># =&gt; Placement [Pos=(0.3,0,0), Yaw-Pitch-Roll=(0,0,27)]</span>
+</pre></div>
+<p>See <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=9&amp;t=40046" rel="nofollow">here</a> for related functions and use in expressions.
+</p>
+<h4><span class="mw-headline" id="Offset_rotations">Offset rotations</span></h4>
+<p><code>Rotation(axis angle)</code> represents rotations about the direction <code>axis</code> through the origin.  What if we wish to rotate a point <code>P</code> about an axis offset from the origin by the Vector <code>C</code>?  We break our Vector <code>P</code> into the two parts <code>C</code> and <code>P - C</code>. The first part remains fixed, the second rotates, resulting in
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">rot</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+<span class="n">newP</span> <span class="o">=</span> <span class="n">C</span> <span class="o">+</span> <span class="n">Rotation</span><span class="o">.</span><span class="n">multVec</span><span class="p">(</span><span class="n">P</span> <span class="o">-</span>  <span class="n">C</span><span class="p">)</span>
+</pre></div>
+<p>Placements can do this with a third <i>center</i> Argument  <code>Placement(BaseVector, Rotation, Center)</code> represents a <i>Rotation</i> about <i>Center</i> followed by a displacement of <i>BaseVector</i>.
+</p><p>Constructing from first principles, we see:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">baseVector</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">axis</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">angle</span> <span class="o">=</span> <span class="mi">45</span>
+<span class="n">center</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">rotation</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Rotation</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
+<span class="n">zeroVec</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># or =App.Vector()</span>
+<span class="n">zeroRot</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Rotation</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># or =App.Rotation()</span>
+<span class="n">p1</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Placement</span><span class="p">(</span><span class="n">baseVector</span><span class="p">,</span> <span class="n">rotation</span><span class="p">,</span> <span class="n">center</span><span class="p">)</span>
+<span class="n">p2</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Placement</span><span class="p">(</span><span class="n">BaseVector</span><span class="p">,</span> <span class="n">zeroRot</span><span class="p">)</span> <span class="o">*</span> <span class="n">App</span><span class="o">.</span><span class="n">Placement</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">zeroRot</span><span class="p">)</span> <span class="o">*</span> <span class="n">App</span><span class="o">.</span><span class="n">Placement</span><span class="p">(</span><span class="n">zeroVec</span><span class="p">,</span>  <span class="n">rotation</span><span class="p">)</span> <span class="o">*</span> <span class="n">App</span><span class="o">.</span><span class="n">Placement</span><span class="p">(</span><span class="o">-</span><span class="n">center</span><span class="p">,</span> <span class="n">zeroRot</span><span class="p">)</span>
+<span class="n">p1</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
+<span class="kc">True</span>
+</pre></div>
+<h3><span class="mw-headline" id="Some_other_Vector_Methods">Some other Vector Methods</span></h3>
+<p>Let v, v0, v1, v2 etc. be Vectors
+</p><p><code>v.distanceToLine(v1, v2)</code>
+</p><p>This returns the perpendicular distance to the extended line passing though v1 in the direction v2
+</p><p><code>v.distanceToLineSegment(v1, v2)</code>
+</p><p>The name and tooltip are misleading here. This function returns the <i>vector</i> to the closest point on the line segment that extends from <code>v1</code> and <code>v2</code>. It is along the perpendicular if that meets the line segment, otherwise it is to the nearest endpoint.
+</p><p><code>v.distanceToPlane(v1, v2)</code>
+</p><p>The plane is defined by <code>v1</code>, any point on it, and <code>v2</code>, the direction of the normal to the plane. The method returns the shortest distance to the plane - positive if <code>v</code> is on the side of the plane pointed to by its normal <code>v2</code>, negative otherwise.
+</p>
+<h3><span class="mw-headline" id="Vectors_in_2D">Vectors in 2D</span></h3>
+<p>FreeCAD has a subsystem for creating 2D objects in the Part.Geom2d module. It uses a two component vector class App.Base.Vector2d. 3D vectors are in App.Vector  See <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?style=3&amp;p=567377#p567377" rel="nofollow">here</a> for some usage information of Part.Geom2d.
+</p>
+<h2><span class="mw-headline" id="Placement">Placement</span></h2>
+<p>A Placement combines rotation and translation into a single operator.  <code>Placement.Base</code> is the translation vector. <code>Placement.Rotation</code> is the rotation. The combined operation translates the object, rotated about its origin, by the translation vector. (See <a href="Rigid_Transformation_Math.html" title="Rigid Transformation Math">Rigid Transformation Math</a> for the representation of placements as 4 x 4 matrices.) The placement relates the local coordinate system (LCS) of the object to that of its container coordinate system (CCS).  The tooltip for <code>App.Rotation</code> shows the many options for its constructor. An example, rotating by 90 degrees about the x-axis and translating 20 in the z-direction, would be
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">rot</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Rotation</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">90</span><span class="p">)</span>
+<span class="n">trans</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">placement</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Placement</span><span class="p">(</span><span class="n">trans</span><span class="p">,</span> <span class="n">rot</span><span class="p">)</span>
+</pre></div>
+<p>A placement acting on (multiplying) a coordinate vector in the LCS gives the coordinates in the CCS. (see Vertex Coordinates)
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">lcscoord</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">ccscoord</span> <span class="o">=</span> <span class="n">rot</span> <span class="o">*</span> <span class="n">lcscoord</span> <span class="c1">#or rot.multiply(lcscoord) =&gt; App.Vector(0, 0, 10)</span>
+</pre></div>
+<p>We can test of two placements are equal within numerical tolerance with:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">placements_same</span><span class="p">(</span><span class="n">pl1</span><span class="p">,</span> <span class="n">pl2</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-7</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">pl1</span><span class="o">.</span><span class="n">Rotation</span><span class="o">.</span><span class="n">isSame</span><span class="p">(</span><span class="n">pl2</span><span class="o">.</span><span class="n">Rotation</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pl1</span><span class="o">.</span><span class="n">Base</span><span class="o">.</span><span class="n">isEqual</span><span class="p">(</span><span class="n">pl2</span><span class="o">.</span><span class="n">Base</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span>
+</pre></div>
+<h4><span class="mw-headline" id="Compound_placement">Compound placement</span></h4>
+<figure class="mw-default-size mw-halign-left" typeof="mw:File/Thumb"><a class="mw-file-description" href="File/Sample_Assembly_structure.png"><img decoding="async" height="189" src="File/Sample_Assembly_structure.png" width="194"/></a><figcaption>Nested placements</figcaption></figure>
+<p>The document <b>macroplacement</b>, whose tree-view is illustrated above, contains two objects, <b>Body</b> and <b>Cube</b>.  The <b>Part</b> container's location in the document's global coordinate system (GCS) is given by its Placement property.  Likewise, <b>Part001'</b>s location <b>Part'</b>s LCS is given by its Placement.  The global placements of the objects are determined by multiplying the chain of placements, starting from the root. Note that the features inside the Body container (Pad) have the placement of the Body.  FCstd file is <a class="external text" href="https://forum.freecadweb.org/download/file.php?id=172998" rel="nofollow">here.</a>
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span>
+<span class="n">plPart</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s1">'Part'</span><span class="p">)</span><span class="o">.</span><span class="n">Placement</span>
+<span class="n">plPart001</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s1">'Part001'</span><span class="p">)</span><span class="o">.</span><span class="n">Placement</span>
+<span class="n">plBody</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s1">'Body'</span><span class="p">)</span><span class="o">.</span><span class="n">Placement</span>
+<span class="n">gplBody</span> <span class="o">=</span> <span class="n">plPart</span> <span class="o">*</span> <span class="n">plPart001</span> <span class="o">*</span> <span class="n">plBody</span>  <span class="c1">#from chain of placements</span>
+<span class="n">gplBody1</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s1">'Body'</span><span class="p">)</span><span class="o">.</span><span class="n">getGlobalPlacement</span><span class="p">()</span> <span class="c1">#from built-in method</span>
+<span class="n">placements_same</span><span class="p">(</span><span class="n">gplBody</span><span class="p">,</span> <span class="n">gplBody1</span><span class="p">)</span> <span class="c1">#  returns True</span>
+</pre></div>
+<h4><span class="mw-headline" id="Manipulating_global_Placement.">Manipulating global Placement.</span></h4>
+<p>Changing any of the placements in the chain will change the global placements of the children.  Suppose we wish to change the global placement of <b>Body</b> by changing the placement of <b>Part001</b>. We express the desired change in global placement of <b>Body</b> as <code>delta_global</code>
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span>
+<span class="n">plPart001</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s1">'Part001'</span><span class="p">)</span><span class="o">.</span><span class="n">Placement</span>
+<span class="n">gplBody</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s1">'Body'</span><span class="p">)</span><span class="o">.</span><span class="n">getGlobalPlacement</span><span class="p">()</span>  
+<span class="n">delta_global</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Placement</span> <span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">180</span><span class="p">)</span> <span class="c1"># desired change in global placement</span>
+<span class="n">gplBodyNew</span> <span class="o">=</span> <span class="n">delta_global</span> <span class="o">*</span> <span class="n">gplBody</span>  <span class="c1">#  desired final global placement</span>
+<span class="n">container_global_placement</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s1">'Part'</span><span class="p">)</span><span class="o">.</span><span class="n">getGlobalPlacement</span><span class="p">()</span> <span class="c1">#global placement of parent of Part001</span>
+<span class="n">delta_part001</span> <span class="o">=</span> <span class="n">container_global_placement</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span> <span class="o">*</span> <span class="n">delta_global</span> <span class="o">*</span> <span class="n">container_global_placement</span>
+<span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s1">'Part001'</span><span class="p">)</span><span class="o">.</span><span class="n">Placement</span> <span class="o">=</span> <span class="n">delta_part001</span> <span class="o">*</span> <span class="n">plPart001</span>  <span class="c1">#move Part001 and its contents</span>
+<span class="n">doc</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+<span class="n">gplBodyNew1</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s1">'Body'</span><span class="p">)</span><span class="o">.</span><span class="n">getGlobalPlacement</span><span class="p">()</span>  <span class="c1"># new placement</span>
+<span class="n">placements_same</span><span class="p">(</span><span class="n">gplBodyNew</span><span class="p">,</span> <span class="n">gplBodyNew1</span><span class="p">)</span> <span class="c1">#  returns True - it works!</span>
+</pre></div>
+<p>See also  <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=22&amp;t=64608" rel="nofollow">forum discussion</a> and <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?p=569083#p569083" rel="nofollow">getting getGlobalPlacement for linked objects</a>
+</p>
+<h4><span class="mw-headline" id="Interpolating_Placements.">Interpolating Placements.</span></h4>
+<p>Just as we can interpolate rotations using slerp, we can interpolate Placements using sclerp. The object takes a helical path between two placements, simultaneously rotating and translating.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">sclerp</span><span class="p">(</span><span class="n">placement2</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">shorten</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1">#interpolate between self and placement2.</span>
+</pre></div>
+<p>Interpolation is a continuous motion along a helical path, made of equal transforms if discretized.                    
+t = 0.0 - return self. 
+t = 1.0 - return placement2. 
+t can also be outside of 0..1 range, for extrapolation.                   
+If the quaternions of rotations of the two placements differ in sign, the interpolation will take a long path. 
+If 'shorten' is true, the signs are harmonized before interpolation, and the interpolation takes the shorter path.
+</p>
+<h3><span class="mw-headline" id="Vertex_Coordinates">Vertex Coordinates</span></h3>
+<p>Selecting a vertex in the 3D view displays its global coordinates and its name. We can obtain the local coordinates as follows.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span>
+<span class="n">pad</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s1">'Pad'</span><span class="p">)</span>
+<span class="n">pad</span><span class="o">.</span><span class="n">Shape</span><span class="o">.</span><span class="n">Vertexes</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">Point</span> <span class="c1"># returns the LCS coordinates of Vertex005</span>
+<span class="n">box</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s1">'Box'</span><span class="p">)</span>
+<span class="n">box</span><span class="o">.</span><span class="n">Shape</span><span class="o">.</span><span class="n">Vertexes</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">Point</span> <span class="c1"># returns the coordinates of Vertex004 including its placement</span>
+<span class="n">pli</span> <span class="o">=</span> <span class="n">box</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span>
+<span class="n">pli</span> <span class="o">*</span> <span class="n">box</span><span class="o">.</span><span class="n">Shape</span><span class="o">.</span><span class="n">Vertexes</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">Point</span>  <span class="c1"># returns the LCS coordinates of Vertex004 by undoing the placement</span>
+</pre></div>
+<p>Part workbench objects behave differently from others for historical reasons. <b>Point</b> for Part objects includes their placement. See <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=10&amp;t=27821&amp;sid=ed6ead0ccdffb9836043e548919759a5#p225497" rel="nofollow">Forum discussion</a>
+</p><p>Using the Gui, on selecting a vertex:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">sel</span> <span class="o">=</span> <span class="n">Gui</span><span class="o">.</span><span class="n">Selection</span><span class="o">.</span><span class="n">getSelectionEx</span><span class="p">()</span>
+<span class="n">sel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">SubObjects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Point</span> <span class="c1">#returns the LCS coordinates of picked Vertex (including placement if a Part, as above)</span>
+<span class="n">sel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">PickedPoints</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1">#returns global coordinates of picked vertex</span>
+<span class="n">sel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Object</span><span class="o">.</span><span class="n">Placement</span> <span class="c1"># object placement</span>
+</pre></div>
+<p>Possible code correcting for placement of part objects
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">getLCSVertex</span><span class="p">(</span><span class="n">sel</span><span class="p">):</span>
+    <span class="sd">'''return coordinates of selected vertex in local coordinate system'''</span>
+    <span class="n">pt</span> <span class="o">=</span> <span class="n">sel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">SubObjects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Point</span>
+    <span class="k">if</span> <span class="n">sel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Object</span><span class="o">.</span><span class="n">TypeId</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Part::'</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sel</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Object</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span> <span class="o">*</span> <span class="n">pt</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pt</span>
+</pre></div>
+<h3><span class="mw-headline" id="References">References</span></h3>
+<p><a class="external free" href="https://wiki.freecadweb.org/Placement" rel="nofollow">https://wiki.freecadweb.org/Placement</a>
+</p><p><a class="external free" href="https://github.com/FreeCAD/FreeCAD/blob/5d49bf78de785a536f941f1a6d06d432582a95d3/src/Base/Rotation.cpp" rel="nofollow">https://github.com/FreeCAD/FreeCAD/blob/5d49bf78de785a536f941f1a6d06d432582a95d3/src/Base/Rotation.cpp</a>
+</p><p><a class="external text" href="https://github.com/FreeCAD/FreeCAD-macros/blob/master/Information/GetGlobalPlacement.FCMacro" rel="nofollow">Macro GetGlobalPlacement</a>
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20241129212321
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.128 seconds
+Real time usage: 3.342 seconds
+Preprocessor visited node count: 309/1000000
+Post‐expand include size: 1720/2097152 bytes
+Template argument size: 4374/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 20/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 30245/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 3279.511      1 -total
+ 99.91% 3276.536     20 Template:Code
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:112498-0!canonical and timestamp 20241129212317 and revision id 1212440. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>

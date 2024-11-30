@@ -1,0 +1,384 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Create a FeaturePython object part I/fr</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Create_a_FeaturePython_object_part_I.html" lang="de" title="Ein FeaturePython-Objekt erstellen Teil I (32% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Create_a_FeaturePython_object_part_I.html" lang="en" title="Create a FeaturePython object part I (100% translated)">English</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="fr">français</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Create_a_FeaturePython_object_part_I.html" lang="it" title="Oggetti FeaturePython (3% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Create_a_FeaturePython_object_part_I.html" lang="pl" title="Tworzenie obiektów FeaturePython - część I (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Create_a_FeaturePython_object_part_I.html" lang="ru" title="Create a FeaturePython object part I/ru (21% translated)">русский</a></li></ul></div>
+<div class="docnav" style="background-color: #ececef; border: 1px solid #a2a9b1; padding: 2px 10px; margin: 10px 0; line-height: 1; clear: both; overflow: hidden;">
+<div style="margin: 4px 0; float: left;"><span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="16" src="../File/Arrow-left.svg" width="16"/></span></span> <a href="PySide.html" title="PySide/fr">PySide</a></div>
+<div style="margin: 4px 0; float: right;"><a href="Create_a_FeaturePython_object_part_II.html" title="Create a FeaturePython object part II/fr">Créer un objet FeaturePython partie II</a>
+<span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="16" src="../File/Arrow-right.svg" width="16"/></span></span></div>
+<div style="text-align:center"><a href="Online_Help_Toc.html" title="Online Help Toc/fr">Index</a> <span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="24" src="../File/Online_Help_Toc.svg" width="24"/></span></span></div>
+</div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Comment_ça_marche?"><span class="tocnumber">2</span> <span class="toctext">Comment ça marche?</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Mise_en_place"><span class="tocnumber">3</span> <span class="toctext">Mise en place</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Un_objet_FeaturePython"><span class="tocnumber">4</span> <span class="toctext">Un objet FeaturePython</span></a>
+<ul>
+<li class="toclevel-2 tocsection-5"><a href="#Test_du_code"><span class="tocnumber">4.1</span> <span class="toctext">Test du code</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Ajout_de_propriétés"><span class="tocnumber">4.2</span> <span class="toctext">Ajout de propriétés</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#Piège_à_événements"><span class="tocnumber">4.3</span> <span class="toctext">Piège à événements</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Le_code_terminé"><span class="tocnumber">4.4</span> <span class="toctext">Le code terminé</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>Les objets FeaturePython (également appelés <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a>) offrent aux utilisateurs la possibilité d'étendre FreeCAD avec des objets qui s'intègrent de manière transparente dans le framework FreeCAD.
+</p><p>Cela favorise:
+</p>
+<ul><li>Le prototypage rapide de nouveaux objets et outils avec des classes personnalisées de Python.</li>
+<li>Sauvegarde et restauration des données (également appelées sérialisation) via des objets <code>App::Property</code> sans intégrer de script dans le fichier de document FreeCAD.</li>
+<li>Une liberté créative pour adapter FreeCAD à n'importe quelle tâche.</li></ul>
+<p>Sur cette page, nous allons construire un exemple de travail d'une classe personnalisée FeaturePython, en identifiant tous les composants principaux et en comprenant comment tout fonctionne au fur et à mesure.
+</p><p><span id="How_does_it_work?"></span>
+</p>
+<h2><span id="Comment_.C3.A7a_marche.3F"></span><span class="mw-headline" id="Comment_ça_marche?">Comment ça marche?</span></h2>
+<p>FreeCAD est livré avec un certain nombre de types d'objets par défaut pour gérer différents types de géométrie. Certains d'entre eux ont des alternatives "FeaturePython" qui permettent une personnalisation avec une classe Python définie par l'utilisateur.
+</p><p>Cette classe Python personnalisée prend une référence à l'un de ces objets et le modifie. Par exemple, la classe Python peut ajouter des propriétés à l'objet ou le lier à d'autres objets. De plus, la classe Python peut implémenter certaines méthodes pour permettre à l'objet de répondre aux événements du document, ce qui permet de piéger les modifications de propriété de l'objet et de recalculer le document.
+</p><p>Lorsque vous travaillez avec des classes personnalisées et des objets FeaturePython, il est important de savoir que la classe personnalisée et son état ne sont pas enregistrés dans le document car cela nécessiterait l'incorporation d'un script dans un fichier de document FreeCAD, ce qui poserait un risque de sécurité important. Seul l'objet FeaturePython lui-même est enregistré (sérialisé). Mais comme le chemin du module de script est stocké dans le document, un utilisateur n'a qu'à installer le code de classe Python personnalisé en tant que module importable, suivant la même structure de dossier, pour retrouver la fonctionnalité perdue.
+</p><p><a href="#top">En haut</a>
+</p><p><span id="Setting_things_up"></span>
+</p>
+<h2><span class="mw-headline" id="Mise_en_place">Mise en place</span></h2>
+<p>Les classes d'objets FeaturePython doivent agir comme des modules importables dans FreeCAD. Cela signifie que vous devez les placer dans un chemin qui existe dans votre environnement Python (ou l'ajouter spécifiquement). Pour les besoins de ce tutoriel, nous allons utiliser le dossier Macro utilisateur FreeCAD, mais si vous avez une autre idée en tête, n'hésitez pas à l'utiliser à la place!
+</p><p>Si vous ne savez pas où se trouve le dossier des Macro de FreeCAD, tapez <code>FreeCAD.getUserMacroDir(True)</code> dans la <a href="Python_console.html" title="Python console/fr">console Python</a> de FreeCAD :
+</p>
+<ul><li>Sous Linux, il s'agit généralement de <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">/home/&lt;username&gt;/.local/share/FreeCAD/Mod/</span> (<span style="font-size:small;color:green;">version 0.20 et suivantes</span>) ou <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">/home/&lt;username&gt;/.FreeCAD/Mod/</span> (<span style="font-size:small;color:blue;">version 0.19 et précédentes</span>).</li>
+<li>Sous Windows, c'est <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">%APPDATA%\FreeCAD\Macro\</span>, généralement <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">C:\Users\&lt;username&gt;\Appdata\Roaming\FreeCAD\Macro\</span>.</li>
+<li>Sous macOS, il s'agit généralement de <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">/Users/&lt;username&gt;/Library/Application Support/FreeCAD/Macro/</span>.</li></ul>
+<p>Maintenant, nous devons créer des fichiers :
+</p>
+<ul><li>Dans le dossier <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Macro</span>, créez un nouveau dossier appelé <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">fpo</span>.</li>
+<li>Dans le dossier <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">fpo</span>, créez un fichier vide : <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">__init__.py</span>.</li>
+<li>Dans le dossier <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">fpo</span>, créez un nouveau dossier appelé <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">box</span>.</li>
+<li>Dans le dossier <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">box</span>, créez deux fichiers : <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">__init__.py</span> et <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">box.py</span> (laissez les deux cases vides pour l'instant).</li></ul>
+<p>La structure de votre dossier devrait ressembler à ceci :
+</p>
+<pre>Macro/
+    |--&gt; fpo/
+        |--&gt; __init__.py
+        |--&gt; box/
+            |--&gt; __init__.py
+            |--&gt; box.py
+</pre>
+<p>Le dossier <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">fpo</span> est l'endroit pour jouer avec les nouveaux objets FeaturePython et le dossier <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">box</span> est le module dans lequel nous allons travailler. <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">__init__.py</span> indique à Python qu'il y a un module importable dans le dossier et <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">box.py</span> sera le fichier de classe pour notre nouvel objet FeaturePython.
+</p><p>Une fois nos chemins et fichiers de module créés, nous assurons que FreeCAD est correctement configuré :
+</p>
+<ul><li>Démarrez FreeCAD (si vous ne l'avez pas déjà fait).</li>
+<li>Activez la <a href="Report_view.html" title="Report view/fr">Vue rapport</a> (<b>Affichage → Panneaux → Vue rapport</b>).</li>
+<li>Activez la <a href="Python_console.html" title="Python console/fr">console Python</a> (<b>Affichage → Panneaux → Console Python</b>) voir <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/fr">FreeCAD Scripting Basics</a>.</li></ul>
+<p>Enfin, naviguez jusqu'au dossier <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Macro/fpo/box</span> et ouvrez <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">box.py</span> dans votre éditeur de code préféré. Nous ne modifierons que ce fichier.
+</p><p><a href="#top">En haut</a>
+</p><p><span id="A_FeaturePython_object"></span>
+</p>
+<h2><span class="mw-headline" id="Un_objet_FeaturePython">Un objet FeaturePython</span></h2>
+<p>Commençons par écrire notre classe et son constructeur :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">box</span><span class="p">():</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Default constructor</span>
+<span class="sd">        """</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="s1">'box'</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+</pre></div>
+<p><b>La méthode <code>__init__()</code> se décompose comme suit:</b>
+</p>
+<table cellpadding="5px" class="wikitable" width="100%">
+<tbody><tr>
+<td style="width:25%"><code>def __init__(self, obj):</code>
+</td>
+<td style="width:75%">Les paramètres font référence à la classe Python elle-même et à l'objet FeaturePython auquel elle est attachée.
+</td></tr>
+<tr>
+<td><code>self.Type = 'box'</code>
+</td>
+<td>Définition de chaîne du type Python personnalisé.
+</td></tr>
+<tr>
+<td><code>obj.Proxy = self</code>
+</td>
+<td>Stocke une référence à l'instance Python dans l'objet FeaturePython.
+</td></tr></tbody></table>
+<p>Ajoutez le code suivant en haut du fichier :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+
+<span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">obj_name</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Object creation method</span>
+<span class="sd">    """</span>
+
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'App::FeaturePython'</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">)</span>
+
+    <span class="n">box</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">obj</span>
+</pre></div>
+<p><b>La méthode <code>create()</code> se décompose comme suit :</b>
+</p>
+<table cellpadding="5px" class="wikitable" width="100%">
+<tbody><tr>
+<td style="width:25%"><code>import FreeCAD as App</code>
+</td>
+<td style="width:75%">Importation standard pour la plupart des scripts Python, l'alias d'application n'est pas requis.
+</td></tr>
+<tr>
+<td><code>obj = ... addObject(...)</code>
+</td>
+<td>Crée un nouvel objet FeaturePython de FreeCAD avec le nom transmis à la méthode. S'il n'y a pas de conflit de nom, ce sera le libellé et le nom de l'objet créé. Sinon, un nom et une étiquette uniques seront créés en fonction de 'obj_name'.
+</td></tr>
+<tr>
+<td><code>box(obj)</code>
+</td>
+<td>Crée notre instance de classe personnalisée.
+</td></tr>
+<tr>
+<td><code>return obj</code>
+</td>
+<td>Renvoie l'objet FeaturePython.
+</td></tr></tbody></table>
+<p>La méthode <code>create()</code> n'est pas requise mais elle fournit un bon moyen d'encapsuler le code de création d'objet.
+</p><p><a href="#top">En haut</a>
+</p><p><span id="Testing_the_code"></span>
+</p>
+<h3><span class="mw-headline" id="Test_du_code">Test du code</span></h3>
+<p>Nous pouvons maintenant tester notre nouvel objet. Enregistrez votre code et revenez à FreeCAD. Assurez-vous que vous avez ouvert un nouveau document, vous pouvez le faire en appuyant sur <span style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #888888; border-radius: 0.3em; padding: 0px 5px 1px 5px;">Ctrl</span>+<span style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #888888; border-radius: 0.3em; padding: 0px 5px 1px 5px;">N</span> ou en sélectionnant <b>Fichier → Nouveau</b>.
+</p><p>Dans la console Python, tapez ce qui suit :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">fpo.box</span> <span class="kn">import</span> <span class="n">box</span>
+</pre></div>
+<p>Maintenant, nous devons créer notre objet :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">mybox</span> <span class="o">=</span> <span class="n">box</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">'my_box'</span><span class="p">)</span>
+</pre></div>
+<figure class="mw-default-size mw-halign-right" typeof="mw:File"><a class="mw-file-description" href="../File/Fpo_treeview.png"><img decoding="async" height="180" src="../File/Fpo_treeview.png" width="205"/></a><figcaption></figcaption></figure>
+<p>Vous devriez voir apparaître un nouvel objet dans la <a href="Tree_view.html" title="Tree view/fr">Vue en arborescence</a> étiqueté "my_box".
+</p><p>Notez que l'icône est grise. FreeCAD nous dit que l'objet ne peut rien afficher dans la <a href="3D_view.html" title="3D view/fr">Vue 3D</a>. Cliquez sur l'objet et regardez ses propriétés dans l'<a href="Property_editor.html" title="Property editor/fr">Éditeur de propriétés</a>. Il n'y a pas grand-chose là-bas, juste le nom de l'objet.
+</p><p>Notez également qu'il y a une petite coche bleue à côté de l'objet FeaturePython dans l'arborescence. En effet, lorsqu'un objet est créé ou modifié, il est "touché" et doit être recalculé. Appuyez sur le bouton <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Std_Refresh.svg"><img decoding="async" height="16" src="../File/Std_Refresh.svg" width="16"/></a></span> <a href="Std_Refresh.html" title="Std Refresh/fr">Std Recalculer</a></span> pour y parvenir. Nous ajouterons du code pour automatiser cela plus tard.
+</p>
+<div style="clear:both"></div>
+<p>Jetons un oeil aux attributs de notre objet :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">dir</span><span class="p">(</span><span class="n">mybox</span><span class="p">)</span>
+</pre></div>
+<p>Cela retournera :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="p">[</span><span class="s1">'Content'</span><span class="p">,</span> <span class="s1">'Document'</span><span class="p">,</span> <span class="s1">'ExpressionEngine'</span><span class="p">,</span> <span class="s1">'FullName'</span><span class="p">,</span> <span class="s1">'ID'</span><span class="p">,</span> <span class="s1">'InList'</span><span class="p">,</span>
+<span class="o">...</span>
+<span class="s1">'setPropertyStatus'</span><span class="p">,</span> <span class="s1">'supportedProperties'</span><span class="p">,</span> <span class="s1">'touch'</span><span class="p">]</span>
+</pre></div>
+<p>Il y a beaucoup d'attributs car nous accédons à l'objet FeaturePyton natif de FreeCAD créé à la première ligne de notre méthode <code>create()</code>. La propriété <code>Proxy</code> que nous avons ajoutée dans notre méthode <code>__init__()</code> est là aussi.
+</p><p>Inspectons-la avec la méthode <code>dir()</code> :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">dir</span><span class="p">(</span><span class="n">mybox</span><span class="o">.</span><span class="n">Proxy</span><span class="p">)</span>
+</pre></div>
+<p>Cela retournera :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="p">[</span><span class="s1">'Type'</span><span class="p">,</span> <span class="s1">'__class__'</span><span class="p">,</span> <span class="s1">'__delattr__'</span><span class="p">,</span> <span class="s1">'__dict__'</span><span class="p">,</span> <span class="s1">'__dir__'</span><span class="p">,</span> <span class="s1">'__doc__'</span><span class="p">,</span>
+<span class="o">...</span>
+<span class="s1">'__str__'</span><span class="p">,</span> <span class="s1">'__subclasshook__'</span><span class="p">,</span> <span class="s1">'__weakref__'</span><span class="p">]</span>
+</pre></div>
+<p>Nous pouvons voir notre propriété <code>Type</code>. Vérifions :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">mybox</span><span class="o">.</span><span class="n">Proxy</span><span class="o">.</span><span class="n">Type</span>
+</pre></div>
+<p>Cela retournera :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="s1">'box'</span>
+</pre></div>
+<p>Il s'agit bien de la valeur assignée, nous savons donc que nous accédons à la classe personnalisée via l'objet FeaturePython.
+</p><p>Voyons maintenant si nous pouvons rendre notre classe un peu plus intéressante, et peut-être aussi plus utile.
+</p><p><a href="#top">En haut</a>
+</p><p><span id="Adding_properties"></span>
+</p>
+<h3><span id="Ajout_de_propri.C3.A9t.C3.A9s"></span><span class="mw-headline" id="Ajout_de_propriétés">Ajout de propriétés</span></h3>
+<p>Les propriétés sont l'élément vital d'une classe FeaturePython. Heureusement, FreeCAD supporte <a href="FeaturePython_Custom_Properties.html" title="FeaturePython Custom Properties/fr">un certain nombre de types de propriétés</a> pour les classes FeaturePython. Ces propriétés sont attachées directement à l'objet FeaturePython et sont entièrement sérialisées lors de l'enregistrement du fichier. Pour éviter d'avoir à sérialiser les données vous-même, il est conseillé de n'utiliser que ces types de propriétés.
+</p><p>L'ajout de propriétés se fait à l'aide de la méthode <code>add_property()</code>. La syntaxe de cette méthode est la suivante :
+</p>
+<pre>add_property(type, name, section, description)
+</pre>
+<p>Vous pouvez consulter la liste des propriétés prises en charge en tapant :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">mybox</span><span class="o">.</span><span class="n">supportedProperties</span><span class="p">()</span>
+</pre></div>
+<p>Essayons d'ajouter une propriété à notre classe de boîte. Passez à votre éditeur de code, passez à la méthode <code>__init__()</code>, et à la fin de la méthode, ajoutez :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s1">'App::PropertyString'</span><span class="p">,</span> <span class="s1">'Description'</span><span class="p">,</span> <span class="s1">'Base'</span><span class="p">,</span> <span class="s1">'Box description'</span><span class="p">)</span><span class="o">.</span><span class="n">Description</span> <span class="o">=</span> <span class="s2">""</span>
+</pre></div>
+<p>Notez que nous utilisons la référence à l'objet FeaturePython (sérialisable) <code>obj</code>, et non l'instance de classe Python (non sérialisable) <code>self</code>.
+</p><p>Une fois que vous avez terminé, enregistrez les modifications et revenez à FreeCAD. Avant de pouvoir observer les modifications apportées à notre code, nous devons recharger le module. Cela peut être accompli en redémarrant FreeCAD, mais redémarrer FreeCAD à chaque fois que nous éditons le code serait gênant. Pour faciliter les choses, tapez ce qui suit dans la console Python :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">reload</span>
+<span class="n">reload</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
+</pre></div>
+<p>Avec le module rechargé, voyons ce que nous obtenons lorsque nous créons un objet :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">box</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">'box_property_test'</span><span class="p">)</span>
+</pre></div>
+<p>Vous devriez voir le nouvel objet boîte apparaître dans l'arborescence :
+</p>
+<ul><li>Sélectionnez-le et regardez l'éditeur de propriétés. Là, vous devriez voir la propriété <i>Description</i>.</li>
+<li>Passez la souris sur le nom de la propriété à gauche et l'info-bulle devrait apparaître avec la description que vous avez fournie.</li>
+<li>Sélectionnez le champ et tapez ce que vous voulez. Vous remarquerez que les commandes de mise à jour Python sont exécutées et affichées dans la console lorsque vous tapez des lettres et que les propriétés changent.</li></ul>
+<p><a href="#top">En haut</a>
+</p><p>Ajoutons quelques propriétés supplémentaires. Retournez à votre code source et ajoutez les propriétés suivantes à la méthode <code>__init__()</code> :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s1">'App::PropertyLength'</span><span class="p">,</span> <span class="s1">'Length'</span><span class="p">,</span> <span class="s1">'Dimensions'</span><span class="p">,</span> <span class="s1">'Box length'</span><span class="p">)</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s1">'App::PropertyLength'</span><span class="p">,</span> <span class="s1">'Width'</span><span class="p">,</span> <span class="s1">'Dimensions'</span><span class="p">,</span> <span class="s1">'Box width'</span><span class="p">)</span><span class="o">.</span><span class="n">Width</span> <span class="o">=</span> <span class="s1">'10 mm'</span>
+<span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s1">'App::PropertyLength'</span><span class="p">,</span> <span class="s1">'Height'</span><span class="p">,</span> <span class="s1">'Dimensions'</span><span class="p">,</span> <span class="s1">'Box height'</span><span class="p">)</span><span class="o">.</span><span class="n">Height</span> <span class="o">=</span> <span class="s1">'1 cm'</span>
+</pre></div>
+<p>Et ajoutons aussi un code pour recalculer le document automatiquement. Ajoutez la ligne suivante au-dessus de l'instruction <code>return()</code> de la méthode <code>create()</code>:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+</pre></div>
+<p><b>Faites attention à l'endroit où vous recalculez un objet FeaturePython. Le recalcul doit être effectué par une méthode externe à sa classe.</b>
+</p>
+<figure class="mw-default-size mw-halign-right" typeof="mw:File"><a class="mw-file-description" href="../File/Fpo_box_properties.png"><img decoding="async" height="198" src="../File/Fpo_box_properties.png" width="260"/></a><figcaption></figcaption></figure>
+<p>Maintenant, testez vos modifications comme suit:
+</p>
+<ul><li>Enregistrez vos modifications et rechargez votre module.</li>
+<li>Supprimez tous les objets dans l'arborescence.</li>
+<li>Créez un nouvel objet boîte à partir de la console Python en appelant <code>box.create('myBox')</code>.</li></ul>
+<p>Une fois que la boîte est créée et que vous avez vérifié pour vous assurer qu'elle a été recalculée, sélectionnez l'objet et regardez ses propriétés. Vous devez noter deux choses:
+</p>
+<ul><li>Un nouveau groupe de propriétés: <i>Dimensions</i>.</li>
+<li>Trois nouvelles propriétés: <i>Height</i>, <i>Length</i> et <i>Width</i>.</li></ul>
+<p>Notez également que les propriétés ont des unités. Plus précisément, elles ont repris les unités linéaires définies dans les préférences de l'utilisateur (<b>Edition → Préférences... → Général → Unités</b>).
+</p>
+<div style="clear:both"></div>
+<p>Vous avez sans doute remarqué que trois valeurs différentes ont été saisies pour les dimensions : une valeur en virgule flottante (<code>10.0</code>) et deux chaînes de caractères différentes (<code>'10 mm'</code> et <code>'1 cm'</code>). Le type <code>App::PropertyLength</code> suppose que les valeurs en virgule flottante sont en millimètres, les valeurs des chaînes sont analysées en fonction des unités spécifiées et, dans l'interface graphique, toutes les valeurs sont converties dans les unités spécifiées dans les préférences de l'utilisateur (<code>mm</code> dans l'image). Ce comportement intégré rend le type <code>App::PropertyLength</code> idéal pour les dimensions.
+</p><p><a href="#top">En haut</a>
+</p><p><span id="Trapping_events"></span>
+</p>
+<h3><span id="Pi.C3.A8ge_.C3.A0_.C3.A9v.C3.A9nements"></span><span class="mw-headline" id="Piège_à_événements">Piège à événements</span></h3>
+<p>Le dernier élément requis pour un objet FeaturePython de base est le recouvrement d'événements. Un objet FeaturePython peut réagir aux événements avec des fonctions de rappel. Dans notre cas, nous voulons que l'objet réagisse chaque fois qu'il est recalculé. En d'autres termes, nous voulons intercepter les recalculs. Pour ce faire, nous devons ajouter une fonction avec un nom spécifique, <code>execute()</code>, à la classe d'objets. Il existe plusieurs autres événements qui peuvent être piégés, à la fois dans l'objet FeaturePython lui-même et dans le <a href="Viewprovider.html" title="Viewprovider/fr">ViewProvider</a>, que nous aborderons dans la <a href="Create_a_FeaturePython_object_part_II.html" title="Create a FeaturePython object part II/fr">Création d'une boîte FeaturePython, partie II</a>.
+</p><p>Pour une référence complète des méthodes disponibles à implémenter sur les classes FeautrePython, voir <a href="FeaturePython_methods.html" title="FeaturePython methods/fr">Méthodes FeaturePython</a>.
+</p><p>Ajoutez ce qui suit après la fonction <code>__init__()</code>:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Called on document recompute</span>
+<span class="sd">    """</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Recomputing </span><span class="si">{0:s}</span><span class="s1"> (</span><span class="si">{1:s}</span><span class="s1">)'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Type</span><span class="p">))</span>
+</pre></div>
+<p>Testez le code en suivant à nouveau ces étapes:
+</p>
+<ul><li>Enregistrez et rechargez le module.</li>
+<li>Supprimer tous les objets.</li>
+<li>Créez un nouvel objet boîte.</li></ul>
+<p>Vous devriez voir la sortie imprimée dans la console Python, grâce à l'appel <code>recompute()</code> que nous avons ajouté à la méthode <code>create()</code>. Bien sûr, la méthode <code>execute()</code> ne fait rien ici, sauf nous dire qu'elle a été appelée, mais elle est la clé de la magie des objets FeaturePython.
+</p><p>Voilà, vous savez maintenant comment construire un objet FeaturePython basique et fonctionnel !
+</p><p><a href="#top">En haut</a>
+</p><p><span id="Complete_code"></span>
+</p>
+<h3><span id="Le_code_termin.C3.A9"></span><span class="mw-headline" id="Le_code_terminé">Le code terminé</span></h3>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+
+<span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">obj_name</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Object creation method</span>
+<span class="sd">    """</span>
+
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'App::FeaturePython'</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">)</span>
+
+    <span class="n">box</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">obj</span>
+
+<span class="k">class</span> <span class="nc">box</span><span class="p">():</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Default constructor</span>
+<span class="sd">        """</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="s1">'box'</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s1">'App::PropertyString'</span><span class="p">,</span> <span class="s1">'Description'</span><span class="p">,</span> <span class="s1">'Base'</span><span class="p">,</span> <span class="s1">'Box description'</span><span class="p">)</span><span class="o">.</span><span class="n">Description</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s1">'App::PropertyLength'</span><span class="p">,</span> <span class="s1">'Length'</span><span class="p">,</span> <span class="s1">'Dimensions'</span><span class="p">,</span> <span class="s1">'Box length'</span><span class="p">)</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mf">10.0</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s1">'App::PropertyLength'</span><span class="p">,</span> <span class="s1">'Width'</span><span class="p">,</span> <span class="s1">'Dimensions'</span><span class="p">,</span> <span class="s1">'Box width'</span><span class="p">)</span><span class="o">.</span><span class="n">Width</span> <span class="o">=</span> <span class="s1">'10 mm'</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s1">'App::PropertyLength'</span><span class="p">,</span> <span class="s1">'Height'</span><span class="p">,</span> <span class="s1">'Dimensions'</span><span class="p">,</span> <span class="s1">'Box height'</span><span class="p">)</span><span class="o">.</span><span class="n">Height</span> <span class="o">=</span> <span class="s1">'1 cm'</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Called on document recompute</span>
+<span class="sd">        """</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Recomputing </span><span class="si">{0:s}</span><span class="s1"> (</span><span class="si">{1:s}</span><span class="s1">)'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Type</span><span class="p">))</span>
+</pre></div>
+<p><a href="#top">En haut</a>
+</p>
+<div class="docnav" style="background-color: #ececef; border: 1px solid #a2a9b1; padding: 2px 10px; margin: 10px 0; line-height: 1; clear: both; overflow: hidden;">
+<div style="margin: 4px 0; float: left;"><span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="16" src="../File/Arrow-left.svg" width="16"/></span></span> <a href="PySide.html" title="PySide/fr">PySide</a></div>
+<div style="margin: 4px 0; float: right;"><a href="Create_a_FeaturePython_object_part_II.html" title="Create a FeaturePython object part II/fr">Créer un objet FeaturePython partie II</a>
+<span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="16" src="../File/Arrow-right.svg" width="16"/></span></span></div>
+<div style="text-align:center"><a href="Online_Help_Toc.html" title="Online Help Toc/fr">Index</a> <span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="24" src="../File/Online_Help_Toc.svg" width="24"/></span></span></div>
+</div>
+<p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Scripts FreeCAD :</b> <a href="Python.html" title="Python/fr">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/fr">Introduction à Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/fr">Tutoriel sur les scripts Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/fr">Débuter avec les scripts</a></li></ul>
+<hr/>
+<ul><li><b>Modules :</b> <a href="Builtin_modules.html" title="Builtin modules/fr">Modules intégrés</a>, <a href="Units.html" title="Units/fr">Unités</a>, <a href="Quantity.html" title="Quantity/fr">Quantity</a></li>
+<li><b>Ateliers :</b> <a href="Workbench_creation.html" title="Workbench creation/fr">Création d'atelier</a>, <a href="Gui_Command.html" title="Gui Command/fr">Commands Gui</a>, <a href="Command.html" title="Command/fr">Les commandes</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/fr">Installer des ateliers supplémentaires</a></li>
+<li><b>Maillages et objets Parts :</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/fr">Scripts Mesh</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/fr">Script de données topologiques</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/fr">Conversion objet Mesh en Part</a>, <a href="PythonOCC.html" title="PythonOCC/fr">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Objets paramétriques :</b> <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a>, <a href="Viewprovider.html" title="Viewprovider/fr">Viewproviders</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view/fr">Icône personnalisée dans l'arborescence</a>)</small></li>
+<li><b>Scénographie :</b> <a href="Scenegraph.html" title="Scenegraph/fr">Graphe de scène Coin (Inventor)</a>, <a href="Pivy.html" title="Pivy/fr">Pivy</a></li>
+<li><b>Interface graphique :</b> <a href="Interface_creation.html" title="Interface creation/fr">Création d'interface</a>, <a href="Dialog_creation.html" title="Dialog creation/fr">Création d'une boite de dialogue</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets/fr">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files/fr">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors/fr">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF/fr">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets/fr">5</a>)</small>, <a href="PySide.html" title="PySide/fr">PySide</a>, Exemples PySide <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples/fr">débutant</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/fr">intermédiaire</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples/fr">expérimenté</a></li>
+<li><b>Macros :</b> <a href="Macros.html" title="Macros/fr">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros/fr">Comment installer des macros</a></li>
+<li><b>Intégration :</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/fr">Intégrer FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/fr">Intégration de FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Autre :</b> <a href="Expressions.html" title="Expressions/fr">Expressions</a>, <a href="Code_snippets.html" title="Code snippets/fr">Extraits de codes</a>, <a href="Line_drawing_function.html" title="Line drawing function/fr">Fonction - tracer une ligne</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/fr">Bibliothèque mathématique vectorielle de FreeCAD</a> <small>(déprécié)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs :</b> <a href="User_hub.html" title="User hub/fr">Hub utilisateurs</a>, <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>, <a href="Developer_hub.html" title="Developer hub/fr">Hub développeurs</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129213038
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.156 seconds
+Real time usage: 1.570 seconds
+Preprocessor visited node count: 842/1000000
+Post‐expand include size: 14428/2097152 bytes
+Template argument size: 6059/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 18/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 16116/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 1411.756      1 -total
+ 97.49% 1376.271     18 Template:Code
+  0.87%   12.327     36 Template:Incode
+  0.26%    3.695      2 Template:Docnav/fr
+  0.25%    3.519      1 Template:Powerdocnavi/fr
+  0.15%    2.065      1 Template:Navigation_menu_2
+  0.14%    1.954      4 Template:MenuCommand
+  0.13%    1.820      1 Template:TOCright
+  0.10%    1.347     20 Template:FileName
+  0.06%    0.864      1 Template:VersionPlus/fr
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:157543-0!canonical and timestamp 20241129213036 and revision id 1504388. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

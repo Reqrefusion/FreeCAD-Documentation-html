@@ -1,0 +1,74 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Headless FreeCAD/pl</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Headless_FreeCAD.html" lang="de" title="FreeCAD kopflos (25% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Headless_FreeCAD.html" lang="en" title="Headless FreeCAD (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Headless_FreeCAD.html" lang="fr" title="FreeCAD sans GUI (100% translated)">français</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="pl">polski</span></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Wprowadzenie"><span class="tocnumber">1</span> <span class="toctext">Wprowadzenie</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Reprezentacja_scenografii"><span class="tocnumber">2</span> <span class="toctext">Reprezentacja scenografii</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Przykłady"><span class="tocnumber">3</span> <span class="toctext">Przykłady</span></a>
+<ul>
+<li class="toclevel-2 tocsection-4"><a href="#Przeszukiwanie_modułów_FreeCAD"><span class="tocnumber">3.1</span> <span class="toctext">Przeszukiwanie modułów FreeCAD</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-5"><a href="#Powiązane"><span class="tocnumber">4</span> <span class="toctext">Powiązane</span></a></li>
+</ul>
+</div>
+</div>
+<h2><span class="mw-headline" id="Wprowadzenie">Wprowadzenie</span></h2>
+<p>Ta strona wiki dokumentuje różne aspekty uruchamiania FreeCAD w konsoli bez włączania GUI <i>(Graphical User Interface)</i> lub tak zwanego <i>headless</i>.
+</p>
+<h2><span class="mw-headline" id="Reprezentacja_scenografii">Reprezentacja scenografii</span></h2>
+<p>Ponieważ nie jest możliwe utworzenie lub dostęp do <a href="Viewprovider.html" title="Viewprovider/pl">dostawcy widoku</a> w trybie bez użycia GUI. Co jest możliwe, to załadowanie <code>FreeCADGui</code> w trybie bez GUI, ale nie ma możliwości dostępu do dokumentu GUI, ponieważ nie zostanie on utworzony i w konsekwencji nie będzie istniał żaden dostawca widoku.
+</p><p>Możliwe jest jednak stworzenie <a href="Scenegraph.html" title="Scenegraph/pl">Scenogramu</a> reprezentacji obiektu:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCADGui</span> <span class="k">as</span> <span class="nn">Gui</span>
+<span class="kn">from</span> <span class="nn">pivy</span> <span class="kn">import</span> <span class="n">coin</span>
+
+<span class="n">Gui</span><span class="o">.</span><span class="n">setupWithoutGUI</span><span class="p">()</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>
+<span class="n">obj</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::Box"</span><span class="p">,</span><span class="s2">"Box"</span><span class="p">)</span>
+<span class="n">doc</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+<span class="n">view</span> <span class="o">=</span> <span class="n">Gui</span><span class="o">.</span><span class="n">subgraphFromObject</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</pre></div>
+<p>Zobacz: <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=10&amp;t=55794&amp;p=481586#p481586" rel="nofollow">wątek na forum</a>.
+</p>
+<h2><span id="Przyk.C5.82ady"></span><span class="mw-headline" id="Przykłady">Przykłady</span></h2>
+<h3><span id="Przeszukiwanie_modu.C5.82.C3.B3w_FreeCAD"></span><span class="mw-headline" id="Przeszukiwanie_modułów_FreeCAD">Przeszukiwanie modułów FreeCAD</span></h3>
+<ol><li>Otwórz terminal i wpisz:
+<dl><dd><code>$ /path/to/FreeCAD -c</code>
+<dl><dd>lub</dd></dl></dd>
+<dd><code>$ /ścieżka/do/FreeCADCmd</code></dd></dl></li>
+<li>Powłoka Python uruchomi się z promptem. Wpisz <code>help()</code>.</li>
+<li>Zostanie wyświetlony tekst pomocy.</li>
+<li>Wpisz <code>modules freecad</code>.</li></ol>
+<h2><span id="Powi.C4.85zane"></span><span class="mw-headline" id="Powiązane">Powiązane</span></h2>
+<ul><li><a href="Embedding_FreeCAD.html#U.C5.BCywanie_FreeCAD_bez_GUI" title="Embedding FreeCAD/pl">Osadzanie FreeCAD</a></li>
+<li><a href="Start_up_and_Configuration.html#Uruchamianie_FreeCAD_bez_GUI" title="Start up and Configuration/pl">Uruchomienie i Konfiguracja</a></li></ul>
+<!-- 
+NewPP limit report
+Cached time: 20241129210355
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.045 seconds
+Real time usage: 0.253 seconds
+Preprocessor visited node count: 72/1000000
+Post‐expand include size: 355/2097152 bytes
+Template argument size: 267/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 1/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 2065/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  166.241      1 -total
+ 98.70%  164.075      1 Template:Code
+  0.53%    0.883      5 Template:Incode
+  0.44%    0.728      1 Template:TOCright
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:273792-0!canonical and timestamp 20241129210355 and revision id 1079058. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

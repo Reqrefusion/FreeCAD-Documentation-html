@@ -1,0 +1,271 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">FEM Geometry Preparation and Meshing/pl</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--med" dir="ltr" href="FEM_Geometry_Preparation_and_Meshing.html" lang="de" title="FEM Geometrie vorbereiten und vernetzen (52% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FEM_Geometry_Preparation_and_Meshing.html" lang="en" title="FEM Geometry Preparation and Meshing (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FEM_Geometry_Preparation_and_Meshing.html" lang="fr" title="FEM Préparation de la géométrie et maillage (100% translated)">français</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="pl">polski</span></li></ul></div>
+<table class="fcinfobox wikitable ct" style="width: 230px; float: right; margin-left: 1em">
+<tbody><tr>
+<td class="ctTitle" style="font-weight: bold; font-size: 125%;"><span typeof="mw:File"><span><img decoding="async" height="32" src="../File/Freecad.svg" width="32"/></span></span> Ćwiczenie
+</td></tr>
+<tr>
+<th class="ctOdd">Temat
+</th></tr>
+<tr>
+<td class="ctEven">Analiza MES
+</td></tr>
+<tr>
+<th class="ctOdd">Poziom trudności
+</th></tr>
+<tr>
+<td class="ctEven">początkujący
+</td></tr>
+<tr>
+<th class="ctOdd">Czas wykonania
+</th></tr>
+<tr>
+<td class="ctEven">Nie dotyczy
+</td></tr>
+<tr>
+<th class="ctOdd">Autorzy
+</th></tr>
+<tr>
+<td class="ctEven"><a class="external text" href="http://www.freecadweb.org/wiki/index.php?title=User:NewJoker" rel="nofollow">NewJoker</a>
+</td></tr>
+<tr>
+<th class="ctOdd">Wersja FreeCAD
+</th></tr>
+<tr>
+<td class="ctEven">0.21 lub nowszy
+</td></tr>
+<tr>
+<th class="ctOdd">Pliki z przykładami
+</th></tr>
+<tr>
+<td class="ctEven"><i>Nie dołączono</i>
+</td></tr>
+<tr>
+<th class="ctOdd">Zobacz również
+</th></tr>
+<tr>
+<td class="ctEven"><a href="FEM_Workbench.html" title="FEM Workbench/pl">środowisko pracy MES</a>
+</td></tr>
+<tr>
+<td class="ctToc"><br/><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Kontekst"><span class="tocnumber">1</span> <span class="toctext">Kontekst</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Typy_geometrii_używanej_do_analiz_MES_we_FreeCAD"><span class="tocnumber">2</span> <span class="toctext">Typy geometrii używanej do analiz MES we FreeCAD</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Wybór_typu_geometrii"><span class="tocnumber">3</span> <span class="toctext">Wybór typu geometrii</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Poprawność_geometrii"><span class="tocnumber">4</span> <span class="toctext">Poprawność geometrii</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Upraszczanie_geometrii"><span class="tocnumber">5</span> <span class="toctext">Upraszczanie geometrii</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Partycjonowanie_geometrii"><span class="tocnumber">6</span> <span class="toctext">Partycjonowanie geometrii</span></a></li>
+<li class="toclevel-1 tocsection-7"><a href="#Geometrie_złożeń"><span class="tocnumber">7</span> <span class="toctext">Geometrie złożeń</span></a></li>
+<li class="toclevel-1 tocsection-8"><a href="#Podstawy_tworzenia_siatek"><span class="tocnumber">8</span> <span class="toctext">Podstawy tworzenia siatek</span></a></li>
+<li class="toclevel-1 tocsection-9"><a href="#Ujemne_Jacobiany"><span class="tocnumber">9</span> <span class="toctext">Ujemne Jacobiany</span></a></li>
+<li class="toclevel-1 tocsection-10"><a href="#Studia_zbieżności_siatki"><span class="tocnumber">10</span> <span class="toctext">Studia zbieżności siatki</span></a></li>
+</ul>
+</div>
+</td></tr></tbody></table>
+<p><span id="Background"></span>
+</p>
+<h2><span class="mw-headline" id="Kontekst">Kontekst</span></h2>
+<p>Przygotowanie geometrii i tworzenie siatek to kluczowe elementy preprocessingu symulacji MES <i>(metoda elementów skończonych)</i>. Podczas gdy łatwo dostępne oprogramowanie do analiz połączone ze środowiskiem CAD <i>(takie jak <a href="FEM_Workbench.html" title="FEM Workbench/pl">środowisko pracy MES</a> we FreeCAD)</i> zachęca do przeprowadzania symulacji na nowych projektach bez żadnych przygotowań, należy pamiętać, że MES to zaawansowana metoda i wymaga odpowiednio przygotowanej geometrii i siatki aby zapewnić prawidłowe wyniki. Stara zasada <a class="external text" href="https://pl.wikipedia.org/wiki/Garbage_in,_garbage_out" rel="nofollow"><i>garbage in, garbage out</i></a> <i>(śmieci na wejściu - śmieci na wyjściu)</i> jest tu szczególnie istotna. Są jeszcze inne istotne ustawienia, od których w znaczącym stopniu zależy dokładność analiz MES <i>(takie jak właściwości materiałów i warunki brzegowe)</i>, ale pierwsze etapy i jedne z najczęstszych źródeł błędów to właśnie przygotowanie geometrii i tworzenie siatek, opisane na tej stronie.
+</p><p><span id="Types_of_geometry_used_for_FEM_in_FreeCAD"></span>
+</p>
+<h2><span id="Typy_geometrii_u.C5.BCywanej_do_analiz_MES_we_FreeCAD"></span><span class="mw-headline" id="Typy_geometrii_używanej_do_analiz_MES_we_FreeCAD">Typy geometrii używanej do analiz MES we FreeCAD</span></h2>
+<ul><li>Linie - używane w analizach z elementami belkowymi</li>
+<li>Powierzchnie - używane w analizach z elementami powłokowymi</li>
+<li>Bryły - używane w analizach z elementami bryłowymi</li></ul>
+<p><span id="Choice_of_the_type_of_geometry"></span>
+</p>
+<h2><span id="Wyb.C3.B3r_typu_geometrii"></span><span class="mw-headline" id="Wybór_typu_geometrii">Wybór typu geometrii</span></h2>
+<p>Podczas gdy większość modeli CAD składa się z brył, często bardzo zalecane jest użycie linii i powierzchni w analizach MES jeśli pozwala na to dana konstrukcja:
+</p>
+<ul><li>jeśli część jest smukła <i>(długa i wąska)</i> i przypomina belkę oraz ma regularny przekrój należący do jednego z obecnie wspieranych typów przekrojów belkowych <i>(prostokątny, okrągły lub rurowy)</i> to powinna być liczona z użyciem elementów belkowych <i>(chyba że występują pewne specyficzne formy obciążenia, odpowiedzi lub detale geometrii, których nie można pominąć, a które sprawiają, że to założenie upraszczające jest nieprawdziwe)</i>. Należy po prostu narysować linię środkową <i>(kilka rad na temat jej uzyskiwania z istniejącej geometrii bryłowej można znaleźć w <a class="external text" href="https://forum.freecad.org/viewtopic.php?t=81589" rel="nofollow">tym wątku na forum</a>)</i> i zdefiniować odpowiedni <a href="FEM_ElementGeometry1D.html" title="FEM ElementGeometry1D/pl">przekrój belki</a> z opcjonalnym <a href="FEM_ElementRotation1D.html" title="FEM ElementRotation1D/pl">obrotem</a>. Nie ma jednej przyjętej zasady kiedy można używać elementów belkowych, ale często zaleca się aby wymiary przekroju były &lt; 1/10 długości części żeby można było zastosować teorię belek.</li></ul>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_beam_model.JPG"><img decoding="async" height="233" src="../File/FEM_beam_model.JPG" srcset="/images/thumb/a/af/FEM_beam_model.JPG/900px-FEM_beam_model.JPG 1.5x, /images/a/af/FEM_beam_model.JPG 2x" width="600"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Smukła część nadająca się do analizy przy pomocy elementów belkowych - podświetlona linia środkowa</p>
+<ul><li>jeśli część jest cienkościenna <i>(np. konstrukcje blachowe)</i> to powinna być liczona z użyciem elementów powłokowych <i>(chyba, że potrzebne są dokładne wyniki związane z kontaktem lub problem stanowią pewne ograniczenia elementów powłokowych)</i>. Jest to bardzo istotne i często pomijane. Do uzyskania odpowiedniej dokładności wyników <i>(zwłaszcza gdy występuje zginanie)</i> potrzeba kilku elementów <i>(co najmniej 3-5)</i> po grubości. W przypadku części cienkościennych, zwykle prowadzi to do uzyskania dużych siatek <i>(szczególnie gdy używane są elementy czworościenne, ponieważ sześciościenne nie mogą być wygenerowane we FreeCAD)</i> i znacznego zwiększenia kosztu obliczeń <i>(wymaganej mocy komputera i czasu analizy)</i>. Aby uzyskać geometrię odpowiednią do analizy z użyciem elementów powłokowych, należy narysować powierzchnię środkową części <i>(kilka rad na temat jej uzyskiwania z istniejącej geometrii bryłowej można znaleźć w <a class="external text" href="https://forum.freecad.org/viewtopic.php?t=67505" rel="nofollow">tym wątku na forum</a>, <a class="external text" href="https://forum.freecad.org/viewtopic.php?t=71821" rel="nofollow">tym</a> oraz <a class="external text" href="https://forum.freecad.org/viewtopic.php?t=81834" rel="nofollow">tym</a>)</i> i zdefiniować odpowiednią <a href="FEM_ElementGeometry2D.html" title="FEM ElementGeometry2D/pl">grubość</a>. Tu również nie ma jednej przyjętej zasady, ale zaleca się aby grubość była &lt; 1/10 typowego wymiaru globalnego <i>(długość / szerokość)</i> części żeby można było zastosować teorię powłok.</li></ul>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_shell_model.JPG"><img decoding="async" height="282" src="../File/FEM_shell_model.JPG" srcset="/images/thumb/a/a7/FEM_shell_model.JPG/900px-FEM_shell_model.JPG 1.5x, /images/thumb/a/a7/FEM_shell_model.JPG/1200px-FEM_shell_model.JPG 2x" width="600"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Cienkościenna część nadająca się do analizy przy pomocy elementów powłokowych - podświetlona powierzchnia środkowa</p>
+<p>Należy pamiętać, że elementy belkowe i powłokowe w CalculiX nie są prawdziwymi elementami tego typu <i>(nie korzystają ze sformułowań elementów belkowych / powłokowych znanych z literatury i innego oprogramowania)</i> - wewnętrznie są przekształcane w elementy bryłowe. Pomimo tego, zaleca się korzystanie z nich w wyżej wymienionych przypadkach.
+</p><p><span id="Geometry_validity"></span>
+</p>
+<h2><span id="Poprawno.C5.9B.C4.87_geometrii"></span><span class="mw-headline" id="Poprawność_geometrii">Poprawność geometrii</span></h2>
+<p>Geometria używana w analizach MES musi być poprawna. Przede wszystkim, nie mogą występować żadne przenikania. Jest to częsty problem, zwykle występujący gdy złożenia są modelowane bez odpowiednich połączeń między częściami. Narzędzie <a href="Part_SectionCut.html" title="Part SectionCut/pl">Część: Wycinek z przekroju</a> może pomóc w znalezieniu takich przenikań między częściami. Oczywiście narzędzie <a href="Part_Fuse.html" title="Part Fuse/pl">Część: Połączenie</a> może pomóc je naprawić jeśli są celowe. Inne problemy z geometrią <i>(takie jak geometrie typu non-manifold, zbędne krawędzie i ściany itp.)</i> również muszą być naprawione przed przystąpieniem do tworzenia siatki. Narzędzie <a href="Part_CheckGeometry.html" title="Part CheckGeometry/pl">Część: Sprawdź geometrię</a> może być pomocne, ale istotna jest też wizualna ocena. Przy przygotowywaniu symulacji z użyciem elementów bryłowych, w razie wątpliwości czy część faktycznie jest bryłą czy tylko zamkniętą powłoką, wyżej wymienione narzędzia <i>(Część: Wycinek z przekroju i zakładka </i>Zawartość kształtu<i> w wynikach narzędzia Część: Sprawdź geometrię)</i> mogą rozwiać te wątpliwości.
+</p><p><span id="Geometry_simplification"></span>
+</p>
+<h2><span class="mw-headline" id="Upraszczanie_geometrii">Upraszczanie geometrii</span></h2>
+<p>Projekty przygotowane w programach CAD często są zbyt szczegółowe żeby nadawały się do analiz MES. W wielu przypadkach konieczne jest najpierw ich uproszczenie. Ten krok jest często pomijany a jest bardzo istotny, ponieważ może być trudno uzyskać dobrą siatkę jeśli część jest zbyt szczegółowa a nawet jeśli uda się w końcu uzyskać taką siatkę, to może być bardzo gęsta, prowadząc do przesadnie długiego czasu rozwiązywania. Zatem należy zawsze przyjrzeć się projektowi i postarać się go uprościć tak bardzo jak to możliwe, zostawiając tylko te cechy geometrii, które mogą mieć istotny wpływ na wyniki <i>(wytrzymałość / sztywność)</i>, więc nie można ich pominąć. Następujące cechy zwykle są pomijane:
+</p>
+<ul><li>małe zaokrąglenia i sfazowania,</li>
+<li>małe otwory,</li>
+<li>inne małe detale,</li>
+<li>spawy,</li>
+<li>śruby, gwinty,</li>
+<li>elementy dekoracyjne (loga, grawerunki).</li></ul>
+<p>Narzędzie <a href="Part_Defeaturing.html" title="Part Defeaturing/pl">Część: Usuwanie cech</a> i dodatkowe <a href="Defeaturing_Workbench.html" title="Defeaturing Workbench/pl">środowisko pracy Upraszczanie</a> mogą być pomocne podczas upraszczania części do analiz.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_bracket_original.PNG"><img decoding="async" height="471" src="../File/FEM_bracket_original.PNG" srcset="/images/8/8b/FEM_bracket_original.PNG 1.5x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Oryginalna geometria kątownika</p>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_bracket_simplified.PNG"><img decoding="async" height="466" src="../File/FEM_bracket_simplified.PNG" srcset="/images/thumb/e/e6/FEM_bracket_simplified.PNG/600px-FEM_bracket_simplified.PNG 1.5x, /images/e/e6/FEM_bracket_simplified.PNG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Geometria kątownika uproszczona przy pomocy samego narzędzia Część: Usuwanie cech</p>
+<p>W przypadku złożeń <i>(więcej o nich w jednej z kolejnych sekcji)</i>, często niektóre części można wykluczyć z symulacji i zastąpić warunkami brzegowymi jeśli były one połączone z częściami podlegającymi analizie. Takie podejście jest prawidłowe jeśli wykluczone części są znacznie sztywniejsze (w rozumieniu sztywności strukturalnej, więc biorąc pod uwagę nie tylko materiał, ale też geometrię części) niż analizowane części, z którymi były połączone. Jest tak dlatego, że warunki brzegowe blokady przemieszczeń wprowadzają sztywność (jakby analizowana część była połączona z nieskończenie sztywnym komponentem) a podpory sprężyste, takie jak elementy typu sprężyna, nie są dostępne w środowisku pracy MES programu FreeCAD w przypadku korzystania z solvera CalculiX (Elmer ma zaimplementowane <a href="FEM_ConstraintSpring.html" title="FEM ConstraintSpring/pl">sprężyny</a>).
+</p><p>Upraszczanie geometrii do analiz MES może też oznaczać jej cięcie w jednej z płaszczyzn symetrii aby skorzystać z założenia symetrii planarnej w symulacji. Jest ono prawidłowe tylko gdy wszystkie poniższe aspekty modelu wykazują symetrię w danej płaszczyźnie:
+</p>
+<ul><li>geometria,</li>
+<li>obciążenia,</li>
+<li>warunki brzegowe,</li>
+<li>odpowiedź <i>(należy uważać w przypadku analiz częstotliwości drgań własnych i wyboczenia korzystających z symetrii - nie uzyska się asymetrycznych postaci drgań własnych i wyboczenia)</i>.</li></ul>
+<p>Korzystanie z symetrii <i>(1/2, 1/4 lub 1/8 modelu)</i> jest zalecane gdy tylko wchodzi to w grę, ponieważ można w ten sposób znacznie zredukować koszt obliczeń. Inną zaletą jest to, że eliminowane są niektóre ruchy sztywne, dzięki czemu łatwiej jest związać część. Warunek brzegowy symetrii powinien być zadany na ściany należące do płaszczyzny symetrii:
+</p>
+<ul><li>przesunięcie w kierunku normalnym do płaszczyzny symetrii powinno być zablokowane dla części bryłowych,</li>
+<li>przesunięcie w kierunku normalnym do płaszczyzny symetrii i obroty w kierunkach innych niż wokół osi normalnej do płaszczyzny symetrii powinny być zablokowane dla części powłokowych i belkowych.</li></ul>
+<p>Przyłożoną siłę należy odpowiednio zredukować jeśli płaszczyzna symetrii przecina obszar jej przyłożenia (nieistotne w przypadku obciążenia ciśnieniem).
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_symmetric_vessel.JPG"><img decoding="async" height="447" src="../File/FEM_symmetric_vessel.JPG" srcset="/images/thumb/c/c6/FEM_symmetric_vessel.JPG/600px-FEM_symmetric_vessel.JPG 1.5x, /images/c/c6/FEM_symmetric_vessel.JPG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Model 1/8 zbiornika cylindrycznego z warunkami brzegowymi symetrii i ciśnieniem wewnętrznym</p>
+<p><span id="Geometry_partitioning"></span>
+</p>
+<h2><span class="mw-headline" id="Partycjonowanie_geometrii">Partycjonowanie geometrii</span></h2>
+<p>Tak zwane partycjonowanie to podział geometrii na mniejsze segmenty. W innych programach jest to powszechnie używane aby umożliwić tworzenie siatek złożonych z elementów sześciościennych, ale we FreeCAD może być przydatne z innych powodów. Głównym zastosowaniem partycjonowania są przypadki gdy obciążenie <i>(lub warunek brzegowy)</i> trzeba przyłożyć tylko do wybranego obszaru na powierzchni części. Najłatwiejszym sposobem aby to osiągnąć jest utworzenie szkicu z odpowiednim konturem na ścianie i użycie narzędzia <a href="Part_BooleanFragments.html" title="Part BooleanFragments/pl">Część: Fragmentacja funkcją logiczną</a> aby podzielić ścianę przy pomocy szkicu. Innym powodem partycjonowania może być przypadek gdy na jedną część trzeba nałożyć wiele materiałów <i>(bez używania wielu części połączonych ze sobą)</i>. Wtedy partycjonowania można dokonać przy pomocy <a href="PartDesign_Plane.html" title="PartDesign Plane/pl">płaszczyzny odniesienia</a> i narzędzia Fragmentacja funkcją logiczną z trybem <i>Compsolid</i> <i>(bryła złożona)</i>. Partycjonowanie jest też wykorzystywane do tworzenia obszarów do <a href="FEM_MeshRegion.html" title="FEM MeshRegion/pl">zagęszczenia siatki</a>.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_partition.JPG"><img decoding="async" height="404" src="../File/FEM_partition.JPG" srcset="/images/thumb/a/a6/FEM_partition.JPG/600px-FEM_partition.JPG 1.5x, /images/a/a6/FEM_partition.JPG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Część ze ścianą podzieloną do zadania obciążenia lub warunku brzegowego</p>
+<p><span id="Assembly_geometries"></span>
+</p>
+<h2><span id="Geometrie_z.C5.82o.C5.BCe.C5.84"></span><span class="mw-headline" id="Geometrie_złożeń">Geometrie złożeń</span></h2>
+<p>Obecnie jednym z największych ograniczeń środowiska pracy MES jest brak wsparcia dla wielu siatek w jednej analizie. W praktyce oznacza to, że nie można nałożyć siatki na każdą część złożenia osobno i połączyć je odpowiednimi więzami do analizy. Zamiast tego, należy utworzyć pojedynczy obiekt zawierający wszystkie części złożenia i nałożyć siatkę na ten obiekt. Jest tu kilka opcji, wszystkie korzystające z <a href="Part_Workbench.html#Pasek_narzędzi_Operacje_logiczne" title="Part Workbench/pl">operacji logicznych</a>. Wybór zależy od oczekiwanego efektu - czy poszczególne części / objętości i ich brzegi mają mieć możliwość wskazania <i>(np. do przypisania materiałów lub definicji warunków brzegowych na wewnętrznych ścianach)</i> czy nie:
+</p>
+<ul><li><a href="Part_Fuse.html" title="Part Fuse/pl">Część: Połączenie</a> - scala części, uniemożliwiając ich indywidualne wskazywanie np. do definicji materiałów,</li>
+<li><a href="Part_Compound.html" title="Part Compound/pl">Część: Utwórz kształt złożony</a> - tworzy obiekt złożony, umożliwiając wskazywanie poszczególnych części,</li>
+<li><a href="Part_JoinConnect.html" title="Part JoinConnect/pl">Część: Połącz obiekty</a> - działa jak Część: Połączenie, scalając części i uniemożliwiając ich indywidualne wskazywanie,</li>
+<li><a href="Part_BooleanFragments.html" title="Part BooleanFragments/pl">Część: Fragmentacja funkcją logiczną</a> - działa jak Część: Utwórz kształt złożony, uniemożliwiając indywidualne wskazywanie części.</li></ul>
+<p>Należy wspomnieć, że jeśli części się stykają to na obiekcie boolowskim powstanie ciągła siatka i nie będzie potrzeby zadawania więzów do symulacji. Jeśli jest nawet drobna przerwa (albo przenikanie w przypadku narzędzia Utwórz kształt złożony) między częściami, siatka nie będzie ciągła i konieczne będą więzy takie jak <a href="FEM_ConstraintTie.html" title="FEM ConstraintTie/pl">tie</a> lub <a href="FEM_ConstraintContact.html" title="FEM ConstraintContact/pl">kontakt</a>. Przeprowadzenie analizy częstotliwości drgań własnych to dobry sposób na sprawdzenie czy siatka jest ciągła czy nie - jeśli części nie są połączone to pierwsze postacie drgań własnych z deformacją zwizualizowaną przy pomocy <a href="FEM_PostFilterWarp.html" title="FEM PostFilterWarp/pl">filtra wizualizacji deformacji</a> pokażą ich separację - części będą "odlatywać".
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_modal_separation.JPG"><img decoding="async" height="484" src="../File/FEM_modal_separation.JPG" srcset="/images/9/97/FEM_modal_separation.JPG 1.5x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Pierwsza postać drgań własnych z filtrem wizualizacji deformacji - analizie poddano dwie kostki z niewielką początkową przerwą między nimi</p>
+<p>Wskazywanie wewnętrznych obszarów <i>(ścian / objętości)</i> bywa problematyczne. Może być konieczne do zdefiniowania różnych materiałów, obciążeń objętościowych lub warunków brzegowych <i>(zwłaszcza w analizach termicznych i elektromagnetycznych)</i>. Istnieje kilka sposobów:
+</p>
+<ul><li>włączenie <a href="Std_ToggleClipPlane.html" title="Std ToggleClipPlane/pl">płaszczyzny tnącej</a> na czas dokonywania wskazania i wybranie wewnętrznych ścian,</li>
+<li>schowanie obiektu boolowskiego, zostawiając pokazaną tylko jedną z części, na których został on zastosowany i wybranie jej,</li>
+<li>wybranie innego, zewnętrznego obiektu i edycja właściwości <i>References</i> w zakładce <i>Dane</i> określonej cechy analizy <i>(wymaga ręcznego podania numeru obiektu geometrycznego)</i>.</li></ul>
+<p><span id="Meshing_basics"></span>
+</p>
+<h2><span class="mw-headline" id="Podstawy_tworzenia_siatek">Podstawy tworzenia siatek</span></h2>
+<p>Zbyt rzadka siatka to jedno z najczęstszych źródeł niedokładności i innych problemów w MES. Często jest to po części wina automatycznych ustawień generatorów siatek - zwykle tworzą bardzo rzadkie, nienadające się do analizy siatki gdy rozmiar elementu nie jest ręcznie podany tylko zostawiony z domyślną wartością. Należy zawsze znać przybliżone rozmiary części, zwłaszcza rozmiar najmniejszej istotnej cechy <i>(może w tym pomóc narzędzie <a href="Part_Measure_Linear.html" title="Part Measure Linear/pl">Część: Pomiary liniowe</a>)</i> i wprowadzać odpowiedni maksymalny rozmiar elementu w oparciu o to. W przypadku generowania siatki za pomocą narzędzia Gmsh, dostępne jest też ustawienie minimalnego rozmiaru elementu, które zapobiega powstawaniu zbyt drobnych elementów wokół małych cech geometrii, co może prowadzić do niepotrzebnie gęstych siatek <i>(a czasem nawet crashy i zawieszania się programu FreeeCAD podczas prób generowania takich siatek)</i>. Ogólnie rzecz biorąc, lepiej zacząć od rzadszej siatki <i>(generowanej szybciej)</i>, zobaczyć jak wygląda <i>(potrzeba pewnego doświadczenia)</i> i zagęścić ją w razie potrzeby. Często sens ma użycie gęstej siatki tylko w pobliżu obszarów zainteresowania <i>(miejsc z dużymi gradientami / koncentracjami naprężeń - karby)</i> i względnie rzadkiej siatki z dala od nich. Dzięki temu liczba elementów jest znacząco redukowana, co prowadzi do krótszego czasu obliczeń. Lokalnego zagęszczenia siatki można dokonać przy pomocy narzędzia <a href="FEM_MeshRegion.html" title="FEM MeshRegion/pl">MES: Obszar siatki</a>.
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_default_mesh.PNG"><img decoding="async" height="238" src="../File/FEM_default_mesh.PNG" srcset="/images/thumb/b/ba/FEM_default_mesh.PNG/600px-FEM_default_mesh.PNG 1.5x, /images/thumb/b/ba/FEM_default_mesh.PNG/800px-FEM_default_mesh.PNG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Domyślna, zbyt rzadka siatka</p>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_globally_refined_mesh.PNG"><img decoding="async" height="239" src="../File/FEM_globally_refined_mesh.PNG" srcset="/images/thumb/1/12/FEM_globally_refined_mesh.PNG/600px-FEM_globally_refined_mesh.PNG 1.5x, /images/thumb/1/12/FEM_globally_refined_mesh.PNG/800px-FEM_globally_refined_mesh.PNG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Globalnie zagęszczona siatka</p>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_locally_refined_mesh.PNG"><img decoding="async" height="239" src="../File/FEM_locally_refined_mesh.PNG" srcset="/images/thumb/3/34/FEM_locally_refined_mesh.PNG/600px-FEM_locally_refined_mesh.PNG 1.5x, /images/thumb/3/34/FEM_locally_refined_mesh.PNG/800px-FEM_locally_refined_mesh.PNG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Lokalnie zagęszczona siatka</p>
+<p>Wybór typu elementów skończonych nie jest łatwy i zależy od wielu czynników, ale ogólną zasadą jest to, że preferowane są elementy sześciościenne i czworokątne w stosunku do czworościennych i trójkątnych. Jednak skomplikowane geometrie nie mogą być dyskretyzowane przy pomocy elementów sześciościennych a FreeCAD nie potrafi ich w ogóle generować <i>(jedynie siatki czworokątne mogą być generowane na powierzchniach - zobacz <a class="external text" href="https://forum.freecad.org/viewtopic.php?t=20351" rel="nofollow">ten wątek na forum</a>)</i>. Elementy sześciościenne można zaimportować z zewnętrznych generatorów takich jak <a class="external text" href="https://gmsh.info" rel="nofollow">Gmsh</a>  i wykorzystać w środowisku pracy MES, co pokazano w <a class="external text" href="https://www.youtube.com/watch?v=vylt24G7qj4&amp;t=932s" rel="nofollow">tym filmiku</a>.
+</p><p>Wybór rzędu elementów <i>(pierwszy lub drugi)</i> zależy od warunków analizy, ale w większości przypadków preferowane są elementy drugiego rzędu. Jest tak zwłaszcza w przypadku elementów trójkątnych i czworokątnych - ich wersje pierwszego rzędu <i>(liniowe)</i> nie powinny być normalnie używane - zaleca się korzystanie z nich tylko jak z wypełniaczy w mało istotnych obszarach. Jednak ponieważ FreeCAD nie może generować elementów sześciościennych to można korzystać z liniowych czworościanów w niektórych przypadkach jeśli siatki są wystarczająco gęste. Dotyczy to zwłaszcza analiz z <a href="FEM_ConstraintContact.html" title="FEM ConstraintContact/pl">kontaktem</a>.
+</p><p><span id="Negative_Jacobians"></span>
+</p>
+<h2><span class="mw-headline" id="Ujemne_Jacobiany">Ujemne Jacobiany</span></h2>
+<p>Jeśli przestrzega się powyższych zasad (szczególnie w kwestii poprawności geometrii, usuwania jej zbędnych cech i doboru rozmiaru elementów), to siatka powinna zostać poprawnie wygenerowana. Jednak w niektórych przypadkach geometrii nie można za bardzo uprościć albo procedura modelowania jest prawidłowa, ale i tak prowadzi do małych krawędzi i ścianek. Wtedy tworzenie siatki z elementami drugiego rzędu może się nie udać ze względu na ujemne Jacobiany. Wynika to z faktu, iż generatory siatek muszą podążać za geometrią CAD i umieszczają węzły środkowe elementów drugiego rzędu na geometrii. Dla bardziej złożonych kształtów może to prowadzić do rozciągnięcia elementów w takim stopniu, że zostają odwrócone na drugą stronę. Jacobian to jedna z głównych miar jakości siatki. opisuje rozbieżność między idealnym a rzeczywistym kształtem elementu. Staje się ujemny gdy element odwraca się na drugą stronę z powodu dużych deformacji w trakcie analizy (nie omawiane tutaj) lub ze względu na opisane wyżej problemy z generowaniem siatki. Ujemne Jacobiany w środowisku pracy MES programu FreeCAD może zgłaszać Gmsh lub CalculiX. Ich położenia na siatce są podświetlane gdy włącza się analizy z CalculiX przy pomocy przycisku <a href="FEM_SolverRun.html" title="FEM SolverRun/pl">Uruchom solver</a>. Następujące zalecenia mogą pomóc wyeliminować ujemne Jacobiany:
+</p>
+<ul><li>ustaw właściwość <i>Second Order Linear</i> obiektu <a href="FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape/pl">FEMMeshGmsh</a> na <i>prawda</i> - to powoduje, że węzły środkowe elementów drugiego rzędu są bezpośrednio dodawane w środku prostych krawędzi elementów (początkowo) pierwszego rzędu, bez umieszczania ich na geometrii i rozwiązuje problem w większości przypadków,</li>
+<li>skorzystaj z generatora Netgen zamiast Gmsh - Netgen jest mniej wrażliwy na problemy z ujemnymi Jacobianami, ale też ich nie zgłasza, więc można się o nich dowiedzieć dopiero uruchamiając analizę,</li>
+<li>jeszcze bardziej zmniejsz rozmiar elementów,</li>
+<li>wyeksportuj geometrię i spróbuj wygenerować dla niej siatkę przy pomocy środowisk graficznych programów Gmsh lub Netgen (NGSolve) bądź innych niezależnych preprocessorów (jak Salome_Meca) - te programy mają dodatkowe narzędzia, które mogą pomóc pozbyć się ujemnych Jacobianów (np. Gmsh ma tzw. "High-order tools"),</li>
+<li>użyj elementów pierwszego rzędu - tylko w ostateczności, ponieważ elementy czworościenne pierwszego rzędu są znane z niskiej dokładności.</li></ul>
+<p>Niezależnie od tych zaleceń, należy ponownie podkreślić, że ujemne Jacobiany są zwykle winą niechlujnego podejścia do modelowania i braku przygotowania geometrii do analizy (szczególnie częste w przypadku modeli STEP pobieranych z różnych stron internetowych). Nawet jeśli uda się w końcu wygenerować siatkę w takich przypadkach, to wyniki mogą być kiepskiej jakości (zasada <i>śmieci na wejściu - śmieci na wyjściu</i> wspomniana w pierwszym akapicie). Tak więc oczyszczenie i przygotowanie geometrii do symulacji powinno zawsze być priorytetem.
+</p><p><span id="Mesh_convergence_studies"></span>
+</p>
+<h2><span id="Studia_zbie.C5.BCno.C5.9Bci_siatki"></span><span class="mw-headline" id="Studia_zbieżności_siatki">Studia zbieżności siatki</span></h2>
+<p>Studia zbieżności siatki są zalecane w przypadku wszystkich poważnych projektów wymagających dokładnych wyników. Wynika to z faktu, iż wyniki mogą się znacznie różnić, zbliżając się do poprawnych wartości wraz z zagęszczaniem siatki. Powinno się stosować następujące podejście:
+</p>
+<ol><li>Po uzyskaniu pierwszych wyników i zanotowaniu ich <i>(zwykle maksymalne naprężenia von Mises, naprężenia von Mises w danym miejscu i maksymalne przemieszczenia)</i> należy zagęścić siatkę <i>(globalnie lub lepiej lokalnie - przy pomocy narzędzia <a href="FEM_MeshRegion.html" title="FEM MeshRegion/pl">MES: Obszar siatki</a>)</i> i ponownie uruchomić analizę.</li>
+<li>Sprawdź wyniki i zanotuj ich nowe wartości. Jeśli odbiegają znacznie od początkowych wartości, ponownie zagęść siatkę i uruchom analizę.</li>
+<li>Powtórz proces jeśli wyniki nadal się znacząco zmieniają <i>(zwykle rosną)</i> wraz z zagęszczaniem siatki.</li></ol>
+<p>Zwykle pomaga utworzenie wykresu z danym wynikiem w funkcji gęstości siatki. W ten sposób łatwiej zauważyć kiedy wyniki zaczynają się zbiegać. Akceptowalna różnica w wynikach między dwoma uruchomieniami to zwykle kilka procent <i>(np. poniżej 5%)</i>.
+</p><p>W niektórych przypadkach zdarza się, że maksymalne naprężenia rosną w nieskończoność niezależnie od tego, jak gęsta jest siatka. Taki niefizyczny efekt to osobliwość naprężeń. Może mieć kilka powodów:
+</p>
+<ul><li>siły skupione <i>(punktowe)</i> przyłożone do modeli bryłowych i powłokowych,</li>
+<li>warunki brzegowe zadane w punktach <i>(pojedynczych węzłach)</i>,</li>
+<li>ostre narożniki,</li>
+<li>kontakt występujący w narożniku.</li></ul>
+<p>Typowe sposoby radzenia sobie z osobliwościami naprężeń to:
+</p>
+<ul><li>zadawanie obciążeń i warunków brzegowych na małe powierzchnie zamiast punktów - zobacz sekcję o partycjonowaniu powyżej</li>
+<li>dodawania małych zaokrągleń do ostrych narożników <i>(wyjątek zasady pomijania małych zaokrągleń podczas upraszczania modeli do analiz)</i>,</li>
+<li>dodanie plastyczności do zachowania materiału aby umożliwić redystrybucję naprężeń i ograniczyć je do wartości, na jakie pozwala definicja plastyczności przy obserwowaniu odpowiedniego poziomu uplastycznienia <i>(odkształcenia plastyczne)</i>,</li>
+<li>ignorowanie osobliwości i odczytywanie wyników z dala od nich jeśli to możliwe <i>(w oparciu o regułę St. Venanta)</i>.</li></ul>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_mesh_convergence.PNG"><img decoding="async" height="332" src="../File/FEM_mesh_convergence.PNG" srcset="/images/thumb/1/13/FEM_mesh_convergence.PNG/600px-FEM_mesh_convergence.PNG 1.5x, /images/thumb/1/13/FEM_mesh_convergence.PNG/800px-FEM_mesh_convergence.PNG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Typowe wykresy zbieżności siatki:<br/>
+- przemieszczenia <i>(<b>zielona krzywa</b>)</i> zbiegają się szybko,<br/>
+- maksymalne naprężenia w karbie takim jak otwór <i>(<b>niebieska krzywa</b>)</i> potrzebują więcej iteracji zagęszczania siatki aby się zbiegać,<br/>
+- maksymalne naprężenia w ostrym narożniku z warunkiem brzegowym utwierdzenia <i>(<b>czerwona krzywa</b>)</i> nie zbiegają się w ogóle - występuje osobliwość naprężeń i potrzebne jest małe zaokrąglenie i zamodelowanie połączenia w bardziej realistyczny, podatny sposób aby uniknąć tego zjawiska.<br/></p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_FEM.svg"><img decoding="async" height="24" src="../File/Workbench_FEM.svg" width="24"/></a></span> <a href="FEM_Workbench.html" title="FEM Workbench/pl">Środowisko pracy MES</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><a href="FEM_Analysis.html" title="FEM Analysis/pl">Analiza MES</a></li></ul>
+<ul><li><b>Materiał:</b> <a href="FEM_MaterialSolid.html" title="FEM MaterialSolid/pl">Bryła</a>, <a href="FEM_MaterialFluid.html" title="FEM MaterialFluid/pl">Ciecz</a>, <a href="FEM_MaterialMechanicalNonlinear.html" title="FEM MaterialMechanicalNonlinear/pl">Nieliniowy materiał mechaniczny</a>, <a href="FEM_MaterialReinforced.html" title="FEM MaterialReinforced/pl">Materiał zbrojony (beton)</a>, <a href="FEM_MaterialEditor.html" title="FEM MaterialEditor/pl">Edytor materiału</a></li></ul>
+<ul><li><b>Geometria elementu:</b> <a href="FEM_ElementGeometry1D.html" title="FEM ElementGeometry1D/pl">Geometria elementu</a>, <a href="FEM_ElementRotation1D.html" title="FEM ElementRotation1D/pl">Obrót w okół osi</a>, <a href="FEM_ElementGeometry2D.html" title="FEM ElementGeometry2D/pl">Geometria elementu 2D</a>, <a href="FEM_ElementFluid1D.html" title="FEM ElementFluid1D/pl">Element przepływu</a></li></ul>
+<hr/>
+<p><b>Wiązania</b>
+</p>
+<ul><li><b>Elektromagnetyczne:</b> <a href="FEM_ConstraintElectrostaticPotential.html" title="FEM ConstraintElectrostaticPotential/pl">Potencjał elektryczny</a>, <a href="FEM_ConstraintCurrentDensity.html" title="FEM ConstraintCurrentDensity/pl">Gęstość prądu</a>, <a href="FEM_ConstraintMagnetization.html" title="FEM ConstraintMagnetization/pl">Magnetyzacja</a></li></ul>
+<ul><li><b>Ciecz:</b> <a href="FEM_ConstraintInitialFlowVelocity.html" title="FEM ConstraintInitialFlowVelocity/pl">Warunek początkowy prędkości przepływu</a>, <a href="FEM_ConstraintInitialPressure.html" title="FEM ConstraintInitialPressure/pl">Ciśnienie początkowe</a>, <a href="FEM_ConstraintFlowVelocity.html" title="FEM ConstraintFlowVelocity/pl">Prędkość przepływu</a></li></ul>
+<ul><li><b>Geometryczne:</b> <a href="FEM_ConstraintPlaneRotation.html" title="FEM ConstraintPlaneRotation/pl">Obrót w płaszczyźnie</a>, <a href="FEM_ConstraintSectionPrint.html" title="FEM ConstraintSectionPrint/pl">Zapis wyników z przekroju</a>, <a href="FEM_ConstraintTransform.html" title="FEM ConstraintTransform/pl">Zdefiniuj odkształcenie</a></li></ul>
+<ul><li><b>Mechaniczne:</b> <a href="FEM_ConstraintFixed.html" title="FEM ConstraintFixed/pl">Zdefiniuj przytwierdzenie</a>, <a href="FEM_ConstraintDisplacement.html" title="FEM ConstraintDisplacement/pl">Zdefiniuj przemieszczenie</a>, <a href="FEM_ConstraintContact.html" title="FEM ConstraintContact/pl">Zdefiniuj kontakt</a>, <a href="FEM_ConstraintTie.html" title="FEM ConstraintTie/pl">Zdefiniuj powiązanie</a>, <a href="FEM_ConstraintSpring.html" title="FEM ConstraintSpring/pl">Wiązanie sprężyny</a>, <a href="FEM_ConstraintForce.html" title="FEM ConstraintForce/pl">Zdefiniuj siłę</a>, <a href="FEM_ConstraintPressure.html" title="FEM ConstraintPressure/pl">Zdefiniuj obciążenie ciśnieniem</a>, <a href="FEM_ConstraintCentrif.html" title="FEM ConstraintCentrif/pl">Zdefiniuj siłę odśrodkową</a>, <a href="FEM_ConstraintSelfWeight.html" title="FEM ConstraintSelfWeight/pl">Zdefiniuj obciążenie ciężarem własnym</a></li></ul>
+<ul><li><b>Termiczne:</b> <a href="FEM_ConstraintInitialTemperature.html" title="FEM ConstraintInitialTemperature/pl">Warunek początkowy temperatury</a>, <a href="FEM_ConstraintHeatflux.html" title="FEM ConstraintHeatflux/pl">Zdefiniuj strumień ciepła</a>, <a href="FEM_ConstraintTemperature.html" title="FEM ConstraintTemperature/pl">Zdefiniuj temperaturę</a>, <a href="FEM_ConstraintBodyHeatSource.html" title="FEM ConstraintBodyHeatSource/pl">Zdefiniuj objętościowe źródło ciepła</a></li></ul>
+<ul><li><b>Zmieniające wiązania:</b> <a href="FEM_ConstantVacuumPermittivity.html" title="FEM ConstantVacuumPermittivity/pl">Zdefiniuj przenikalność elektryczną próżni</a></li></ul>
+<hr/>
+<ul><li><b>Siatki:</b> <a href="FEM_MeshNetgenFromShape.html" title="FEM MeshNetgenFromShape/pl">Siatka Netgen</a>, <a href="FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape/pl">Siatka GMSH</a>, <a href="FEM_MeshBoundaryLayer.html" title="FEM MeshBoundaryLayer/pl">Warstwa graniczna siatki</a>, <a href="FEM_MeshRegion.html" title="FEM MeshRegion/pl">Obszar siatki</a>, <a href="FEM_MeshGroup.html" title="FEM MeshGroup/pl">Grupa siatki</a>, <a href="FEM_CreateNodesSet.html" title="FEM CreateNodesSet/pl">Utwórz zestaw węzłów</a>, <a href="FEM_FemMesh2Mesh.html" title="FEM FemMesh2Mesh/pl">Siatka MES na obiekt środowiska Siatka</a></li></ul>
+<ul><li><b>Solver:</b> <a href="FEM_SolverCalculixCxxtools.html" title="FEM SolverCalculixCxxtools/pl">Narzędzia CalculiX</a>, <a href="FEM_SolverElmer.html" title="FEM SolverElmer/pl">Elmer</a>, <a href="FEM_SolverMystran.html" title="FEM SolverMystran/pl">Mystran</a>, <a href="FEM_SolverZ88.html" title="FEM SolverZ88/pl">Z88</a>; <b>Równania:</b> <a href="FEM_EquationElasticity.html" title="FEM EquationElasticity/pl">Elastyczności</a>, <a href="FEM_EquationElectrostatic.html" title="FEM EquationElectrostatic/pl">Elektrostatyczne</a>, <a href="FEM_EquationElectricforce.html" title="FEM EquationElectricforce/pl">Siły elektrostatycznej</a>, <a href="FEM_EquationMagnetodynamic.html" title="FEM EquationMagnetodynamic/pl">Magnetodynamiczne</a>, <a href="FEM_EquationMagnetodynamic2D.html" title="FEM EquationMagnetodynamic2D/pl">RMagnetodynamiczne 2D</a>, <a href="FEM_EquationFlow.html" title="FEM EquationFlow/pl">Przepływu</a>, <a href="FEM_EquationFlux.html" title="FEM EquationFlux/pl">Strumienia</a>, <a href="FEM_EquationHeat.html" title="FEM EquationHeat/pl">Ciepła</a>; <b>Solver:</b> <a href="FEM_SolverControl.html" title="FEM SolverControl/pl">Kontrola pracy solvera</a>, <a href="FEM_SolverRun.html" title="FEM SolverRun/pl">Uruchom solver</a></li></ul>
+<ul><li><b>Wyniki:</b> <a href="FEM_ResultsPurge.html" title="FEM ResultsPurge/pl">Oczyszczanie z wyników</a>, <a href="FEM_ResultShow.html" title="FEM ResultShow/pl">Prezentacja wyników</a>; <b>Postprocessing:</b> <a href="FEM_PostApplyChanges.html" title="FEM PostApplyChanges/pl">Zastosuj zmiany</a>, <a href="FEM_PostPipelineFromResult.html" title="FEM PostPipelineFromResult/pl">Prezentacja graficzna</a>, <a href="FEM_PostFilterWarp.html" title="FEM PostFilterWarp/pl">Filtr rozpraszający</a>, <a href="FEM_PostFilterClipScalar.html" title="FEM PostFilterClipScalar/pl">Skalarny filtr obcinający</a>, <a href="FEM_PostFilterCutFunction.html" title="FEM PostFilterCutFunction/pl">Filtr odcięcia funkcji</a>, <a href="FEM_PostFilterClipRegion.html" title="FEM PostFilterClipRegion/pl">Filtr odcięcia obszaru</a>, <a href="FEM_PostFilterContours.html" title="FEM PostFilterContours/pl">Filtr konturów</a>, <a href="FEM_PostFilterDataAlongLine.html" title="FEM PostFilterDataAlongLine/pl">Filtr danych wzdłuż linii</a>, <a href="FEM_PostFilterLinearizedStresses.html" title="FEM PostFilterLinearizedStresses/pl">Wykres liniowości naprężeń</a>, <a href="FEM_PostFilterDataAtPoint.html" title="FEM PostFilterDataAtPoint/pl">Filtr obcinania danych w punkcie</a>, <a class="mw-redirect" href="FEM_PostCreateFunctions.html" title="FEM PostCreateFunctions/pl">Utwórz funkcję</a>, <a href="FEM_PostCreateFunctionPlane.html" title="FEM PostCreateFunctionPlane/pl">Filtr funkcji płaszczyzny</a>, <a href="FEM_PostCreateFunctionSphere.html" title="FEM PostCreateFunctionSphere/pl">Filtr funkcji sfery</a>, <a href="FEM_PostCreateFunctionCylinder.html" title="FEM PostCreateFunctionCylinder/pl">Filtr funkcji walca</a>, <a href="FEM_PostCreateFunctionBox.html" title="FEM PostCreateFunctionBox/pl">Filtr funkcji prostopadłościanu</a></li></ul>
+<ul><li><b>Narzędzia:</b> <a href="FEM_ClippingPlaneAdd.html" title="FEM ClippingPlaneAdd/pl">Płaszczyzna tnąca</a>, <a href="FEM_ClippingPlaneRemoveAll.html" title="FEM ClippingPlaneRemoveAll/pl">Usuń płaszczyznę tnąca</a>, <a href="FEM_Examples.html" title="FEM Examples/pl">Przykłady</a>; <a href="FEM_MeshClear.html" title="FEM MeshClear/pl">Usuń siatkę</a>, <a href="FEM_MeshDisplayInfo.html" title="FEM MeshDisplayInfo/pl">Informacje o siatce</a></li></ul>
+<hr/>
+<ul><li><b>Dodatkowe:</b> <a href="FEM_Preferences.html" title="FEM Preferences/pl">Konfiguracja</a>, <a href="FEM_Install.html" title="FEM Install/pl">Instalacja środowiska MES</a>, <a href="FEM_Mesh.html" title="FEM Mesh/pl">Siatka</a>, <a href="FEM_Solver.html" title="FEM Solver/pl">FEM Solver</a>, <a href="FEM_CalculiX.html" title="FEM CalculiX/pl">CalculiX</a>, <a href="FEM_Concrete.html" title="FEM Concrete/pl">Beton</a>, <a href="FEM_Element_Types.html" title="FEM Element Types/pl">Rodzaje elementów</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/User_hub.png"><img decoding="async" height="24" src="../File/User_hub.png" srcset="/images/thumb/9/94/User_hub.png/36px-User_hub.png 1.5x, /images/thumb/9/94/User_hub.png/48px-User_hub.png 2x" width="24"/></a></span> <a href="User_hub.html" title="User hub/pl">Centrum użytkownika</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started/pl">Jak zacząć</a></b></li>
+<li><b>Instalacja:</b> <a href="Download.html" title="Download/pl">Pobieranie programu</a>, <a href="Installing_on_Windows.html" title="Installing on Windows/pl">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux/pl">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac/pl">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components/pl">Dodatkowych komponentów</a>, <a href="Compile_on_Docker.html" title="Compile on Docker/pl">Docker</a>, <a href="AppImage.html" title="AppImage/pl">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap/pl">Ubuntu Snap</a></li>
+<li><b>Podstawy:</b> <a href="About_FreeCAD.html" title="About FreeCAD/pl">Informacje na temat FreeCAD</a>, <a href="Interface.html" title="Interface/pl">Interfejs użytkownika</a>, <a href="Mouse_navigation.html" title="Mouse navigation/pl">Profil nawigacji myszką</a>, <a href="Selection_methods.html" title="Selection methods/pl">Metody wyboru</a>, <a href="Object_name.html" title="Object name/pl">Nazwa obiektu</a>, <a href="Preferences_Editor.html" title="Preferences Editor/pl">Edytor ustawień</a>, <a href="Workbenches.html" title="Workbenches/pl">Środowiska pracy</a>, <a href="Document_structure.html" title="Document structure/pl">Struktura dokumentu</a>, <a href="Property.html" title="Property/pl">Właściwości</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD/pl">Pomóż w rozwoju FreeCAD</a>, <a href="Donate.html" title="Donate/pl">Dotacje</a></li></ul>
+<hr/>
+<ul><li><b>Pomoc:</b> <a href="Tutorials.html" title="Tutorials/pl">Poradniki</a>, <a href="Video_tutorials.html" title="Video tutorials/pl">Wideo poradniki</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches/pl">Środowiska pracy</a>:</b> <a href="Std_Base.html" title="Std Base/pl">Strona Startowa</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench/pl">Złożenie</a>, <a href="Arch_Workbench.html" title="Arch Workbench/pl">BIM</a>, <a href="CAM_Workbench.html" title="CAM Workbench/pl">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench/pl">Rysunek Roboczy</a>, <a href="FEM_Workbench.html" title="FEM Workbench/pl">MES</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench/pl">Inspekcja</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench/pl">Siatka</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench/pl">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench/pl">Część</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench/pl">Projekt Części</a>, <a href="Points_Workbench.html" title="Points Workbench/pl">Punkty</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/pl">Inżynieria Wsteczna</a>, <a href="Robot_Workbench.html" title="Robot Workbench/pl">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench/pl">Szkicownik</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench/pl">Arkusz Kalkulacyjny</a>, <a href="Surface_Workbench.html" title="Surface Workbench/pl">Powierzchnia 3D</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench/pl">Rysunek Techniczny</a>, <a href="Testing.html" title="Testing/pl">Test Framework</a></li></ul>
+<hr/>
+<ul><li><b><a href="Addon.html" title="Addon/pl">Dodatki</a>:</b> <a href="Std_AddonMgr.html" title="Std AddonMgr/pl">Menadżer dodatków</a>, <a href="External_workbenches.html" title="External workbenches/pl">Zewnętrzne środowiska pracy</a>, <a href="Scripting_and_macros.html" title="Scripting and macros/pl">Skrypty i makrodefinicje</a></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub/pl">Centrum użytkownika</a>, <a href="Power_users_hub.html" title="Power users hub/pl">Centrum Power użytkownika</a>, <a href="Developer_hub.html" title="Developer hub/pl">Centrum programisty</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211158
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.086 seconds
+Real time usage: 0.129 seconds
+Preprocessor visited node count: 328/1000000
+Post‐expand include size: 22430/2097152 bytes
+Template argument size: 8245/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 913/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    9.590      1 -total
+ 40.96%    3.928      1 Template:FEM_Tools_navi/pl
+ 22.24%    2.133      1 Template:TutorialInfo/pl
+ 20.59%    1.975      2 Template:Navigation_menu_2
+ 17.08%    1.638     11 Template:Caption
+  9.22%    0.884      1 Template:Userdocnavi/pl
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:332851-0!canonical and timestamp 20241129211158 and revision id 1469817. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

@@ -1,0 +1,232 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Scripted objects saving attributes/fr</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--med" dir="ltr" href="Scripted_objects_saving_attributes.html" lang="de" title="Gescriptete Objekte die Attribute speichern (42% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Scripted_objects_saving_attributes.html" lang="en" title="Scripted objects saving attributes (100% translated)">English</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="fr">français</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Scripted_objects_saving_attributes.html" lang="it" title="Oggetti creati con script che salvano gli attributi (12% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Scripted_objects_saving_attributes.html" lang="pl" title="Obiekty tworzone skryptami, zapis atrybutów (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Scripted_objects_saving_attributes.html" lang="ru" title="Scripted objects saving attributes/ru (4% translated)">русский</a></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Sauvegarde_de_tous_les_attributs"><span class="tocnumber">2</span> <span class="toctext">Sauvegarde de tous les attributs</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Sauvegarde_d'attributs_spécifiques"><span class="tocnumber">3</span> <span class="toctext">Sauvegarde d'attributs spécifiques</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Utilisation"><span class="tocnumber">4</span> <span class="toctext">Utilisation</span></a>
+<ul>
+<li class="toclevel-2 tocsection-5"><a href="#Identifier_le_type"><span class="tocnumber">4.1</span> <span class="toctext">Identifier le type</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Migration_de_l'objet"><span class="tocnumber">4.2</span> <span class="toctext">Migration de l'objet</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-7"><a href="#Liens"><span class="tocnumber">5</span> <span class="toctext">Liens</span></a></li>
+</ul>
+</div>
+</div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>Les <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a> sont reconstruits à chaque fois qu'un <a href="File_Format_FCStd.html" title="File Format FCStd/fr">document au format FCStd</a> est ouvert. Pour ce faire, le document conserve une référence au module et à la classe Python qui ont été utilisés pour créer l'objet, ainsi que ses propriétés.
+</p><p>Les attributs de la classe utilisée pour créer l'objet peuvent également être enregistrés, c'est-à-dire "sérialisés". Ceci peut être contrôlé par les méthodes <code>dumps</code> et <code>loads</code> de la classe.
+</p><p><span id="Saving_all_attributes"></span>
+</p>
+<h2><span class="mw-headline" id="Sauvegarde_de_tous_les_attributs">Sauvegarde de tous les attributs</span></h2>
+<p>Par défaut, les attributs enregistrés dans une classe d'objets sont ceux du dictionnaire <code>__dict__</code> de la classe.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># various_states.py</span>
+<span class="k">class</span> <span class="nc">VariousStates</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Length"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyArea"</span><span class="p">,</span> <span class="s2">"Area"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mi">15</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Area</span> <span class="o">=</span> <span class="mi">300</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="n">Type</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">Type</span><span class="p">[</span><span class="s2">"Version"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Custom"</span>
+        <span class="n">Type</span><span class="p">[</span><span class="s2">"Release"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"production"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="n">Type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="s2">"Custom"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ver</span> <span class="o">=</span> <span class="s2">"0.18"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mf">2.5</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+<p>Un objet peut être créé à l'aide de cette classe et il peut être enregistré dans <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">my_document.FCstd</span>. Si aucun <a href="Viewprovider.html" title="Viewprovider/fr">viewprovider</a> particulier n'est attribué au nouvel objet, sa classe proxy est simplement définie sur une valeur différente de <code>None</code>, dans ce cas, sur <code>1</code>.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">various_states</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>
+<span class="n">doc</span><span class="o">.</span><span class="n">FileName</span> <span class="o">=</span> <span class="s2">"my_document.FCStd"</span>
+
+<span class="n">obj</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::FeaturePython"</span><span class="p">,</span> <span class="s2">"Custom"</span><span class="p">)</span>
+<span class="n">various_states</span><span class="o">.</span><span class="n">VariousStates</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">App</span><span class="o">.</span><span class="n">GuiUp</span><span class="p">:</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">doc</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+<span class="n">doc</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+<p>Lorsque nous rouvrons le fichier, nous pouvons inspecter le dictionnaire de la classe de l'objet.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Custom</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">various_states</span><span class="o">.</span><span class="n">VariousStates</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7f0a899bde10</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+<span class="p">{</span><span class="s1">'Type'</span><span class="p">:</span> <span class="p">{</span><span class="s1">'Version'</span><span class="p">:</span> <span class="s1">'Custom'</span><span class="p">,</span> <span class="s1">'Release'</span><span class="p">:</span> <span class="s1">'production'</span><span class="p">},</span> <span class="s1">'ver'</span><span class="p">:</span> <span class="s1">'0.18'</span><span class="p">,</span> <span class="s1">'color'</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">'width'</span><span class="p">:</span> <span class="mf">2.5</span><span class="p">}</span>
+</pre></div>
+<p>Nous voyons que tous les attributs qui commencent par <code>self</code> dans la classe ont été sauvegardés. Ceux-ci peuvent être de différents types, notamment chaîne de caractères, liste, flottant et dictionnaire. Le tuple original pour <code>self.color</code> a été converti en liste, mais sinon tous les attributs ont été chargés de la même manière.
+</p><p><span id="Saving_specific_attributes"></span>
+</p>
+<h2><span id="Sauvegarde_d.27attributs_sp.C3.A9cifiques"></span><span class="mw-headline" id="Sauvegarde_d'attributs_spécifiques">Sauvegarde d'attributs spécifiques</span></h2>
+<p>Nous pouvons définir une classe similaire à la première, qui implémente des attributs spécifiques à sauvegarder.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># various_states.py</span>
+<span class="k">class</span> <span class="nc">CustomStates</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Length"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyArea"</span><span class="p">,</span> <span class="s2">"Area"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mi">15</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Area</span> <span class="o">=</span> <span class="mi">300</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="n">Type</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">Type</span><span class="p">[</span><span class="s2">"Version"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Custom"</span>
+        <span class="n">Type</span><span class="p">[</span><span class="s2">"Release"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"production"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="n">Type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ver</span> <span class="o">=</span> <span class="s2">"0.18"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mf">2.5</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">dumps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
+
+    <span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+<p>La valeur de retour de <code>dumps</code> est l'objet qui sera sérialisé. Il peut s'agir d'une valeur unique ou d'un tuple de valeurs. Lorsque l'objet est restauré, la classe appelle la méthode <code>loads</code>, en passant la variable <code>state</code> avec le contenu sérialisé. Dans ce cas, <code>state</code> est un tuple qui est décomposé dans les variables respectives pour reconstruire l'"état" qui existait à l'origine.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">)</span>
+<span class="n">state</span> <span class="o">=</span> <span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mf">2.5</span><span class="p">)</span>
+</pre></div>
+<p>Nous pouvons créer un objet avec cette classe et enregistrer le document, comme dans l'exemple précédent. Lorsque nous rouvrons le fichier, nous pouvons inspecter le dictionnaire de la classe de l'objet.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">obj2</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Custom2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj2</span><span class="o">.</span><span class="n">Proxy</span><span class="p">)</span>
+<span class="o">&lt;</span><span class="n">various_states</span><span class="o">.</span><span class="n">CustomStates</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x7fb399496630</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">obj2</span><span class="o">.</span><span class="n">Proxy</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+<span class="p">{</span><span class="s1">'color'</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">'width'</span><span class="p">:</span> <span class="mf">2.5</span><span class="p">}</span>
+</pre></div>
+<p>Le tuple original de <code>self.color</code> a été converti en liste, mais les autres informations ont été récupérées sans problème. Au lieu de restaurer tous les attributs comme dans le cas précédent, seuls les attributs que nous avons spécifiés dans <code>dumps</code> et <code>loads</code> ont été restaurés.
+</p><p><span id="Usage"></span>
+</p>
+<h2><span class="mw-headline" id="Utilisation">Utilisation</span></h2>
+<p><span id="Identifying_the_type"></span>
+</p>
+<h3><span class="mw-headline" id="Identifier_le_type">Identifier le type</span></h3>
+<p>Normalement, les <a href="Scripted_objects.html" title="Scripted objects/fr">objets créés par script</a> devraient utiliser des <a href="Property.html" title="Property/fr">propriétés</a> pour stocker des informations, car celles-ci sont automatiquement restaurées à l'ouverture du document.
+</p><p>Cependant, il arrive que la classe restitue des informations internes qui ne sont pas destinées à être modifiées, mais qu'il est utile d'inspecter.
+</p><p>Par exemple, la plupart des objets de l'<a href="Draft_Workbench.html" title="Draft Workbench/fr">atelier Draft</a> configurent un attribut <code>Type</code> qui peut être utilisé pour déterminer le type d'objet utilisé.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">DraftObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">_type</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="n">_type</span>
+
+    <span class="k">def</span> <span class="nf">dumps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Type</span>
+
+    <span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">state</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="n">state</span>
+</pre></div>
+<p>Tous les objets ont une propriété <code>TypeId</code>, mais pour les <a href="Scripted_objects.html" title="Scripted objects/fr">objets créés par script</a>, cette propriété n'est pas utile car elle fait toujours référence à la classe C++ parente, par exemple, <a href="Part_Part2DObject.html" title="Part Part2DObject/fr"><code>Part::Part2DObjectPython</code></a> ou <a href="Part_Feature.html" title="Part Feature/fr"><code>Part::FeaturePython</code></a>. Par conséquent, le fait d'avoir cet attribut supplémentaire <code>Proxy.Type</code> dans la classe est utile pour traiter chaque objet d'une manière particulière.
+</p><p><span id="Migrating_the_object"></span>
+</p>
+<h3><span id="Migration_de_l.27objet"></span><span class="mw-headline" id="Migration_de_l'objet">Migration de l'objet</span></h3>
+<p>Les informations de version peuvent être stockées à l'intérieur de la classe afin de vérifier l'origine d'un objet.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">CustomObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">_type</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="n">_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="s2">"0.18"</span>
+
+    <span class="k">def</span> <span class="nf">dumps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span>
+
+    <span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">state</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+<p>Si la structure de la classe change, c'est-à-dire si ses propriétés ou méthodes changent, sont renommées ou supprimées, nous pourrions tester l'attribut version afin de faire migrer l'ancien objet vers un nouvel ensemble de propriétés ou vers une nouvelle classe. Ceci peut être fait en implémentant la méthode <code>onDocumentRestored</code>, comme expliqué dans <a href="Scripted_objects_migration.html" title="Scripted objects migration/fr">Migration d'objets créés par script</a>.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">CustomObject</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">onDocumentRestored</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="p">,</span> <span class="s2">"version"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="o">.</span><span class="n">version</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span><span class="o">.</span><span class="n">version</span> <span class="o">==</span> <span class="s2">"0.18"</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">migrate_from_018</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">migrate_from_018</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="o">...</span>
+</pre></div>
+<p><span id="Links"></span>
+</p>
+<h2><span class="mw-headline" id="Liens">Liens</span></h2>
+<ul><li><a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a></li>
+<li><a href="Scripted_objects_migration.html" title="Scripted objects migration/fr">Migration d'objets créés par script</a></li>
+<li><a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=10&amp;t=49120" rel="nofollow">Discussion sur le forum FreeCAD : Sérialisation des objets scripts : json ou pickle ?</a></li></ul>
+<ul><li><a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=18&amp;t=44009" rel="nofollow">obj.Proxy.Type est un dict, pas une chaîne de caractères</a>, explication de <code>dumps</code> et <code>loads</code> dans le forum.</li>
+<li><a class="external text" href="https://docs.python.org/3/library/pickle.html#object.__getstate__" rel="nofollow">Le module Pickle</a> dans la documentation Python.</li></ul>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Scripts FreeCAD :</b> <a href="Python.html" title="Python/fr">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/fr">Introduction à Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/fr">Tutoriel sur les scripts Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/fr">Débuter avec les scripts</a></li></ul>
+<hr/>
+<ul><li><b>Modules :</b> <a href="Builtin_modules.html" title="Builtin modules/fr">Modules intégrés</a>, <a href="Units.html" title="Units/fr">Unités</a>, <a href="Quantity.html" title="Quantity/fr">Quantity</a></li>
+<li><b>Ateliers :</b> <a href="Workbench_creation.html" title="Workbench creation/fr">Création d'atelier</a>, <a href="Gui_Command.html" title="Gui Command/fr">Commands Gui</a>, <a href="Command.html" title="Command/fr">Les commandes</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/fr">Installer des ateliers supplémentaires</a></li>
+<li><b>Maillages et objets Parts :</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/fr">Scripts Mesh</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/fr">Script de données topologiques</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/fr">Conversion objet Mesh en Part</a>, <a href="PythonOCC.html" title="PythonOCC/fr">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Objets paramétriques :</b> <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a>, <a href="Viewprovider.html" title="Viewprovider/fr">Viewproviders</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view/fr">Icône personnalisée dans l'arborescence</a>)</small></li>
+<li><b>Scénographie :</b> <a href="Scenegraph.html" title="Scenegraph/fr">Graphe de scène Coin (Inventor)</a>, <a href="Pivy.html" title="Pivy/fr">Pivy</a></li>
+<li><b>Interface graphique :</b> <a href="Interface_creation.html" title="Interface creation/fr">Création d'interface</a>, <a href="Dialog_creation.html" title="Dialog creation/fr">Création d'une boite de dialogue</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets/fr">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files/fr">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors/fr">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF/fr">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets/fr">5</a>)</small>, <a href="PySide.html" title="PySide/fr">PySide</a>, Exemples PySide <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples/fr">débutant</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/fr">intermédiaire</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples/fr">expérimenté</a></li>
+<li><b>Macros :</b> <a href="Macros.html" title="Macros/fr">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros/fr">Comment installer des macros</a></li>
+<li><b>Intégration :</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/fr">Intégrer FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/fr">Intégration de FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Autre :</b> <a href="Expressions.html" title="Expressions/fr">Expressions</a>, <a href="Code_snippets.html" title="Code snippets/fr">Extraits de codes</a>, <a href="Line_drawing_function.html" title="Line drawing function/fr">Fonction - tracer une ligne</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/fr">Bibliothèque mathématique vectorielle de FreeCAD</a> <small>(déprécié)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs :</b> <a href="User_hub.html" title="User hub/fr">Hub utilisateurs</a>, <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>, <a href="Developer_hub.html" title="Developer hub/fr">Hub développeurs</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129212305
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.073 seconds
+Real time usage: 0.095 seconds
+Preprocessor visited node count: 361/1000000
+Post‐expand include size: 7803/2097152 bytes
+Template argument size: 5203/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 9/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 18771/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   13.426      1 -total
+ 28.36%    3.807      9 Template:Code
+ 25.40%    3.410      1 Template:Powerdocnavi/fr
+ 15.52%    2.083      1 Template:Navigation_menu_2
+ 11.16%    1.499     22 Template:Incode
+  6.15%    0.826      1 Template:TOCright
+  5.33%    0.716      1 Template:FileName
+  4.44%    0.596      1 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:199290-0!canonical and timestamp 20241129212305 and revision id 1359192. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

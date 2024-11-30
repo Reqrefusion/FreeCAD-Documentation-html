@@ -1,0 +1,97 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Raytracing API example</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Raytracing_API_example.html" lang="de" title="Strahlverfolgungs API Beispiel (100% translated)">Deutsch</a></li>
+<li><span class="mw-pt-languages-ui mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="en">English</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Raytracing_API_example.html" lang="fr" title="Raytracing : Exemples d'API (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Raytracing_API_example.html" lang="it" title="Esempi di API Raytracing (100% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Raytracing_API_example.html" lang="pl" title="Skrypty środowiska Raytracing (12% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Raytracing_API_example.html" lang="ru" title="Raytracing API example/ru (12% translated)">русский</a></li></ul></div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>The <code>Raytracing</code> and <code>RaytracingGui</code> modules provide several methods to write scene contents as povray or luxrender data.
+</p><p>The most useful commands are <code>Raytracing.getPartAsPovray()</code> and <code>Raytracing.getPartAsLux()</code> to render a FreeCAD Part object into a povray or luxrender definition, and <code>RaytracingGui.povViewCamera()</code> and <code>RaytracinGui.luxViewCamera()</code> to get the current point of view of the 3D view window into povray or luxrender format.
+</p>
+<h2><span class="mw-headline" id="Outputting_render_files">Outputting render files</span></h2>
+<p>Here is how to write a povray file from python, assuming your document contains a "Box" object:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Raytracing</span><span class="o">,</span><span class="nn">RaytracingGui</span>
+<span class="n">OutFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'C:/Documents and Settings/jriegel/Desktop/test.pov'</span><span class="p">,</span><span class="s1">'w'</span><span class="p">)</span>
+<span class="n">OutFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">getResourceDir</span><span class="p">()</span><span class="o">+</span><span class="s1">'Mod/Raytracing/Templates/ProjectStd.pov'</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="n">OutFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">RaytracingGui</span><span class="o">.</span><span class="n">povViewCamera</span><span class="p">())</span>
+<span class="n">OutFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">Raytracing</span><span class="o">.</span><span class="n">getPartAsPovray</span><span class="p">(</span><span class="s1">'Box'</span><span class="p">,</span><span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Box</span><span class="o">.</span><span class="n">Shape</span><span class="p">,</span><span class="mf">0.800000</span><span class="p">,</span><span class="mf">0.800000</span><span class="p">,</span><span class="mf">0.800000</span><span class="p">))</span>
+<span class="n">OutFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="k">del</span> <span class="n">OutFile</span>
+</pre></div>
+<p>And the same for luxrender:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Raytracing</span><span class="o">,</span><span class="nn">RaytracingGui</span>
+<span class="n">OutFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'C:/Documents and Settings/jriegel/Desktop/test.lxs'</span><span class="p">,</span><span class="s1">'w'</span><span class="p">)</span>
+<span class="n">OutFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">getResourceDir</span><span class="p">()</span><span class="o">+</span><span class="s1">'Mod/Raytracing/Templates/LuxClassic.lxs'</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+<span class="n">OutFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">RaytracingGui</span><span class="o">.</span><span class="n">luxViewCamera</span><span class="p">())</span>
+<span class="n">OutFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">Raytracing</span><span class="o">.</span><span class="n">getPartAsLux</span><span class="p">(</span><span class="s1">'Box'</span><span class="p">,</span><span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Box</span><span class="o">.</span><span class="n">Shape</span><span class="p">,</span><span class="mf">0.800000</span><span class="p">,</span><span class="mf">0.800000</span><span class="p">,</span><span class="mf">0.800000</span><span class="p">))</span>
+<span class="n">OutFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="k">del</span> <span class="n">OutFile</span>
+</pre></div>
+<h2><span class="mw-headline" id="Creating_a_custom_render_object">Creating a custom render object</span></h2>
+<p>Apart from standard povray and luxrender view objects that provide a view of an existing Part object, and that can be inserted in povray and luxrender projects respectively, a third object exist, called RaySegment, that can be inserted either in povray or luxrender projects. That RaySegment object is not linked to any of the FreeCAD objects, and can contain custom povray or luxrender code, that you might wish to insert into your raytracing project. You can also use it, for example, to output your FreeCAD objects a certain way, if you are not happy with the standard way. You can create and use it like this from the python console:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">myRaytracingProject</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">PovProject</span>
+<span class="n">myCustomRenderObject</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Raytracing::RaySegment"</span><span class="p">,</span><span class="s2">"myRenderObject"</span><span class="p">)</span>
+<span class="n">myRaytracingProject</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="n">myCustomRenderObject</span><span class="p">)</span>
+<span class="n">myCustomRenderObject</span><span class="o">.</span><span class="n">Result</span> <span class="o">=</span> <span class="s2">"// Hello from python!"</span>
+</pre></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="File/Power_user_hub.png"><img decoding="async" height="24" src="File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub">Power user documentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>FreeCAD scripting:</b> <a href="Python.html" title="Python">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python">Introduction to Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial">Python scripting tutorial</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics">FreeCAD Scripting Basics</a></li></ul>
+<hr/>
+<ul><li><b>Modules:</b> <a href="Builtin_modules.html" title="Builtin modules">Builtin modules</a>, <a href="Units.html" title="Units">Units</a>, <a href="Quantity.html" title="Quantity">Quantity</a></li>
+<li><b>Workbenches:</b> <a href="Workbench_creation.html" title="Workbench creation">Workbench creation</a>, <a href="Gui_Command.html" title="Gui Command">Gui Commands</a>, <a href="Command.html" title="Command">Commands</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches">Installing more workbenches</a></li>
+<li><b>Meshes and Parts:</b> <a href="Mesh_Scripting.html" title="Mesh Scripting">Mesh Scripting</a>, <a href="Topological_data_scripting.html" title="Topological data scripting">Topological data scripting</a>, <a href="Mesh_to_Part.html" title="Mesh to Part">Mesh to Part</a>, <a href="PythonOCC.html" title="PythonOCC">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Parametric objects:</b> <a href="Scripted_objects.html" title="Scripted objects">Scripted objects</a>, <a href="Viewprovider.html" title="Viewprovider">Viewproviders</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view">Custom icon in tree view</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="Scenegraph.html" title="Scenegraph">Coin (Inventor) scenegraph</a>, <a href="Pivy.html" title="Pivy">Pivy</a></li>
+<li><b>Graphical interface:</b> <a href="Interface_creation.html" title="Interface creation">Interface creation</a>, <a href="Dialog_creation.html" title="Dialog creation">Interface creation completely in Python</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets">5</a>)</small>, <a href="PySide.html" title="PySide">PySide</a>, PySide examples <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples">beginner</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples">intermediate</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples">advanced</a></li>
+<li><b>Macros:</b> <a href="Macros.html" title="Macros">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros">How to install macros</a></li>
+<li><b>Embedding:</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD">Embedding FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui">Embedding FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Other:</b> <a href="Expressions.html" title="Expressions">Expressions</a>, <a href="Code_snippets.html" title="Code snippets">Code snippets</a>, <a href="Line_drawing_function.html" title="Line drawing function">Line drawing function</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library">FreeCAD vector math library</a> <small>(deprecated)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub">User hub</a>, <a href="Power_users_hub.html" title="Power users hub">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub">Developer hub</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="File/Workbench_Raytracing.svg"><img decoding="async" height="24" src="File/Workbench_Raytracing.svg" width="24"/></a></span> <a href="Raytracing_Workbench.html" title="Raytracing Workbench">Raytracing</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Tools:</b> <a href="Raytracing_New.html" title="Raytracing New">New PovRay project</a>, <a href="Raytracing_Lux.html" title="Raytracing Lux">New LuxRender project</a>, <a href="Raytracing_InsertPart.html" title="Raytracing InsertPart">Insert part</a>, <a href="Raytracing_ResetCamera.html" title="Raytracing ResetCamera">Reset camera</a>, <a href="Raytracing_ExportProject.html" title="Raytracing ExportProject">Export project</a>, <a href="Raytracing_Render.html" title="Raytracing Render">Render</a></li></ul>
+<ul><li><b>Utilities:</b> <a href="Raytracing_WriteView.html" title="Raytracing WriteView">Export view to povray</a>, <a href="Raytracing_WriteCamera.html" title="Raytracing WriteCamera">Export camera to povray</a>, <a href="Raytracing_WritePart.html" title="Raytracing WritePart">Export part to povray</a></li></ul>
+<hr/>
+<ul><li><b>Additional:</b> <a href="Raytracing_Preferences.html" title="Raytracing Preferences">Preferences</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129212145
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [no‐toc‐conversion]
+CPU time usage: 0.070 seconds
+Real time usage: 0.578 seconds
+Preprocessor visited node count: 182/1000000
+Post‐expand include size: 8600/2097152 bytes
+Template argument size: 3723/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 3/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 6569/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  496.802      1 -total
+ 98.59%  489.782      3 Template:Code
+  0.51%    2.522      6 Template:Incode
+  0.44%    2.200      1 Template:Powerdocnavi
+  0.30%    1.487      2 Template:Navigation_menu_2
+  0.18%    0.882      1 Template:Raytracing_Tools_navi
+  0.10%    0.486      1 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:119787-0!canonical and timestamp 20241129212144 and revision id 738937. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>

@@ -1,0 +1,151 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Part Loft Technical Details/fr</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="de" title="Part Ausformung Technische Details (100% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="en" title="Part Loft Technical Details (100% translated)">English</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="fr">français</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Part_Loft_Technical_Details.html" lang="hr" title="Part Loft Technical Details/hr (0% translated)">hrvatski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="it" title="Dettagli tecnici di Part Loft (100% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="pl" title="Część: Szczegóły techniczne wyciągnięcia przez profile (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--med" dir="ltr" href="Part_Loft_Technical_Details.html" lang="ro" title="Instrumentul Loft (Mansardare)-  Detalii Tehnice (54% translated)">română</a></li></ul></div>
+<p>Cette page explique les détails de la création d'une surface <a href="Part_Loft.html" title="Part Loft/fr">lissée</a>. Cela s'applique également au <a href="Part_Sweep.html" title="Part Sweep/fr">Part Balayage</a> effectué le long d'une trajectoire droite, bien qu'il y ait des différences.
+</p><p>Les informations fournies sont spécifiques à la mise en œuvre et peuvent changer. L'état actuel concerne FreeCAD 0.15.4119, version OCC: 6.7.0.
+</p><p><span id="Stages_of_the_Loft_creation"></span>
+</p>
+<div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Etapes_de_la_création_du_lissage"><span class="tocnumber">1</span> <span class="toctext">Etapes de la création du lissage</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Étape_1._Rendre_le_nombre_de_segments_des_profils_identiques"><span class="tocnumber">1.1</span> <span class="toctext">Étape 1. Rendre le nombre de segments des profils identiques</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#Étape_2._Établir_la_correspondance_entre_les_segments"><span class="tocnumber">1.2</span> <span class="toctext">Étape 2. Établir la correspondance entre les segments</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Étape_3._Faire_la_surface_lissée"><span class="tocnumber">1.3</span> <span class="toctext">Étape 3. Faire la surface lissée</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-5"><a href="#L'essentiel"><span class="tocnumber">2</span> <span class="toctext">L'essentiel</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Remarques_supplémentaires"><span class="tocnumber">3</span> <span class="toctext">Remarques supplémentaires</span></a></li>
+</ul>
+</div>
+<h2><span id="Etapes_de_la_cr.C3.A9ation_du_lissage"></span><span class="mw-headline" id="Etapes_de_la_création_du_lissage">Etapes de la création du lissage</span></h2>
+<p>Pour expliquer le processus de lissage, il est pratique de le diviser en étapes :
+</p>
+<ol><li>rendre égal le nombre de segments dans les profils (s'ils ne le sont pas déjà)</li>
+<li>établir la correspondance entre les segments</li>
+<li>faire la surface du lissage</li></ol>
+<p><span id="Step_1._Making_numbers_of_segment_in_profiles_match"></span>
+</p>
+<h3><span id=".C3.89tape_1._Rendre_le_nombre_de_segments_des_profils_identiques"></span><span class="mw-headline" id="Étape_1._Rendre_le_nombre_de_segments_des_profils_identiques">Étape 1. Rendre le nombre de segments des profils identiques</span></h3>
+<p>Le lissage a besoin d'un nombre de segments ideniques afin de créer autant de surfaces entre les segments correspondants. Si le nombre de segments est correcte dans tous les profils, cette étape est ignorée.
+</p><p>Si au moins l'un des profils a un nombre différent de segments, la procédure suivante est appliquée. Par simplicité, la procédure est expliquée ici dans le cas de deux profiles seulement . 
+</p>
+<ol><li>Les profils sont alignés temporairement de sorte qu'ils sont coplanaires et leurs centres de gravité * correspondent.</li>
+<li>(Voir l'image) pour chaque sommet dans un même profil, le second profil est tranché dans le même angle polaire (le centre polaire est le centre de gravité). Si il y a plus d'une tranche possible ou pas du tout de tranche possible (cela peut arriver sur des profils très convexes), le Lissage échoue généralement.</li>
+<li>On fait de même dans le direction opposée.</li></ol>
+<p>L'opération est étendue à tous les profils, pour obtenir le même nombre de segments. Le nombre total de segments dans chaque profil sera égale à la somme de tous les nombres de segments de tous les profils (à condition qu'aucun des sommets ne se trouvent être dans le même angle polaire).
+</p>
+<table style="margin: 0 auto;">
+<tbody><tr>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft-vertex-insertion.png"><img decoding="async" height="276" src="../File/Loft-vertex-insertion.png" srcset="/images/thumb/7/7b/Loft-vertex-insertion.png/450px-Loft-vertex-insertion.png 1.5x, /images/thumb/7/7b/Loft-vertex-insertion.png/600px-Loft-vertex-insertion.png 2x" width="300"/></a><figcaption>Le processus de découpage de profile2 (forme blanche en forme de croissant) pour créer des joints correspondant aux sommets de profile1 (pentagone violet). Les joints insérés sont marqués par des flèches jaunes.</figcaption></figure>
+</td>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_crescent_pentagon.png"><img decoding="async" height="242" src="../File/Loft_crescent_pentagon.png" srcset="/images/thumb/3/33/Loft_crescent_pentagon.png/450px-Loft_crescent_pentagon.png 1.5x, /images/thumb/3/33/Loft_crescent_pentagon.png/600px-Loft_crescent_pentagon.png 2x" width="300"/></a><figcaption>Le résultat du lissage correspondant à l'image à gauche.</figcaption></figure>
+</td></tr></tbody></table>
+<p><span id="Step_2._Establishing_correspondence_between_segments"></span>
+</p>
+<h3><span id=".C3.89tape_2._.C3.89tablir_la_correspondance_entre_les_segments"></span><span class="mw-headline" id="Étape_2._Établir_la_correspondance_entre_les_segments">Étape 2. Établir la correspondance entre les segments</span></h3>
+<figure typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_Number_of_verts_match.png"><img decoding="async" height="260" src="../File/Loft_Number_of_verts_match.png" srcset="/images/thumb/8/89/Loft_Number_of_verts_match.png/450px-Loft_Number_of_verts_match.png 1.5x, /images/thumb/8/89/Loft_Number_of_verts_match.png/600px-Loft_Number_of_verts_match.png 2x" width="300"/></a><figcaption>Démonstration de lissage en gardant le nombre de segments dans les profils quand ils correspondent. Notez comment les 3 arêtes du carré supérieur "s'effondrent" en une petite pièce polygonale du profil inférieur.</figcaption></figure>
+<p>Dans le cas où les nombres de segments dans tous les profils ne sont pas égaux, le découpage a été fait à l'étape 1, et la correspondance est triviale.
+Dans le cas où les nombres de segments dans tous les profils sont égaux, les segments existants sont utilisés (voir l'image), et c'est à ce moment que la correspondance doit être établie. 
+</p><p>L'algorithme exact pour trouver les segments correspondants est complexe, mais il tend généralement à minimiser la torsion du lissage résultant. Cela signifie que si l'on effectue un lissage entre deux carrés, la torsion maximale possible est &lt;45°. Une rotation supplémentaire de l'un des carrés fera sauter le lissage à d'autres sommets.
+</p><p>La correspondance entre les profils voisins est faite indépendamment. Cela signifie qu'une torsion supplémentaire peut être obtenue en ajoutant plus de profils intermédiaires.
+</p><p>Une autre chose à noter est que lorsque le nombre de segments dans les profils est égal, le lissage résultant est considérablement plus robuste en ce qui concerne les profils complexes, en particulier pour les profils non convexes.
+</p>
+<div style="clear:both"></div>
+<p><span id="Step_3._Making_the_loft_surface"></span>
+</p>
+<h3><span id=".C3.89tape_3._Faire_la_surface_liss.C3.A9e"></span><span class="mw-headline" id="Étape_3._Faire_la_surface_lissée">Étape 3. Faire la surface lissée</span></h3>
+<figure typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_B-spline.png"><img decoding="async" height="342" src="../File/Loft_B-spline.png" srcset="/images/thumb/5/5a/Loft_B-spline.png/600px-Loft_B-spline.png 1.5x, /images/thumb/5/5a/Loft_B-spline.png/800px-Loft_B-spline.png 2x" width="400"/></a><figcaption>Une courbe d'interpolation spline (rouge) qui suit la surface du lissage. Les points à interpoler sont représentés par des carrés rouges.</figcaption></figure>
+<p>S'il n'y a que deux profils, les surfaces créées sont des surfaces réglées entre les segments correspondants des profils. Les arêtes droites sont créées pour connecter les sommets correspondants des profils.
+</p><p>S'il y a plus de deux profils, les surfaces sont faites de cannelures de la même manière que les lignes droites forment des surfaces réglées. Les splines imaginaires dont la surface est "faite de" sont dessinées à travers les points correspondants des segments correspondants des profils.
+</p><p>Les splines sont une interpolation B-spline.
+</p>
+<ul><li>Si le nombre de profils est inférieur à 10, l'interpolation est effectuée par une B-spline avec un degré maximum possible (c'est-à-dire degré = nombre_de_profils - 1).</li>
+<li>Si le nombre de profils dépasse 10, l'interpolation est commutée sur les B-splines du 3ème degré.</li></ul>
+<p>La méthode par les nœuds utilisée est celle de la "longueur de corde approximative". Approximative signifie que le vecteur des nœuds est exactement le même pour chaque spline d'un lissage. Pour plus d'informations sur ce qu'est l'interpolation d'une B-spline, le vecteur de nœud, la méthode de la longueur de corde, voir, par exemple, <a class="external text" href="http://www.cs.mtu.edu/~shene/COURSES/cs3621/NOTES/INT-APP/CURVE-INT-global.html" rel="nofollow">cs.mtu.edu Curve Global Interpolation </a>.
+</p><p>Notez que le lissage a une propriété "Ruled". Si elle est définie sur true, les surfaces réglées sont créées entre des profils voisins même s'il existe plusieurs profils. C'est-à-dire que l'interpolation B-spline est remplacée par une interpolation linéaire par morceaux.
+</p>
+<div style="clear:both"></div>
+<p><span id="The_main_point"></span>
+</p>
+<h2><span id="L.27essentiel"></span><span class="mw-headline" id="L'essentiel">L'essentiel</span></h2>
+<ul><li>Le lissage effectue une interpolation de la B-spline entre les profils fournis. L'interpolation est commutée en linéaire par morceaux lorsque la propriété "Ruled" est définie à true.</li>
+<li>Lorsque le nombre de profils dépasse 9, le degré d'interpolation est ramené à 3. Ce basculement peut réduire considérablement les oscillations.</li>
+<li>La correspondance du nombre de segments (alias nombre de sommets) dans les profils permet de donner une légère torsion au lissage et permet généralement d'utiliser des profils plus complexes.</li>
+<li>Lorsque les nombres de segments ne correspondent pas, il est préférable de garder les profils représentables par une fonction r(phi) appropriée en coordonnées polaires.</li></ul>
+<p><span id="Additional_remarks"></span>
+</p>
+<h2><span id="Remarques_suppl.C3.A9mentaires"></span><span class="mw-headline" id="Remarques_supplémentaires">Remarques supplémentaires</span></h2>
+<ul><li>Il n'est pas nécessaire que les profils soient parallèles (voir une image ci-dessous).</li>
+<li>Pour le lissage, il n'est pas nécessaire que les profils soient séparés (voir une image ci-dessous). Ils peuvent être coplanaires, mais ils ne devraient pas se croiser.</li>
+<li>Lorsque la propriété "closed" du lissage est "true", il y a un cuspide dans toutes les splines formant le lissage (voir une image ci-dessous). Il n'y a aucun moyen fiable maintenant de fermer le lissage en douceur.</li></ul>
+<table style="margin: 0 auto;">
+<tbody><tr>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_nonparallel.png"><img decoding="async" height="271" src="../File/Loft_nonparallel.png" srcset="/images/thumb/e/e5/Loft_nonparallel.png/450px-Loft_nonparallel.png 1.5x, /images/thumb/e/e5/Loft_nonparallel.png/600px-Loft_nonparallel.png 2x" width="300"/></a><figcaption>Il n'est pas obligatoire que les profils soient parallèles.</figcaption></figure>
+</td>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_Coplanar.png"><img decoding="async" height="167" src="../File/Loft_Coplanar.png" srcset="/images/thumb/b/bb/Loft_Coplanar.png/450px-Loft_Coplanar.png 1.5x, /images/b/bb/Loft_Coplanar.png 2x" width="300"/></a><figcaption>Dans un lissage, les profils peuvent être coplanaires. Dans cet exemple, deux des trois profils sont coplanaires.</figcaption></figure>
+</td>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft-closed.png"><img decoding="async" height="207" src="../File/Loft-closed.png" srcset="/images/thumb/b/ba/Loft-closed.png/450px-Loft-closed.png 1.5x, /images/thumb/b/ba/Loft-closed.png/600px-Loft-closed.png 2x" width="300"/></a><figcaption>Exemple de lissage fermé entre trois profils pentagonaux (blanc). Notez le joint non lisse au profil le plus externe. C'est le premier profil dans le lissage fermé.</figcaption></figure>
+</td></tr></tbody></table>
+<p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_Part.svg"><img decoding="async" height="24" src="../File/Workbench_Part.svg" width="24"/></a></span> <a href="Part_Workbench.html" title="Part Workbench/fr">Part</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Primitives :</b> <a href="Part_Box.html" title="Part Box/fr">Box</a>, <a href="Part_Cylinder.html" title="Part Cylinder/fr">Cylindre</a>, <a href="Part_Sphere.html" title="Part Sphere/fr">Sphère</a>, <a href="Part_Cone.html" title="Part Cone/fr">Cône</a>, <a href="Part_Torus.html" title="Part Torus/fr">Tore</a>, <a href="Part_Tube.html" title="Part Tube/fr">Tube</a>, <a href="Part_Primitives.html" title="Part Primitives/fr">Primitives</a>, <a href="Part_Builder.html" title="Part Builder/fr">Générateur de formes</a></li></ul>
+<hr/>
+<ul><li><b>Création et modification des objets :</b> <a href="Part_Extrude.html" title="Part Extrude/fr">Extrusion</a>, <a href="Part_Revolve.html" title="Part Revolve/fr">Révolution</a>, <a href="Part_Mirror.html" title="Part Mirror/fr">Miroir</a>, <a href="Part_Fillet.html" title="Part Fillet/fr">Congé</a>, <a href="Part_Chamfer.html" title="Part Chamfer/fr">Chanfrein</a>, <a href="Part_MakeFace.html" title="Part MakeFace/fr">Créer une face</a>, <a href="Part_RuledSurface.html" title="Part RuledSurface/fr">Surface réglée</a>, <a href="Part_Loft.html" title="Part Loft/fr">Lissage</a>, <a href="Part_Sweep.html" title="Part Sweep/fr">Balayage</a>, <a href="Part_Section.html" title="Part Section/fr">Section</a>, <a href="Part_CrossSections.html" title="Part CrossSections/fr">Coupes</a>, <a href="Part_Offset.html" title="Part Offset/fr">Décalage 3D</a>, <a href="Part_Offset2D.html" title="Part Offset2D/fr">Décalage 2D</a>, <a href="Part_Thickness.html" title="Part Thickness/fr"> Évidement</a>, <a href="Part_ProjectionOnSurface.html" title="Part ProjectionOnSurface/fr">Projection sur surface</a>, <a href="Part_EditAttachment.html" title="Part EditAttachment/fr">Ancrage</a></li></ul>
+<p>---
+</p>
+<ul><li><b>Booléen :</b> <a href="Part_Compound.html" title="Part Compound/fr">Créé un composé</a>, <a href="Part_ExplodeCompound.html" title="Part ExplodeCompound/fr">Éclater le composé</a>, <a href="Part_CompoundFilter.html" title="Part CompoundFilter/fr">Filtre composé</a>, <a href="Part_Boolean.html" title="Part Boolean/fr">Opération booléenne</a>, <a href="Part_Cut.html" title="Part Cut/fr">Soustraction</a>, <a href="Part_Fuse.html" title="Part Fuse/fr">Union</a>, <a href="Part_Common.html" title="Part Common/fr">Intersection</a>, <a href="Part_JoinConnect.html" title="Part JoinConnect/fr">Connecter</a>, <a href="Part_JoinEmbed.html" title="Part JoinEmbed/fr">Intégrer</a>, <a href="Part_JoinCutout.html" title="Part JoinCutout/fr">Découper</a>, <a href="Part_BooleanFragments.html" title="Part BooleanFragments/fr">Fragments booléens</a>, <a href="Part_SliceApart.html" title="Part SliceApart/fr">Séparer/exploser</a>, <a href="Part_Slice.html" title="Part Slice/fr">Scinder</a>, <a href="Part_XOR.html" title="Part XOR/fr">OU exclusif</a></li></ul>
+<hr/>
+<ul><li><b>Mesure :</b> <a href="Part_Measure_Linear.html" title="Part Measure Linear/fr">Mesure linéaire</a>, <a href="Part_Measure_Angular.html" title="Part Measure Angular/fr">Mesure Angulaire</a>, <a href="Part_Measure_Refresh.html" title="Part Measure Refresh/fr">Rafraîchir les mesures</a>, <a href="Part_Measure_Clear_All.html" title="Part Measure Clear All/fr">Effacer toute mesure</a>, <a href="Part_Measure_Toggle_All.html" title="Part Measure Toggle All/fr">Tout basculer</a>, <a href="Part_Measure_Toggle_3D.html" title="Part Measure Toggle 3D/fr">Mesures dans la 3D</a>, <a href="Part_Measure_Toggle_Delta.html" title="Part Measure Toggle Delta/fr">Mesures selon le repère global</a></li></ul>
+<hr/>
+<ul><li><b>Autre outils :</b> <a href="Part_Import.html" title="Part Import/fr">Importation</a>, <a href="Part_Export.html" title="Part Export/fr">Exportation</a>, <a href="Part_BoxSelection.html" title="Part BoxSelection/fr">Sélection par zone</a>, <a href="Part_ShapeFromMesh.html" title="Part ShapeFromMesh/fr">Forme à partir d'un maillage</a>, <a href="Part_PointsFromMesh.html" title="Part PointsFromMesh/fr">Points à partir d'un maillage</a>, <a href="Part_MakeSolid.html" title="Part MakeSolid/fr">Convertir en solide</a>, <a href="Part_ReverseShape.html" title="Part ReverseShape/fr">Inverser les formes</a>, <a href="Part_SimpleCopy.html" title="Part SimpleCopy/fr">Copie simple</a>, <a href="Part_TransformedCopy.html" title="Part TransformedCopy/fr">Copie transformée</a>, <a href="Part_ElementCopy.html" title="Part ElementCopy/fr">Copie d'un élément</a>, <a href="Part_RefineShape.html" title="Part RefineShape/fr">Affiner la forme</a>, <a href="Part_CheckGeometry.html" title="Part CheckGeometry/fr">Vérifier la géométrie</a>, <a href="Part_Defeaturing.html" title="Part Defeaturing/fr">Supprimer la fonctionnalité</a>, <a href="Std_SetAppearance.html" title="Std SetAppearance/fr">Apparence</a>, <a class="mw-redirect" href="Part_FaceColors.html" title="Part FaceColors/fr">Définir les couleurs</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/User_hub.png"><img decoding="async" height="24" src="../File/User_hub.png" srcset="/images/thumb/9/94/User_hub.png/36px-User_hub.png 1.5x, /images/thumb/9/94/User_hub.png/48px-User_hub.png 2x" width="24"/></a></span> <a href="User_hub.html" title="User hub/fr">Hub utilisateurs</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started/fr">Démarrer avec FreeCAD</a></b></li>
+<li><b>Installation :</b> <a href="Download.html" title="Download/fr">Téléchargements</a>, <a href="Installing_on_Windows.html" title="Installing on Windows/fr">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux/fr">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac/fr">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components/fr">Logiciels supplémentaires</a>, <a href="Compile_on_Docker.html" title="Compile on Docker/fr">Docker</a>, <a href="AppImage.html" title="AppImage/fr">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap/fr">Ubuntu Snap</a></li>
+<li><b>Bases :</b> <a href="About_FreeCAD.html" title="About FreeCAD/fr">À propos de FreeCAD</a>, <a href="Interface.html" title="Interface/fr">Interface</a>, <a href="Mouse_navigation.html" title="Mouse navigation/fr">Navigation par la souris</a>, <a href="Selection_methods.html" title="Selection methods/fr">Méthodes de sélection</a>, <a href="Object_name.html" title="Object name/fr">Objet name</a>, <a href="Preferences_Editor.html" title="Preferences Editor/fr">Préférences</a>, <a href="Workbenches.html" title="Workbenches/fr">Ateliers</a>, <a href="Document_structure.html" title="Document structure/fr">Structure du document</a>, <a href="Property.html" title="Property/fr">Propriétés</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD/fr">Contribuer à FreeCAD</a>, <a href="Donate.html" title="Donate/fr">Faire un don</a></li></ul>
+<hr/>
+<ul><li><b>Aide :</b> <a href="Tutorials.html" title="Tutorials/fr">Tutoriels</a>, <a href="Video_tutorials.html" title="Video tutorials/fr">Tutoriels vidéo</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches/fr">Ateliers</a> :</b> <a href="Std_Base.html" title="Std Base/fr">Std Base</a>, <a href="Arch_Workbench.html" title="Arch Workbench/fr">Arch</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench/fr">Assembly</a>, <a href="CAM_Workbench.html" title="CAM Workbench/fr">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench/fr">Draft</a>, <a href="FEM_Workbench.html" title="FEM Workbench/fr">FEM</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench/fr">Inspection</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench/fr">Mesh</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench/fr">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench/fr">Part</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench/fr">PartDesign</a>, <a href="Points_Workbench.html" title="Points Workbench/fr">Points</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/fr">Reverse Engineering</a>, <a href="Robot_Workbench.html" title="Robot Workbench/fr">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench/fr">Sketcher</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench/fr">Spreadsheet</a>, <a href="Surface_Workbench.html" title="Surface Workbench/fr">Surface</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench/fr">TechDraw</a>, <a href="Testing.html" title="Testing/fr">Test</a></li></ul>
+<hr/>
+<ul><li><b><a href="Addon.html" title="Addon/fr">Addons</a> :</b> <a href="Std_AddonMgr.html" title="Std AddonMgr/fr">Gestionnaire d'Addons</a>, <a href="External_workbenches.html" title="External workbenches/fr">Ateliers externes</a>, <a href="Scripting_and_macros.html" title="Scripting and macros/fr">Scripts et macros</a></li></ul>
+<hr/>
+<ul><li><b>Hubs :</b> <a href="User_hub.html" title="User hub/fr">Hub utilisateurs</a>, <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>, <a href="Developer_hub.html" title="Developer hub/fr">Hub Développeurs</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211516
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.074 seconds
+Real time usage: 0.080 seconds
+Preprocessor visited node count: 134/1000000
+Post‐expand include size: 12157/2097152 bytes
+Template argument size: 4486/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 1465/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    5.229      1 -total
+ 59.69%    3.121      1 Template:Part_Tools_navi/fr
+ 38.72%    2.025      2 Template:Navigation_menu_2
+ 20.02%    1.047      1 Template:Userdocnavi/fr
+ 13.98%    0.731      2 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:55846-0!canonical and timestamp 20241129211516 and revision id 1255288. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

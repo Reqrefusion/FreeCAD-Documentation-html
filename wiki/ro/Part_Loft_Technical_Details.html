@@ -1,0 +1,166 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Part Loft Technical Details/ro</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="de" title="Part Ausformung Technische Details (100% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="en" title="Part Loft Technical Details (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="fr" title="Part Détails techniques du lissage (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Part_Loft_Technical_Details.html" lang="hr" title="Part Loft Technical Details/hr (0% translated)">hrvatski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="it" title="Dettagli tecnici di Part Loft (100% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="pl" title="Część: Szczegóły techniczne wyciągnięcia przez profile (100% translated)">polski</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--med" dir="ltr" lang="ro">română</span></li></ul></div>
+<p>Această pagină explică în detalii cum este creată o suprafață <a href="Part_Loft.html" title="Part Loft">Loft</a>. Aceasta este un caz particular de suprafața baleiată <a href="Part_Sweep.html" title="Part Sweep">Part Sweep</a> dar creată de-a lungul unei traiectorii drepte, dar sunt și alte diferențe.
+</p><p>Informațiile furnizate sunt specifice implementării și se pot schimba. Starea actuală este relevantă pentru FreeCAD 0.15.4119, versiunea OCC: 6.7.0.
+</p>
+<div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Stages_of_the_Loft_creation"><span class="tocnumber">1</span> <span class="toctext">Stages of the Loft creation</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Etapele_creării_suprafeței_riglate_Loft"><span class="tocnumber">2</span> <span class="toctext">Etapele creării suprafeței riglate Loft</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#Step_1._Making_numbers_of_segment_in_profiles_match"><span class="tocnumber">2.1</span> <span class="toctext">Step 1. Making numbers of segment in profiles match</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#pasul_1._Faceți_ca_numărul_de_segment_din_profiluri_să_se_potrivească"><span class="tocnumber">2.2</span> <span class="toctext">pasul 1. Faceți ca  numărul de segment din profiluri să se potrivească</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Step_2._Establishing_correspondence_between_segments"><span class="tocnumber">2.3</span> <span class="toctext">Step 2. Establishing correspondence between segments</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Pasul_2._Establishing_correspondence_between_segments"><span class="tocnumber">2.4</span> <span class="toctext">Pasul 2. Establishing correspondence between segments</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#Step_3._Making_the_loft_surface"><span class="tocnumber">2.5</span> <span class="toctext">Step 3. Making the loft surface</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Pasul_3._Making_the_loft_surface."><span class="tocnumber">2.6</span> <span class="toctext">Pasul 3. Making the loft surface.</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-9"><a href="#The_main_point"><span class="tocnumber">3</span> <span class="toctext">The main point</span></a></li>
+<li class="toclevel-1 tocsection-10"><a href="#Esența_instrumentului"><span class="tocnumber">4</span> <span class="toctext">Esența instrumentului</span></a></li>
+<li class="toclevel-1 tocsection-11"><a href="#Additional_remarks"><span class="tocnumber">5</span> <span class="toctext">Additional remarks</span></a></li>
+<li class="toclevel-1 tocsection-12"><a href="#Observații_suplimentare"><span class="tocnumber">6</span> <span class="toctext">Observații suplimentare</span></a></li>
+</ul>
+</div>
+<h2><span class="mw-headline" id="Stages_of_the_Loft_creation">Stages of the Loft creation</span></h2>
+<div class="mw-translate-fuzzy">
+<h2><span id="Etapele_cre.C4.83rii_suprafe.C8.9Bei_riglate_Loft"></span><span class="mw-headline" id="Etapele_creării_suprafeței_riglate_Loft">Etapele creării suprafeței riglate Loft</span></h2>
+<p>Pentru a explica procesul de mansardare, este convenabil să-l împărțim în etape:
+</p>
+<ol><li>faceți ca numărul de segmente din profiluri să fie egal (dacă acestea nu sunt deja)</li>
+<li>stabiliți corespondența între segmente</li>
+<li>face suprafața mansardei</li></ol>
+</div>
+<h3><span class="mw-headline" id="Step_1._Making_numbers_of_segment_in_profiles_match">Step 1. Making numbers of segment in profiles match</span></h3>
+<div class="mw-translate-fuzzy">
+<h3><span id="pasul_1._Face.C8.9Bi_ca_num.C4.83rul_de_segment_din_profiluri_s.C4.83_se_potriveasc.C4.83"></span><span class="mw-headline" id="pasul_1._Faceți_ca_numărul_de_segment_din_profiluri_să_se_potrivească">pasul 1. Faceți ca  numărul de segment din profiluri să se potrivească</span></h3>
+<p>Instrumentul Loft-ul are nevoie de numărul de segmente să se potrivească pentru a crea suprafețe între segmentele corespunzătoare. Dacă numărul de segmente se potrivește în toate profilurile, acest pas poate fi/este omis.
+</p>
+</div>
+<p>Dacă cel puțin unul dintre profile are un număr diferit de segmente, se aplică următoarea procedură. Procedura este explicată aici pentru cazul a numai două profiluri pentru simplitate.
+</p>
+<ol><li>profilurile sunt aliniate temporar, astfel încât acestea să fie coplanare și să se potrivească centrele lor de masă.</li>
+<li>(vezi imaginea) pentru fiecare vârf dintr-un profil, al doilea profil este tăiat la același unghi polar (centrul polar este centrul masei). Dacă există mai mult de o felie posibilă sau nicio felie deloc posibilă (se poate întâmpla pe profile foarte convexe), Loft-ul eșuează în mod obișnuit.</li>
+<li>același lucru se face în sens opus.</li></ol>
+<p>Operația este extinsă la toate profilurile, pentru a obține un număr egal de segmente. Numărul total de segmente din fiecare profil ar fi egal cu suma tuturor numerelor de segmente ale tuturor profilurilor (cu condiția ca nici unul dintre vârfuri să nu aibă același unghi polar).
+</p>
+<table style="margin: 0 auto;">
+<tbody><tr>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft-vertex-insertion.png"><img decoding="async" height="276" src="../File/Loft-vertex-insertion.png" srcset="/images/thumb/7/7b/Loft-vertex-insertion.png/450px-Loft-vertex-insertion.png 1.5x, /images/thumb/7/7b/Loft-vertex-insertion.png/600px-Loft-vertex-insertion.png 2x" width="300"/></a><figcaption>The process of slicing profile2 (white crescent-like shape) to create joints corresponding to vertices of profile1 (purple pentagon). The inserted joints are marked by yellow arrows.</figcaption></figure>
+</td>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_crescent_pentagon.png"><img decoding="async" height="242" src="../File/Loft_crescent_pentagon.png" srcset="/images/thumb/3/33/Loft_crescent_pentagon.png/450px-Loft_crescent_pentagon.png 1.5x, /images/thumb/3/33/Loft_crescent_pentagon.png/600px-Loft_crescent_pentagon.png 2x" width="300"/></a><figcaption>The result of loft relevant to the picture on the left.</figcaption></figure>
+</td></tr></tbody></table>
+<h3><span class="mw-headline" id="Step_2._Establishing_correspondence_between_segments">Step 2. Establishing correspondence between segments</span></h3>
+<div class="mw-translate-fuzzy">
+<h3><span class="mw-headline" id="Pasul_2._Establishing_correspondence_between_segments">Pasul 2. Establishing correspondence between segments</span></h3>
+<figure typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_Number_of_verts_match.png"><img decoding="async" height="260" src="../File/Loft_Number_of_verts_match.png" srcset="/images/thumb/8/89/Loft_Number_of_verts_match.png/450px-Loft_Number_of_verts_match.png 1.5x, /images/thumb/8/89/Loft_Number_of_verts_match.png/600px-Loft_Number_of_verts_match.png 2x" width="300"/></a><figcaption>Demonstration of Loft keeping the number of segments in profiles when they match. Note how 3 edges of the top square "collapse" into a small polygonal piece of the bottom profile.</figcaption></figure>
+<p>În cazul în care numărul de segmente din toate profilurile nu este egal, felierea a fost făcută în pasul 1, iar corespondența este trivială.
+În cazul în care numerele de segmente din toate profilurile au fost egale, segmentele existente sunt utilizate (vezi imaginea), iar acesta este momentul în care trebuie stabilită corespondența.
+</p>
+</div>
+<p>Algoritmul exact de a găsi segmente corespunzătoare este complex, dar, în general, tinde să minimizeze răsucirea Loft-ului rezultat. Aceasta înseamnă că, dacă se face o mansardă/loft între două pătrate, este posibilă o răsturnare maximă de &lt;45 °. Rotirea ulterioară a unuia dintre pătrate va face Loft-ul să sară la alte noduri.
+</p><p>Corespondența dintre profilurile învecinate se face independent. Aceasta înseamnă că răsucirea suplimentară poate fi obținută prin adăugarea de mai multe profiluri.
+</p><p>Un alt lucru care trebuie remarcat este că atunci când numărul de segmente în profiluri este egal, loftul rezultat este substanțial mai robust în ceea ce privește profilurile complexe, în special pentru cele ne-convexe.
+</p>
+<div style="clear:both"></div>
+<h3><span class="mw-headline" id="Step_3._Making_the_loft_surface">Step 3. Making the loft surface</span></h3>
+<div class="mw-translate-fuzzy">
+<h3><span class="mw-headline" id="Pasul_3._Making_the_loft_surface.">Pasul 3. Making the loft surface.</span></h3>
+<figure typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_B-spline.png"><img decoding="async" height="342" src="../File/Loft_B-spline.png" srcset="/images/thumb/5/5a/Loft_B-spline.png/600px-Loft_B-spline.png 1.5x, /images/thumb/5/5a/Loft_B-spline.png/800px-Loft_B-spline.png 2x" width="400"/></a><figcaption>A spline interpolation curve (red) that follows the loft surface. The points to interpolate through are shown as red squares.</figcaption></figure>
+<p>Dacă există doar două profiluri, suprafețele create sunt suprafețe riglate între segmentele corespunzătoare ale profilurilor. Muchiile/marginile drepte sunt create pentru a conecta vârfurile corespunzătoare ale profilurilor.
+</p>
+</div>
+<p>Dacă există mai mult de două profile, suprafețele sunt realizate din curbe spline în același mod în care liniile drepte formează suprafețe riglate. Curbele Spline imaginare pe care suprafața este "realizată" sunt desenate prin punctele corespunzătoare ale segmentelor corespunzătoare ale profilurilor.
+</p><p>Curebele sunt interpolare B-spline.
+</p>
+<ul><li>Dacă numărul de profile este mai mic de 10, interpolarea se face cu o funcție B-spline cu un grad maxim posibil (adică grad = number_of_profiles - 1).</li>
+<li>În cazul în care numărul de profile depășește 10, interpolarea este trecută la funcții B-splinele de gradul 3.</li></ul>
+<p>Metoda de îmbinare utilizată este "lungimea aproximativă a coardei". Aproximarea constă în faptul că vectorul nodului este exact același pentru fiecare curbă spline dintr-o mansardă/loft. Pentru mai multe informații despre ceea ce este interpolarea B-spline, vectorul nodului, metoda lungimii coardei, a se vedea, de exemplu,<a class="external text" href="http://www.cs.mtu.edu/~shene/COURSES/cs3621/NOTES/INT-APP/CURVE-INT-global.html" rel="nofollow">cs.mtu.edu Curve Global Interpolation </a>.
+</p><p>Rețineți că Loft are o proprietate "Riglat". Dacă este setat la adevărat, suprafețele riglate sunt realizate între profilurile învecinate chiar și atunci când există mai multe profiluri. Asta este, interpolarea funcției B-spline este înlocuită cu o interpolare liniară pe bucăți/părți.
+</p>
+<div style="clear:both"></div>
+<h2><span class="mw-headline" id="The_main_point">The main point</span></h2>
+<div class="mw-translate-fuzzy">
+<h2><span id="Esen.C8.9Ba_instrumentului"></span><span class="mw-headline" id="Esența_instrumentului">Esența instrumentului</span></h2>
+<ul><li>Instrumentul Loft efectuează o interpolare B-spline între profilurile furnizate. Interpolarea este comutată în  liniară pe bucăți/părți atunci când proprietatea "Ruled" este setată la true.</li>
+<li>Când numărul de profile depășește 9, gradul de interpolare este de 3. Această comutare poate reduce semnificativ agitarea/termurul.</li>
+<li>Dacă se potrivește numărul de segmente (sau numărul de noduri) din profiluri aceasta oferă Loft-ului o răsucire ușoară și, în general, vă permite să utilizați profiluri mai complexe.</li>
+<li>Când numărul de segmente nu se potrivește, este mai bine să păstrați profilurile astfel încât să poată fi reprezentate de o funcție corespunzătoare (phi) în coordonate polare.</li></ul>
+</div>
+<h2><span class="mw-headline" id="Additional_remarks">Additional remarks</span></h2>
+<div class="mw-translate-fuzzy">
+<h2><span id="Observa.C8.9Bii_suplimentare"></span><span class="mw-headline" id="Observații_suplimentare">Observații suplimentare</span></h2>
+<ul><li>Nu este necesar ca profilurile să fie paralele (a se vedea imaginea de mai jos).</li>
+<li>Pentru Loft, nu este necesar ca profilurile să fie separate (a se vedea o imagine de mai jos). Ele pot fi coplanare, dar nu ar trebui să se intersecteze.</li>
+<li>Când proprietatea "închisă" a Loft-ului este "adevărată", există o îmbinare la vârf între toate curbele spline care formează Loft-ul (vezi imaginea de mai jos). Nu există nici o modalitate sigură de a închide Loft-ul fără asperități/probleme.</li></ul>
+</div>
+<table style="margin: 0 auto;">
+<tbody><tr>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_nonparallel.png"><img decoding="async" height="271" src="../File/Loft_nonparallel.png" srcset="/images/thumb/e/e5/Loft_nonparallel.png/450px-Loft_nonparallel.png 1.5x, /images/thumb/e/e5/Loft_nonparallel.png/600px-Loft_nonparallel.png 2x" width="300"/></a><figcaption>It is not required that the profiles are parallel.</figcaption></figure>
+</td>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_Coplanar.png"><img decoding="async" height="167" src="../File/Loft_Coplanar.png" srcset="/images/thumb/b/bb/Loft_Coplanar.png/450px-Loft_Coplanar.png 1.5x, /images/b/bb/Loft_Coplanar.png 2x" width="300"/></a><figcaption>In Loft, the profiles can be coplanar. In this example, two of three profiles are coplanar.</figcaption></figure>
+</td>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft-closed.png"><img decoding="async" height="207" src="../File/Loft-closed.png" srcset="/images/thumb/b/ba/Loft-closed.png/450px-Loft-closed.png 1.5x, /images/thumb/b/ba/Loft-closed.png/600px-Loft-closed.png 2x" width="300"/></a><figcaption>An example of a closed loft between three pentagonal profiles (white). Note the non-smooth joint at the outermost profile. This is the first profile in the closed loft.</figcaption></figure>
+</td></tr></tbody></table>
+<p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_Part.svg"><img decoding="async" height="24" src="../File/Workbench_Part.svg" width="24"/></a></span> <a href="Part_Workbench.html" title="Part Workbench/ro">Part</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Primitives:</b> <a href="Part_Box.html" title="Part Box/ro">Box</a>, <a href="Part_Cylinder.html" title="Part Cylinder/ro">Cylinder</a>, <a href="Part_Sphere.html" title="Part Sphere/ro">Sphere</a>, <a href="Part_Cone.html" title="Part Cone/ro">Cone</a>, <a href="Part_Torus.html" title="Part Torus/ro">Torus</a>, <a class="new" href="index.php?title=Part_Tube_ro&amp;action=edit&amp;redlink=1.html" title="Part Tube/ro (page does not exist)">Tube</a>, <a href="Part_Primitives.html" title="Part Primitives/ro">Create primitives</a>, <a href="Part_Builder.html" title="Part Builder/ro">Shape builder</a></li></ul>
+<hr/>
+<ul><li><b>Creation and modification:</b> <a href="Sketcher_NewSketch.html" title="Sketcher NewSketch/ro">Create sketch</a>, <a href="Part_Extrude.html" title="Part Extrude/ro">Extrude</a>, <a href="Part_Revolve.html" title="Part Revolve/ro">Revolve</a>, <a href="Part_Mirror.html" title="Part Mirror/ro">Mirror</a>, <a class="new" href="index.php?title=Part_Scale_ro&amp;action=edit&amp;redlink=1.html" title="Part Scale/ro (page does not exist)">Scale</a>, <a href="Part_Fillet.html" title="Part Fillet/ro">Fillet</a>, <a href="Part_Chamfer.html" title="Part Chamfer/ro">Chamfer</a>, <a class="new" href="index.php?title=Part_MakeFace_ro&amp;action=edit&amp;redlink=1.html" title="Part MakeFace/ro (page does not exist)">Make face from wires</a>, <a href="Part_RuledSurface.html" title="Part RuledSurface/ro">Ruled Surface</a>, <a href="Part_Loft.html" title="Part Loft/ro">Loft</a>, <a href="Part_Sweep.html" title="Part Sweep/ro">Sweep</a>, <a href="Part_Section.html" title="Part Section/ro">Section</a>, <a href="Part_CrossSections.html" title="Part CrossSections/ro">Cross sections</a>, <a href="Part_Offset.html" title="Part Offset/ro">3D Offset</a>, <a href="Part_Offset2D.html" title="Part Offset2D/ro">2D Offset</a>, <a href="Part_Thickness.html" title="Part Thickness/ro">Thickness</a>, <a class="new" href="index.php?title=Part_ProjectionOnSurface_ro&amp;action=edit&amp;redlink=1.html" title="Part ProjectionOnSurface/ro (page does not exist)">Projection on surface</a>, <a class="new" href="index.php?title=Part_ColorPerFace_ro&amp;action=edit&amp;redlink=1.html" title="Part ColorPerFace/ro (page does not exist)">Color per face</a></li></ul>
+<hr/>
+<ul><li><b>Boolean:</b> <a href="Part_Compound.html" title="Part Compound/ro">Make compound</a>, <a class="new" href="index.php?title=Part_ExplodeCompound_ro&amp;action=edit&amp;redlink=1.html" title="Part ExplodeCompound/ro (page does not exist)">Explode compound</a>, <a href="Part_CompoundFilter.html" title="Part CompoundFilter/ro">Compound Filter</a>, <a href="Part_Boolean.html" title="Part Boolean/ro">Boolean</a>, <a href="Part_Cut.html" title="Part Cut/ro">Cut</a>, <a href="Part_Fuse.html" title="Part Fuse/ro">Union</a>, <a href="Part_Common.html" title="Part Common/ro">Intersection</a>, <a href="Part_JoinConnect.html" title="Part JoinConnect/ro">Connect objects</a>, <a href="Part_JoinEmbed.html" title="Part JoinEmbed/ro">Embed object</a>, <a href="Part_JoinCutout.html" title="Part JoinCutout/ro">Cutout for object</a>, <a href="Part_BooleanFragments.html" title="Part BooleanFragments/ro">Boolean fragments</a>, <a class="new" href="index.php?title=Part_SliceApart_ro&amp;action=edit&amp;redlink=1.html" title="Part SliceApart/ro (page does not exist)">Slice apart</a>, <a href="Part_Slice.html" title="Part Slice/ro">Slice to compound</a>, <a class="new" href="index.php?title=Part_XOR_ro&amp;action=edit&amp;redlink=1.html" title="Part XOR/ro (page does not exist)">Boolean XOR</a>, <a href="Part_CheckGeometry.html" title="Part CheckGeometry/ro">Check geometry</a>, <a class="new" href="index.php?title=Part_Defeaturing_ro&amp;action=edit&amp;redlink=1.html" title="Part Defeaturing/ro (page does not exist)">Defeaturing</a></li></ul>
+<hr/>
+<ul><li><b>Other tools:</b> <a href="Part_Import.html" title="Part Import/ro">Import CAD file</a>, <a class="new" href="index.php?title=Part_Export_ro&amp;action=edit&amp;redlink=1.html" title="Part Export/ro (page does not exist)">Export CAD file</a>, <a class="new" href="index.php?title=Part_BoxSelection_ro&amp;action=edit&amp;redlink=1.html" title="Part BoxSelection/ro (page does not exist)">Box selection</a>, <a href="Part_ShapeFromMesh.html" title="Part ShapeFromMesh/ro">Create shape from mesh</a>, <a class="new" href="index.php?title=Part_PointsFromMesh_ro&amp;action=edit&amp;redlink=1.html" title="Part PointsFromMesh/ro (page does not exist)">Create points object from geometry</a>, <a href="Part_MakeSolid.html" title="Part MakeSolid/ro">Convert to solid</a>, <a href="Part_ReverseShape.html" title="Part ReverseShape/ro">Reverse shapes</a>, <a href="Part_SimpleCopy.html" title="Part SimpleCopy/ro">Create simple copy</a>, <a class="new" href="index.php?title=Part_TransformedCopy_ro&amp;action=edit&amp;redlink=1.html" title="Part TransformedCopy/ro (page does not exist)">Create transformed copy</a>, <a class="new" href="index.php?title=Part_ElementCopy_ro&amp;action=edit&amp;redlink=1.html" title="Part ElementCopy/ro (page does not exist)">Create shape element copy</a>, <a href="Part_RefineShape.html" title="Part RefineShape/ro">Refine shape</a>, <a href="Part_EditAttachment.html" title="Part EditAttachment/ro">Attachment</a></li></ul>
+<hr/>
+<ul><li><b>Preferences:</b> <a class="new" href="index.php?title=PartDesign_Preferences_ro&amp;action=edit&amp;redlink=1.html" title="PartDesign Preferences/ro (page does not exist)">Preferences</a>, <a class="new" href="index.php?title=Fine-tuning_ro&amp;action=edit&amp;redlink=1.html" title="Fine-tuning/ro (page does not exist)">Fine tuning</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/User_hub.png"><img decoding="async" height="24" src="../File/User_hub.png" srcset="/images/thumb/9/94/User_hub.png/36px-User_hub.png 1.5x, /images/thumb/9/94/User_hub.png/48px-User_hub.png 2x" width="24"/></a></span> <a href="User_hub.html" title="User hub/ro">User documentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started/ro">Getting started</a></b></li>
+<li><b>Installation:</b> <a href="Download.html" title="Download/ro">Download</a>, <a href="Installing_on_Windows.html" title="Installing on Windows/ro">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux/ro">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac/ro">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components/ro">Additional components</a>, <a class="new" href="index.php?title=Compile_on_Docker_ro&amp;action=edit&amp;redlink=1.html" title="Compile on Docker/ro (page does not exist)">Docker</a>, <a class="new" href="index.php?title=AppImage_ro&amp;action=edit&amp;redlink=1.html" title="AppImage/ro (page does not exist)">AppImage</a>, <a class="new" href="index.php?title=Ubuntu_Snap_ro&amp;action=edit&amp;redlink=1.html" title="Ubuntu Snap/ro (page does not exist)">Ubuntu Snap</a></li>
+<li><b>Basics:</b> <a href="About_FreeCAD.html" title="About FreeCAD/ro">About FreeCAD</a>, <a class="new" href="index.php?title=Interface_ro&amp;action=edit&amp;redlink=1.html" title="Interface/ro (page does not exist)">Interface</a>, <a href="Mouse_navigation.html" title="Mouse navigation/ro">Mouse navigation</a>, <a class="new" href="index.php?title=Selection_methods_ro&amp;action=edit&amp;redlink=1.html" title="Selection methods/ro (page does not exist)">Selection methods</a>, <a class="new" href="index.php?title=Object_name_ro&amp;action=edit&amp;redlink=1.html" title="Object name/ro (page does not exist)">Object name</a>, <a href="Preferences_Editor.html" title="Preferences Editor/ro">Preferences</a>, <a href="Workbenches.html" title="Workbenches/ro">Workbenches</a>, <a href="Document_structure.html" title="Document structure/ro">Document structure</a>, <a href="Property.html" title="Property/ro">Properties</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD/ro">Help FreeCAD</a>, <a class="new" href="index.php?title=Donate_ro&amp;action=edit&amp;redlink=1.html" title="Donate/ro (page does not exist)">Donate</a></li></ul>
+<hr/>
+<ul><li><b>Help:</b> <a href="Tutorials.html" title="Tutorials/ro">Tutorials</a>, <a href="Video_tutorials.html" title="Video tutorials/ro">Video tutorials</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches/ro">Workbenches</a>:</b> <a href="Std_Base.html" title="Std Base/ro">Std Base</a>, <a class="new" href="index.php?title=Assembly_Workbench_ro&amp;action=edit&amp;redlink=1.html" title="Assembly Workbench/ro (page does not exist)">Assembly</a>, <a class="new" href="index.php?title=BIM_Workbench_ro&amp;action=edit&amp;redlink=1.html" title="BIM Workbench/ro (page does not exist)">BIM</a>, <a href="CAM_Workbench.html" title="CAM Workbench/ro">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench/ro">Draft</a>, <a href="FEM_Workbench.html" title="FEM Workbench/ro">FEM</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench/ro">Inspection</a>, <a class="new" href="index.php?title=Material_Workbench_ro&amp;action=edit&amp;redlink=1.html" title="Material Workbench/ro (page does not exist)">Material</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench/ro">Mesh</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench/ro">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench/ro">Part</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench/ro">PartDesign</a>, <a href="Points_Workbench.html" title="Points Workbench/ro">Points</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/ro">Reverse Engineering</a>, <a href="Robot_Workbench.html" title="Robot Workbench/ro">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench/ro">Sketcher</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench/ro">Spreadsheet</a>, <a href="Surface_Workbench.html" title="Surface Workbench/ro">Surface</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench/ro">TechDraw</a>, <a href="Testing.html" title="Testing/ro">Test Framework</a></li></ul>
+<hr/>
+<ul><li><b><a class="new" href="index.php?title=Addon_ro&amp;action=edit&amp;redlink=1.html" title="Addon/ro (page does not exist)">Addons</a>:</b> <a href="Std_AddonMgr.html" title="Std AddonMgr/ro">Addon Manager</a>, <a href="External_workbenches.html" title="External workbenches/ro">External workbenches</a>, <a href="Scripting_and_macros.html" title="Scripting and macros/ro">Scripting and macros</a></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub/ro">User hub</a>, <a href="Power_users_hub.html" title="Power users hub/ro">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub/ro">Developer hub</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211337
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.071 seconds
+Real time usage: 0.093 seconds
+Preprocessor visited node count: 199/1000000
+Post‐expand include size: 11564/2097152 bytes
+Template argument size: 4119/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 1453/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    6.734      1 -total
+ 48.10%    3.239      1 Template:Part_Tools_navi/ro
+ 38.69%    2.605      2 Template:Navigation_menu_2
+ 36.53%    2.460      1 Template:Userdocnavi/ro
+ 11.50%    0.774      2 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:108835-0!canonical and timestamp 20241129211337 and revision id 1255107. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

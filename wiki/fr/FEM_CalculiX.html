@@ -1,0 +1,134 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">FEM CalculiX/fr</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FEM_CalculiX.html" lang="de" title="FEM CalculiX (100% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FEM_CalculiX.html" lang="en" title="FEM CalculiX (100% translated)">English</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="fr">français</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="FEM_CalculiX.html" lang="it" title="FEM CalculiX (21% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FEM_CalculiX.html" lang="pl" title="MES: CalculiX (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="FEM_CalculiX.html" lang="ro" title="FEM CalculiX (4% translated)">română</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="FEM_CalculiX.html" lang="ru" title="FEM CalculiX (17% translated)">русский</a></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Intégration_à_FreeCAD"><span class="tocnumber">2</span> <span class="toctext">Intégration à FreeCAD</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Interface_de_prétraitement"><span class="tocnumber">3</span> <span class="toctext">Interface de prétraitement</span></a>
+<ul>
+<li class="toclevel-2 tocsection-4"><a href="#Éléments_finis"><span class="tocnumber">3.1</span> <span class="toctext">Éléments finis</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Analyses"><span class="tocnumber">3.2</span> <span class="toctext">Analyses</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Matériaux"><span class="tocnumber">3.3</span> <span class="toctext">Matériaux</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-7"><a href="#Interface_de_post-traitement"><span class="tocnumber">4</span> <span class="toctext">Interface de post-traitement</span></a></li>
+<li class="toclevel-1 tocsection-8"><a href="#En_relation"><span class="tocnumber">5</span> <span class="toctext">En relation</span></a></li>
+</ul>
+</div>
+</div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>Cette page rassemble des informations sur le solveur d'éléments finis <a class="external text" href="http://www.calculix.de/" rel="nofollow">CalculiX</a>, le solveur par défaut de l'<span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_FEM.svg"><img decoding="async" height="24" src="../File/Workbench_FEM.svg" width="24"/></a></span> <a href="FEM_Workbench.html" title="FEM Workbench/fr">atelier FEM</a> pour l'analyse structurelle et thermo-mécanique. Selon le système d'exploitation que vous utilisez, vous devrez installer CalculiX avant de lancer votre première simulation. Veuillez voir <a href="FEM_Install.html" title="FEM Install/fr">Installation des composants requis pour l’atelier FEM</a>.
+</p><p>Le solveur est capable de faire des calculs linéaires et non linéaires pour des problèmes statiques, dynamiques et thermiques. Le solveur opère sur un fichier d'entrée de type Abaqus (<code>.inp</code>), ce qui signifie qu'il peut être utilisé avec différents pré-processeurs prenant en charge ce format. Le programme inclut son propre pré-processeur graphique qui, toutefois, n’est pas utilisé par FreeCAD, mais uniquement par le solveur lui-même.
+</p><p>CalculiX est conçu pour fonctionner sur les plates-formes Unix telles que les ordinateurs Linux et Irix mais également sur MS-Windows. CalculiX a été développé par des ingénieurs de MTU Aero Engines, Munich, Allemagne, pour les aider à concevoir des machines telles que des turbines à jet. Le logiciel est actuellement disponible au public selon les termes de la GPL version 2.
+</p><p><span id="Integration_with_FreeCAD"></span>
+</p>
+<h2><span id="Int.C3.A9gration_.C3.A0_FreeCAD"></span><span class="mw-headline" id="Intégration_à_FreeCAD">Intégration à FreeCAD</span></h2>
+<p>L'interaction entre l'<a href="FEM_Workbench.html" title="FEM Workbench/fr">atelier FEM</a> et CalculiX s'effectue par l'écriture et la lecture de fichiers texte. La séquence des opérations est la suivante :
+</p>
+<ol><li>Un fichier d'entrée CalculiX est créé avec les détails nécessaires à l'exécution de la simulation.</li>
+<li>Le solveur CalculiX est démarré avec ce fichier d'entrée.</li>
+<li>La sortie du solveur est enregistrée.</li>
+<li>Les fichiers de sortie du solveur sont lus, s’ils sont disponibles.</li></ol>
+<p>L'outil <a href="FEM_SolverControl.html" title="FEM SolverControl/fr">FEM Réglage du solveur</a> gère l'ensemble du processus. L'interaction de l'utilisateur dans le processus est possible.
+</p><p><span id="Preprocessing_interface"></span>
+</p>
+<h2><span id="Interface_de_pr.C3.A9traitement"></span><span class="mw-headline" id="Interface_de_prétraitement">Interface de prétraitement</span></h2>
+<p>Le fichier d'entrée utilisé par CalculiX peut être préparé et édité avant le démarrage du solveur. Les unités utilisées dans le fichier d'entrée sont indépendantes des unités définies dans FreeCAD. Elles seront toujours en millimètres (mm) et en Newton (N).
+</p><p><i>(À faire : vérifiez ceci. Que se passe-t-il quand un maillage est en inch et utilisé dans FreeCAD ? Comme la densité a été introduite, nous avons des kg et des s et non plus des N ?!)</i>
+</p><p>L'interface CalculiX prend en charge les objets suivants :
+</p><p><span id="FEM_Elements"></span>
+</p>
+<h3><span id=".C3.89l.C3.A9ments_finis"></span><span class="mw-headline" id="Éléments_finis">Éléments finis</span></h3>
+<ul><li>Tet4 et Tet10</li>
+<li>S3 et S6</li>
+<li>B31 et B32</li>
+<li>et ceux décrits dans <a href="FEM_Mesh_CalculiX.html" title="FEM Mesh CalculiX/fr">FEM Maillage avec Calculix</a></li></ul>
+<p><span id="Analysis"></span>
+</p>
+<h3><span class="mw-headline" id="Analyses">Analyses</span></h3>
+<ul><li>Analyse statique linéaire et non linéaire</li>
+<li>Analyse de fréquence</li>
+<li>Analyse du flambage linéaire</li>
+<li>Analyse thermique-structurelle couplée</li></ul>
+<p><span id="Materials"></span>
+</p>
+<h3><span id="Mat.C3.A9riaux"></span><span class="mw-headline" id="Matériaux">Matériaux</span></h3>
+<ul><li>Matériaux isotropes à élasticité linéaire (uniformité dans toutes les directions)</li>
+<li>Plasticité avec durcissement isotrope</li></ul>
+<p><span id="Postprocessing_interface"></span>
+</p>
+<h2><span class="mw-headline" id="Interface_de_post-traitement">Interface de post-traitement</span></h2>
+<p>L'atelier FEM charge les résultats de CalculiX dans l'<a href="FEM_ResultShow.html" title="FEM ResultShow/fr">objet résultat</a> qui contiendra :
+</p>
+<ul><li>Déplacements</li>
+<li>Contraintes</li>
+<li>Déformations</li>
+<li>Déformation plastique équivalente (PEEQ), si un matériau non linéaire a été utilisé.</li>
+<li>Température, pour l'analyse thermomécanique.</li></ul>
+<p>FreeCAD lit les résultats du fichier <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">*.frd</span> que CalculiX a crée. Si ces résultats contiennent plusieurs pas de temps, chaque pas de temps est importé dans FreeCAD comme un nouvel objet résultat. Le même comportement s'applique à l'analyse fréquentielle ou de flambage avec de multiples valeurs propres.
+</p><p>Les forces de réaction se trouvent dans <i>ccx_dat_file</i>, qui contient les composantes de force de réaction (fx, fy, fz) pour chaque condition limite fixe et pour chaque condition limite de déplacement, ce qui limite les degrés de liberté de translation.
+</p><p><span id="Related"></span>
+</p>
+<h2><span class="mw-headline" id="En_relation">En relation</span></h2>
+<ul><li><a href="FEM_Mesh_CalculiX.html" title="FEM Mesh CalculiX/fr">FEM Maillage avec Calculix</a></li>
+<li><a href="FEM_Preferences.html#CalculiX" title="FEM Preferences/fr">Préférences de CalculiX</a> dans le menu des préférences de l'atelier FEM.</li></ul>
+<p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_FEM.svg"><img decoding="async" height="24" src="../File/Workbench_FEM.svg" width="24"/></a></span> <a href="FEM_Workbench.html" title="FEM Workbench/fr">FEM</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><a href="FEM_Analysis.html" title="FEM Analysis/fr">FEM Conteneur d'analyse</a></li></ul>
+<ul><li><b>Matériaux :</b> <a href="FEM_MaterialSolid.html" title="FEM MaterialSolid/fr">Solide</a>, <a href="FEM_MaterialFluid.html" title="FEM MaterialFluid/fr">Fluide</a>, <a href="FEM_MaterialMechanicalNonlinear.html" title="FEM MaterialMechanicalNonlinear/fr">Mécanique non linéaire</a>, <a href="FEM_MaterialReinforced.html" title="FEM MaterialReinforced/fr">Renforcé (type béton)</a> ; <a href="FEM_MaterialEditor.html" title="FEM MaterialEditor/fr">Éditeur de matériaux</a></li></ul>
+<ul><li><b>Géométrie de l'élement :</b> <a href="FEM_ElementGeometry1D.html" title="FEM ElementGeometry1D/fr">Poutre (1D)</a>, <a href="FEM_ElementRotation1D.html" title="FEM ElementRotation1D/fr"> Rotation de poutre (1D)</a>, <a href="FEM_ElementGeometry2D.html" title="FEM ElementGeometry2D/fr">Coque (2D)</a>, <a href="FEM_ElementFluid1D.html" title="FEM ElementFluid1D/fr">Section fluide (1D)</a></li></ul>
+<hr/>
+<p><b>Contraintes</b>
+</p>
+<ul><li><b>Électromagnétique :</b> <a href="FEM_ConstraintElectrostaticPotential.html" title="FEM ConstraintElectrostaticPotential/fr">Potentiel électrostatique</a>, <a href="FEM_ConstraintCurrentDensity.html" title="FEM ConstraintCurrentDensity/fr">Densité de courant</a>, <a href="FEM_ConstraintMagnetization.html" title="FEM ConstraintMagnetization/fr">Magnétisation</a></li></ul>
+<ul><li><b>Fluide :</b> <a href="FEM_ConstraintInitialFlowVelocity.html" title="FEM ConstraintInitialFlowVelocity/fr">Vitesse initiale d'écoulement</a>, <a href="FEM_ConstraintInitialPressure.html" title="FEM ConstraintInitialPressure/fr">Pression initiale</a>, <a href="FEM_ConstraintFlowVelocity.html" title="FEM ConstraintFlowVelocity/fr">Vitesse d'écoulement</a></li></ul>
+<ul><li><b>Géometrique :</b> <a href="FEM_ConstraintPlaneRotation.html" title="FEM ConstraintPlaneRotation/fr">Rotation plane</a>, <a href="FEM_ConstraintSectionPrint.html" title="FEM ConstraintSectionPrint/fr">Empreinte de section</a>, <a href="FEM_ConstraintTransform.html" title="FEM ConstraintTransform/fr">Transformation</a></li></ul>
+<ul><li><b>Mécanique :</b> <a href="FEM_ConstraintFixed.html" title="FEM ConstraintFixed/fr">Immobilisation</a>, <a href="FEM_ConstraintDisplacement.html" title="FEM ConstraintDisplacement/fr">Déplacement</a>, <a href="FEM_ConstraintContact.html" title="FEM ConstraintContact/fr">Contact</a>, <a href="FEM_ConstraintTie.html" title="FEM ConstraintTie/fr">Liaison</a>, <a href="FEM_ConstraintSpring.html" title="FEM ConstraintSpring/fr">Ressort</a>, <a href="FEM_ConstraintForce.html" title="FEM ConstraintForce/fr">Force</a>, <a href="FEM_ConstraintPressure.html" title="FEM ConstraintPressure/fr">Pression</a>, <a href="FEM_ConstraintCentrif.html" title="FEM ConstraintCentrif/fr">Centrifuge</a>, <a href="FEM_ConstraintSelfWeight.html" title="FEM ConstraintSelfWeight/fr">Poids propre</a></li></ul>
+<ul><li><b>Thermique :</b> <a href="FEM_ConstraintInitialTemperature.html" title="FEM ConstraintInitialTemperature/fr">Température initiale</a>, <a href="FEM_ConstraintHeatflux.html" title="FEM ConstraintHeatflux/fr">Flux de chaleur</a>, <a href="FEM_ConstraintTemperature.html" title="FEM ConstraintTemperature/fr">Température</a>, <a href="FEM_ConstraintBodyHeatSource.html" title="FEM ConstraintBodyHeatSource/fr">Source thermique</a></li></ul>
+<ul><li><b>Remplacer les Constantes :</b> <a href="FEM_ConstantVacuumPermittivity.html" title="FEM ConstantVacuumPermittivity/fr">Permittivité du vide</a></li></ul>
+<hr/>
+<ul><li><b>Maillage :</b> <a href="FEM_MeshNetgenFromShape.html" title="FEM MeshNetgenFromShape/fr">Maillage Netgen</a>, <a href="FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape/fr">Maillage GMSH</a>, <a href="FEM_MeshBoundaryLayer.html" title="FEM MeshBoundaryLayer/fr">Couche limite de maillage</a>, <a href="FEM_MeshRegion.html" title="FEM MeshRegion/fr">Région de maillage</a>, <a href="FEM_MeshGroup.html" title="FEM MeshGroup/fr">Groupe de maillage</a>, <a href="FEM_CreateNodesSet.html" title="FEM CreateNodesSet/fr">Ensemble de nœuds</a>, <a href="FEM_FemMesh2Mesh.html" title="FEM FemMesh2Mesh/fr">Maillage à maillage</a></li></ul>
+<ul><li><b>Solveur :</b> <a href="FEM_SolverCalculixCxxtools.html" title="FEM SolverCalculixCxxtools/fr">CalculiX Standard</a>, <a href="FEM_SolverElmer.html" title="FEM SolverElmer/fr">Elmer</a>, <a href="FEM_SolverMystran.html" title="FEM SolverMystran/fr">Mystran</a>, <a href="FEM_SolverZ88.html" title="FEM SolverZ88/fr">Z88</a> ; <b>Équations :</b> <a href="FEM_EquationDeformation.html" title="FEM EquationDeformation/fr">Déformation</a>, <a href="FEM_EquationElasticity.html" title="FEM EquationElasticity/fr">Élasticité</a>, <a href="FEM_EquationElectrostatic.html" title="FEM EquationElectrostatic/fr">Électrostatique</a>, <a href="FEM_EquationElectricforce.html" title="FEM EquationElectricforce/fr">Force électrique</a>, <a href="FEM_EquationMagnetodynamic.html" title="FEM EquationMagnetodynamic/fr">Magnétodynamique</a>, <a href="FEM_EquationMagnetodynamic2D.html" title="FEM EquationMagnetodynamic2D/fr">Magnétodynamique 2D</a>, <a href="FEM_EquationFlow.html" title="FEM EquationFlow/fr">Écoulement</a>, <a href="FEM_EquationFlux.html" title="FEM EquationFlux/fr">Flux</a>, <a href="FEM_EquationHeat.html" title="FEM EquationHeat/fr">Chaleur</a> ; <b>Solveur :</b> <a href="FEM_SolverControl.html" title="FEM SolverControl/fr">Réglage du solveur</a>, <a href="FEM_SolverRun.html" title="FEM SolverRun/fr">Calcul du solveur</a></li></ul>
+<ul><li><b>Résultats :</b> <a href="FEM_ResultsPurge.html" title="FEM ResultsPurge/fr">Purger</a>, <a href="FEM_ResultShow.html" title="FEM ResultShow/fr">Afficher</a> ; <b>Postprocessing :</b> <a href="FEM_PostApplyChanges.html" title="FEM PostApplyChanges/fr">Appliquer les modifications</a>, <a href="FEM_PostPipelineFromResult.html" title="FEM PostPipelineFromResult/fr">Pipeline du résultat</a>, <a href="FEM_PostFilterWarp.html" title="FEM PostFilterWarp/fr">Filtre des déformations</a>, <a href="FEM_PostFilterClipScalar.html" title="FEM PostFilterClipScalar/fr">Filtre d'écrêtage scalaire</a>, <a href="FEM_PostFilterCutFunction.html" title="FEM PostFilterCutFunction/fr">Filtre de fonction de découpe</a>, <a href="FEM_PostFilterClipRegion.html" title="FEM PostFilterClipRegion/fr">Filtre d'écrêtage selon une région</a>, <a href="FEM_PostFilterContours.html" title="FEM PostFilterContours/fr">Filtre par contours</a>, <a href="FEM_PostFilterDataAlongLine.html" title="FEM PostFilterDataAlongLine/fr">Filtre d'écrêtage selon une ligne</a>, <a href="FEM_PostFilterLinearizedStresses.html" title="FEM PostFilterLinearizedStresses/fr">Graphique de linéarisation des critères</a>, <a href="FEM_PostFilterDataAtPoint.html" title="FEM PostFilterDataAtPoint/fr">Données du filtre d'écrêtage du point</a>, <a href="FEM_PostCreateFunctionPlane.html" title="FEM PostCreateFunctionPlane/fr">Filtre fonction plan</a>, <a href="FEM_PostCreateFunctionSphere.html" title="FEM PostCreateFunctionSphere/fr">Filtre fonction sphère</a>, <a href="FEM_PostCreateFunctionCylinder.html" title="FEM PostCreateFunctionCylinder/fr">Filtre fonction cylindre</a>, <a href="FEM_PostCreateFunctionBox.html" title="FEM PostCreateFunctionBox/fr">Filtre fonction boîte</a></li></ul>
+<ul><li><b>Utilitaires :</b> <a href="FEM_ClippingPlaneAdd.html" title="FEM ClippingPlaneAdd/fr">Plan de coupe</a>, <a href="FEM_ClippingPlaneRemoveAll.html" title="FEM ClippingPlaneRemoveAll/fr">Supprimer les plans de coupe</a>, <a href="FEM_Examples.html" title="FEM Examples/fr">Exemples</a> ; <a href="FEM_MeshClear.html" title="FEM MeshClear/fr">Supprimer le maillage</a>, <a href="FEM_MeshDisplayInfo.html" title="FEM MeshDisplayInfo/fr">Affichage des informations du maillage</a></li></ul>
+<hr/>
+<ul><li><b>Additionnel :</b> <a href="FEM_Preferences.html" title="FEM Preferences/fr">Préférences</a> ; <a href="FEM_Install.html" title="FEM Install/fr">Installation</a>, <a href="FEM_Mesh.html" title="FEM Mesh/fr">FEM Maillage</a>, <a href="FEM_Solver.html" title="FEM Solver/fr">Solveur</a>, <a class="mw-selflink selflink">CalculiX</a>, <a href="FEM_Concrete.html" title="FEM Concrete/fr">FEM Béton</a> ; <a href="FEM_Element_Types.html" title="FEM Element Types/fr">FEM Types d'élements</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129212503
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.063 seconds
+Real time usage: 0.101 seconds
+Preprocessor visited node count: 167/1000000
+Post‐expand include size: 11096/2097152 bytes
+Template argument size: 4671/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 1220/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    5.472      1 -total
+ 52.19%    2.856      1 Template:FEM_Tools_navi/fr
+ 34.99%    1.915      1 Template:Navigation_menu_2
+ 12.23%    0.669      1 Template:Incode
+ 11.31%    0.619      1 Template:TOCright
+ 10.02%    0.548      1 Template:Emphasis
+  8.52%    0.466      1 Template:FileName
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:66274-0!canonical and timestamp 20241129212503 and revision id 1479474. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

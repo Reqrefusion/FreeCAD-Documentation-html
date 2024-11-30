@@ -1,0 +1,703 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">TechDraw TemplateGenerator</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="TechDraw_TemplateGenerator.html" lang="de" title="TechDraw Vorlagengenerator (100% translated)">Deutsch</a></li>
+<li><span class="mw-pt-languages-ui mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="en">English</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="TechDraw_TemplateGenerator.html" lang="fr" title="TechDraw Création de modèles (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="TechDraw_TemplateGenerator.html" lang="pl" title="Rysunek Techniczny: Generator szablonów (100% translated)">polski</a></li></ul></div>
+<table class="fcinfobox wikitable ct" style="width: 230px; float: right; margin-left: 1em">
+<tbody><tr>
+<td class="ctTitle" style="font-weight: bold; font-size: 125%;"><span typeof="mw:File"><span><img decoding="async" height="32" src="File/Freecad.svg" width="32"/></span></span> Tutorial
+</td></tr>
+<tr>
+<th class="ctOdd">Topic
+</th></tr>
+<tr>
+<td class="ctEven">Create a TechDraw template using a Python macro
+</td></tr>
+<tr>
+<th class="ctOdd">Level
+</th></tr>
+<tr>
+<td class="ctEven">Basic skills of Python and svg-structures are helpful
+</td></tr>
+<tr>
+<th class="ctOdd">Time to complete
+</th></tr>
+<tr>
+<td class="ctEven">(I don't know yet)
+</td></tr>
+<tr>
+<th class="ctOdd">Authors
+</th></tr>
+<tr>
+<td class="ctEven"><a href="User;FBXL5.html" title="User:FBXL5">FBXL5</a>
+</td></tr>
+<tr>
+<th class="ctOdd">FreeCAD version
+</th></tr>
+<tr>
+<td class="ctEven">0.21 and later
+</td></tr>
+<tr>
+<th class="ctOdd">Example files
+</th></tr>
+<tr>
+<td class="ctEven"><i>None</i>
+</td></tr>
+<tr>
+<th class="ctOdd">See also
+</th></tr>
+<tr>
+<td class="ctEven"><a href="Macro_TemplateHelper.html" title="Macro TemplateHelper">Macro TemplateHelper</a>
+</td></tr>
+<tr>
+<td class="ctToc"><br/><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Structure_of_a_simple_blank_page"><span class="tocnumber">2</span> <span class="toctext">Structure of a simple blank page</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#Head"><span class="tocnumber">2.1</span> <span class="toctext">Head</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Body"><span class="tocnumber">2.2</span> <span class="toctext">Body</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-5"><a href="#Python_code..."><span class="tocnumber">3</span> <span class="toctext">Python code...</span></a>
+<ul>
+<li class="toclevel-2 tocsection-6"><a href="#..._to_create_a_blank_page"><span class="tocnumber">3.1</span> <span class="toctext">... to create a blank page</span></a>
+<ul>
+<li class="toclevel-3 tocsection-7"><a href="#pathToTemplate()"><span class="tocnumber">3.1.1</span> <span class="toctext">pathToTemplate()</span></a></li>
+<li class="toclevel-3 tocsection-8"><a href="#createSvgFile()"><span class="tocnumber">3.1.2</span> <span class="toctext">createSvgFile()</span></a></li>
+<li class="toclevel-3 tocsection-9"><a href="#startSvg()"><span class="tocnumber">3.1.3</span> <span class="toctext">startSvg()</span></a></li>
+<li class="toclevel-3 tocsection-10"><a href="#endSvg()"><span class="tocnumber">3.1.4</span> <span class="toctext">endSvg()</span></a></li>
+<li class="toclevel-3 tocsection-11"><a href="#main()"><span class="tocnumber">3.1.5</span> <span class="toctext">main()</span></a></li>
+<li class="toclevel-3 tocsection-12"><a href="#The_complete_blank_page_macro"><span class="tocnumber">3.1.6</span> <span class="toctext">The complete blank page macro</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-13"><a href="#..._to_create_a_page_with_some_ink"><span class="tocnumber">3.2</span> <span class="toctext">... to create a page with some ink</span></a>
+<ul>
+<li class="toclevel-3 tocsection-14"><a href="#svgRect()"><span class="tocnumber">3.2.1</span> <span class="toctext">svgRect()</span></a></li>
+<li class="toclevel-3 tocsection-15"><a href="#svgPath()"><span class="tocnumber">3.2.2</span> <span class="toctext">svgPath()</span></a></li>
+<li class="toclevel-3 tocsection-16"><a href="#svgText()"><span class="tocnumber">3.2.3</span> <span class="toctext">svgText()</span></a></li>
+<li class="toclevel-3 tocsection-17"><a href="#ediText()"><span class="tocnumber">3.2.4</span> <span class="toctext">ediText()</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-18"><a href="#createXxxx_functions"><span class="tocnumber">3.3</span> <span class="toctext">createXxxx functions</span></a></li>
+<li class="toclevel-2 tocsection-19"><a href="#Resulting_macro"><span class="tocnumber">3.4</span> <span class="toctext">Resulting macro</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</td></tr></tbody></table>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>This tutorial describes how to generate a simple template to use with the TechDraw workbench out of some lines of Python code.
+</p><p>Any text editor can be used to code. My choice is Atom, but FreeCAD's built-in editor works well, too.
+</p><p>The following code examples can be copied and pasted into an empty text file and then saved under a name of your choice as a *.py or *.FCMacro file.
+</p><p>A template provides a background for the drawing tasks and its dimensions are used by the printer drivers to scale the drawing correctly.
+</p><p>The templates are svg-files and so a macro has to compose some lines of svg code (which is a subset of xml code).
+</p><p><b>Note:</b> When FreeCAD was migrated from <b>freecadweb.org</b> to <b>freecad.org</b> this page was updated accordingly and the resulting SVG code is no longer compatible with FreeCAD versions older than v0.21. For those versions you need to manually change <code>freecad.org</code> to <code>freecadweb.org</code> on the namespace declaration line in the resulting SVG code, otherwise the editable texts are not recognized.
+</p>
+<h2><span class="mw-headline" id="Structure_of_a_simple_blank_page">Structure of a simple blank page</span></h2>
+<p>The SVG format is a subset of the XML format.
+That is why an SVG file, like any XML file, consists of two parts:
+</p>
+<ul><li>Head, a format declaration</li>
+<li>Body, containing the information what to show and where to place it</li></ul>
+<dl><dd>(I don't know why there should be a headline, the svg-file is still a valid template file without it...)</dd></dl>
+<h3><span class="mw-headline" id="Head">Head</span></h3>
+<p>The head is just one line to declare which version of the XML language an interpreter should use to handle the instructions in the body.
+</p>
+<div class="mw-highlight mw-highlight-lang-xml mw-content-ltr" dir="ltr"><pre><span></span><span class="cp">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;</span>
+</pre></div>
+<h3><span class="mw-headline" id="Body">Body</span></h3>
+<p>The Body starts with an opening tag which contains information about name spaces and about the size of the template and where to place it. And it finishes with a closing tag.
+</p>
+<div class="mw-highlight mw-highlight-lang-xml mw-content-ltr" dir="ltr"><pre><span></span><span class="nt">&lt;svg</span>
+  <span class="na">xmlns=</span><span class="s">"http://www.w3.org/2000/svg"</span> <span class="na">version=</span><span class="s">"1.1"</span>
+  <span class="na">xmlns:freecad=</span><span class="s">"http://www.freecad.org/wiki/index.php?title=Svg_Namespace"</span>
+  <span class="na">width=</span><span class="s">"420mm"</span>
+  <span class="na">height=</span><span class="s">"297mm"</span>
+  <span class="na">viewBox=</span><span class="s">"0 0 420 297"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/svg&gt;</span>
+</pre></div>
+<dl><dd><b>xmlns=</b>"<a class="external free" href="http://www.w3.org/2000/svg" rel="nofollow">http://www.w3.org/2000/svg</a>": External link to the xml name space to look up standard xml commands</dd>
+<dd><b>version=</b>"1.1": Used xml version is 1.1</dd>
+<dd><b>xmlns:freecad=</b>"...=Svg_Namespace": External link to FreeCAD's <a href="Svg_Namespace.html" title="Svg Namespace">Svg Namespace</a> wiki page. The link is not used to retrieve information or values at runtime, but it is the key to activate the custom attributes, e.g. those for editable texts.</dd>
+<dd>"freecad:" will be prefixed to said custom attribute names.</dd>
+<dd><b>width=</b>"420mm": Width of the drawing area</dd>
+<dd><b>height=</b>"297mm": Height of the drawing area</dd>
+<dd><b>viewBox=</b>"0 0 420 297": Position of the upper left corner (0;0) and the lower right corner (420;297) in the svg construction space (in svg units).</dd>
+<dd>Width, height, and viewBox in this combination set 1 svg-unit to 1 mm for the whole document. A dimensional unit can be omitted from now on.</dd>
+<dd>In this case 420 and 297 give an A3 page. Customise these values to generate other page sizes.</dd></dl>
+<p>For a blank page size DIN A3 in landscape orientation that's all.
+</p>
+<div class="mw-highlight mw-highlight-lang-xml mw-content-ltr" dir="ltr"><pre><span></span><span class="cp">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;</span>
+<span class="nt">&lt;svg</span>
+  <span class="na">xmlns=</span><span class="s">"http://www.w3.org/2000/svg"</span> <span class="na">version=</span><span class="s">"1.1"</span>
+  <span class="na">xmlns:freecad=</span><span class="s">"http://www.freecad.org/wiki/index.php?title=Svg_Namespace"</span>
+  <span class="na">width=</span><span class="s">"420mm"</span>
+  <span class="na">height=</span><span class="s">"297mm"</span>
+  <span class="na">viewBox=</span><span class="s">"0 0 420 297"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;/svg&gt;</span>
+</pre></div>
+<h2><span class="mw-headline" id="Python_code...">Python code...</span></h2>
+<p>Coding starts with a framework containing a separate main function:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="ch">#! python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># (c) 2024 Your name LGPL</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">"""Here is where the magic happens"""</span>
+    <span class="k">return</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="c1"># This will be true only if the file is "executed"</span>
+    <span class="c1"># but not if imported as module</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+<h3><span class="mw-headline" id="..._to_create_a_blank_page">... to create a blank page</span></h3>
+<p>The process of creating a template consists of:
+</p>
+<ul><li>Locate the template folder.</li>
+<li>Open a file for writing to create an svg-file from scratch, write the header line and close the file as a first step.</li>
+<li>And then repeatedly open the file to append further segments, closing it again each time.</li></ul>
+<p>The macro is made of several functions which are called from the main section.<br/>
+Additional functions could be inserted before the EndSvg function and the needed calls are put before the EndSvg() call.<br/>
+We need to have an eye on the number of spaces used with the write operations for a correct indentation.
+</p>
+<h4><span id="pathToTemplate.28.29"></span><span class="mw-headline" id="pathToTemplate()">pathToTemplate()</span></h4>
+<p>Before any code is generated a folder is needed to store the new template file, and a file name has to be set.
+</p><p>The user should have selected a template folder. Its path is then stored in the TechDraw preferences. <br/>
+It is not necessary to know where the preferences are store, because FreeCAD has commands to address needed parameters directly.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">pathToTemplate</span><span class="p">(</span><span class="n">template_name</span><span class="p">):</span>
+    <span class="sd">"""Link a given template name to the path of the template folder"""</span>
+    <span class="c1">#- Get the path to the template folder that is set in the FreeCAD parameters</span>
+    <span class="n">parameter_path</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ParamGet</span><span class="p">(</span><span class="s2">"User parameter:BaseApp/Preferences/Mod/TechDraw/Files"</span><span class="p">)</span>
+    <span class="n">template_path</span> <span class="o">=</span> <span class="n">parameter_path</span><span class="o">.</span><span class="n">GetString</span><span class="p">(</span><span class="s2">"TemplateDir"</span><span class="p">)</span>
+    <span class="c1">#- Link template_path and template_name for any OS</span>
+    <span class="n">path_to_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">template_path</span><span class="p">,</span> <span class="n">template_name</span><span class="p">)</span>  <span class="c1"># to join path segments OS neutral</span>
+    <span class="k">return</span> <span class="n">path_to_file</span>
+</pre></div>
+<p><b>parameter_path</b> receives the path to the "folder" within the configuration file where "TemplateDir" parameter can be found. <br/>
+<b>template_path</b> receives the content of "TemplateDir" which is the path to the template directory.<br/>
+<b>template_name</b> recieves the name of the template to be created.
+</p><p>Now the template name needs to be linked to the template path in a way that is compatible to unix based OSs and Windows.<br/>
+This is done with the "os.path.join" command and stored into the <b>template_file</b>. To enable this command an "import os" instruction is required.
+</p>
+<h4><span id="createSvgFile.28.29"></span><span class="mw-headline" id="createSvgFile()">createSvgFile()</span></h4>
+<p>This creates a new Template file and saves the xml head line.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">createSvgFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="c1"># Create a file and insert a header line (with t as the space saving variant of template)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span>  <span class="c1"># w = write, overwrites existing files</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"&lt;?xml version=</span><span class="se">\"</span><span class="s2">1.0</span><span class="se">\"</span><span class="s2"> encoding=</span><span class="se">\"</span><span class="s2">UTF-8</span><span class="se">\"</span><span class="s2"> standalone=</span><span class="se">\"</span><span class="s2">no</span><span class="se">\"</span><span class="s2">?&gt;"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+</pre></div>
+<h4><span id="startSvg.28.29"></span><span class="mw-headline" id="startSvg()">startSvg()</span></h4>
+<p>This appends the template file and creates the svg opening tag including its attributes.<br/>
+Each write instruction contains one single line of svg code ending with "\n", the marker for CR/LF.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">startSvg</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sheet_width</span><span class="p">,</span> <span class="n">sheet_height</span><span class="p">):</span>
+    <span class="c1"># Create svg-tag including namespace and format definitions</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="c1"># a = append, new lines are added at the end of an existing file</span>
+    <span class="c1"># encoding="utf-8", helps with special characters if the Python interpreter is in ASCII mode</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"&lt;svg</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1">#- Namespace declarations</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  xmlns=</span><span class="se">\"</span><span class="s2">http://www.w3.org/2000/svg</span><span class="se">\"</span><span class="s2"> version=</span><span class="se">\"</span><span class="s2">1.1</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  xmlns:freecad=</span><span class="se">\"</span><span class="s2">http://www.freecad.org/wiki/index.php?title=Svg_Namespace</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1">#- Format definition</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  width =</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">sheet_width</span> <span class="o">+</span> <span class="s2">"mm</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  height=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">sheet_height</span> <span class="o">+</span> <span class="s2">"mm</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  viewBox=</span><span class="se">\"</span><span class="s2">0 0 "</span> <span class="o">+</span> <span class="n">sheet_width</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">sheet_height</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1"># identical values for width and height and Viewbox' width and height</span>
+    <span class="c1"># will synchronise mm and svg-units</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+</pre></div>
+<h4><span id="endSvg.28.29"></span><span class="mw-headline" id="endSvg()">endSvg()</span></h4>
+<p>This further appends the template file and creates the svg closing tag; This eventually finishes the template code.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">endSvg</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="c1"># Create closing svg-tag</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"&lt;/svg&gt;"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+</pre></div>
+<h4><span id="main.28.29"></span><span class="mw-headline" id="main()">main()</span></h4>
+<p>The main() function calls the functions and hands over some parameters.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">"""This one creates an empty A3 template"""</span>
+    <span class="c1">#- Set the name of the template file and get its location</span>
+    <span class="n">template_file</span> <span class="o">=</span> <span class="n">pathToTemplate</span><span class="p">(</span><span class="s2">"MyTemplate.svg"</span><span class="p">)</span>  <span class="c1"># Change the template name here</span>
+    <span class="c1">#- Here starts the compiling of the svg file</span>
+    <span class="n">createSvgFile</span><span class="p">(</span><span class="n">template_file</span><span class="p">)</span>  <span class="c1"># overwrites existing File</span>
+    <span class="c1">#- Set sheet format (DIN A3)</span>
+    <span class="n">format_width</span>  <span class="o">=</span> <span class="s2">"420"</span>
+    <span class="n">format_height</span> <span class="o">=</span> <span class="s2">"297"</span>
+    <span class="n">startSvg</span><span class="p">(</span><span class="n">template_file</span><span class="p">,</span> <span class="n">format_width</span><span class="p">,</span> <span class="n">format_height</span><span class="p">)</span>  <span class="c1"># adds svg start tag</span>
+    <span class="n">endSvg</span><span class="p">(</span><span class="n">template_file</span><span class="p">)</span>  <span class="c1"># adds svg end tag</span>
+    <span class="c1"># At this point a new SVG-file is generated and saved</span>
+    <span class="k">return</span>
+</pre></div>
+<p>In this example <code>format_width</code> and <code>format_height</code> are hard coded dimensions, both unnecessary lines mark the points where other means of retrieving format data could put their content.
+</p>
+<div class="mw-collapsible mw-collapsed toccolours">
+<h4><span class="mw-headline" id="The_complete_blank_page_macro">The complete blank page macro</span></h4>
+<p>This macro consists of the above code segments, ready to run.
+</p>
+<div class="mw-collapsible-content">
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="ch">#! python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># (c) 2024 Your name LGPL</span>
+
+<span class="kn">import</span> <span class="nn">os</span>  <span class="c1"># to enable the use of os.path.join()</span>
+
+
+<span class="c1"># - SVG creation -</span>
+<span class="k">def</span> <span class="nf">createSvgFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="c1"># Create a file and insert a header line (with t as the space saving variant of template)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span>  <span class="c1"># w = write, overwrites existing files</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"&lt;?xml version=</span><span class="se">\"</span><span class="s2">1.0</span><span class="se">\"</span><span class="s2"> encoding=</span><span class="se">\"</span><span class="s2">UTF-8</span><span class="se">\"</span><span class="s2"> standalone=</span><span class="se">\"</span><span class="s2">no</span><span class="se">\"</span><span class="s2">?&gt;"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+
+<span class="k">def</span> <span class="nf">startSvg</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sheet_width</span><span class="p">,</span> <span class="n">sheet_height</span><span class="p">):</span>
+    <span class="c1"># Create svg-tag including namespace and format definitions</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="c1"># a = append, new lines are added at the end of an existing file</span>
+    <span class="c1"># encoding="utf-8", helps with special characters if the Python interpreter is in ASCII mode</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"&lt;svg</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1">#- Namespace declarations</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  xmlns=</span><span class="se">\"</span><span class="s2">http://www.w3.org/2000/svg</span><span class="se">\"</span><span class="s2"> version=</span><span class="se">\"</span><span class="s2">1.1</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  xmlns:freecad=</span><span class="se">\"</span><span class="s2">http://www.freecad.org/wiki/index.php?title=Svg_Namespace</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1">#- Format definition</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  width =</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">sheet_width</span> <span class="o">+</span> <span class="s2">"mm</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  height=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">sheet_height</span> <span class="o">+</span> <span class="s2">"mm</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  viewBox=</span><span class="se">\"</span><span class="s2">0 0 "</span> <span class="o">+</span> <span class="n">sheet_width</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">sheet_height</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1"># identical values for width and height and Viewbox' width and height</span>
+    <span class="c1"># will synchronise mm and svg-units</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+
+<span class="k">def</span> <span class="nf">endSvg</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="c1"># Create closing svg-tag</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"&lt;/svg&gt;"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+
+<span class="k">def</span> <span class="nf">pathToTemplate</span><span class="p">(</span><span class="n">template_name</span><span class="p">):</span>
+    <span class="sd">"""Link a given template name to the path of the template folder"""</span>
+    <span class="c1">#- Get the path to the template folder that is set in the FreeCAD parameters</span>
+    <span class="n">parameter_path</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ParamGet</span><span class="p">(</span><span class="s2">"User parameter:BaseApp/Preferences/Mod/TechDraw/Files"</span><span class="p">)</span>
+    <span class="n">template_path</span> <span class="o">=</span> <span class="n">parameter_path</span><span class="o">.</span><span class="n">GetString</span><span class="p">(</span><span class="s2">"TemplateDir"</span><span class="p">)</span>
+    <span class="c1">#- Link template_path and template_name for any OS</span>
+    <span class="n">path_to_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">template_path</span><span class="p">,</span> <span class="n">template_name</span><span class="p">)</span>  <span class="c1"># to join path segments OS neutral</span>
+    <span class="k">return</span> <span class="n">path_to_file</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">"""This one creates an empty A3 template"""</span>
+    <span class="c1">#- Set the name of the template file and get its location</span>
+    <span class="n">template_file</span> <span class="o">=</span> <span class="n">pathToTemplate</span><span class="p">(</span><span class="s2">"MyTemplate.svg"</span><span class="p">)</span>  <span class="c1"># Change the template name here</span>
+    <span class="c1">#- Here starts the compiling of the svg file</span>
+    <span class="n">createSvgFile</span><span class="p">(</span><span class="n">template_file</span><span class="p">)</span>  <span class="c1"># overwrites existing File</span>
+    <span class="c1">#- Set sheet format (DIN A3)</span>
+    <span class="n">format_width</span>  <span class="o">=</span> <span class="s2">"420"</span>
+    <span class="n">format_height</span> <span class="o">=</span> <span class="s2">"297"</span>
+    <span class="n">startSvg</span><span class="p">(</span><span class="n">template_file</span><span class="p">,</span> <span class="n">format_width</span><span class="p">,</span> <span class="n">format_height</span><span class="p">)</span>  <span class="c1"># adds svg start tag</span>
+    <span class="n">endSvg</span><span class="p">(</span><span class="n">template_file</span><span class="p">)</span>  <span class="c1"># adds svg end tag</span>
+    <span class="c1"># At this point a new SVG-file is generated and saved</span>
+    <span class="k">return</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="c1"># This will be true only if the file is "executed"</span>
+    <span class="c1"># but not if imported as module</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<p><br/>
+</p>
+<h3><span class="mw-headline" id="..._to_create_a_page_with_some_ink">... to create a page with some ink</span></h3>
+<p>To make a drawing out of a blank page we need:
+</p>
+<ul><li>Frames i.e. rectangles created with the <b>rect</b> instruction.</li>
+<li>A title block and more made of lines created with the <b>path</b> instruction.</li>
+<li>Simple texts for indexes and labeling title block cells.</li>
+<li>Editable texts like part number or part name.</li></ul>
+<p>Normally these graphical elements are used repeatedly and so the generating code is put into four functions:
+</p>
+<ul><li>svgRect() for rectangular frame elements.</li>
+<li>svgPath() for straight line elements.</li>
+<li>svgText() for static texts.</li>
+<li>ediText() for editable texts.</li></ul>
+<p>All functions are placed inside the above macro before the main() function and their related function calls are inserted in the main() function between <code>startSvg(...)</code> and <code>endSvg(...)</code>.
+</p>
+<h4><span id="svgRect.28.29"></span><span class="mw-headline" id="svgRect()">svgRect()</span></h4>
+<p>To draw a rectangle we just need to call the <b>svgRect</b> function and hand over the values for width, height, and position of the upper left corner. That is better readable in this place than if svg_line would contain the whole svg code line.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">svgRect</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="c1"># Generates an svg-instruction to draw a rectangle with the given values</span>
+    <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">"&lt;rect width=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">width</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> height=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">height</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> x=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">x</span>
+        <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> y=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> /&gt;"</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">svg_line</span>
+</pre></div>
+<p>The svg instruction is split to stay within the recommended Python line length, it will result in a single svg line nevertheless.
+</p>
+<h4><span id="svgPath.28.29"></span><span class="mw-headline" id="svgPath()">svgPath()</span></h4>
+<p>To draw a line we just need to call the <b>svgPath</b> function and hand over the coordinates of the start point and the endpoint of a line.
+</p><p>Instead of the end point coordinates we can hand over a tag to draw a horizontal (h) or vertical (v) line followed by the length of the line or the tag to draw a horizontal (H) or vertical (V) line followed by the x or y ordinate of the end point.
+</p><p>Each path starts at the origin and the first action is a movement with "raised pen" (not drawing) to the start point. In this case the relative movement and the absolute movement are the same and so it is irrelevant whether the m-tag is upper or lower case.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">svgPath</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">):</span>
+    <span class="c1"># Generates an svg-instruction to draw a path element (line) with the given values</span>
+    <span class="k">if</span> <span class="n">x2</span> <span class="o">==</span> <span class="s2">"v"</span> <span class="ow">or</span> <span class="n">x2</span> <span class="o">==</span> <span class="s2">"V"</span> <span class="ow">or</span> <span class="n">x2</span> <span class="o">==</span> <span class="s2">"h"</span> <span class="ow">or</span> <span class="n">x2</span> <span class="o">==</span> <span class="s2">"H"</span><span class="p">:</span>
+        <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"&lt;path d=</span><span class="se">\"</span><span class="s2">m "</span> <span class="o">+</span> <span class="n">x1</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">y1</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">x2</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">y2</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> /&gt;"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"&lt;path d=</span><span class="se">\"</span><span class="s2">m "</span> <span class="o">+</span> <span class="n">x1</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">y1</span> <span class="o">+</span> <span class="s2">" l "</span> <span class="o">+</span> <span class="n">x2</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">y2</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> /&gt;"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">svg_line</span>
+</pre></div>
+<h4><span id="svgText.28.29"></span><span class="mw-headline" id="svgText()">svgText()</span></h4>
+<p>To draw a piece of text we just need to call the <b>svgText</b> function and hand over the coordinates of the text's anchor point, the text string itself, and optionally an angle for rotated text. To rotate texts a transformation instruction has to be inserted in each text tag separately; the rotation centers are set to the same coordinates as the related text anchor points.
+</p><p>(The text alignment is controlled by the surrounding group tag or left-aligned as default).
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">svgText</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">str_value</span><span class="p">,</span> <span class="n">str_angle</span><span class="o">=</span><span class="s2">"0"</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Generates an svg-instruction to place a text element with the given values.</span>
+<span class="sd">    Optional str_angle enables vertical and arbitrarily rotated texts</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">str_angle</span> <span class="o">==</span> <span class="s2">"0"</span><span class="p">:</span>
+        <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"&lt;text x=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> y=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">&gt;"</span> <span class="o">+</span> <span class="n">str_value</span> <span class="o">+</span> <span class="s2">"&lt;/text&gt;"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">"&lt;text x=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> y=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> transform=</span><span class="se">\"</span><span class="s2">rotate("</span> <span class="o">+</span> <span class="n">str_angle</span>
+            <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="s2">")</span><span class="se">\"</span><span class="s2">&gt;"</span> <span class="o">+</span> <span class="n">str_value</span> <span class="o">+</span> <span class="s2">"&lt;/text&gt;"</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">svg_line</span>
+</pre></div>
+<h4><span id="ediText.28.29"></span><span class="mw-headline" id="ediText()">ediText()</span></h4>
+<p>To draw a piece of editable text we just need to call the <b>ediText</b> function and hand over a name, the coordinates of the text's anchor point, the text string itself, and optionally an angle for rotated text. To rotate texts a transformation instruction has to be inserted in each text tag separately; the rotation centers are set to the same coordinates as the related text anchor points.
+</p><p>FreeCAD creates a dictionary object with every inserted template, and each entry has a name (key) and a value.
+</p><p>(The text alignment is controlled by the surrounding group tag or left-aligned as default).
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">ediText</span><span class="p">(</span><span class="n">entry_name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">str_value</span><span class="p">,</span> <span class="n">str_angle</span><span class="o">=</span><span class="s2">"0"</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Generates an svg-instruction to place an editable text element with the given values.</span>
+<span class="sd">    Optional str_angle enables vertical and arbitrarily rotated editable texts</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">str_angle</span> <span class="o">==</span> <span class="s2">"0"</span><span class="p">:</span>
+        <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">"&lt;text freecad:editable=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">entry_name</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> x=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> y=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">y</span>
+            <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">&gt;  &lt;tspan&gt;"</span> <span class="o">+</span> <span class="n">str_value</span> <span class="o">+</span> <span class="s2">"&lt;/tspan&gt;  &lt;/text&gt;"</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">"&lt;text freecad:editable=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">entry_name</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> x=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> y=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">y</span>
+            <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> transform=</span><span class="se">\"</span><span class="s2">rotate("</span> <span class="o">+</span> <span class="n">str_angle</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="s2">")</span><span class="se">\"</span><span class="s2">&gt;  &lt;tspan&gt;"</span>
+            <span class="o">+</span> <span class="n">str_value</span> <span class="o">+</span> <span class="s2">"&lt;/tspan&gt;  &lt;/text&gt;"</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">svg_line</span>
+</pre></div>
+<h3><span class="mw-headline" id="createXxxx_functions">createXxxx functions</span></h3>
+<p>These functions start with code to open a file in append mode and to write the group opening tag.
+</p><p>Then follows a section to set and calculate values, and with write instructions that call the above functions to generate svg-code.
+</p><p>And finally the group closing tag followed by an instruction to close the file.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">createFrame</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sheet_width</span><span class="p">,</span> <span class="n">sheet_height</span><span class="p">):</span>
+    <span class="c1"># Creates rectangles for sheet frame and drawing area</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"    &lt;g id=</span><span class="se">\"</span><span class="s2">drawing-frame</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"      style=</span><span class="se">\"</span><span class="s2">fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:round</span><span class="se">\"</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1">#- upper left corner of inner Frame, drawing area</span>
+    <span class="n">frame_x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">frame_y</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1">#- frame dimensions</span>
+    <span class="n">frame_width</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sheet_width</span><span class="p">)</span> <span class="o">-</span> <span class="mi">20</span> <span class="o">-</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">frame_height</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sheet_height</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">-</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="c1">#- frame rectangle</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"      "</span> <span class="o">+</span> <span class="n">svgRect</span><span class="p">(</span><span class="n">frame_width</span><span class="p">,</span> <span class="n">frame_height</span><span class="p">,</span> <span class="n">frame_x</span><span class="p">,</span> <span class="n">frame_y</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1">#- upper left corner outer frame, sheet frame</span>
+    <span class="n">frame_x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">frame_y</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="c1">#- frame dimensions</span>
+    <span class="n">frame_width</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sheet_width</span><span class="p">)</span><span class="o">-</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">frame_height</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sheet_height</span><span class="p">)</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1">#- frame rectangle</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"      "</span> <span class="o">+</span> <span class="n">svgRect</span><span class="p">(</span><span class="n">frame_width</span><span class="p">,</span> <span class="n">frame_height</span><span class="p">,</span> <span class="n">frame_x</span><span class="p">,</span> <span class="n">frame_y</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"    &lt;/g&gt;</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+</pre></div>
+<h3><span class="mw-headline" id="Resulting_macro">Resulting macro</span></h3>
+<div class="mw-collapsible mw-collapsed toccolours">
+<p>This macro adds some basic graphical elements needed for proper templates i.e. line elements, texts, and editable texts.
+</p>
+<div class="mw-collapsible-content">
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="ch">#! python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1"># (c) 2024 Your name LGPL</span>
+
+<span class="kn">import</span> <span class="nn">os</span>  <span class="c1"># to enable the use of os.path.join()</span>
+
+
+<span class="c1"># - SVG creation -</span>
+<span class="k">def</span> <span class="nf">createSvgFile</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="c1"># Create a file and insert a header line (with t as the space saving variant of template)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span>  <span class="c1"># w = write, overwrites existing files</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"&lt;?xml version=</span><span class="se">\"</span><span class="s2">1.0</span><span class="se">\"</span><span class="s2"> encoding=</span><span class="se">\"</span><span class="s2">UTF-8</span><span class="se">\"</span><span class="s2"> standalone=</span><span class="se">\"</span><span class="s2">no</span><span class="se">\"</span><span class="s2">?&gt;"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+
+<span class="k">def</span> <span class="nf">startSvg</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sheet_width</span><span class="p">,</span> <span class="n">sheet_height</span><span class="p">):</span>
+    <span class="c1"># Create svg-tag including namespace and format definitions</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="c1"># a = append, new lines are added at the end of an existing file</span>
+    <span class="c1"># encoding="utf-8", helps with special characters if the Python interpreter is in ASCII mode</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"&lt;svg</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1">#- Namespace declarations</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  xmlns=</span><span class="se">\"</span><span class="s2">http://www.w3.org/2000/svg</span><span class="se">\"</span><span class="s2"> version=</span><span class="se">\"</span><span class="s2">1.1</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  xmlns:freecad=</span><span class="se">\"</span><span class="s2">http://www.freecad.org/wiki/index.php?title=Svg_Namespace</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1">#- Format definition</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  width =</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">sheet_width</span> <span class="o">+</span> <span class="s2">"mm</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  height=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">sheet_height</span> <span class="o">+</span> <span class="s2">"mm</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"  viewBox=</span><span class="se">\"</span><span class="s2">0 0 "</span> <span class="o">+</span> <span class="n">sheet_width</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">sheet_height</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1"># identical values for width and height and Viewbox' width and height</span>
+    <span class="c1"># will synchronise mm and svg-units</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+
+<span class="k">def</span> <span class="nf">endSvg</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+    <span class="c1"># Create closing svg-tag</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"&lt;/svg&gt;"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+
+<span class="k">def</span> <span class="nf">svgRect</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="c1"># Ggenerates an svg-instruction to draw a rectangle with the given values</span>
+    <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">"&lt;rect width=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">width</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> height=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">height</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> x=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">x</span>
+        <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> y=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> /&gt;"</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">svg_line</span>
+
+<span class="k">def</span> <span class="nf">svgPath</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">):</span>
+    <span class="c1"># Generates an svg-instruction to draw a path element (line) with the given values</span>
+    <span class="k">if</span> <span class="n">x2</span> <span class="o">==</span> <span class="s2">"v"</span> <span class="ow">or</span> <span class="n">x2</span> <span class="o">==</span> <span class="s2">"V"</span> <span class="ow">or</span> <span class="n">x2</span> <span class="o">==</span> <span class="s2">"h"</span> <span class="ow">or</span> <span class="n">x2</span> <span class="o">==</span> <span class="s2">"H"</span><span class="p">:</span>
+        <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"&lt;path d=</span><span class="se">\"</span><span class="s2">m "</span> <span class="o">+</span> <span class="n">x1</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">y1</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">x2</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">y2</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> /&gt;"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"&lt;path d=</span><span class="se">\"</span><span class="s2">m "</span> <span class="o">+</span> <span class="n">x1</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">y1</span> <span class="o">+</span> <span class="s2">" l "</span> <span class="o">+</span> <span class="n">x2</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">y2</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> /&gt;"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">svg_line</span>
+
+<span class="k">def</span> <span class="nf">svgText</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">str_value</span><span class="p">,</span> <span class="n">str_angle</span><span class="o">=</span><span class="s2">"0"</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Generates an svg-instruction to place a text element with the given values.</span>
+<span class="sd">    Optional str_angle enables vertical and arbitrarily rotated texts</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">str_angle</span> <span class="o">==</span> <span class="s2">"0"</span><span class="p">:</span>
+        <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"&lt;text x=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> y=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">&gt;"</span> <span class="o">+</span> <span class="n">str_value</span> <span class="o">+</span> <span class="s2">"&lt;/text&gt;"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">"&lt;text x=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> y=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> transform=</span><span class="se">\"</span><span class="s2">rotate("</span> <span class="o">+</span> <span class="n">str_angle</span>
+            <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="s2">")</span><span class="se">\"</span><span class="s2">&gt;"</span> <span class="o">+</span> <span class="n">str_value</span> <span class="o">+</span> <span class="s2">"&lt;/text&gt;"</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">svg_line</span>
+
+<span class="k">def</span> <span class="nf">ediText</span><span class="p">(</span><span class="n">entry_name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">str_value</span><span class="p">,</span> <span class="n">str_angle</span><span class="o">=</span><span class="s2">"0"</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Generates an svg-instruction to place an editable text element with the given values.</span>
+<span class="sd">    Optional str_angle enables vertical and arbitrarily rotated editable texts</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">str_angle</span> <span class="o">==</span> <span class="s2">"0"</span><span class="p">:</span>
+        <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">"&lt;text freecad:editable=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">entry_name</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> x=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> y=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">y</span>
+            <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">&gt;  &lt;tspan&gt;"</span> <span class="o">+</span> <span class="n">str_value</span> <span class="o">+</span> <span class="s2">"&lt;/tspan&gt;  &lt;/text&gt;"</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">"&lt;text freecad:editable=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">entry_name</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> x=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> y=</span><span class="se">\"</span><span class="s2">"</span> <span class="o">+</span> <span class="n">y</span>
+            <span class="o">+</span> <span class="s2">"</span><span class="se">\"</span><span class="s2"> transform=</span><span class="se">\"</span><span class="s2">rotate("</span> <span class="o">+</span> <span class="n">str_angle</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="s2">")</span><span class="se">\"</span><span class="s2">&gt;  &lt;tspan&gt;"</span>
+            <span class="o">+</span> <span class="n">str_value</span> <span class="o">+</span> <span class="s2">"&lt;/tspan&gt;  &lt;/text&gt;"</span>
+            <span class="p">)</span>
+    <span class="k">return</span> <span class="n">svg_line</span>
+
+<span class="k">def</span> <span class="nf">createFrame</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sheet_width</span><span class="p">,</span> <span class="n">sheet_height</span><span class="p">):</span>
+    <span class="c1"># Creates rectangles for sheet frame and drawing area</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"    &lt;g id=</span><span class="se">\"</span><span class="s2">drawing-frame</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"      style=</span><span class="se">\"</span><span class="s2">fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:round</span><span class="se">\"</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1">#- calculate upper left corner of inner Frame, drawing area</span>
+    <span class="n">frame_x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">frame_y</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1">#- frame dimensions</span>
+    <span class="n">frame_width</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sheet_width</span><span class="p">)</span> <span class="o">-</span> <span class="mi">20</span> <span class="o">-</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">frame_height</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sheet_height</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">-</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="c1">#- frame rectangle</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"      "</span> <span class="o">+</span> <span class="n">svgRect</span><span class="p">(</span><span class="n">frame_width</span><span class="p">,</span> <span class="n">frame_height</span><span class="p">,</span> <span class="n">frame_x</span><span class="p">,</span> <span class="n">frame_y</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1">#- calculate upper left corner outer frame, sheet frame</span>
+    <span class="n">frame_x</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">frame_y</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+    <span class="c1">#- frame dimensions</span>
+    <span class="n">frame_width</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sheet_width</span><span class="p">)</span><span class="o">-</span><span class="mi">20</span><span class="p">)</span>
+    <span class="n">frame_height</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sheet_height</span><span class="p">)</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1">#- frame rectangle</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"      "</span> <span class="o">+</span> <span class="n">svgRect</span><span class="p">(</span><span class="n">frame_width</span><span class="p">,</span> <span class="n">frame_height</span><span class="p">,</span> <span class="n">frame_x</span><span class="p">,</span> <span class="n">frame_y</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"    &lt;/g&gt;</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+
+<span class="k">def</span> <span class="nf">createTitleBlock</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sheet_width</span><span class="p">,</span> <span class="n">sheet_height</span><span class="p">):</span>
+    <span class="sd">"""Creates a title block and transfers it to the position according to the sheet dimensions"""</span>
+    <span class="c1">#- calculate title block origin (lower left corner), offset from page origin</span>
+    <span class="n">tbX</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sheet_width</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">-</span> <span class="mi">180</span><span class="p">)</span>  <span class="c1"># 180 according to DIN EN ISO 7200</span>
+    <span class="n">tbY</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">sheet_height</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="c1">#- group to transfer all included title block elements at once</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"    &lt;g id=</span><span class="se">\"</span><span class="s2">titleblock</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"      transform=</span><span class="se">\"</span><span class="s2">translate("</span> <span class="o">+</span> <span class="n">tbX</span> <span class="o">+</span> <span class="s2">","</span> <span class="o">+</span> <span class="n">tbY</span> <span class="o">+</span> <span class="s2">")</span><span class="se">\"</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1">#- sub-group of title block line framework</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"      &lt;g id=</span><span class="se">\"</span><span class="s2">titleblock-frame</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"        style=</span><span class="se">\"</span><span class="s2">fill:none;stroke:#000000;stroke-width:0.35;</span><span class="se">\</span>
+<span class="s2">stroke-linecap:miter;stroke-miterlimit:4</span><span class="se">\"</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"        "</span> <span class="o">+</span> <span class="n">svgPath</span><span class="p">(</span><span class="s2">"  0"</span><span class="p">,</span><span class="s2">"  0"</span><span class="p">,</span><span class="s2">"  0"</span><span class="p">,</span><span class="s2">"-63"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"        "</span> <span class="o">+</span> <span class="n">svgPath</span><span class="p">(</span><span class="s2">"  0"</span><span class="p">,</span><span class="s2">"-63"</span><span class="p">,</span><span class="s2">"180"</span><span class="p">,</span><span class="s2">"  0"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"        "</span> <span class="o">+</span> <span class="n">svgPath</span><span class="p">(</span><span class="s2">"  0"</span><span class="p">,</span><span class="s2">"-30"</span><span class="p">,</span><span class="s2">"h"</span><span class="p">,</span><span class="s2">"155"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"        "</span> <span class="o">+</span> <span class="n">svgPath</span><span class="p">(</span><span class="s2">"155"</span><span class="p">,</span><span class="s2">"  0"</span><span class="p">,</span><span class="s2">"v"</span><span class="p">,</span><span class="s2">"-63"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"      &lt;/g&gt;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="c1">#- sub-group of title block static texts (left-aligned by default)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"      &lt;g id=</span><span class="se">\"</span><span class="s2">titleblock-text-non-editable</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"        style=</span><span class="se">\"</span><span class="s2">font-size:5.0;text-anchor:start;fill:#000000;</span><span class="se">\</span>
+<span class="s2">font-family:osifont</span><span class="se">\"</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"        "</span> <span class="o">+</span> <span class="n">svgText</span><span class="p">(</span><span class="s2">"  4.5"</span><span class="p">,</span><span class="s2">"-43.5 "</span><span class="p">,</span><span class="s2">"Some static text"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"        "</span> <span class="o">+</span> <span class="n">svgText</span><span class="p">(</span><span class="s2">"  4.5"</span><span class="p">,</span><span class="s2">"-13.5 "</span><span class="p">,</span><span class="s2">"More static text"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"        "</span> <span class="o">+</span> <span class="n">svgText</span><span class="p">(</span><span class="s2">"162.5"</span><span class="p">,</span><span class="s2">"-3.5 "</span><span class="p">,</span><span class="s2">"Vertical static text"</span><span class="p">,</span><span class="s2">"-90"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"      &lt;/g&gt;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"    &lt;/g&gt;</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+
+<span class="k">def</span> <span class="nf">createEditableText</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">sheet_width</span><span class="p">,</span> <span class="n">sheet_height</span><span class="p">):</span>
+    <span class="sd">"""Creates editable texts positioned according to the page origin"""</span>
+    <span class="c1">#- calculate offset to titleblock origin</span>
+    <span class="n">edX</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sheet_width</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">-</span> <span class="mi">180</span> <span class="c1"># 180 according to DIN EN ISO 7200</span>
+    <span class="n">edY</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sheet_height</span><span class="p">)</span> <span class="o">-</span> <span class="mi">10</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"a"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span>
+    <span class="c1">#- group editable texts using the same attributes</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"    &lt;g id=</span><span class="se">\"</span><span class="s2">titleblock-editable-texts</span><span class="se">\"\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"      style=</span><span class="se">\"</span><span class="s2">font-size:7.0;text-anchor:start;fill:#0000d0;</span><span class="se">\</span>
+<span class="s2">font-family:osifont</span><span class="se">\"</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+        <span class="s2">"      "</span> <span class="o">+</span> <span class="n">ediText</span><span class="p">(</span><span class="s2">"EdiText-1"</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">edX</span> <span class="o">+</span> <span class="mi">60</span><span class="p">),</span><span class="nb">str</span><span class="p">(</span><span class="n">edY</span> <span class="o">-</span> <span class="mf">43.5</span><span class="p">),</span><span class="s2">"Some editable text"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+        <span class="s2">"      "</span> <span class="o">+</span> <span class="n">ediText</span><span class="p">(</span><span class="s2">"EdiText-2"</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">edX</span> <span class="o">+</span> <span class="mi">60</span><span class="p">),</span><span class="nb">str</span><span class="p">(</span><span class="n">edY</span> <span class="o">-</span> <span class="mf">13.5</span><span class="p">),</span><span class="s2">"More editable text"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
+        <span class="s2">"      "</span> <span class="o">+</span> <span class="n">ediText</span><span class="p">(</span><span class="s2">"EdiText-3"</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">edX</span> <span class="o">+</span> <span class="mi">173</span><span class="p">),</span><span class="nb">str</span><span class="p">(</span><span class="n">edY</span> <span class="o">-</span> <span class="mf">4.5</span><span class="p">),</span><span class="s2">"90° editable text"</span><span class="p">,</span><span class="s2">"-90"</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+        <span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"    &lt;/g&gt;</span><span class="se">\n\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">close</span>
+
+<span class="k">def</span> <span class="nf">pathToTemplate</span><span class="p">(</span><span class="n">template_name</span><span class="p">):</span>
+    <span class="sd">"""Link a given template name to the path of the template folder"""</span>
+    <span class="c1">#- Get the path to the template folder that is set in the FreeCAD parameters</span>
+    <span class="n">parameter_path</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ParamGet</span><span class="p">(</span><span class="s2">"User parameter:BaseApp/Preferences/Mod/TechDraw/Files"</span><span class="p">)</span>
+    <span class="n">template_path</span> <span class="o">=</span> <span class="n">parameter_path</span><span class="o">.</span><span class="n">GetString</span><span class="p">(</span><span class="s2">"TemplateDir"</span><span class="p">)</span>
+    <span class="c1">#- Link template_path and template_name for any OS</span>
+    <span class="n">path_to_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">template_path</span><span class="p">,</span> <span class="n">template_name</span><span class="p">)</span>  <span class="c1"># to join path segments OS neutral</span>
+    <span class="k">return</span> <span class="n">path_to_file</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">"""This one creates an A3 template with simple frame and title block"""</span>
+    <span class="c1">#- Set the name of the template file and get its location</span>
+    <span class="n">template_file</span> <span class="o">=</span> <span class="n">pathToTemplate</span><span class="p">(</span><span class="s2">"MyTemplate.svg"</span><span class="p">)</span>  <span class="c1"># Change the template name here</span>
+    <span class="c1">#- Here starts the compiling of the svg file</span>
+    <span class="n">createSvgFile</span><span class="p">(</span><span class="n">template_file</span><span class="p">)</span>  <span class="c1"># overwrites existing File</span>
+    <span class="c1">#- Set sheet format (DIN A3)</span>
+    <span class="n">format_width</span>  <span class="o">=</span> <span class="s2">"420"</span>
+    <span class="n">format_height</span> <span class="o">=</span> <span class="s2">"297"</span>
+    <span class="n">startSvg</span><span class="p">(</span><span class="n">template_file</span><span class="p">,</span> <span class="n">format_width</span><span class="p">,</span> <span class="n">format_height</span><span class="p">)</span>  <span class="c1"># adds svg start tag</span>
+    <span class="n">createFrame</span><span class="p">(</span><span class="n">template_file</span><span class="p">,</span> <span class="n">format_width</span><span class="p">,</span> <span class="n">format_height</span><span class="p">)</span>
+    <span class="n">createTitleBlock</span><span class="p">(</span><span class="n">template_file</span><span class="p">,</span> <span class="n">format_width</span><span class="p">,</span> <span class="n">format_height</span><span class="p">)</span>
+    <span class="n">createEditableText</span><span class="p">(</span><span class="n">template_file</span><span class="p">,</span> <span class="n">format_width</span><span class="p">,</span> <span class="n">format_height</span><span class="p">)</span>
+    <span class="n">endSvg</span><span class="p">(</span><span class="n">template_file</span><span class="p">)</span>  <span class="c1"># adds svg end tag</span>
+    <span class="c1"># At this point a new SVG-file is generated and saved</span>
+    <span class="k">return</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="c1"># This will be true only if the file is "executed"</span>
+    <span class="c1"># but not if imported as module</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+<p>And this is the svg-code coming out of this macro:
+</p>
+<div class="mw-highlight mw-highlight-lang-xml mw-content-ltr" dir="ltr"><pre><span></span><span class="cp">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;</span>
+
+<span class="nt">&lt;svg</span>
+  <span class="na">xmlns=</span><span class="s">"http://www.w3.org/2000/svg"</span> <span class="na">version=</span><span class="s">"1.1"</span>
+  <span class="na">xmlns:freecad=</span><span class="s">"http://www.freecad.org/wiki/index.php?title=Svg_Namespace"</span>
+  <span class="na">width =</span><span class="s">"420mm"</span>
+  <span class="na">height=</span><span class="s">"297mm"</span>
+  <span class="na">viewBox=</span><span class="s">"0 0 420 297"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;g</span> <span class="na">id=</span><span class="s">"drawing-frame"</span>
+      <span class="na">style=</span><span class="s">"fill:none;stroke:#000000;stroke-width:0.5;stroke-linecap:round"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"390"</span> <span class="na">height=</span><span class="s">"277"</span> <span class="na">x=</span><span class="s">"20"</span> <span class="na">y=</span><span class="s">"10"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;rect</span> <span class="na">width=</span><span class="s">"400"</span> <span class="na">height=</span><span class="s">"287"</span> <span class="na">x=</span><span class="s">"15"</span> <span class="na">y=</span><span class="s">"5"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/g&gt;</span>
+
+    <span class="nt">&lt;g</span> <span class="na">id=</span><span class="s">"titleblock"</span>
+      <span class="na">transform=</span><span class="s">"translate(230,287)"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;g</span> <span class="na">id=</span><span class="s">"titleblock-frame"</span>
+        <span class="na">style=</span><span class="s">"fill:none;stroke:#000000;stroke-width:0.35;stroke-linecap:miter;stroke-miterlimit:4"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;path</span> <span class="na">d=</span><span class="s">"m   0,  0 l   0,-63"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;path</span> <span class="na">d=</span><span class="s">"m   0,-63 l 180,  0"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;path</span> <span class="na">d=</span><span class="s">"m   0,-30 h 155"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;path</span> <span class="na">d=</span><span class="s">"m 155,  0 v -63"</span> <span class="nt">/&gt;</span>
+      <span class="nt">&lt;/g&gt;</span>
+      <span class="nt">&lt;g</span> <span class="na">id=</span><span class="s">"titleblock-text-non-editable"</span>
+        <span class="na">style=</span><span class="s">"font-size:5.0;text-anchor:start;fill:#000000;font-family:osifont"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;text</span> <span class="na">x=</span><span class="s">"  4.5"</span> <span class="na">y=</span><span class="s">"-43.5 "</span><span class="nt">&gt;</span>Some static text<span class="nt">&lt;/text&gt;</span>
+        <span class="nt">&lt;text</span> <span class="na">x=</span><span class="s">"  4.5"</span> <span class="na">y=</span><span class="s">"-13.5 "</span><span class="nt">&gt;</span>More static text<span class="nt">&lt;/text&gt;</span>
+        <span class="nt">&lt;text</span> <span class="na">x=</span><span class="s">"162.5"</span> <span class="na">y=</span><span class="s">"-3.5 "</span> <span class="na">transform=</span><span class="s">"rotate(-90,162.5,-3.5 )"</span><span class="nt">&gt;</span>Vertical static text<span class="nt">&lt;/text&gt;</span>
+      <span class="nt">&lt;/g&gt;</span>
+    <span class="nt">&lt;/g&gt;</span>
+
+    <span class="nt">&lt;g</span> <span class="na">id=</span><span class="s">"titleblock-editable-texts"</span>
+      <span class="na">style=</span><span class="s">"font-size:7.0;text-anchor:start;fill:#0000d0;font-family:osifont"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;text</span> <span class="na">freecad:editable=</span><span class="s">"EdiText-1"</span> <span class="na">x=</span><span class="s">"290"</span> <span class="na">y=</span><span class="s">"243.5"</span><span class="nt">&gt;</span>  <span class="nt">&lt;tspan&gt;</span>Some editable text<span class="nt">&lt;/tspan&gt;</span>  <span class="nt">&lt;/text&gt;</span>
+      <span class="nt">&lt;text</span> <span class="na">freecad:editable=</span><span class="s">"EdiText-2"</span> <span class="na">x=</span><span class="s">"290"</span> <span class="na">y=</span><span class="s">"273.5"</span><span class="nt">&gt;</span>  <span class="nt">&lt;tspan&gt;</span>More editable text<span class="nt">&lt;/tspan&gt;</span>  <span class="nt">&lt;/text&gt;</span>
+      <span class="nt">&lt;text</span> <span class="na">freecad:editable=</span><span class="s">"EdiText-3"</span> <span class="na">x=</span><span class="s">"403"</span> <span class="na">y=</span><span class="s">"282.5"</span> <span class="na">transform=</span><span class="s">"rotate(-90,403,282.5)"</span><span class="nt">&gt;</span>  <span class="nt">&lt;tspan&gt;</span>90° editable text<span class="nt">&lt;/tspan&gt;</span>  <span class="nt">&lt;/text&gt;</span>
+    <span class="nt">&lt;/g&gt;</span>
+
+<span class="nt">&lt;/svg&gt;</span>
+</pre></div>
+</div>
+</div>
+<p>And what it should look like when inserted (plus magnified title block):
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="File/TechDraw_TemplateGenerator.png"><img decoding="async" height="429" src="File/TechDraw_TemplateGenerator.png" srcset="/images/thumb/7/7c/TechDraw_TemplateGenerator.png/900px-TechDraw_TemplateGenerator.png 1.5x, /images/thumb/7/7c/TechDraw_TemplateGenerator.png/1200px-TechDraw_TemplateGenerator.png 2x" width="600"/></a></span>
+</p><p>To color the editable texts in blue is just a personal choice to easier distinguish static and editable texts on the finished drawing.
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20241129213115
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.160 seconds
+Real time usage: 2.523 seconds
+Preprocessor visited node count: 435/1000000
+Post‐expand include size: 2498/2097152 bytes
+Template argument size: 19181/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 17/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 86741/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 2376.069      1 -total
+ 99.70% 2368.848     17 Template:Code
+  0.10%    2.435      1 Template:TutorialInfo
+  0.09%    2.133      6 Template:Incode
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:237613-0!canonical and timestamp 20241129213112 and revision id 1361129. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>

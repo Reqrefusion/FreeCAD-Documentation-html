@@ -1,0 +1,177 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Viewprovider/ru</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Viewprovider.html" lang="de" title="Viewprovider (100% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Viewprovider.html" lang="en" title="Viewprovider (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Viewprovider.html" lang="fr" title="Viewprovider (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Viewprovider.html" lang="it" title="Viewprovider (100% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Viewprovider.html" lang="pl" title="Dostawca widoku (100% translated)">polski</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--stub" dir="ltr" lang="ru">русский</span></li></ul></div>
+<h2><span id=".D0.92.D0.B2.D0.B5.D0.B4.D0.B5.D0.BD.D0.B8.D0.B5"></span><span class="mw-headline" id="Введение">Введение</span></h2>
+<p><a href="Viewprovider.html" title="Viewprovider">Viewproviders</a> are classes that define the way objects will look like in the <a href="Tree_view.html" title="Tree view">tree view</a> and the <a href="3D_view.html" title="3D view">3D view</a>, and how they will interact with certain graphical actions such as <a href="Selection_methods.html" title="Selection methods">selection</a>.
+</p><p>They complement the <a href="Scripted_objects.html" title="Scripted objects">scripted objects</a>. While the base class of the scripted object defines its <i>data</i> <a href="Property.html" title="Property">properties</a>, the viewprovider defines it <i>view</i> <a href="Property.html" title="Property">properties</a>. These view properties are not essential information of the object, as they only indicate superficial information like line width, line color, face color, etc. In a terminal only session, the viewprovider is not loaded because there will be no interface to manipulate those visible properties.
+</p><p>Like with data properties, view properties are accessible from the <a href="Property_editor.html" title="Property editor">property editor</a>.
+</p>
+<h2><span class="mw-headline" id="Python_view_providers">Python view providers</span></h2>
+<p>The viewproviders classes usually include <code>ViewProvider</code> in their name. They are assigned on the <code>ViewObject</code> attribute of the base object.
+</p><p>In this example, we define two properties for the viewprovider, only if the properties don't already exist, and assign their default values. We also define the <code>onChanged</code> method that runs every time a property changes. We need to test the property by name, and then we will call one of two methods that will do the actual work of updating the pattern or setting its size.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># views/view_custom.py</span>
+<span class="k">class</span> <span class="nc">ViewProviderCustom</span><span class="p">:</span>
+    <span class="sd">"""Viewprovider of the custom object."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vobj</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Object</span> <span class="o">=</span> <span class="n">vobj</span><span class="o">.</span><span class="n">Object</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_properties</span><span class="p">(</span><span class="n">vobj</span><span class="p">)</span>
+        <span class="n">vobj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">_set_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vobj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">vobj</span><span class="p">,</span> <span class="s2">"Pattern"</span><span class="p">):</span>
+            <span class="n">vobj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyEnumeration"</span><span class="p">,</span>
+                             <span class="s2">"Pattern"</span><span class="p">,</span>
+                             <span class="s2">"Custom"</span><span class="p">,</span>
+                             <span class="s2">"Defines a hatch pattern for this object."</span><span class="p">)</span>
+            <span class="n">vobj</span><span class="o">.</span><span class="n">Pattern</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"None"</span><span class="p">,</span> <span class="s2">"diagonals"</span><span class="p">,</span> <span class="s2">"cross"</span><span class="p">,</span> <span class="s2">"brick"</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">vobj</span><span class="p">,</span> <span class="s2">"PatternSize"</span><span class="p">):</span>
+            <span class="n">vobj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyFloat"</span><span class="p">,</span>
+                             <span class="s2">"PatternSize"</span><span class="p">,</span>
+                             <span class="s2">"Custom"</span><span class="p">,</span>
+                             <span class="s2">"Defines the size of the hatch pattern."</span><span class="p">)</span>
+            <span class="n">vobj</span><span class="o">.</span><span class="n">PatternSize</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">onChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vobj</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">prop</span> <span class="ow">in</span> <span class="s2">"Pattern"</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_pattern</span><span class="p">(</span><span class="n">vobj</span><span class="o">.</span><span class="n">Pattern</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">prop</span> <span class="ow">in</span> <span class="s2">"PatternSize"</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_size</span><span class="p">(</span><span class="n">vobj</span><span class="o">.</span><span class="n">PatternSize</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_pattern</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">_set_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="o">...</span>
+</pre></div>
+<p>The normal workflow is to first add the object proxy class, for example, <code>CustomObject</code>, and then the viewprovider, for example, <code>ViewProviderCustom</code>. The viewprovider can only be assigned when we have verified that the graphical interface is available, as otherwise the <code>ViewObject</code> attribute doesn't exist, and it will be an error to use this element as input for our class.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">objects.custom</span> <span class="k">as</span> <span class="nn">custom</span>
+<span class="kn">import</span> <span class="nn">views.view_custom</span> <span class="k">as</span> <span class="nn">view_custom</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>
+<span class="n">obj</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::FeaturePython"</span><span class="p">,</span> <span class="s2">"Custom"</span><span class="p">)</span>
+
+<span class="n">custom</span><span class="o">.</span><span class="n">CustomObject</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">App</span><span class="o">.</span><span class="n">GuiUp</span><span class="p">:</span>
+    <span class="n">view_custom</span><span class="o">.</span><span class="n">ViewProviderCustom</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
+</pre></div>
+<h2><span class="mw-headline" id="Custom_icons">Custom icons</span></h2>
+<p>By implementing the <code>getIcon</code> method, you can specify the icon that will be shown in the <a href="Tree_view.html" title="Tree view">tree view</a> in the upper part of the <a href="Combo_view.html" title="Combo view">combo view</a>.
+</p><p>The return value can be the full path to an icon.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">some_path</span> <span class="o">=</span> <span class="s2">"/home/user/.FreeCAD/custom_icons"</span>
+
+<span class="k">class</span> <span class="nc">ViewProviderCustom</span><span class="p">:</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">getIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">some_path</span><span class="p">,</span> <span class="s2">"my_icon.svg"</span><span class="p">)</span>
+</pre></div>
+<p>The relative path to an icon inside a compiled resource file.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">MyModule_rc.py</span>
+
+<span class="k">class</span> <span class="nc">ViewProviderCustom</span><span class="p">:</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">getIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">":/icons/my_icon.svg"</span>
+</pre></div>
+<p>A raw <a class="external text" href="https://en.wikipedia.org/wiki/X_PixMap" rel="nofollow">XPM icon</a>, which is essentially ASCII art.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">MyModule_rc.py</span>
+
+<span class="k">class</span> <span class="nc">ViewProviderCustom</span><span class="p">:</span>
+    <span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">getIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">"""</span>
+<span class="s2">               /* XPM */</span>
+<span class="s2">               static char *Some_icon_xpm[] = {</span>
+<span class="s2">               /* columns rows colors chars-per-pixel */</span>
+<span class="s2">               "16 16 3 1 ",</span>
+<span class="s2">               "  c None",</span>
+<span class="s2">               ". c #D71414",</span>
+<span class="s2">               "+ c #AA1919",</span>
+<span class="s2">               /* pixels */</span>
+<span class="s2">               "                ",</span>
+<span class="s2">               "  +          +  ",</span>
+<span class="s2">               " +.+        +.+ ",</span>
+<span class="s2">               "  +.+      +.+  ",</span>
+<span class="s2">               "   +        +   ",</span>
+<span class="s2">               "      ++++      ",</span>
+<span class="s2">               "     +....+     ",</span>
+<span class="s2">               "     +...++     ",</span>
+<span class="s2">               "     +..+++     ",</span>
+<span class="s2">               "     +.++.+     ",</span>
+<span class="s2">               "      ++++      ",</span>
+<span class="s2">               "   +        +   ",</span>
+<span class="s2">               "  +.+      +.+  ",</span>
+<span class="s2">               " +.+        +.+ ",</span>
+<span class="s2">               "  +          +  ",</span>
+<span class="s2">               "                "</span>
+<span class="s2">               };</span>
+<span class="s2">               """</span>
+</pre></div>
+<p>See various examples in <a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view">Custom icon in tree view</a>.
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub/ru">Power user documentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>FreeCAD scripting:</b> <a href="Python.html" title="Python/ru">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/ru">Introduction to Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/ru">Python scripting tutorial</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/ru">FreeCAD Scripting Basics</a></li></ul>
+<hr/>
+<ul><li><b>Modules:</b> <a href="Builtin_modules.html" title="Builtin modules/ru">Builtin modules</a>, <a href="Units.html" title="Units/ru">Units</a>, <a class="new" href="index.php?title=Quantity_ru&amp;action=edit&amp;redlink=1.html" title="Quantity/ru (page does not exist)">Quantity</a></li>
+<li><b>Workbenches:</b> <a href="Workbench_creation.html" title="Workbench creation/ru">Workbench creation</a>, <a href="Gui_Command.html" title="Gui Command/ru">Gui Commands</a>, <a href="Command.html" title="Command/ru">Commands</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/ru">Installing more workbenches</a></li>
+<li><b>Meshes and Parts:</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/ru">Mesh Scripting</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/ru">Topological data scripting</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/ru">Mesh to Part</a>, <a href="PythonOCC.html" title="PythonOCC/ru">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Parametric objects:</b> <a href="Scripted_objects.html" title="Scripted objects/ru">Scripted objects</a>, <a class="mw-selflink selflink">Viewproviders</a> <small>(<a class="new" href="index.php?title=Custom_icon_in_tree_view_ru&amp;action=edit&amp;redlink=1.html" title="Custom icon in tree view/ru (page does not exist)">Custom icon in tree view</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="Scenegraph.html" title="Scenegraph/ru">Coin (Inventor) scenegraph</a>, <a href="Pivy.html" title="Pivy/ru">Pivy</a></li>
+<li><b>Graphical interface:</b> <a href="Interface_creation.html" title="Interface creation/ru">Interface creation</a>, <a href="Dialog_creation.html" title="Dialog creation/ru">Interface creation completely in Python</a> <small>(<a class="new" href="index.php?title=Dialog_creation_with_various_widgets_ru&amp;action=edit&amp;redlink=1.html" title="Dialog creation with various widgets/ru (page does not exist)">1</a>, <a class="new" href="index.php?title=Dialog_creation_reading_and_writing_files_ru&amp;action=edit&amp;redlink=1.html" title="Dialog creation reading and writing files/ru (page does not exist)">2</a>, <a class="new" href="index.php?title=Dialog_creation_setting_colors_ru&amp;action=edit&amp;redlink=1.html" title="Dialog creation setting colors/ru (page does not exist)">3</a>, <a class="new" href="index.php?title=Dialog_creation_image_and_animated_GIF_ru&amp;action=edit&amp;redlink=1.html" title="Dialog creation image and animated GIF/ru (page does not exist)">4</a>, <a class="new" href="index.php?title=PySide_usage_snippets_ru&amp;action=edit&amp;redlink=1.html" title="PySide usage snippets/ru (page does not exist)">5</a>)</small>, <a href="PySide.html" title="PySide/ru">PySide</a>, PySide examples <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples/ru">beginner</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/ru">intermediate</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples/ru">advanced</a></li>
+<li><b>Macros:</b> <a href="Macros.html" title="Macros/ru">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros/ru">How to install macros</a></li>
+<li><b>Embedding:</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/ru">Embedding FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/ru">Embedding FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Other:</b> <a href="Expressions.html" title="Expressions/ru">Expressions</a>, <a href="Code_snippets.html" title="Code snippets/ru">Code snippets</a>, <a href="Line_drawing_function.html" title="Line drawing function/ru">Line drawing function</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/ru">FreeCAD vector math library</a> <small>(deprecated)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub/ru">User hub</a>, <a href="Power_users_hub.html" title="Power users hub/ru">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub/ru">Developer hub</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211808
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [no‐toc‐conversion]
+CPU time usage: 0.091 seconds
+Real time usage: 0.974 seconds
+Preprocessor visited node count: 194/1000000
+Post‐expand include size: 6573/2097152 bytes
+Template argument size: 4903/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 5/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 11293/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  880.713      1 -total
+ 99.07%  872.552      5 Template:Code
+  0.34%    2.978      1 Template:Powerdocnavi/ru
+  0.16%    1.447      7 Template:Incode
+  0.16%    1.366      1 Template:Navigation_menu_2
+  0.15%    1.349      2 Template:Emphasis
+  0.05%    0.459      1 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:303199-0!canonical and timestamp 20241129211807 and revision id 1212439. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

@@ -1,0 +1,595 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">CAM scripting/fr</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--med" dir="ltr" href="CAM_scripting.html" lang="de" title="CAM skripten (40% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="CAM_scripting.html" lang="en" title="CAM scripting (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="CAM_scripting.html" lang="es" title="Guión de trayectoria (19% translated)">español</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="fr">français</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="CAM_scripting.html" lang="it" title="Script di Path (32% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="CAM_scripting.html" lang="pl" title="Skrypty środowiska CAM (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="CAM_scripting.html" lang="pt-BR" title="Scripting (0% translated)">português do Brasil</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="CAM_scripting.html" lang="ro" title="Path scripting (15% translated)">română</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="CAM_scripting.html" lang="ru" title="Составление скриптов для Path (9% translated)">русский</a></li></ul></div>
+<div class="docnav" style="background-color: #ececef; border: 1px solid #a2a9b1; padding: 2px 10px; margin: 10px 0; line-height: 1; clear: both; overflow: hidden;">
+<div style="margin: 4px 0; float: left;"><span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="16" src="../File/Arrow-left.svg" width="16"/></span></span> <a href="CAM_Preferences.html" title="CAM Preferences/fr">Préférences</a></div>
+<div style="margin: 4px 0; float: right;"><span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="16" src="../File/Freecad.svg" width="16"/></span></span></div>
+<div style="text-align:center"><a href="CAM_Workbench.html" title="CAM Workbench/fr">Atelier CAM</a>
+<span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="24" src="../File/Workbench_CAM.svg" width="24"/></span></span></div>
+</div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Prise_en_main_rapide"><span class="tocnumber">2</span> <span class="toctext">Prise en main rapide</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Le_format_G-code_interne_de_FreeCAD"><span class="tocnumber">3</span> <span class="toctext">Le format G-code interne de FreeCAD</span></a>
+<ul>
+<li class="toclevel-2 tocsection-4"><a href="#Référence_du_G-code"><span class="tocnumber">3.1</span> <span class="toctext">Référence du G-code</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Liste_des_commandes_G-code_actuellement_acceptées"><span class="tocnumber">3.2</span> <span class="toctext">Liste des commandes G-code actuellement acceptées</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-6"><a href="#L'objet_Command"><span class="tocnumber">4</span> <span class="toctext">L'objet Command</span></a></li>
+<li class="toclevel-1 tocsection-7"><a href="#L'objet_Path"><span class="tocnumber">5</span> <span class="toctext">L'objet Path</span></a></li>
+<li class="toclevel-1 tocsection-8"><a href="#La_fonction_Path"><span class="tocnumber">6</span> <span class="toctext">La fonction Path</span></a></li>
+<li class="toclevel-1 tocsection-9"><a href="#Objets_Tool_et_Tooltable"><span class="tocnumber">7</span> <span class="toctext">Objets Tool et Tooltable</span></a>
+<ul>
+<li class="toclevel-2 tocsection-10"><a href="#Script_&lt;=_0.18"><span class="tocnumber">7.1</span> <span class="toctext">Script &lt;= 0.18</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-11"><a href="#Fonctions"><span class="tocnumber">8</span> <span class="toctext">Fonctions</span></a>
+<ul>
+<li class="toclevel-2 tocsection-12"><a href="#La_fonction_Path_Compound"><span class="tocnumber">8.1</span> <span class="toctext">La fonction Path Compound</span></a></li>
+<li class="toclevel-2 tocsection-13"><a href="#La_fonction_Path_Project"><span class="tocnumber">8.2</span> <span class="toctext">La fonction Path Project</span></a></li>
+<li class="toclevel-2 tocsection-14"><a href="#La_fonction_Path_Shape"><span class="tocnumber">8.3</span> <span class="toctext">La fonction Path Shape</span></a></li>
+<li class="toclevel-2 tocsection-15"><a href="#Les_fonctions_Python"><span class="tocnumber">8.4</span> <span class="toctext">Les fonctions Python</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-16"><a href="#Importer_et_exporter_du_G-code"><span class="tocnumber">9</span> <span class="toctext">Importer et exporter du G-code</span></a>
+<ul>
+<li class="toclevel-2 tocsection-17"><a href="#Format_natif"><span class="tocnumber">9.1</span> <span class="toctext">Format natif</span></a></li>
+<li class="toclevel-2 tocsection-18"><a href="#Utiliser_les_scripts_de_pre-_et_post-traitement"><span class="tocnumber">9.2</span> <span class="toctext">Utiliser les scripts de pre- et post-traitement</span></a></li>
+<li class="toclevel-2 tocsection-19"><a href="#Écrire_des_scripts_de_traitement"><span class="tocnumber">9.3</span> <span class="toctext">Écrire des scripts de traitement</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-20"><a href="#Ajouter_toutes_les_faces_d'une_ShapeString_à_la_liste_de_BaseFeature_d'une_opération_ProfileFromFaces"><span class="tocnumber">10</span> <span class="toctext">Ajouter toutes les faces d'une ShapeString à la liste de BaseFeature d'une opération ProfileFromFaces</span></a>
+<ul>
+<li class="toclevel-2 tocsection-21"><a href="#Prérequis"><span class="tocnumber">10.1</span> <span class="toctext">Prérequis</span></a></li>
+<li class="toclevel-2 tocsection-22"><a href="#Le_code"><span class="tocnumber">10.2</span> <span class="toctext">Le code</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>L'atelier CAM propose des outils pour importer, créer, manipuler et exporter des <a class="external text" href="https://fr.wikipedia.org/wiki/Programmation_de_commande_num%C3%A9rique" rel="nofollow">parcours-outils</a> dans FreeCAD. Avec eux, l'utilisateur peut importer, voir et modifier des programmes G-code existants, créer des parcours d'outils depuis des formes 3D et exporter ces parcours en G-code.
+</p><p>L'atelier CAM en est actuellement à ses débuts et n'offre pas toutes les fonctions avancées de certaines alternatives commerciales. Cependant, l'interface de script en Python facilite la modification ou le développement d'outils plus puissants.
+</p><p><span id="Quickstart"></span>
+</p>
+<h2><span class="mw-headline" id="Prise_en_main_rapide">Prise en main rapide</span></h2>
+<p>Les objets Path de FreeCAD sont des commandes de séquences de déplacement. Voici une utilisation typique :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">Path</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c1</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s2">"g1x1"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c2</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s2">"g1y4"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c3</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s2">"g1 x2 y2"</span><span class="p">)</span> <span class="c1"># spaces end newlines are ignored</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Path</span><span class="p">([</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">,</span><span class="n">c3</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Path::Feature"</span><span class="p">,</span><span class="s2">"mypath"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">p</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">toGCode</span><span class="p">())</span>
+</pre></div>
+<p><span id="The_FreeCAD_Internal_G-code_Format"></span>
+</p>
+<h2><span class="mw-headline" id="Le_format_G-code_interne_de_FreeCAD">Le format G-code interne de FreeCAD</span></h2>
+<p>Il est important de comprendre un concept préliminaire. La majeure partie de la mise en œuvre ci-dessous s'appuie fortement sur des commandes de mouvement qui portent les mêmes noms que les commandes du G-code, mais qui ne sont pas censées être proches de la mise en œuvre d'un contrôleur particulier. Des noms tels que "G0" pour représenter un mouvement "rapide" ou "G1" pour représenter un mouvement "d'avance" ont été choisis pour des raisons de performance (économie de fichiers efficace) et pour minimiser le travail nécessaire à la traduction vers/depuis d'autres formats de G-code. Étant donné que le monde de la CNC parle des milliers de dialectes de G-code, un sous-ensemble très simplifié a été choisi. On pourrait décrire le format G-code de FreeCAD comme une forme de G-code "agnostique".
+</p><p>Les données Path sont sauvegardées directement sous cette forme de G-code dans les fichiers .FCStd.
+</p><p>Toutes les traductions vers/depuis les dialectes vers le G-code de FreeCAD sont effectuées par des pré et post-scripts. Cela signifie que si vous voulez travailler avec une machine qui utilise un contrôleur LinuxCNC, Fanuc, Mitusubishi ou HAAS spécifique, vous devrez utiliser (ou écrire s'il n'existe pas) un post-processeur pour ce contrôleur particulier (voir la section "Importer et exporter du G-code" ci-dessous).
+</p><p><span id="G-code_Reference"></span>
+</p>
+<h3><span id="R.C3.A9f.C3.A9rence_du_G-code"></span><span class="mw-headline" id="Référence_du_G-code">Référence du G-code</span></h3>
+<p>Les règles et les lignes directrices suivantes définissent le jeu de G-code employé en interne dans FreeCAD :
+</p>
+<ul><li>Les données en G-code, à l'intérieur des objets Path de FreeCAD, sont séparées en "Commandes". Une commande est définie par un nom de commande, qui doit commencer par G ou M, et (optionnellement) des arguments, qui sont sous la forme Lettre plus un Flottant, par exemple X 0.02 ou Y 3.5 ou F 300. Voici des exemples de commandes typiques en G-code dans FreeCAD :</li></ul>
+<pre>G0 X2.5 Y0 (le nom de commande est G0, les arguments X=2.5 et Y=0)
+</pre>
+<pre>G1 X30 (le nom de commande est G1, le seul argument  X=30)
+</pre>
+<pre>G90 (le nom de commande est G90, sans argument)
+</pre>
+<ul><li>Pour la partie numérique d'une commande G ou M, les deux formes "G1" ou "G01" sont prises en charge.</li>
+<li>Seules les commandes commençant par G ou M sont prises en charge pour le moment.</li>
+<li>Seuls les millimètres sont acceptés pour le moment. G20/G21 sont ignorés.</li>
+<li>Les arguments sont toujours triés par ordre alphabétique. Cela signifie que si vous créez une commande avec "G1 X2 Y4 F300", elle sera stockée sous la forme "G1 F300 X2 Y4"</li>
+<li>Les arguments ne peuvent pas être répétés à l'intérieur d'une même commande. Par exemple, "G1 X1 Y2 X2 Y3" ne fonctionnera pas. Vous devrez le diviser en deux commandes, par exemple : "G1 X1 Y2, G1 X2 Y3"</li>
+<li>Les arguments X, Y, Z, A, B, C sont absolus ou relatifs, selon le mode G90/G91 en cours. La valeur par défaut (si elle n'est pas spécifiée) est absolue.</li>
+<li>I, J, K sont toujours relatifs au dernier point. K peut être omis.</li>
+<li>X, Y ou Z (et A, B, C) peuvent être omis. Dans ce cas, les coordonnées X, Y ou Z précédentes sont conservées.</li>
+<li>Les commandes G-code autres que celles énumérées dans le tableau ci-dessous sont prises en charge, c'est-à-dire qu'elles sont sauvegardées dans les données du chemin (pour autant qu'elles respectent les règles ci-dessus, bien entendu), mais elles ne produiront tout simplement pas de résultat visible à l'écran. Par exemple, vous pouvez ajouter une commande G81, elle sera enregistrée, mais ne sera pas affichée.</li></ul>
+<p><span id="List_of_currently_supported_G-code_commands"></span>
+</p>
+<h3><span id="Liste_des_commandes_G-code_actuellement_accept.C3.A9es"></span><span class="mw-headline" id="Liste_des_commandes_G-code_actuellement_acceptées">Liste des commandes G-code actuellement acceptées</span></h3>
+<table class="wikitable">
+<tbody><tr>
+<th>Commande
+</th>
+<th>Description
+</th>
+<th>Arguments acceptés
+</th>
+<th>Affiché
+</th></tr>
+<tr>
+<td>G0
+</td>
+<td>déplacement rapide
+</td>
+<td>X,Y,Z,A,B,C
+</td>
+<td>Rouge
+</td></tr>
+<tr>
+<td>G1
+</td>
+<td>déplacement normal
+</td>
+<td>X,Y,Z,A,B,C
+</td>
+<td>Vert
+</td></tr>
+<tr>
+<td>G2
+</td>
+<td>arc dans le sens des aiguilles
+</td>
+<td>X,Y,Z,A,B,C,I,J,K
+</td>
+<td>Vert
+</td></tr>
+<tr>
+<td>G3
+</td>
+<td>arc inverse du sens des aiguilles
+</td>
+<td>X,Y,Z,A,B,C,I,J,K
+</td>
+<td>Vert
+</td></tr>
+<tr>
+<td>G81, G82, G83
+</td>
+<td>perçage
+</td>
+<td>X,Y,Z,R,Q
+</td>
+<td>Rouge/Vert
+</td></tr>
+<tr>
+<td>G38.2
+</td>
+<td>déplacement droit de la sonde (utilisé lors du fonctionnement de la sonde)
+</td>
+<td>Z, F
+</td>
+<td>Jaune
+</td></tr>
+<tr>
+<td>G90
+</td>
+<td>coordonnées absolues
+</td>
+<td>
+</td>
+<td>
+</td></tr>
+<tr>
+<td>G91
+</td>
+<td>coordonnées relatives
+</td>
+<td>
+</td>
+<td>
+</td></tr>
+<tr>
+<td>(Message)
+</td>
+<td>commentaire
+</td>
+<td>
+</td>
+<td>
+</td></tr></tbody></table>
+<p><span id="The_Command_object"></span>
+</p>
+<h2><span id="L.27objet_Command"></span><span class="mw-headline" id="L'objet_Command">L'objet Command</span></h2>
+<p>L'objet Command représente une commande G-code. Il a trois attributs : Nom, Paramètres et Placement, ainsi que deux méthodes : toGCode() et setFromGCode(). En interne, il ne contient qu'un nom et un dictionnaire de paramètres. La suite (placement et G-code) est interprétée depuis/vers ces données.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">Path</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">Command</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span>
+<span class="n">Command</span>  <span class="p">(</span> <span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">"G1"</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span>
+<span class="n">Command</span> <span class="n">G1</span> <span class="p">(</span> <span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">Parameters</span><span class="o">=</span> <span class="p">{</span><span class="s2">"X"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">"Y"</span><span class="p">:</span><span class="mi">0</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span>
+<span class="n">Command</span> <span class="n">G1</span> <span class="p">(</span> <span class="n">X</span><span class="p">:</span><span class="mi">1</span> <span class="n">Y</span><span class="p">:</span><span class="mi">0</span> <span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">Parameters</span>
+<span class="p">{</span><span class="s1">'Y'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">'X'</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">Parameters</span><span class="o">=</span> <span class="p">{</span><span class="s2">"X"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">"Y"</span><span class="p">:</span><span class="mf">0.5</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span>
+<span class="n">Command</span> <span class="n">G1</span> <span class="p">(</span> <span class="n">X</span><span class="p">:</span><span class="mi">1</span> <span class="n">Y</span><span class="p">:</span><span class="mf">0.5</span> <span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">toGCode</span><span class="p">()</span>
+<span class="s1">'G1X1Y0.5'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c2</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s2">"G2"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c2</span>
+<span class="n">Command</span> <span class="n">G2</span> <span class="p">(</span> <span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c3</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s2">"G1"</span><span class="p">,{</span><span class="s2">"X"</span><span class="p">:</span><span class="mi">34</span><span class="p">,</span><span class="s2">"Y"</span><span class="p">:</span><span class="mf">1.2</span><span class="p">})</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c3</span>
+<span class="n">Command</span> <span class="n">G1</span> <span class="p">(</span> <span class="n">X</span><span class="p">:</span><span class="mi">34</span> <span class="n">Y</span><span class="p">:</span><span class="mf">1.2</span> <span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c3</span><span class="o">.</span><span class="n">Placement</span>
+<span class="n">Placement</span> <span class="p">[</span><span class="n">Pos</span><span class="o">=</span><span class="p">(</span><span class="mi">34</span><span class="p">,</span><span class="mf">1.2</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">Yaw</span><span class="o">-</span><span class="n">Pitch</span><span class="o">-</span><span class="n">Roll</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c3</span><span class="o">.</span><span class="n">toGCode</span><span class="p">()</span>
+<span class="s1">'G1X34Y1.2'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c3</span><span class="o">.</span><span class="n">setFromGCode</span><span class="p">(</span><span class="s2">"G1X1Y0"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c3</span>
+<span class="n">Command</span> <span class="n">G1</span> <span class="p">[</span> <span class="n">X</span><span class="p">:</span><span class="mi">1</span> <span class="n">Y</span><span class="p">:</span><span class="mi">0</span> <span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c4</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s2">"G1X4Y5"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c4</span>
+<span class="n">Command</span> <span class="n">G1</span> <span class="p">[</span> <span class="n">X</span><span class="p">:</span><span class="mi">4</span> <span class="n">Y</span><span class="p">:</span><span class="mi">5</span> <span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p1</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Placement</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p1</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p1</span>
+<span class="n">Placement</span> <span class="p">[</span><span class="n">Pos</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">Yaw</span><span class="o">-</span><span class="n">Pitch</span><span class="o">-</span><span class="n">Roll</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c5</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s2">"g1"</span><span class="p">,</span><span class="n">p1</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c5</span>
+<span class="n">Command</span> <span class="n">G1</span> <span class="p">[</span> <span class="n">X</span><span class="p">:</span><span class="mi">3</span> <span class="n">Y</span><span class="p">:</span><span class="mi">2</span> <span class="n">Z</span><span class="p">:</span><span class="mi">1</span> <span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p2</span><span class="o">=</span><span class="n">App</span><span class="o">.</span><span class="n">Placement</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p2</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c5</span>
+<span class="n">Command</span> <span class="n">G1</span> <span class="p">[</span> <span class="n">X</span><span class="p">:</span><span class="mi">3</span> <span class="n">Y</span><span class="p">:</span><span class="mi">2</span> <span class="n">Z</span><span class="p">:</span><span class="mi">1</span> <span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c5</span><span class="o">.</span><span class="n">Placement</span><span class="o">=</span><span class="n">p2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c5</span>
+<span class="n">Command</span> <span class="n">G1</span> <span class="p">[</span> <span class="n">X</span><span class="p">:</span><span class="mi">5</span> <span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c5</span><span class="o">.</span><span class="n">x</span>
+<span class="mf">5.0</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c5</span><span class="o">.</span><span class="n">x</span><span class="o">=</span><span class="mi">10</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c5</span>
+<span class="n">Command</span> <span class="n">G1</span> <span class="p">[</span> <span class="n">X</span><span class="p">:</span><span class="mi">10</span> <span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c5</span><span class="o">.</span><span class="n">y</span><span class="o">=</span><span class="mi">2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c5</span>
+<span class="n">Command</span> <span class="n">G1</span> <span class="p">[</span> <span class="n">X</span><span class="p">:</span><span class="mi">10</span> <span class="n">Y</span><span class="p">:</span><span class="mi">2</span> <span class="p">]</span>
+</pre></div>
+<p><span id="The_Path_object"></span>
+</p>
+<h2><span id="L.27objet_Path"></span><span class="mw-headline" id="L'objet_Path">L'objet Path</span></h2>
+<p>L'objet Path contient une liste de commandes.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">Path</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c1</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s2">"g1"</span><span class="p">,{</span><span class="s2">"x"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">"y"</span><span class="p">:</span><span class="mi">0</span><span class="p">})</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">c2</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="s2">"g1"</span><span class="p">,{</span><span class="s2">"x"</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">"y"</span><span class="p">:</span><span class="mi">2</span><span class="p">})</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">Path</span><span class="p">([</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p</span>
+<span class="n">Path</span> <span class="p">[</span> <span class="n">size</span><span class="p">:</span><span class="mi">2</span> <span class="n">length</span><span class="p">:</span><span class="mi">3</span> <span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">Commands</span>
+<span class="p">[</span><span class="n">Command</span> <span class="n">G1</span> <span class="p">[</span> <span class="n">X</span><span class="p">:</span><span class="mi">1</span> <span class="n">Y</span><span class="p">:</span><span class="mi">0</span> <span class="p">],</span> <span class="n">Command</span> <span class="n">G1</span> <span class="p">[</span> <span class="n">X</span><span class="p">:</span><span class="mi">0</span> <span class="n">Y</span><span class="p">:</span><span class="mi">2</span> <span class="p">]]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">Length</span>
+<span class="mf">3.0</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">addCommands</span><span class="p">(</span><span class="n">c1</span><span class="p">)</span>
+<span class="n">Path</span> <span class="p">[</span> <span class="n">size</span><span class="p">:</span><span class="mi">3</span> <span class="n">length</span><span class="p">:</span><span class="mi">4</span> <span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">toGCode</span><span class="p">()</span>
+<span class="s1">'G1X1G1Y2G1X1'</span>
+
+<span class="n">lines</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">G0X-0.5905Y-0.3937S3000M03</span>
+<span class="s2">G0Z0.125</span>
+<span class="s2">G1Z-0.004F3</span>
+<span class="s2">G1X0.9842Y-0.3937F14.17</span>
+<span class="s2">G1X0.9842Y0.433</span>
+<span class="s2">G1X-0.5905Y0.433</span>
+<span class="s2">G1X-0.5905Y-0.3937</span>
+<span class="s2">G0Z0.5</span>
+<span class="s2">"""</span>
+
+<span class="n">slines</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Path</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">slines</span><span class="p">:</span>
+    <span class="n">p</span><span class="o">.</span><span class="n">addCommands</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">Command</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+
+<span class="n">o</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Path::Feature"</span><span class="p">,</span><span class="s2">"mypath"</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">p</span>
+
+<span class="c1"># but you can also create a path directly form a piece of G-code.</span>
+<span class="c1"># The commands will be created automatically:</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Path</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">setFromGCode</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+</pre></div>
+<p>En simplifiant, un objet Path peut aussi être créé directement depuis une séquence G-code complète. Elle sera automatiquement divisée en séquences de commandes.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"G0 X2 Y2 G1 X0 Y2"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p</span>
+<span class="n">Path</span> <span class="p">[</span> <span class="n">size</span><span class="p">:</span><span class="mi">2</span> <span class="n">length</span><span class="p">:</span><span class="mi">2</span> <span class="p">]</span>
+</pre></div>
+<p><span id="The_Path_feature"></span>
+</p>
+<h2><span class="mw-headline" id="La_fonction_Path">La fonction Path</span></h2>
+<p>La fonction Path est un objet document de FreeCAD, qui contient un chemin et le présente en une vue 3D.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="n">pf</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Path::Feature"</span><span class="p">,</span><span class="s2">"mypath"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">pf</span>
+<span class="o">&lt;</span><span class="n">Document</span> <span class="nb">object</span><span class="o">&gt;</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">pf</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">p</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">pf</span><span class="o">.</span><span class="n">Path</span>
+<span class="n">Path</span> <span class="p">[</span> <span class="n">size</span><span class="p">:</span><span class="mi">2</span> <span class="n">length</span><span class="p">:</span><span class="mi">2</span> <span class="p">]</span>
+</pre></div>
+<p>La fonction Path contient aussi une propriété de Placement. Changer la valeur de ce placement modifiera la position dans la vue 3D, bien que l'information de Path elle-même ne soit pas modifiée. La transformation est purement visuelle. Cela vous permet, par exemple, de créer un parcours autour d'une face qui a une orientation particulière sur votre modèle, qui n'aura pas la même orientation que la matière première que vous positionnerez sur votre CNC.
+</p><p>Néanmoins, Path Compounds peut utiliser le Placement de ses enfants (voir ci-dessous).
+</p><p><span id="The_Tool_and_Tooltable_objects"></span>
+</p>
+<h2><span class="mw-headline" id="Objets_Tool_et_Tooltable">Objets Tool et Tooltable</span></h2>
+<p><b>REMARQUE :</b> ce type d'utilisation des outils est déprécié à partir de la version officielle 0.19. Dans la version 0.19, le nouveau système d'outils ToolBit a été mis en place pour remplacer cet ancien système. Par conséquent, le codage a changé par rapport à ce qui est représenté ci-dessous. Veuillez consulter la page <a href="CAM_Tools.html" title="CAM Tools/fr">CAM Outils</a> pour plus d'informations.
+</p><p><span id="Scripting_&lt;=_0.18"></span>
+</p>
+<h3><span id="Script_.3C.3D_0.18"></span><span class="mw-headline" id="Script_&lt;=_0.18">Script &lt;= 0.18</span></h3>
+<p>L'objet Tool contient les définitions d'un outil de CNC. L'objet Tooltable contient, lui, une liste ordonnée d'outils. Les Tooltables sont reliées comme propriété dans les caractérisques de Path Project et peuvent donc être éditées par l'interface graphique en double-cliquant sur le bouton « Edit tooltable » de l'arborescence d'un projet dans les tâches qui s'ouvrent.
+</p><p>Les tables d'outils peuvent être importées depuis les .xml de FreeCAD et les formats .tooltable de HeeksCad et exportés au format .xml de FreeCAD depuis cette interface.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">Path</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t1</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">Tool</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t1</span>
+<span class="n">Tool</span> <span class="n">Default</span> <span class="n">tool</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t1</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="s2">"12.7mm Drill Bit"</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t1</span>
+<span class="n">Tool</span> <span class="mf">12.7</span><span class="n">mm</span> <span class="n">Drill</span> <span class="n">Bit</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t1</span><span class="o">.</span><span class="n">ToolType</span>
+<span class="s1">'Undefined'</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t1</span><span class="o">.</span><span class="n">ToolType</span> <span class="o">=</span> <span class="s2">"Drill"</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t1</span><span class="o">.</span><span class="n">Diameter</span><span class="o">=</span> <span class="mf">12.7</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t1</span><span class="o">.</span><span class="n">LengthOffset</span> <span class="o">=</span> <span class="mi">127</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t1</span><span class="o">.</span><span class="n">CuttingEdgeAngle</span> <span class="o">=</span> <span class="mi">59</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t1</span><span class="o">.</span><span class="n">CuttingEdgeHeight</span> <span class="o">=</span> <span class="mf">50.8</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t2</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Tool</span><span class="p">(</span><span class="s2">"my other tool"</span><span class="p">,</span><span class="n">tooltype</span><span class="o">=</span><span class="s2">"EndMill"</span><span class="p">,</span><span class="n">diameter</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t2</span>
+<span class="n">Tool</span> <span class="n">my</span> <span class="n">other</span> <span class="n">tool</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">t2</span><span class="o">.</span><span class="n">Diameter</span>
+<span class="mf">10.0</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">table</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Tooltable</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">table</span>
+<span class="n">Tooltable</span> <span class="n">containing</span> <span class="mi">0</span> <span class="n">tools</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">table</span><span class="o">.</span><span class="n">addTools</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
+<span class="n">Tooltable</span> <span class="n">containing</span> <span class="mi">1</span> <span class="n">tools</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">table</span><span class="o">.</span><span class="n">addTools</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+<span class="n">Tooltable</span> <span class="n">containing</span> <span class="mi">2</span> <span class="n">tools</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">table</span><span class="o">.</span><span class="n">Tools</span>
+<span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="n">Tool</span> <span class="mf">12.7</span><span class="n">mm</span> <span class="n">Drill</span> <span class="n">Bit</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Tool</span> <span class="n">my</span> <span class="n">other</span> <span class="n">tool</span><span class="p">}</span>
+<span class="o">&gt;&gt;&gt;</span>
+</pre></div>
+<p><span id="Features"></span>
+</p>
+<h2><span class="mw-headline" id="Fonctions">Fonctions</span></h2>
+<p><span id="The_Path_Compound_feature"></span>
+</p>
+<h3><span class="mw-headline" id="La_fonction_Path_Compound">La fonction Path Compound</span></h3>
+<p>L'objectif de cette fonction est d'assembler un ou plusieurs parcours d'outils et l'(les) associer à une table d'outils. La fonction Compound se comporte aussi comme un groupe standard FreeCAD dont vous pouvez y ajouter ou y enlever les objets directement depuis la vue en arborescence. Vous pouvez aussi réordonner les items en double-cliquant sur l'objet Compound de la vue en arborescence et réordonner ses élements dans la vue des tâches qui s'ouvre.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">Path</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p1</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"G1X1"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o1</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Path::Feature"</span><span class="p">,</span><span class="s2">"path1"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o1</span><span class="o">.</span><span class="n">Path</span><span class="o">=</span><span class="n">p1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="s2">"G1Y1"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o2</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Path::Feature"</span><span class="p">,</span><span class="s2">"path2"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o2</span><span class="o">.</span><span class="n">Path</span><span class="o">=</span><span class="n">p2</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o3</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Path::FeatureCompound"</span><span class="p">,</span><span class="s2">"compound"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o3</span><span class="o">.</span><span class="n">Group</span><span class="o">=</span><span class="p">[</span><span class="n">o1</span><span class="p">,</span><span class="n">o2</span><span class="p">]</span>
+</pre></div>
+<p>Une fonction importante de Path Compounds est la possibilité de prendre en compte ou non le Placement des parcours enfants en cochant leur propriété UsePlacements à True ou False. Sans cela, les données Path des enfants seront simplement ajoutées séquentiellement. Si True, chaque commande des parcours enfants, s'ils contiennent des informations de position (G0, G1, etc..), seront d'abord transformés par Placement avant d'être ajoutés.
+</p><p>En créant un composant avec un seul parcours enfant, vous pouvez donc de rendre le Placement du parcours enfant "réel" (il affecte les données Path).
+</p><p><span id="The_Path_Project_feature"></span>
+</p>
+<h3><span class="mw-headline" id="La_fonction_Path_Project">La fonction Path Project</span></h3>
+<p>Le projet Path est une sorte d'extension de Compound, qui possède quelques propriétés liées à la machine telle que tooltable. Il a principalement été créé pour être le type d'objet à exporter en G-code une fois que la totalité de l'initialisation du chemin est prête. L'objet Project est maintenant codé en Python, d'où un mécanisme de création un peu différent :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">PathScripts</span> <span class="kn">import</span> <span class="n">PathProject</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o4</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Path::FeatureCompoundPython"</span><span class="p">,</span><span class="s2">"prj"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">PathProject</span><span class="o">.</span><span class="n">ObjectPathProject</span><span class="p">(</span><span class="n">o4</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o4</span><span class="o">.</span><span class="n">Group</span> <span class="o">=</span> <span class="p">[</span><span class="n">o3</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o4</span><span class="o">.</span><span class="n">Tooltable</span>
+<span class="n">Tooltable</span> <span class="n">containing</span> <span class="mi">0</span> <span class="n">tools</span>
+</pre></div>
+<p>Le module Path propose aussi un éditeur graphique de la table d'outils qui peut être appelé depuis Python, en lui donnant un objet qui possède une propriété ToolTable :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">from</span> <span class="nn">PathScripts</span> <span class="kn">import</span> <span class="n">TooltableEditor</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">TooltableEditor</span><span class="o">.</span><span class="n">edit</span><span class="p">(</span><span class="n">o4</span><span class="p">)</span>
+</pre></div>
+<p><span id="Getting_Path_from_Shape"></span>
+</p>
+<h3><span class="mw-headline" id="La_fonction_Path_Shape">La fonction Path Shape</span></h3>
+<p>Attribuez la forme de la polyligne à un objet Path normal, en utilisant la fonction de script Path.fromShape() (ou la fonction plus puissante Path.fromShapes()). En donnant en paramètre un objet polyligne  de Part, son parcours sera automatiquement calculée à partir de la forme. Notez que dans ce cas, le placement est automatiquement fixé au premier point de la polyligne et l'objet n'est donc plus déplaçable en changeant son placement. Pour le déplacer, il faut déplacer la forme sous-jacente elle-même.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">Part</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">Path</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">v1</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">v2</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">v3</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">v4</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">wire</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">makePolygon</span><span class="p">([</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">v3</span><span class="p">,</span><span class="n">v4</span><span class="p">])</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Path::Feature"</span><span class="p">,</span><span class="s2">"myPath2"</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">o</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">fromShape</span><span class="p">(</span><span class="n">wire</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">p</span> <span class="o">=</span>  <span class="n">o</span><span class="o">.</span><span class="n">Path</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">toGCode</span><span class="p">())</span>
+</pre></div>
+<p><span id="Python_features"></span>
+</p>
+<h3><span class="mw-headline" id="Les_fonctions_Python">Les fonctions Python</span></h3>
+<p>Les fonctions Path::Feature et Path::FeatureShape ont toutes deux une version Python, respectivement nommée Path::FeaturePython et Path::FeatureShapePython, qui peuvent être utilisées dans le code Python pour créer des objets paramétriques plus avancés dérivés de ces fonctions.
+</p><p><span id="Importing_and_exporting_G-code"></span>
+</p>
+<h2><span class="mw-headline" id="Importer_et_exporter_du_G-code">Importer et exporter du G-code</span></h2>
+<p><span id="Native_format"></span>
+</p>
+<h3><span class="mw-headline" id="Format_natif">Format natif</span></h3>
+<p>Les fichiers G-code peuvent être importés et exportés directement via l'interface graphique, en utilisant les éléments de menu "ouvrir", "insérer" ou "exporter". Après avoir saisi le nom du fichier, une boîte de dialogue apparaît pour demander quel script de traitement doit être utilisé. Il est également possible de le faire à partir de Python :
+</p><p>Les informations sur les parcours sont stockées dans des objets Path en utilisant un sous-ensemble de G-code décrit dans la section "Format interne de G-code de FreeCAD" ci-dessus. Ce sous-ensemble peut être importé ou exporté "tel quel", ou converti en/à partir d'une version particulière de G-code adaptée à votre machine.
+</p><p>Si vous avez un programme en G-code très simple et standard, qui respecte les règles décrites dans la section "Format interne du G-code de FreeCAD" ci-dessus, par exemple le boomerang de <a class="external text" href="https://www.cnccookbook.com/g-code-examples-files/" rel="nofollow">cnccookbook</a>, il peut être importé directement dans un objet Path, sans traduction (cela équivaut à utiliser l'option "Aucun" de la fenêtre de dialogue GUI) :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Path</span>
+<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"/path/to/boomerangv4.ncc"</span><span class="p">)</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="n">o</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Path::Feature"</span><span class="p">,</span><span class="s2">"boomerang"</span><span class="p">)</span>
+<span class="n">o</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">p</span>
+</pre></div>
+<p>De la même manière, vous pouvez obtenir les informations sur le chemin d'accès sous forme de G-code "agnostique" et les stocker manuellement dans un fichier :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">o</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">toGCode</span><span class="p">()</span>
+<span class="nb">print</span> <span class="n">text</span>
+<span class="n">myfile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"/path/to/newfile.ngc"</span><span class="p">)</span>
+<span class="n">myfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="n">myfile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+<p>Si vous avez besoin d'un résultat différent, vous devrez convertir ce G-code agnostique dans un format adapté à votre machine. C'est le travail des scripts de post-traitement.
+</p><p><span id="Using_pre-_and_post-processing_scripts"></span>
+</p>
+<h3><span class="mw-headline" id="Utiliser_les_scripts_de_pre-_et_post-traitement">Utiliser les scripts de pre- et post-traitement</span></h3>
+<p>Si vous avez un fichier G-code écrit pour une machine particulière, qui n'est pas conforme aux règles internes utilisées par FreeCAD, décrites dans la section "Format G-code interne de FreeCAD" ci-dessus, il peut ne pas être importé et/ou rendu correctement dans la vue 3D. Pour remédier à cela, vous devez utiliser un script de prétraitement, qui convertira le format spécifique de votre machine au format FreeCAD.
+</p><p>Si vous connaissez le nom du script de prétraitement à utiliser, vous pouvez importer votre fichier en l'utilisant, à partir de la console Python comme ceci :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">example_pre</span>
+<span class="n">example_pre</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s2">"/path/to/myfile.ncc"</span><span class="p">,</span><span class="s2">"DocumentName"</span><span class="p">)</span>
+</pre></div>
+<p>De la même manière, vous pouvez convertir un objet Path en G-code, en utilisant un script post_processeur comme celui-ci :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">example_post</span>
+<span class="n">example_post</span><span class="o">.</span><span class="n">export</span> <span class="p">(</span><span class="n">myObjectName</span><span class="p">,</span><span class="s2">"/path/to/outputFile.ncc"</span><span class="p">)</span>
+</pre></div>
+<p><span id="Writing_processing_scripts"></span>
+</p>
+<h3><span id=".C3.89crire_des_scripts_de_traitement"></span><span class="mw-headline" id="Écrire_des_scripts_de_traitement">Écrire des scripts de traitement</span></h3>
+<p>Les scripts de pré- et post-traitement se comportent comme d'autres importateurs/exportateurs habituels de FreeCAD. Lors du choix d'un script de pré/post traitement depuis l'invite, le processus d'import/export sera redirigé vers le script spécifique donné. Les scripts de pré-traitement doivent contenir au moins des méthodes open(filename) et insert(filename,docname).  Les scripts de post-traitement doivent implémenter export(objectslist,filename).
+</p><p>Les scripts sont placés soit dans le dossier Mod/Path/Path/Post/scripts soit dans le répertoire du chemin de la macro de l'utilisateur. Vous pouvez leur donner le nom que vous voulez, mais par convention, et pour être pris en compte par le dialogue de l'interface graphique, les noms des scripts de prétraitement doivent se terminer par "_pre", ceux des scripts de post-traitement par "_post" (assurez-vous d'utiliser le trait de soulignement, et non le trait d'union, sinon Python ne pourra pas l'importer). Ceci est un exemple de préprocesseur très, très simple. Des exemples plus complexes se trouvent dans le dossier Mod/Path/Path/Post/scripts :
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="n">gfile</span> <span class="o">=</span> <span class="n">__builtins__</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="n">inputstring</span> <span class="o">=</span> <span class="n">gfile</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="c1"># the whole gcode program will come in as one string,</span>
+    <span class="c1"># for example: "G0 X1 Y1\nG1 X2 Y2"</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="c1"># we add a comment</span>
+    <span class="n">output</span> <span class="o">+=</span> <span class="s2">"(This is my first parsed output!)</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="c1"># we split the input string by lines</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">inputstring</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">output</span> <span class="o">+=</span> <span class="n">line</span>
+        <span class="c1"># we must insert the "end of line" character again</span>
+        <span class="c1"># because the split removed it</span>
+        <span class="n">output</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+    <span class="c1"># another comment</span>
+    <span class="n">output</span> <span class="o">+=</span> <span class="s2">"(End of program)"</span>
+    <span class="kn">import</span> <span class="nn">Path</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="n">myPath</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Path::Feature"</span><span class="p">,</span><span class="s2">"Import"</span><span class="p">)</span>
+    <span class="n">myPath</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">p</span>
+    <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+</pre></div>
+<p>Les pré et post-processeurs fonctionnent exactement de la même manière. Ils font simplement le contraire : les pré-scripts convertissent du G-code spécifique au G-code "agnostique" de FreeCAD, tandis que les post-scripts convertissent du G-code "agnostique" de FreeCAD au G-code spécifique à la machine.
+</p><p><span id="Adding_all_faces_of_a_ShapeString_to_the_BaseFeature's_list_of_a_ProfileFromFaces_operation"></span>
+</p>
+<h2><span id="Ajouter_toutes_les_faces_d.27une_ShapeString_.C3.A0_la_liste_de_BaseFeature_d.27une_op.C3.A9ration_ProfileFromFaces"></span><span class="mw-headline" id="Ajouter_toutes_les_faces_d'une_ShapeString_à_la_liste_de_BaseFeature_d'une_opération_ProfileFromFaces">Ajouter toutes les faces d'une ShapeString à la liste de BaseFeature d'une opération ProfileFromFaces</span></h2>
+<p>Cet exemple est basé sur une <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=13&amp;t=33310&amp;p=279991#p279959" rel="nofollow">discussion sur le forum germanophone</a>.
+</p><p><span id="Prerequisites"></span>
+</p>
+<h3><span id="Pr.C3.A9requis"></span><span class="mw-headline" id="Prérequis">Prérequis</span></h3>
+<ul><li>Créer un solide avec ShapeString comme Cutout</li>
+<li>Créer une tâche en utilisant ce solide comme son BaseObject</li>
+<li>Créez une opération ProfileFromFaces nommée "Profile_Faces" avec une BaseGeometry vide.</li></ul>
+<p><span id="The_code"></span>
+</p>
+<h3><span class="mw-headline" id="Le_code">Le code</span></h3>
+<p>Le code suivant va ensuite ajouter toutes les faces de ShapeString et créer les chemins:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span>
+<span class="n">list_of_all_element_faces</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">face</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">ShapeString</span><span class="o">.</span><span class="n">Shape</span><span class="o">.</span><span class="n">Faces</span><span class="p">):</span>
+    <span class="n">list_of_all_element_faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">'Face'</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="n">doc</span><span class="o">.</span><span class="n">Profile_Faces</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="p">[(</span><span class="n">doc</span><span class="o">.</span><span class="n">ShapeString</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">list_of_all_element_faces</span><span class="p">))]</span>
+<span class="n">doc</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+</pre></div>
+<p><br/>
+</p>
+<div class="docnav" style="background-color: #ececef; border: 1px solid #a2a9b1; padding: 2px 10px; margin: 10px 0; line-height: 1; clear: both; overflow: hidden;">
+<div style="margin: 4px 0; float: left;"><span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="16" src="../File/Arrow-left.svg" width="16"/></span></span> <a href="CAM_Preferences.html" title="CAM Preferences/fr">Préférences</a></div>
+<div style="margin: 4px 0; float: right;"><span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="16" src="../File/Freecad.svg" width="16"/></span></span></div>
+<div style="text-align:center"><a href="CAM_Workbench.html" title="CAM Workbench/fr">Atelier CAM</a>
+<span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="24" src="../File/Workbench_CAM.svg" width="24"/></span></span></div>
+</div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_CAM.svg"><img decoding="async" height="24" src="../File/Workbench_CAM.svg" width="24"/></a></span> <a href="CAM_Workbench.html" title="CAM Workbench/fr">CAM</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Commandes du projet :</b> <a href="CAM_Job.html" title="CAM Job/fr">Tâche</a>, <a href="CAM_Post.html" title="CAM Post/fr">Post-traitement</a>, <a href="CAM_Sanity.html" title="CAM Sanity/fr">Rechercher des erreurs</a>, <a href="CAM_ExportTemplate.html" title="CAM ExportTemplate/fr">Exporter un modèle</a></li></ul>
+<hr/>
+<ul><li><b>Commandes d'outils :</b> <a href="CAM_Inspect.html" title="CAM Inspect/fr">Inspecter des commandes</a>, <a href="CAM_Simulator.html" title="CAM Simulator/fr">Simulateur FAO</a>, <a href="CAM_SelectLoop.html" title="CAM SelectLoop/fr">Terminer une boucle</a>, <a href="CAM_OpActiveToggle.html" title="CAM OpActiveToggle/fr">Activer une opération</a>, <a href="CAM_ToolBitLibraryOpen.html" title="CAM ToolBitLibraryOpen/fr">Gestionnaire des outils coupants</a>, <a href="CAM_ToolBitDock.html" title="CAM ToolBitDock/fr">Sélecteur d'outils coupants</a></li></ul>
+<hr/>
+<ul><li><b>Opérations de base :</b> <a href="CAM_Profile.html" title="CAM Profile/fr">Contournage</a>, <a href="CAM_Pocket_Shape.html" title="CAM Pocket Shape/fr">Poche</a>, <a href="CAM_Drilling.html" title="CAM Drilling/fr">Perçage</a>, <a href="CAM_MillFace.html" title="CAM MillFace/fr">Surfaçage</a>, <a href="CAM_Helix.html" title="CAM Helix/fr">Hélice</a>, <a href="CAM_Adaptive.html" title="CAM Adaptive/fr">Adaptatif</a>, <a href="CAM_Slot.html" title="CAM Slot/fr">Rainure</a>, <a href="CAM_Engrave.html" title="CAM Engrave/fr">Gravure</a>, <a href="CAM_Deburr.html" title="CAM Deburr/fr">Ébavurage</a>, <a href="CAM_Vcarve.html" title="CAM Vcarve/fr">Gravure en V</a></li></ul>
+<hr/>
+<ul><li><b>Opérations 3D :</b> <a href="CAM_Pocket_3D.html" title="CAM Pocket 3D/fr">Évidement 3D</a>, <a href="CAM_Surface.html" title="CAM Surface/fr">Surface 3D</a>, <a href="CAM_Waterline.html" title="CAM Waterline/fr">Lignes de niveau</a></li></ul>
+<hr/>
+<ul><li><b>Finitions de parcours :</b> <a href="CAM_DressupAxisMap.html" title="CAM DressupAxisMap/fr">Assigner un axe</a>, <a href="CAM_DressupPathBoundary.html" title="CAM DressupPathBoundary/fr">Limitation d'une zone</a>, <a href="CAM_DressupDogbone.html" title="CAM DressupDogbone/fr">Dégagement des angles</a>, <a href="CAM_DressupDragKnife.html" title="CAM DressupDragKnife/fr">Lame rotative</a>, <a href="CAM_DressupLeadInOut.html" title="CAM DressupLeadInOut/fr">Entrée/sortie</a>, <a href="CAM_DressupRampEntry.html" title="CAM DressupRampEntry/fr">Rampe d'entrée</a>, <a href="CAM_DressupTag.html" title="CAM DressupTag/fr">Attache</a>, <a href="CAM_DressupZCorrect.html" title="CAM DressupZCorrect/fr">Correction en Z</a></li></ul>
+<hr/>
+<ul><li><b>Commandes supplémentaires :</b> <a href="CAM_Fixture.html" title="CAM Fixture/fr">Fixation</a>, <a href="CAM_Comment.html" title="CAM Comment/fr">Commentaire</a>, <a href="CAM_Stop.html" title="CAM Stop/fr">Arrêter</a>, <a href="CAM_Custom.html" title="CAM Custom/fr">Personnaliser</a>, <a href="CAM_Probe.html" title="CAM Probe/fr">Sonde</a>, <a href="CAM_Shape.html" title="CAM Shape/fr">Parcours à partir de formes</a></li></ul>
+<hr/>
+<ul><li><b>Modification du parcours d'usinage :</b> <a href="CAM_Copy.html" title="CAM Copy/fr">Copie d'opération</a>, <a href="CAM_Array.html" title="CAM Array/fr">Réseau</a>, <a href="CAM_SimpleCopy.html" title="CAM SimpleCopy/fr">Copie simple</a></li></ul>
+<hr/>
+<ul><li><b>Opérations spécialisées :</b> <a href="CAM_ThreadMilling.html" title="CAM ThreadMilling/fr">Fraisage de filets</a></li></ul>
+<hr/>
+<ul><li><b>Divers :</b> <a href="CAM_Area.html" title="CAM Area/fr">Surface</a>, <a href="CAM_Area_Workplane.html" title="CAM Area Workplane/fr">Plan de travail</a></li></ul>
+<hr/>
+<ul><li><b>Architecture des outils coupants :</b> <a href="CAM_Tools.html" title="CAM Tools/fr">Outils</a>, <a href="CAM_ToolShape.html" title="CAM ToolShape/fr">Forme d'outil</a>, <a href="CAM_ToolBit.html" title="CAM ToolBit/fr">Outil coupant</a>, <a href="CAM_ToolBit_Library.html" title="CAM ToolBit Library/fr">Bibliothèque des outils coupants</a>, <a href="CAM_ToolController.html" title="CAM ToolController/fr">Contrôleur d'outil</a></li></ul>
+<hr/>
+<ul><li><b>Supplémentaires :</b> <a href="CAM_Preferences.html" title="CAM Preferences/fr">Préférences</a>,  <a class="mw-selflink selflink">Script</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Scripts FreeCAD :</b> <a href="Python.html" title="Python/fr">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/fr">Introduction à Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/fr">Tutoriel sur les scripts Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/fr">Débuter avec les scripts</a></li></ul>
+<hr/>
+<ul><li><b>Modules :</b> <a href="Builtin_modules.html" title="Builtin modules/fr">Modules intégrés</a>, <a href="Units.html" title="Units/fr">Unités</a>, <a href="Quantity.html" title="Quantity/fr">Quantity</a></li>
+<li><b>Ateliers :</b> <a href="Workbench_creation.html" title="Workbench creation/fr">Création d'atelier</a>, <a href="Gui_Command.html" title="Gui Command/fr">Commands Gui</a>, <a href="Command.html" title="Command/fr">Les commandes</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/fr">Installer des ateliers supplémentaires</a></li>
+<li><b>Maillages et objets Parts :</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/fr">Scripts Mesh</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/fr">Script de données topologiques</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/fr">Conversion objet Mesh en Part</a>, <a href="PythonOCC.html" title="PythonOCC/fr">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Objets paramétriques :</b> <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a>, <a href="Viewprovider.html" title="Viewprovider/fr">Viewproviders</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view/fr">Icône personnalisée dans l'arborescence</a>)</small></li>
+<li><b>Scénographie :</b> <a href="Scenegraph.html" title="Scenegraph/fr">Graphe de scène Coin (Inventor)</a>, <a href="Pivy.html" title="Pivy/fr">Pivy</a></li>
+<li><b>Interface graphique :</b> <a href="Interface_creation.html" title="Interface creation/fr">Création d'interface</a>, <a href="Dialog_creation.html" title="Dialog creation/fr">Création d'une boite de dialogue</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets/fr">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files/fr">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors/fr">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF/fr">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets/fr">5</a>)</small>, <a href="PySide.html" title="PySide/fr">PySide</a>, Exemples PySide <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples/fr">débutant</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/fr">intermédiaire</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples/fr">expérimenté</a></li>
+<li><b>Macros :</b> <a href="Macros.html" title="Macros/fr">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros/fr">Comment installer des macros</a></li>
+<li><b>Intégration :</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/fr">Intégrer FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/fr">Intégration de FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Autre :</b> <a href="Expressions.html" title="Expressions/fr">Expressions</a>, <a href="Code_snippets.html" title="Code snippets/fr">Extraits de codes</a>, <a href="Line_drawing_function.html" title="Line drawing function/fr">Fonction - tracer une ligne</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/fr">Bibliothèque mathématique vectorielle de FreeCAD</a> <small>(déprécié)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs :</b> <a href="User_hub.html" title="User hub/fr">Hub utilisateurs</a>, <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>, <a href="Developer_hub.html" title="Developer hub/fr">Hub développeurs</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211422
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.117 seconds
+Real time usage: 0.183 seconds
+Preprocessor visited node count: 510/1000000
+Post‐expand include size: 15722/2097152 bytes
+Template argument size: 10387/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 16/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 41989/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   19.465      1 -total
+ 33.11%    6.445     16 Template:Code
+ 29.23%    5.690      1 Template:CAM_Tools_navi/fr
+ 23.13%    4.503      2 Template:Navigation_menu_2
+ 18.08%    3.520      1 Template:Powerdocnavi/fr
+  8.33%    1.621      2 Template:Docnav/fr
+  3.60%    0.700      1 Template:TOCright
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:66375-0!canonical and timestamp 20241129211421 and revision id 1495825. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

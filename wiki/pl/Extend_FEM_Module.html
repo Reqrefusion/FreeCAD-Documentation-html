@@ -1,0 +1,193 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Extend FEM Module/pl</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Extend_FEM_Module.html" lang="de" title="FEM Modul Erweitern (29% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Extend_FEM_Module.html" lang="en" title="Extend FEM Module (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Extend_FEM_Module.html" lang="es" title="Extend FEM Module (17% translated)">español</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Extend_FEM_Module.html" lang="fr" title="FEM Module d'extension (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--med" dir="ltr" href="Extend_FEM_Module.html" lang="it" title="Estendere il modulo FEM (54% translated)">italiano</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="pl">polski</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Extend_FEM_Module.html" lang="ro" title="FEM: Modul Suplimentar MEF (33% translated)">română</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Extend_FEM_Module.html" lang="ru" title="Расширение рабочей среды верстака МКЭ (25% translated)">русский</a></li></ul></div>
+<table class="fcinfobox wikitable ct" style="width: 230px; float: right; margin-left: 1em">
+<tbody><tr>
+<td class="ctTitle" style="font-weight: bold; font-size: 125%;"><span typeof="mw:File"><span><img decoding="async" height="32" src="../File/Freecad.svg" width="32"/></span></span> Ćwiczenie
+</td></tr>
+<tr>
+<th class="ctOdd">Temat
+</th></tr>
+<tr>
+<td class="ctEven">MES
+</td></tr>
+<tr>
+<th class="ctOdd">Poziom trudności
+</th></tr>
+<tr>
+<td class="ctEven">Średnio zaawansowany
+</td></tr>
+<tr>
+<th class="ctOdd">Czas wykonania
+</th></tr>
+<tr>
+<td class="ctEven">1 godzina
+</td></tr>
+<tr>
+<th class="ctOdd">Autorzy
+</th></tr>
+<tr>
+<td class="ctEven"><a class="new" href="index.php?title=User;M42kus&amp;action=edit&amp;redlink=1.html" title="User:M42kus (page does not exist)">M42kus</a>
+</td></tr>
+<tr>
+<th class="ctOdd">Wersja FreeCAD
+</th></tr>
+<tr>
+<td class="ctEven">0.17
+</td></tr>
+<tr>
+<th class="ctOdd">Pliki z przykładami
+</th></tr>
+<tr>
+<td class="ctEven"><i>Nie dołączono</i>
+</td></tr>
+<tr>
+<th class="ctOdd">Zobacz również
+</th></tr>
+<tr>
+<td class="ctEven"><i>-</i>
+</td></tr>
+<tr>
+<td class="ctToc"><br/><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#System_kompilacji_(cmake)"><span class="tocnumber">1</span> <span class="toctext">System kompilacji <i>(cmake)</i></span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Organizacja_źródła"><span class="tocnumber">2</span> <span class="toctext">Organizacja źródła</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Solwer"><span class="tocnumber">3</span> <span class="toctext">Solwer</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Równania"><span class="tocnumber">4</span> <span class="toctext">Równania</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Wiązania"><span class="tocnumber">5</span> <span class="toctext">Wiązania</span></a></li>
+</ul>
+</div>
+</td></tr></tbody></table>
+<p>Środowisko pracy MES obsługuje już wiele różnych wiązań i kilka solwerów. Mimo to użytkownicy często potrzebują więzów, które nie są jeszcze obsługiwane przez FreeCAD. Ta strona jest punktem wyjścia do serii samouczków i innych zasobów opisujących, jak rozszerzyć środowisko pracy MES przy użyciu istniejącej struktury. Chociaż ta seria może okazać się pomocna również dla programistów, ideą jest umożliwienie użytkownikom MES, którzy interesują się kodowaniem w Pythonie, możliwości samodzielnego dodawania potrzebnych rzeczy.
+</p><p>Dodawanie nowych wiązań, równań lub solwerów to w większości rutynowa praca. Ale zrobienie tego po raz pierwszy nie będzie tak łatwe, jak mogłoby się wydawać. Zrozumienie poniższych tematów okaże się pomocne:
+</p>
+<ul><li>Tworzenie skryptów w języku Python we FreeCAD.
+<ul><li><a href="Python_scripting_tutorial.html" title="Python scripting tutorial/pl">Poradnik: Tworzenie skryptów Python</a></li>
+<li><a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/pl">Podstawy tworzenia skryptów FreeCAD</a></li></ul></li>
+<li>Rozszerzanie FreeCAD za pomocą Python.
+<ul><li><a href="Scripted_objects.html" title="Scripted objects/pl">Obiekty tworzone skryptami</a></li></ul></li>
+<li>Ważne jest gruntowne zrozumienie solwera, dla którego będą dodawane nowe obiekty <i>(np. CalculiX lub Elmer)</i>.</li>
+<li>Niewielka wiedza na temat systemów kompilacji, zwłaszcza <code>cmake</code> <i>(system kompilacji używany przez FreeCAD)</i>.</li></ul>
+<p><span id="Build_System_(cmake)"></span>
+</p>
+<h2><span id="System_kompilacji_.28cmake.29"></span><span class="mw-headline" id="System_kompilacji_(cmake)">System kompilacji <i>(cmake)</i></span></h2>
+<p>System kompilacji musi zostać zmodyfikowany niezależnie od tego, które obiekty zostaną dodane do środowiska pracy MES. Każdy moduł (plik) Python musi zostać zarejestrowany. Środowisko pracy FEM wymaga zarejestrowania każdego nowego modułu Python w <code>Mod/Fem/CMakeLists.txt</code>. Jest to niezależne od typu modułu Python <i>(GUI lub non-GUI)</i>. To, gdzie dokładnie moduł musi zostać wstawiony, zależy od jego roli. Solwer, równania i ograniczenia używają różnych list. Wyszukiwanie podobnych plików i wstawianie nowego pliku do tej samej listy działa przez większość czasu.
+</p><p>Jako <i>przykład</i> dodajmy nowe wiązanie o nazwie <code>pressure</code>, które jest związane z <i>równaniem przepływu</i>. Tak więc, <b>FlowPressure</b> będzie powszechnie używane jako &lt;nazwa&gt; dla tego wiązania. Nowe ograniczenie wymaga co najmniej następujących nowych modułów: 
+</p>
+<ul><li><code>constraint_&lt;name&gt;.py</code></li>
+<li><code>view_constraint_&lt;name&gt;.py</code></li>
+<li><code>CommandFemConstraint&lt;name&gt;.py</code> (może być niepotrzebny)</li></ul>
+<p>Te trzy pliki muszą zostać dodane do <code>Mod/Fem/CMakeLists.txt</code>, a także <code>Mod/Fem/App/CMakeLists.txt</code>. Wszystkie dodane linie kodu są oznaczone znakiem <i>+</i> na początku.
+</p><p><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Mod/Fem/CMakeLists.txt</span>
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">SET</span><span class="p">(</span><span class="n">FemObjects_SRCS</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">base_fempythonobject</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">constraint_bodyheatsource</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">constraint_electrostaticpotential</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">constraint_flowvelocity</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">constraint_initialflowvelocity</span><span class="o">.</span><span class="n">py</span>
+<span class="o">+</span>   <span class="n">femobjects</span><span class="o">/</span><span class="n">constraint_initialflowpressure</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">constraint_selfweight</span><span class="o">.</span><span class="n">py</span>
+<span class="o">...</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">solver_ccxtools</span><span class="o">.</span><span class="n">py</span>
+<span class="p">)</span>
+<span class="o">...</span>
+<span class="n">SET</span><span class="p">(</span><span class="n">FemGuiViewProvider_SRCS</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_base_femconstraint</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_base_femobject</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_constraint_bodyheatsource</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_constraint_electrostaticpotential</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_constraint_flowvelocity</span><span class="o">.</span><span class="n">py</span>
+<span class="o">+</span>   <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_constraint_flowpressure</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_constraint_initialflowvelocity</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_constraint_selfweight</span><span class="o">.</span><span class="n">py</span>
+<span class="o">...</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_solver_ccxtools</span><span class="o">.</span><span class="n">py</span>
+<span class="p">)</span>
+</pre></div>
+<p><span id="Source_Organization"></span>
+</p>
+<h2><span id="Organizacja_.C5.BAr.C3.B3d.C5.82a"></span><span class="mw-headline" id="Organizacja_źródła">Organizacja źródła</span></h2>
+<p>Do organizacji kodu Python moduł MES wykorzystuje następujące podejście. Moduł jest podzielony na następujące pakiety: 
+</p>
+<ul><li><code>femobjects</code>, który zawiera wszystkie obiekty niezwiązane z GUI, takie jak proxy Python dla obiektów dokumentów, * <code>femviewproviders</code>, który zawiera wszystkie obiekty związane z GUI, takie jak proxy Python dla obiektów dokumentów.</li>
+<li><code>femviewproviders</code> zawierający wszystko, co związane z GUI, takie jak pythonowe proxy dla dostawców widoków.</li>
+<li>Panele zadań oparte na C++ są przechowywane w '<code>Gui</code>',</li>
+<li>ikony można znaleźć w '<code>Gui/Resources/icons/</code>',</li>
+<li>pliki .ui są przechowywane w poleceniach '<code>Gui/Resources/ui/</code>'.</li></ul>
+<p>Jeden pakiet nie jest zgodny z tym wzorcem: <code>femsolver</code>. Ma on swoje miejsce na tym samym poziomie co <code>femobjects</code> i <code>femguiobjects</code> (<code>src/Mod/Fem/femsolver</code>). Pakiet zawiera pakiety i moduły związane z solwerem i równaniami i jest zorganizowany w następujący sposób:
+</p>
+<pre>.femsolver
+.femsolver.elmer
+.femsolver.elmer.equations
+.femsolver.calculix
+.femsolver.calculix.equations
+.femsolver.z88
+.femsolver.z88.equations
+</pre>
+<p><span id="Solver"></span>
+</p>
+<h2><span class="mw-headline" id="Solwer">Solwer</span></h2>
+<p>W FreeCAD solwer można podzielić na dwie części: 
+</p>
+<ul><li>Jedna to obiekt dokumentu używany przez użytkownika do interakcji z solwerem. Można poprzez niego ustawić parametry solwera i jest on również używany do kontrolowania procesu rozwiązywania.</li>
+<li>Druga część to tak zwane zadania solwera. Proces rozwiązywania jest podzielony na te zadania, a mianowicie: <i>sprawdź, przygotuj, rozwiąż i wyniki</i>. Zadania te wykonują rzeczywistą pracę polegającą na wyeksportowaniu analizy do formatu rozumianego przez plik wykonywalny solwera, uruchomieniu pliku wykonywalnego i załadowaniu wyników z powrotem do FreeCAD.</li></ul>
+<p>Większość plików związanych z solwerem znajduje się w pakiecie podrzędnym pakietu <code>femsolver</code> <i>(np. dla Elmera w <code>femsolver/elmer</code>)</i>. Poniższa lista wylicza wszystkie pliki związane z implementacją solwera. Są to pliki, które należy skopiować i zmodyfikować, aby dodać obsługę nowego solwera do FreeCAD. Podany przykład pochodzi z implementacji solwera Elmer. 
+</p>
+<ul><li><b>femsolver/elmer/solver.py:</b> Obiekt dokumentu widoczny w widoku drzewa. Zaimplementowane w Pythonie poprzez proxy dokumentu i proxy widoku.</li>
+<li><b>femsolver/elmer/tasks.py:</b> Moduł zawierający jedną klasę zadań dla każdego zadania wymaganego dla implementacji solwera. Zadania te dzielą proces rozwiązywania analizy na następujące kroki: sprawdzenie, przygotowanie, rozwiązanie, wyniki.</li>
+<li><b>femcommands/commands.py:</b> Dodaje obiekt dokumentu solwera do aktywnego dokumentu. Wymagane, aby uzyskać dostęp do obiektu solwera z GUI.</li></ul>
+<p><span id="Equations"></span>
+</p>
+<h2><span id="R.C3.B3wnania"></span><span class="mw-headline" id="Równania">Równania</span></h2>
+<p>Równanie reprezentuje określoną fizykę, która powinna być brana pod uwagę podczas rozwiązywania analizy <i>(np. Przepływ, Ciepło)</i>. Nie wszystkie solwery w FreeCAD obsługują <i>(wszystkie)</i> równania. Równania są reprezentowane przez obiekty podrzędne odpowiedniego obiektu solwera. W widoku drzewa wygląda to następująco:
+</p>
+<ul><li>elmer-solver
+<ul><li>elastyczność</li>
+<li>ciepło</li>
+<li>przepływ</li>
+<li>elektrostatyka</li></ul></li></ul>
+<p>Większość opcji specyficznych dla solwera <i>(np. maksymalna liczba iteracji, metoda rozwiązywania itp.)</i> jest ustawiana za pomocą obiektów równań. Jedną z konsekwencji tego jest to, że każdy solwer musi mieć własną implementację "tego samego" równania. CalculiX miałby inny obiekt Heat niż Elmer. Aby uniknąć posiadania wielu przycisków dla tej samej fizyki w GUI, każdy obiekt solwera sam dodaje swoje równania.
+</p><p>Rzeczywistą implementację można podzielić na część ogólną i część specyficzną dla solwera. Część ogólna znajduje się w module <code>femsolver.equationbase</code>. Część specyficzna dla solwera znajduje się w poszczególnych pakietach Equations pakietów solwera <i>(np. <code>femsolver/elmer/equations</code>)</i>.
+</p><p>Dodanie nowych równań do Elmera powinno być bardzo proste. Dla początkujących istnieje poradnik, który pokazuje, jak dodać nowe równanie do Elmera poprzez dodanie istniejącego solwera sprężystości do FreeCAD: <a href="Add_FEM_Equation_Tutorial.html" title="Add FEM Equation Tutorial/pl">Poradnik: Dodawanie równań w środowisku MES</a>.
+</p><p><span id="Constraints"></span>
+</p>
+<h2><span id="Wi.C4.85zania"></span><span class="mw-headline" id="Wiązania">Wiązania</span></h2>
+<p>Wiązania definiują warunki brzegowe dla problemu, który ma zostać rozwiązany. W FreeCAD wiązania nie są specyficzne dla konkretnego solwera. Konfiguracja problemu może być rozwiązana przez wszystkie solwery, które obsługują wszystkie warunki w analizie.
+</p><p>Dodawanie nowych wiązań jest dość proste. Dla początkujących dostępny jest poradnik: <a href="Add_FEM_Constraint_Tutorial.html" title="Add FEM Constraint Tutorial/pl">Poradnik: Dodawanie wiązań w środowisku MES</a>
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20241129211058
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.068 seconds
+Real time usage: 0.264 seconds
+Preprocessor visited node count: 208/1000000
+Post‐expand include size: 1648/2097152 bytes
+Template argument size: 1378/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 1/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 5245/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  179.771      1 -total
+ 97.58%  175.413      1 Template:Code
+  0.67%    1.202     22 Template:Incode
+  0.66%    1.180      1 Template:TutorialInfo/pl
+  0.31%    0.563      1 Template:FileName
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:270193-0!canonical and timestamp 20241129211057 and revision id 1485160. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

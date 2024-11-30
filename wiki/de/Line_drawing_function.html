@@ -1,0 +1,273 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Line drawing function/de</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Line_drawing_function.html" lang="id" title="Line drawing function (3% translated)">Bahasa Indonesia</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="de">Deutsch</span></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Line_drawing_function.html" lang="en" title="Line drawing function (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Line_drawing_function.html" lang="tr" title="Line drawing function (3% translated)">Türkçe</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Line_drawing_function.html" lang="es" title="Line drawing function (12% translated)">español</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Line_drawing_function.html" lang="fr" title="Fonction - tracer une ligne (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Line_drawing_function.html" lang="it" title="Funzione per disegnare delle linee (35% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Line_drawing_function.html" lang="pl" title="Funkcja rysowania linii (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Line_drawing_function.html" lang="ro" title="Funcția de Desenare a liniei (12% translated)">română</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Line_drawing_function.html" lang="sv" title="Line drawing function (12% translated)">svenska</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Line_drawing_function.html" lang="cs" title="Line drawing function (3% translated)">čeština</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Line_drawing_function.html" lang="ru" title="Функция рисования линии (28% translated)">русский</a></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Einführung"><span class="tocnumber">1</span> <span class="toctext">Einführung</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Das_Hauptskript"><span class="tocnumber">2</span> <span class="toctext">Das Hauptskript</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Detaillierte_Erklärung"><span class="tocnumber">3</span> <span class="toctext">Detaillierte Erklärung</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Testen_des_Skripts"><span class="tocnumber">4</span> <span class="toctext">Testen des Skripts</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Registrierung_des_Skripts"><span class="tocnumber">5</span> <span class="toctext">Registrierung des Skripts</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Also_willst_du_mehr?"><span class="tocnumber">6</span> <span class="toctext">Also willst du mehr?</span></a></li>
+</ul>
+</div>
+</div>
+<p><span id="Introduction"></span>
+</p>
+<h2><span id="Einf.C3.BChrung"></span><span class="mw-headline" id="Einführung">Einführung</span></h2>
+<p>Diese Seite zeigt, wie erweiterte Funktionalität in Python einfach erstellt werden kann. In dieser Übung werden wir ein neues Werkzeug bauen, das eine Linie zeichnet. Dieses Werkzeug kann dann mit einem FreeCAD Befehl verknüpft werden, und dieser Befehl kann von jedem Element in der Oberfläche, wie z.B. einem Menüpunkt oder einer Werkzeugleistenschaltfläche, aufgerufen werden.
+</p><p><span id="The_main_script"></span>
+</p>
+<h2><span class="mw-headline" id="Das_Hauptskript">Das Hauptskript</span></h2>
+<p>Zuerst werden wir ein Skript schreiben, das unsere gesamte Funktionalität enthält. Dann werden wir dieses in einer Datei speichern und in FreeCAD importieren, so dass alle von uns geschriebenen Klassen und Funktionen in FreeCAD zur Verfügung stehen. Starte deinen bevorzugten Codeeditor und gib die folgenden Zeilen ein:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCADGui</span><span class="o">,</span> <span class="nn">Part</span>
+<span class="kn">from</span> <span class="nn">pivy.coin</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">class</span> <span class="nc">line</span><span class="p">:</span>
+
+    <span class="sd">"""This class will create a line after the user clicked 2 points on the screen"""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ActiveView</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addEventCallbackPivy</span><span class="p">(</span><span class="n">SoMouseButtonEvent</span><span class="o">.</span><span class="n">getClassTypeId</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getpoint</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_cb</span><span class="p">):</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">event_cb</span><span class="o">.</span><span class="n">getEvent</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="n">SoMouseButtonEvent</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">getPosition</span><span class="p">()</span>
+            <span class="n">point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">getPoint</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">l</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">shape</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">toShape</span><span class="p">()</span>
+                <span class="n">Part</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">removeEventCallbackPivy</span><span class="p">(</span><span class="n">SoMouseButtonEvent</span><span class="o">.</span><span class="n">getClassTypeId</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">)</span>
+</pre></div>
+<p><a href="#top">Anfang</a></p>
+<p><span id="Detailed_explanation"></span>
+</p>
+<h2><span id="Detaillierte_Erkl.C3.A4rung"></span><span class="mw-headline" id="Detaillierte_Erklärung">Detaillierte Erklärung</span></h2>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Part</span><span class="o">,</span> <span class="nn">FreeCADGui</span>
+<span class="kn">from</span> <span class="nn">pivy.coin</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+<p>Wenn Du in Python Funktionen aus einem anderen Modul verwenden willst, musst Du es importieren. In unserem Fall benötigen wir Funktionen aus dem <a href="Part_Workbench.html" title="Part Workbench/de">Part-Arbeitsbereich</a>, um die Linie zu erstellen, und aus dem Gui Modul <code>FreeCADGui</code>, um auf die <a href="3D_view.html" title="3D view/de">3D-Ansicht</a> zuzugreifen. Außerdem benötigen wir die kompletten Inhalte der Coin-Bibliothek, damit wir alle Coin-Objekte wie <code>SoMouseButtonEvent</code>, usw. direkt verwenden können.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">line</span><span class="p">:</span>
+</pre></div>
+<p>Hier definieren wir unsere Hauptklasse. Warum verwenden wir eine Klasse und keine Funktion? Der Grund dafür ist, dass wir unser Werkzeug "am Leben" halten müssen, während wir darauf warten, dass der Benutzer auf den Bildschirm klickt. Eine Funktion endet, wenn ihre Aufgabe erledigt ist, aber ein Objekt (eine Klasse definiert ein Objekt) bleibt am Leben, bis es zerstört wird.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="sd">"""This class will create a line after the user clicked 2 points on the screen"""</span>
+</pre></div>
+<p>In Python kann jede Klasse oder Funktion einen Dokumentationszeichenkette (docstring) haben. Dies ist besonders in FreeCAD nützlich, denn wenn du diese Klasse im Interpreter aufrufst, wird der Beschreibungszeichenkette als Tooltip angezeigt.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</pre></div>
+<p>Python Klassen können immer eine  <code>__init__</code> Funktion enthalten, die beim Aufruf der Klasse zur Erzeugung eines Objekts ausgeführt wird. Wir werden hier also alles ablegen, was sich ereignen soll, wenn unser Linienwerkzeug beginnt.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">view</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ActiveView</span>
+</pre></div>
+<p>In einer Klasse möchte man normalerweise <code>self.</code> vor einem Variablennamen anhängen, damit sie für alle Funktionen innerhalb und außerhalb dieser Klasse leicht zugänglich ist. Hier werden wir <code>self.view</code> verwenden, um auf die aktive 3D Ansicht zuzugreifen und sie zu verändern.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+<p>Hier erstellen wir eine leere Liste, die die von der <code>getpoint()</code> Funktion gesendeten 3D Punkte enthält.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addEventCallbackPivy</span><span class="p">(</span><span class="n">SoMouseButtonEvent</span><span class="o">.</span><span class="n">getClassTypeId</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getpoint</span><span class="p">)</span>
+</pre></div>
+<p>Das ist der wichtige Teil: Da es sich eigentlich um eine <a class="external text" href="http://www.coin3d.org/" rel="nofollow">coin3D</a> Szene handelt, verwendet FreeCAD einen Coin Rückruf Mechanismus, der es erlaubt, eine Funktion jedes Mal aufzurufen, wenn ein bestimmtes Szene Ereignis eintritt. In unserem Fall erstellen wir einen Rückruf für <a class="external text" href="http://doc.coin3d.org/Coin/group__events.html" rel="nofollow">SoMouseButtonEvent</a> Ereignisse, und wir binden ihn an die <code>getpoint()</code> Funktion. Nun wird jedes Mal, wenn eine Maustaste gedrückt oder losgelassen wird, die <code>getpoint()</code> Funktion ausgeführt.
+</p><p>Beachte, dass es auch eine Alternative zu <code>addEventCallbackPivy()</code>  namens <code>addEventCallback()</code> gibt, welche die Verwendung von pivy überflüssig macht. Aber da pivy ein sehr effizienter und natürlicher Weg ist, um auf jeden Teil der coin Szene zuzugreifen, ist es viel besser, es so oft wie möglich zu verwenden.
+</p>
+<p><a href="#top">Anfang</a></p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">getpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_cb</span><span class="p">):</span>
+</pre></div>
+<p>Nun definieren wir die Funktion <code>getpoint()</code>, die beim Drücken einer Maustaste in einer 3D-Ansicht ausgeführt wird. Diese Funktion erhält ein Argument, das wir <code>event_cb</code> nennen. Von dieser Ereignisrückmeldung aus können wir auf das Ereignisobjekt zugreifen, das verschiedene Informationen enthält (weitere Informationen <a href="Code_snippets.html#Mausereignisse_in_der_3D-Ansicht_beobachten_mit_Python" title="Code snippets/de">Hier</a>).
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="n">SoMouseButtonEvent</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+</pre></div>
+<p>Die <code>getpoint()</code> Funktion wird aufgerufen, wenn eine Maustaste gedrückt oder losgelassen wird. Aber wir wollen einen 3D Punkt nur dann aufnehmen, wenn er gedrückt ist, sonst würden wir zwei 3D Punkte sehr nahe aneinander bekommen. Das müssen wir also hier überprüfen.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">pos</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">getPosition</span><span class="p">()</span>
+</pre></div>
+<p>Hier erhalten wir die Bildschirmkoordinaten des Mauszeigers.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">getPoint</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+<p>Diese Funktion gibt uns einen FreeCAD Vektor (x,y,z), der den 3D Punkt enthält, der auf der Brennpunktebene direkt unter unserem Mauszeiger liegt. Wenn Du Dich in der Kameraansicht befindest, stelle dir einen Strahl vor, der von der Kamera kommt, durch den Mauszeiger hindurchgeht und auf die Brennpunktebene trifft. Das ist die Position ist unseres 3D Punktes. Wenn wir uns in der orthogonalen Ansicht befinden, ist der Strahl parallel zur Blickrichtung.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+</pre></div>
+<p>Wir fügen unseren neuen Punkt dem Stapel hinzu.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+</pre></div>
+<p>Haben wir schon genug Punkte? Wenn ja, dann zeichnen wir die Linie!
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">l</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+</pre></div>
+<p>Hier verwenden wir die <code>LineSegment()</code>-Funktion aus dem Part-Arbeitsbereich, die eine Linie aus zwei FreeCAD-Vektoren erzeugt. Die Linie ist nicht an irgendein Objekt unseres aktiven Dokuments gebunden, so dass nichts auf dem Bildschirm erscheint.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">shape</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">toShape</span><span class="p">()</span>
+</pre></div>
+<p>Das FreeCAD Dokument kann nur Formen aus dem Part Modul übernehmen. Formen sind der grundlegendste Typ des Part Moduls. Daher müssen wir unsere Linie in eine Form konvertieren, bevor wir sie dem Dokument hinzufügen.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">Part</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+<p>Das Part Modul hat eine sehr nützliche <code>show()</code> Funktion, die ein neues Objekt im Dokument erzeugt und eine Form daran bindet. Wir hätten auch zuerst ein neues Objekt im Dokument erstellen können, und dann die Form manuell an dieses Objekt binden können.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">removeEventCallbackPivy</span><span class="p">(</span><span class="n">SoMouseButtonEvent</span><span class="o">.</span><span class="n">getClassTypeId</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">)</span>
+</pre></div>
+<p>Da wir mit unserer Linie fertig sind, entfernen wir den Rückrufmechanismus hier.
+</p>
+<p><a href="#top">Anfang</a></p>
+<p><span id="Testing_the_script"></span>
+</p>
+<h2><span class="mw-headline" id="Testen_des_Skripts">Testen des Skripts</span></h2>
+<p>Nun speichern wir unser Skript an einem Ort, an dem der FreeCAD Python Interpreter es finden kann. Beim Import von Modulen wird der Interpreter an folgenden Stellen suchen: die Python Installationspfade, das FreeCAD bin Verzeichnis und alle FreeCAD Modulverzeichnisse. Die beste Lösung ist also, ein neues Verzeichnis in einem der FreeCAD <a href="Installing_more_workbenches.html" title="Installing more workbenches/de">Mod Verzeichnisse</a> anzulegen und unser Skript darin zu speichern. Erstellen wir zum Beispiel ein Verzeichnis "MyScripts" und speichern unser Skript als "exercise.py".
+</p><p>Nun, alles ist bereit. Lass uns FreeCAD starten, ein neues Dokument erstellen und im Python Interpreter eingeben:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">exercise</span>
+</pre></div>
+<p>Wenn keine Fehlermeldung erscheint wurde unser Übungsskript erfolgreich geladen. Wir können nun seinen Inhalt überprüfen mit:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">dir</span><span class="p">(</span><span class="n">exercise</span><span class="p">)</span>
+</pre></div>
+<p>Der Befehl <code>dir()</code> ist ein eingebauter Python Befehl, der den Inhalt eines Moduls auflistet. Wir können prüfen, dass unsere <code>line()</code> Klasse da ist mit:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="s1">'line'</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">exercise</span><span class="p">)</span>
+</pre></div>
+<p>Nun wollen wir es testen:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">exercise</span><span class="o">.</span><span class="n">line</span><span class="p">()</span>
+</pre></div>
+<p>Klicke zwei Mal in der 3D Ansicht, und Bingo, hier ist unsere Linie! Um es zu wiederholen, tippe einfach nochmal <code>exercise.line()</code>.
+</p>
+<p><a href="#top">Anfang</a></p>
+<p><span id="Registering_the_script"></span>
+</p>
+<h2><span class="mw-headline" id="Registrierung_des_Skripts">Registrierung des Skripts</span></h2>
+<p>Nun, damit unser neues Linienwerkzeug wirklich cool ist, sollte es einen Knopf auf der Oberfläche haben, damit wir nicht immer all dieses Zeug tippen müssen. Am einfachsten ist es, unser neues MyScripts Verzeichnis in einen vollständige FreeCAD Arbeitsbereich zu verwandeln. Es ist einfach, alles was benötigt wird ist eine Datei namens <b>InitGui.py</b> in deinem MyScripts Verzeichnis zu speichern. Die Datei InitGui.py enthält die Anweisungen zum Erstellen eines neuen Arbeitsbereichs und fügt unser neues Werkzeug hinzu. Außerdem müssen wir auch unseren Übungscode ein wenig umwandeln, damit das line()-Werkzeug als offizieller FreeCAD Befehl erkannt wird. Beginnen wir damit, eine InitGui.py-Datei zu erstellen, und schreiben wir den folgenden Code hinein:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">MyWorkbench</span> <span class="p">(</span><span class="n">Workbench</span><span class="p">):</span>
+
+    <span class="n">MenuText</span> <span class="o">=</span> <span class="s2">"MyScripts"</span>
+
+    <span class="k">def</span> <span class="nf">Initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">exercise</span>
+        <span class="n">commandslist</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"line"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">appendToolbar</span><span class="p">(</span><span class="s2">"My Scripts"</span><span class="p">,</span> <span class="n">commandslist</span><span class="p">)</span>
+
+<span class="n">Gui</span><span class="o">.</span><span class="n">addWorkbench</span><span class="p">(</span><span class="n">MyWorkbench</span><span class="p">())</span>
+</pre></div>
+<p>Inzwischen solltest Du das obige Skript schon selbst verstehen, Ich denke: Wir erstellen eine neue Klasse, die wir <code>MyWorkbench</code> nennen, wir geben ihr einen Titel <code>MenuText</code> und wir definieren eine <code>Initialize()</code> Funktion, die ausgeführt wird, wenn der Arbeitsbereich in FreeCAD geladen wird. In dieser Funktion laden wir den Inhalt unserer Übungsdatei ein und hängen die darin enthaltenen FreeCAD Befehle an eine Befehlsliste an. Dann erstellen wir eine Werkzeugleiste namens "Meine Skripte" und weisen ihr unsere Befehlsliste zu. Derzeit haben wir natürlich nur ein Werkzeug, so dass unsere Befehlsliste nur ein Element enthält. Sobald unser Arbeitsbereich fertig ist, fügen wir es zur Hauptoberfläche hinzu.
+</p><p>Aber das wird trotzdem nicht funktionieren, da ein FreeCAD Befehl auf eine bestimmte Art und Weise formatiert werden muss, um zu funktionieren. Also müssen wir unser <code>line()</code> Werkzeug ein wenig umwandeln. Unser neues <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">exercise.py</span> Skript wird nun so aussehen:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCADGui</span><span class="o">,</span> <span class="nn">Part</span>
+<span class="kn">from</span> <span class="nn">pivy.coin</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">class</span> <span class="nc">line</span><span class="p">:</span>
+
+    <span class="sd">"""This class will create a line after the user clicked 2 points on the screen"""</span>
+
+    <span class="k">def</span> <span class="nf">Activated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ActiveView</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stack</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">addEventCallbackPivy</span><span class="p">(</span><span class="n">SoMouseButtonEvent</span><span class="o">.</span><span class="n">getClassTypeId</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">getpoint</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_cb</span><span class="p">):</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">event_cb</span><span class="o">.</span><span class="n">getEvent</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="n">SoMouseButtonEvent</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+            <span class="n">pos</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">getPosition</span><span class="p">()</span>
+            <span class="n">point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">getPoint</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">l</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">shape</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">toShape</span><span class="p">()</span>
+                <span class="n">Part</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">removeEventCallbackPivy</span><span class="p">(</span><span class="n">SoMouseButtonEvent</span><span class="o">.</span><span class="n">getClassTypeId</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">GetResources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">'Pixmap'</span><span class="p">:</span> <span class="s1">'path_to_an_icon/line_icon.png'</span><span class="p">,</span> <span class="s1">'MenuText'</span><span class="p">:</span> <span class="s1">'Line'</span><span class="p">,</span> <span class="s1">'ToolTip'</span><span class="p">:</span> <span class="s1">'Creates a line by clicking 2 points on the screen'</span><span class="p">}</span>
+
+<span class="n">FreeCADGui</span><span class="o">.</span><span class="n">addCommand</span><span class="p">(</span><span class="s1">'line'</span><span class="p">,</span> <span class="n">line</span><span class="p">())</span>
+</pre></div>
+<p>Was wir hier gemacht haben, ist die Umwandlung unserer <code>__init__()</code>  Funktion in eine <code>Activated()</code> Funktion, denn wenn FreeCAD Befehle ausgeführt werden, führen sie automatisch die <code>Activated()</code> Funktion aus. Wir haben auch eine <code>GetResources()</code> Funktion hinzugefügt, die FreeCAD darüber informiert, wo es ein Icon für das Werkzeug finden kann und wie der Name und der Tooltip unseres Werkzeugs lauten wird. Jedes <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">jpg</span>, <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">png</span> oder <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">svg</span> Bild wird als Symbol funktionieren, es kann jede beliebige Größe haben, aber es ist am besten, eine Größe zu verwenden, die dem fertigen Seitenverhältnis nahe kommt, wie 16x16, 24x24 oder 32x32.
+Dann fügen wir die <code>line()</code> Klasse als offiziellen FreeCAD Befehl mit der <code>addCommand()</code> Methode hinzu.
+</p><p>Das war's, anschließend müssen wir nur noch FreeCAD neu starten und schon haben wir einen schönen neuen Arbeitsbereich mit unserem brandneuen Linienwerkzeug!
+</p>
+<p><a href="#top">Anfang</a></p>
+<p><span id="So_you_want_more?"></span>
+</p>
+<h2><span id="Also_willst_du_mehr.3F"></span><span class="mw-headline" id="Also_willst_du_mehr?">Also willst du mehr?</span></h2>
+<p>Wenn Dir diese Übung gefallen hat, warum versuchst Du nicht, dieses kleine Werkzeug zu verbessern? Es gibt viele Dinge, die man tun kann, wie zum Beispiel
+</p>
+<ul><li>Benutzer Rückmeldungen hinzufügen: Bis jetzt haben wir ein sehr nacktes Tool gemacht, der Benutzer könnte etwas verloren sein, wenn er es benutzt. Wir könnten also eine Rückmeldung hinzufügen, das ihm sagt, was er als nächstes tun soll. Zum Beispiel könntest Du Meldungen an die FreeCAD Konsole ausgeben. Schaue dir das FreeCAD.Console Modul an</li>
+<li>Füge die Möglichkeit hinzu, die Koordinaten der 3D Punkte manuell einzugeben. Schaue dir die Python input() Funktion an, zum Beispiel</li>
+<li>Füge die Möglichkeit hinzu, mehr als 2 Punkte hinzuzufügen</li>
+<li>Füge Ereignisse für andere Dinge hinzu: Jetzt überprüfen wir nur noch, ob es Ereignisse für die Maustaste gibt, was wäre, wenn wir auch etwas tun würden, wenn die Maus bewegt wird, wie z.B. die aktuellen Koordinaten anzeigen?</li>
+<li>Gib dem erstellten Objekt einen Namen</li></ul>
+<p>Zögere nicht, deine Fragen oder Ideen im <a class="external text" href="http://forum.freecadweb.org/" rel="nofollow">Forum</a> zu teilen!
+</p>
+<p><a href="#top">Anfang</a></p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub/de">Power user documentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>FreeCAD scripting:</b> <a href="Python.html" title="Python/de">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/de">Introduction to Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/de">Python scripting tutorial</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/de">FreeCAD Scripting Basics</a></li></ul>
+<hr/>
+<ul><li><b>Modules:</b> <a href="Builtin_modules.html" title="Builtin modules/de">Builtin modules</a>, <a href="Units.html" title="Units/de">Units</a>, <a href="Quantity.html" title="Quantity/de">Quantity</a></li>
+<li><b>Workbenches:</b> <a href="Workbench_creation.html" title="Workbench creation/de">Workbench creation</a>, <a href="Gui_Command.html" title="Gui Command/de">Gui Commands</a>, <a href="Command.html" title="Command/de">Commands</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/de">Installing more workbenches</a></li>
+<li><b>Meshes and Parts:</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/de">Mesh Scripting</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/de">Topological data scripting</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/de">Mesh to Part</a>, <a href="PythonOCC.html" title="PythonOCC/de">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Parametric objects:</b> <a href="Scripted_objects.html" title="Scripted objects/de">Scripted objects</a>, <a href="Viewprovider.html" title="Viewprovider/de">Viewproviders</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view/de">Custom icon in tree view</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="Scenegraph.html" title="Scenegraph/de">Coin (Inventor) scenegraph</a>, <a href="Pivy.html" title="Pivy/de">Pivy</a></li>
+<li><b>Graphical interface:</b> <a href="Interface_creation.html" title="Interface creation/de">Interface creation</a>, <a href="Dialog_creation.html" title="Dialog creation/de">Interface creation completely in Python</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets/de">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files/de">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors/de">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF/de">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets/de">5</a>)</small>, <a href="PySide.html" title="PySide/de">PySide</a>, PySide examples <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples/de">beginner</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/de">intermediate</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples/de">advanced</a></li>
+<li><b>Macros:</b> <a href="Macros.html" title="Macros/de">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros/de">How to install macros</a></li>
+<li><b>Embedding:</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/de">Embedding FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/de">Embedding FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Other:</b> <a href="Expressions.html" title="Expressions/de">Expressions</a>, <a href="Code_snippets.html" title="Code snippets/de">Code snippets</a>, <a class="mw-selflink selflink">Line drawing function</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/de">FreeCAD vector math library</a> <small>(deprecated)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub/de">User hub</a>, <a href="Power_users_hub.html" title="Power users hub/de">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub/de">Developer hub</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211547
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.140 seconds
+Real time usage: 1.862 seconds
+Preprocessor visited node count: 631/1000000
+Post‐expand include size: 9337/2097152 bytes
+Template argument size: 5440/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 24/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 21615/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 1735.167      1 -total
+ 99.07% 1719.005     24 Template:Code
+  0.24%    4.201      1 Template:Powerdocnavi/de
+  0.11%    1.877      1 Template:Navigation_menu_2
+  0.11%    1.874     28 Template:Incode
+  0.07%    1.279      6 Template:Top
+  0.07%    1.152      4 Template:FileName
+  0.06%    1.109      1 Template:Clear
+  0.04%    0.641      1 Template:TOCright
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:56385-0!canonical and timestamp 20241129211545 and revision id 1393645. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

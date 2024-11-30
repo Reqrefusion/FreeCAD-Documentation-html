@@ -1,0 +1,149 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Part Loft Technical Details/pl</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="de" title="Part Ausformung Technische Details (100% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="en" title="Part Loft Technical Details (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="fr" title="Part Détails techniques du lissage (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Part_Loft_Technical_Details.html" lang="hr" title="Part Loft Technical Details/hr (0% translated)">hrvatski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Part_Loft_Technical_Details.html" lang="it" title="Dettagli tecnici di Part Loft (100% translated)">italiano</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="pl">polski</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--med" dir="ltr" href="Part_Loft_Technical_Details.html" lang="ro" title="Instrumentul Loft (Mansardare)-  Detalii Tehnice (54% translated)">română</a></li></ul></div>
+<p>Ta strona wyjaśnia szczegóły tworzenia powierzchni funkcją <a href="Part_Loft.html" title="Part Loft/pl">wyciągnięcie przez profile</a>. Jest to również istotne dla funkcji <a href="Part_Sweep.html" title="Part Sweep/pl">wyciągnięcie po ścieżce</a> wykonywanego wzdłuż prostej ścieżki, chociaż istnieją różnice.
+</p><p>Podane informacje są specyficzne dla implementacji i mogą ulec zmianie. Obecny stan dotyczy programu FreeCAD 0.15.4119, wersja OCC: 6.7.0.
+</p><p><span id="Stages_of_the_Loft_creation"></span>
+</p>
+<div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Etapy_powstawania_wyciągnięcia"><span class="tocnumber">1</span> <span class="toctext">Etapy powstawania wyciągnięcia</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Krok_1._Dopasowanie_liczby_segmentów_w_profilach"><span class="tocnumber">2</span> <span class="toctext">Krok 1. Dopasowanie liczby segmentów w profilach</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#Krok_2._Ustalenie_zależności_między_segmentami"><span class="tocnumber">2.1</span> <span class="toctext">Krok 2. Ustalenie zależności między segmentami</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Krok_3._Wykonanie_powierzchni_wyciągnięcia"><span class="tocnumber">2.2</span> <span class="toctext">Krok 3. Wykonanie powierzchni wyciągnięcia</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-5"><a href="#Główny_punkt"><span class="tocnumber">3</span> <span class="toctext">Główny punkt</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Uwagi_dodatkowe"><span class="tocnumber">4</span> <span class="toctext">Uwagi dodatkowe</span></a></li>
+</ul>
+</div>
+<h2><span id="Etapy_powstawania_wyci.C4.85gni.C4.99cia"></span><span class="mw-headline" id="Etapy_powstawania_wyciągnięcia">Etapy powstawania wyciągnięcia</span></h2>
+<p>Aby wyjaśnić proces wyciągnięcia przez profile, wygodnie jest podzielić go na etapy:
+</p>
+<ol><li>wyrównać liczbę segmentów w profilach <i>(jeśli jeszcze nie są)</i>,</li>
+<li>ustalić zgodność między segmentami,</li>
+<li>wykonanie powierzchni wyciągnięcia.</li></ol>
+<p><span id="Step_1._Making_numbers_of_segment_in_profiles_match"></span>
+</p>
+<h2><span id="Krok_1._Dopasowanie_liczby_segment.C3.B3w_w_profilach"></span><span class="mw-headline" id="Krok_1._Dopasowanie_liczby_segmentów_w_profilach">Krok 1. Dopasowanie liczby segmentów w profilach</span></h2>
+<p>Operacja ta wymaga dopasowania liczby segmentów, aby utworzyć powierzchnie pomiędzy odpowiadającymi im segmentami. Jeśli ilość segmentów zgadza się we wszystkich profilach, ten krok jest pomijany.
+</p><p>Jeśli przynajmniej jeden z profili ma inną liczbę segmentów, stosuje się następującą procedurę. Dla uproszczenia procedura została tu wyjaśniona dla przypadku tylko dwóch profili.
+</p>
+<ol><li>Profile są tymczasowo wyrównane tak, że są współpłaszczyznowe, a ich środki mas* są zgodne.</li>
+<li><i>(patrz rysunek)</i> dla każdego wierzchołka w jednym profilu, drugi profil jest krojony pod tym samym kątem biegunowym <i>(środek biegunowy to środek masy)</i>. Jeśli jest więcej niż jeden plasterek możliwy lub nie jest możliwy żaden plasterek w ogóle <i>(może się to zdarzyć na bardzo wypukłych profilach)</i>, wyciągnięcie zazwyczaj się nie udaje.</li>
+<li>to samo jest wykonywane w przeciwnym kierunku.</li></ol>
+<p>Operację tę rozszerzamy na wszystkie profile, by uzyskać równą liczbę odcinków. Całkowita liczba odcinków w każdym profilu będzie równa sumie wszystkich liczb odcinków wszystkich profili <i>(pod warunkiem, że żaden z wierzchołków nie znajdzie się pod tym samym kątem polarnym)</i>.
+</p>
+<table style="margin: 0 auto;">
+<tbody><tr>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft-vertex-insertion.png"><img decoding="async" height="276" src="../File/Loft-vertex-insertion.png" srcset="/images/thumb/7/7b/Loft-vertex-insertion.png/450px-Loft-vertex-insertion.png 1.5x, /images/thumb/7/7b/Loft-vertex-insertion.png/600px-Loft-vertex-insertion.png 2x" width="300"/></a><figcaption>Proces krojenia profilu2 <i>(biały półksiężyc)</i> w celu utworzenia połączeń odpowiadających wierzchołkom profilu1 <i>(fioletowy pięciokąt)</i>. Wstawione złącza są oznaczone żółtymi strzałkami.</figcaption></figure>
+</td>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_crescent_pentagon.png"><img decoding="async" height="242" src="../File/Loft_crescent_pentagon.png" srcset="/images/thumb/3/33/Loft_crescent_pentagon.png/450px-Loft_crescent_pentagon.png 1.5x, /images/thumb/3/33/Loft_crescent_pentagon.png/600px-Loft_crescent_pentagon.png 2x" width="300"/></a><figcaption>Wynik wyciągnięcia odpowiedni dla rysunku po lewej stronie.</figcaption></figure>
+</td></tr></tbody></table>
+<p><span id="Step_2._Establishing_correspondence_between_segments"></span>
+</p>
+<h3><span id="Krok_2._Ustalenie_zale.C5.BCno.C5.9Bci_mi.C4.99dzy_segmentami"></span><span class="mw-headline" id="Krok_2._Ustalenie_zależności_między_segmentami">Krok 2. Ustalenie zależności między segmentami</span></h3>
+<figure typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_Number_of_verts_match.png"><img decoding="async" height="260" src="../File/Loft_Number_of_verts_match.png" srcset="/images/thumb/8/89/Loft_Number_of_verts_match.png/450px-Loft_Number_of_verts_match.png 1.5x, /images/thumb/8/89/Loft_Number_of_verts_match.png/600px-Loft_Number_of_verts_match.png 2x" width="300"/></a><figcaption>Demonstracja wyciągnięcia przez profile zachowującego liczbę segmentów w profilach, gdy są one dopasowane. Zauważ jak 3 krawędzie górnego kwadratu "zapadają się" w mały wielokątny kawałek dolnego profilu.</figcaption></figure>
+<p>W przypadku, gdy liczby segmentów we wszystkich profilach nie były równe, krojenie zostało wykonane w kroku 1, a korespondencja jest trywialna.
+W przypadku, gdy liczby odcinków we wszystkich profilach były równe, wykorzystano istniejące odcinki <i>(patrz rysunek)</i> i wtedy należy ustalić zgodność. 
+</p><p>Dokładny algorytm znajdowania odpowiednich segmentów jest skomplikowany, ale generalnie dąży do zminimalizowania skręcenia wynikowego wyciągnięcia przez profile. Oznacza to, że jeśli ktoś robi wyciągnięcie pomiędzy dwoma kwadratami, maksymalny możliwy skręt to &lt;45°. Dalszy obrót jednego z kwadratów spowoduje, że wyciągnięcie będzie przeskakiwało do innych wierzchołków.
+</p><p>Korespondencja pomiędzy sąsiednimi profilami odbywa się niezależnie. Oznacza to, że dodatkowe skręcenie można uzyskać poprzez dodanie kolejnych profili.
+</p><p>Kolejną rzeczą, którą należy zauważyć jest to, że gdy liczby segmentów w profilach są równe, otrzymane wyciągnięcie jest znacznie bardziej wytrzymałe w odniesieniu do złożonych profili, zwłaszcza tych niewypukłych.
+</p>
+<div style="clear:both"></div>
+<p><span id="Step_3._Making_the_loft_surface"></span>
+</p>
+<h3><span id="Krok_3._Wykonanie_powierzchni_wyci.C4.85gni.C4.99cia"></span><span class="mw-headline" id="Krok_3._Wykonanie_powierzchni_wyciągnięcia">Krok 3. Wykonanie powierzchni wyciągnięcia</span></h3>
+<figure typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_B-spline.png"><img decoding="async" height="342" src="../File/Loft_B-spline.png" srcset="/images/thumb/5/5a/Loft_B-spline.png/600px-Loft_B-spline.png 1.5x, /images/thumb/5/5a/Loft_B-spline.png/800px-Loft_B-spline.png 2x" width="400"/></a><figcaption>Krzywa interpolacji spline <i>(czerwona)</i>, która podąża za powierzchnią wyciągnięcia. Punkty, przez które należy interpolować, są pokazane jako czerwone kwadraty.</figcaption></figure>
+<p>Jeśli istnieją tylko dwa profile, utworzone powierzchnie są powierzchniami rządzonymi pomiędzy odpowiadającymi im segmentami profili. Krawędzie proste są tworzone w celu połączenia odpowiednich wierzchołków profili.
+</p><p>Jeśli istnieją więcej niż dwa profile, powierzchnie są tworzone przez krzywe złożone w taki sam sposób, w jaki linie proste tworzą powierzchnie regulowane. Wyimaginowane krzywe złożone, z których "zbudowana" jest powierzchnia, są rysowane przez odpowiednie punkty odpowiednich odcinków profili.
+</p><p>Krzywe są interpolacją krzywych złożonych.
+</p>
+<ul><li>Jeśli liczba profili jest mniejsza niż 10, interpolacja odbywa się za pomocą krzywej złożonej o maksymalnym możliwym stopniu <i>(tj. stopień = number_of_profiles - 1)</i>.</li>
+<li>Jeśli liczba profili przekracza 10, interpolacja jest przełączana na krzywą złożoną 3 stopnia.</li></ul>
+<p>Stosowana metoda węzłów to "approximate chord length". Approximate oznacza, że wektor węzłów jest dokładnie taki sam dla każdej krzywej w wyciągnięciu. Więcej informacji o tym, czym jest interpolacja krzywej złozonej, wektor węzłów, metoda długości cięciwy, można znaleźć na przykład w poradniku <a class="external text" href="http://www.cs.mtu.edu/~shene/COURSES/cs3621/NOTES/INT-APP/CURVE-INT-global.html" rel="nofollow">cs.mtu.edu Curve Global Interpolation</a>.
+</p><p>Zauważ, że Wyciągnięcie ma właściwość "Prostokreślnie". Jeśli jest ona ustawiona na wartość <code>Prawda</code>, to pomiędzy sąsiednimi profilami tworzone są powierzchnie regulowane, nawet jeśli jest więcej niż jeden profil. Oznacza to, że interpolacja krzywej złożonej jest zastępowana przez interpolację liniową kawałkową.
+</p>
+<div style="clear:both"></div>
+<p><span id="The_main_point"></span>
+</p>
+<h2><span id="G.C5.82.C3.B3wny_punkt"></span><span class="mw-headline" id="Główny_punkt">Główny punkt</span></h2>
+<ul><li>Wyciągnięcie wykonuje interpolację krzywej złożonej między dostarczonymi profilami. Interpolacja jest przełączana na liniową, gdy właściwość "Prostokreślnie" jest ustawiona na <code>Prawda</code>.</li>
+<li>Gdy liczba profili przekracza 9, stopień interpolacji spada do 3. To przełączenie może znacznie zmniejszyć drgania.</li>
+<li>Dopasowanie liczby segmentów <i>(względem liczby wierzchołków)</i> w profilach pozwala na lekkie skręcenie wyciągnięcia i zwykle pozwala na użycie bardziej złożonych profili.</li>
+<li>Kiedy liczba segmentów nie jest dopasowana, najlepiej jest zachować profile, aby były reprezentowane przez odpowiednią funkcję r<i>(phi)</i> we współrzędnych biegunowych.</li></ul>
+<p><span id="Additional_remarks"></span>
+</p>
+<h2><span class="mw-headline" id="Uwagi_dodatkowe">Uwagi dodatkowe</span></h2>
+<ul><li>Nie jest wymagane, aby profile były równoległe <i>(patrz zdjęcie poniżej)</i>.</li>
+<li>W przypadku wyciągnięcia nie jest wymagane, aby profile były rozdzielone <i>(patrz zdjęcie poniżej)</i>. Mogą być koplanarne, ale nie powinny się przecinać.</li>
+<li>Gdy właściwość "zamknięty" wyciągnięcia ma wartość <code>Prawda</code>, we wszystkich krzywych tworzących wyciągnięcie po profilach znajduje się połączenie wierzchołkowe <i>(patrz rysunek poniżej)</i>. Nie ma teraz niezawodnego sposobu na płynne zamknięcie wyciągnięcia.</li></ul>
+<table style="margin: 0 auto;">
+<tbody><tr>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_nonparallel.png"><img decoding="async" height="271" src="../File/Loft_nonparallel.png" srcset="/images/thumb/e/e5/Loft_nonparallel.png/450px-Loft_nonparallel.png 1.5x, /images/thumb/e/e5/Loft_nonparallel.png/600px-Loft_nonparallel.png 2x" width="300"/></a><figcaption>Nie jest wymagane, aby profile były równoległe.</figcaption></figure>
+</td>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft_Coplanar.png"><img decoding="async" height="167" src="../File/Loft_Coplanar.png" srcset="/images/thumb/b/bb/Loft_Coplanar.png/450px-Loft_Coplanar.png 1.5x, /images/b/bb/Loft_Coplanar.png 2x" width="300"/></a><figcaption>W wyciągnięciu, profile mogą być współosiowe. W tym przykładzie dwa z trzech profili są współpłaszczyznowe.</figcaption></figure>
+</td>
+<td><figure class="mw-halign-none" typeof="mw:File/Thumb"><a class="mw-file-description" href="../File/Loft-closed.png"><img decoding="async" height="207" src="../File/Loft-closed.png" srcset="/images/thumb/b/ba/Loft-closed.png/450px-Loft-closed.png 1.5x, /images/thumb/b/ba/Loft-closed.png/600px-Loft-closed.png 2x" width="300"/></a><figcaption>Przykład zamkniętego wyciągnięcia pomiędzy trzema pięciokątnymi profilami (biały). Należy zwrócić uwagę na niezbyt gładką spoinę na skrajnym profilu. Jest to pierwszy profil w zamkniętym poddaszu.</figcaption></figure>
+</td></tr></tbody></table>
+<p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><a href="Part_Workbench.html" title="Part Workbench/pl">Środowisko pracy Część</a> <span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_Part.svg"><img decoding="async" height="24" src="../File/Workbench_Part.svg" width="24"/></a></span>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Bryły pierwotne:</b> <a href="Part_Box.html" title="Part Box/pl">Prostopadłościan</a>, <a href="Part_Cylinder.html" title="Part Cylinder/pl">Walec</a>, <a href="Part_Sphere.html" title="Part Sphere/pl">Sfera</a>, <a href="Part_Cone.html" title="Part Cone/pl">Stożek</a>, <a href="Part_Torus.html" title="Part Torus/pl">Torus</a>, <a href="Part_Tube.html" title="Part Tube/pl">Rura</a>, <a href="Part_Primitives.html" title="Part Primitives/pl">Bryły pierwotne</a>, <a href="Part_Builder.html" title="Part Builder/pl">Konstruktor kształtu</a></li></ul>
+<hr/>
+<ul><li><b>Tworzenie i modyfikacja:</b> <a href="Part_Extrude.html" title="Part Extrude/pl">Wyciągnij</a>, <a href="Part_Revolve.html" title="Part Revolve/pl">Wyciągnij przez obrót</a>, <a href="Part_Mirror.html" title="Part Mirror/pl">Odbicie lustrzane</a>, <a href="Part_Scale.html" title="Part Scale/pl">Skaluj</a>, <a href="Part_Fillet.html" title="Part Fillet/pl">Zaokrąglenie</a>, <a href="Part_Chamfer.html" title="Part Chamfer/pl">Fazka</a>, <a href="Part_MakeFace.html" title="Part MakeFace/pl">Utwórz ścianę z linii łamanych</a>, <a href="Part_RuledSurface.html" title="Part RuledSurface/pl">Powierzchnia prostokreślna</a>, <a href="Part_Loft.html" title="Part Loft/pl">Wyciągnięcie przez profile</a>, <a href="Part_Sweep.html" title="Part Sweep/pl">Wyciągnięcie po ścieżce</a>, <a href="Part_Section.html" title="Part Section/pl">Przecięcie</a>, <a href="Part_CrossSections.html" title="Part CrossSections/pl">Przekrój poprzeczny</a>, <a href="Part_Offset.html" title="Part Offset/pl">Odsunięcie 3D</a>, <a href="Part_Offset2D.html" title="Part Offset2D/pl">Odsunięcie 2D</a>, <a href="Part_Thickness.html" title="Part Thickness/pl">Grubość</a>, <a href="Part_ProjectionOnSurface.html" title="Part ProjectionOnSurface/pl">Rzutowanie na powierzchnię</a>, <a href="Part_EditAttachment.html" title="Part EditAttachment/pl">Mocowanie</a></li></ul>
+<hr/>
+<ul><li><b>Funkcje logiczne:</b> <a href="Part_Compound.html" title="Part Compound/pl">Utwórz złożenie</a>, <a href="Part_ExplodeCompound.html" title="Part ExplodeCompound/pl">Rozbij złożenie</a>, <a href="Part_CompoundFilter.html" title="Part CompoundFilter/pl">Filtr złożeń</a>, <a href="Part_Boolean.html" title="Part Boolean/pl">Funkcje logiczne</a>, <a href="Part_Cut.html" title="Part Cut/pl">Wytnij</a>, <a href="Part_Fuse.html" title="Part Fuse/pl">Połączenie</a>, <a href="Part_Common.html" title="Part Common/pl">Część wspólna</a>, <a href="Part_JoinConnect.html" title="Part JoinConnect/pl">Przyłącz</a>, <a href="Part_JoinEmbed.html" title="Part JoinEmbed/pl">Dołącz do osadzenia</a>, <a href="Part_JoinCutout.html" title="Part JoinCutout/pl">Wycięcie połączenia</a>, <a href="Part_BooleanFragments.html" title="Part BooleanFragments/pl">Funkcja logiczna rozdzielająca</a>, <a href="Part_SliceApart.html" title="Part SliceApart/pl">Pokrój część</a>, <a href="Part_Slice.html" title="Part Slice/pl">Krojenie</a>, <a href="Part_XOR.html" title="Part XOR/pl">XOR</a></li></ul>
+<hr/>
+<ul><li><b>Pozostałe narzędzia:</b> <a href="Part_Import.html" title="Part Import/pl">Import z formatu CAD</a>, <a href="Part_Export.html" title="Part Export/pl">Eksport do formatu CAD</a>, <a href="Part_BoxSelection.html" title="Part BoxSelection/pl">Zaznacz obszar</a>, <a href="Part_ShapeFromMesh.html" title="Part ShapeFromMesh/pl">Kształt z siatki</a>, <a href="Part_PointsFromMesh.html" title="Part PointsFromMesh/pl">Punkty z siatki</a>, <a href="Part_MakeSolid.html" title="Part MakeSolid/pl">Utwórz bryłę</a>, <a href="Part_ReverseShape.html" title="Part ReverseShape/pl">Odwróć kształty</a>, <a href="Part_SimpleCopy.html" title="Part SimpleCopy/pl">Szybka kopia</a>, <a href="Part_TransformedCopy.html" title="Part TransformedCopy/pl">Przekształcona kopia</a>, <a href="Part_ElementCopy.html" title="Part ElementCopy/pl">Kopia kształtu elementu</a>, <a href="Part_RefineShape.html" title="Part RefineShape/pl">Udoskonal kształt</a>, <a href="Part_CheckGeometry.html" title="Part CheckGeometry/pl">Sprawdź geometrię</a>, <a href="Part_Defeaturing.html" title="Part Defeaturing/pl">Pogorszenie</a>, <a href="Std_SetAppearance.html" title="Std SetAppearance/pl">Wygląd zewnętrzny</a>, <a class="mw-redirect" href="Part_FaceColors.html" title="Part FaceColors/pl">Kolor powierzchni</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/User_hub.png"><img decoding="async" height="24" src="../File/User_hub.png" srcset="/images/thumb/9/94/User_hub.png/36px-User_hub.png 1.5x, /images/thumb/9/94/User_hub.png/48px-User_hub.png 2x" width="24"/></a></span> <a href="User_hub.html" title="User hub/pl">Centrum użytkownika</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started/pl">Jak zacząć</a></b></li>
+<li><b>Instalacja:</b> <a href="Download.html" title="Download/pl">Pobieranie programu</a>, <a href="Installing_on_Windows.html" title="Installing on Windows/pl">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux/pl">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac/pl">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components/pl">Dodatkowych komponentów</a>, <a href="Compile_on_Docker.html" title="Compile on Docker/pl">Docker</a>, <a href="AppImage.html" title="AppImage/pl">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap/pl">Ubuntu Snap</a></li>
+<li><b>Podstawy:</b> <a href="About_FreeCAD.html" title="About FreeCAD/pl">Informacje na temat FreeCAD</a>, <a href="Interface.html" title="Interface/pl">Interfejs użytkownika</a>, <a href="Mouse_navigation.html" title="Mouse navigation/pl">Profil nawigacji myszką</a>, <a href="Selection_methods.html" title="Selection methods/pl">Metody wyboru</a>, <a href="Object_name.html" title="Object name/pl">Nazwa obiektu</a>, <a href="Preferences_Editor.html" title="Preferences Editor/pl">Edytor ustawień</a>, <a href="Workbenches.html" title="Workbenches/pl">Środowiska pracy</a>, <a href="Document_structure.html" title="Document structure/pl">Struktura dokumentu</a>, <a href="Property.html" title="Property/pl">Właściwości</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD/pl">Pomóż w rozwoju FreeCAD</a>, <a href="Donate.html" title="Donate/pl">Dotacje</a></li></ul>
+<hr/>
+<ul><li><b>Pomoc:</b> <a href="Tutorials.html" title="Tutorials/pl">Poradniki</a>, <a href="Video_tutorials.html" title="Video tutorials/pl">Wideo poradniki</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches/pl">Środowiska pracy</a>:</b> <a href="Std_Base.html" title="Std Base/pl">Strona Startowa</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench/pl">Złożenie</a>, <a href="Arch_Workbench.html" title="Arch Workbench/pl">BIM</a>, <a href="CAM_Workbench.html" title="CAM Workbench/pl">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench/pl">Rysunek Roboczy</a>, <a href="FEM_Workbench.html" title="FEM Workbench/pl">MES</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench/pl">Inspekcja</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench/pl">Siatka</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench/pl">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench/pl">Część</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench/pl">Projekt Części</a>, <a href="Points_Workbench.html" title="Points Workbench/pl">Punkty</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/pl">Inżynieria Wsteczna</a>, <a href="Robot_Workbench.html" title="Robot Workbench/pl">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench/pl">Szkicownik</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench/pl">Arkusz Kalkulacyjny</a>, <a href="Surface_Workbench.html" title="Surface Workbench/pl">Powierzchnia 3D</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench/pl">Rysunek Techniczny</a>, <a href="Testing.html" title="Testing/pl">Test Framework</a></li></ul>
+<hr/>
+<ul><li><b><a href="Addon.html" title="Addon/pl">Dodatki</a>:</b> <a href="Std_AddonMgr.html" title="Std AddonMgr/pl">Menadżer dodatków</a>, <a href="External_workbenches.html" title="External workbenches/pl">Zewnętrzne środowiska pracy</a>, <a href="Scripting_and_macros.html" title="Scripting and macros/pl">Skrypty i makrodefinicje</a></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub/pl">Centrum użytkownika</a>, <a href="Power_users_hub.html" title="Power users hub/pl">Centrum Power użytkownika</a>, <a href="Developer_hub.html" title="Developer hub/pl">Centrum programisty</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129213130
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.074 seconds
+Real time usage: 0.094 seconds
+Preprocessor visited node count: 131/1000000
+Post‐expand include size: 12039/2097152 bytes
+Template argument size: 4415/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 1439/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    5.793      1 -total
+ 45.31%    2.625      1 Template:Part_Tools_navi/pl
+ 29.60%    1.715      2 Template:Navigation_menu_2
+ 16.93%    0.981      1 Template:Userdocnavi/pl
+ 15.21%    0.881      3 Template:True/pl
+ 14.24%    0.825      2 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:275896-0!canonical and timestamp 20241129213130 and revision id 1259424. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

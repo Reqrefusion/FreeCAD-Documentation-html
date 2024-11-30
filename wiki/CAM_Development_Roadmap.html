@@ -1,0 +1,202 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">CAM Development Roadmap</span></h1><div class="mw-parser-output"><div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Purpose"><span class="tocnumber">1</span> <span class="toctext">Purpose</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Core_Objectives"><span class="tocnumber">2</span> <span class="toctext">Core Objectives</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Workflow"><span class="tocnumber">3</span> <span class="toctext">Workflow</span></a>
+<ul>
+<li class="toclevel-2 tocsection-4"><a href="#Job_Types"><span class="tocnumber">3.1</span> <span class="toctext">Job Types</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#2D_workflow"><span class="tocnumber">3.2</span> <span class="toctext">2D workflow</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Lathe_Workflow"><span class="tocnumber">3.3</span> <span class="toctext">Lathe Workflow</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#4/5_axis_workflow"><span class="tocnumber">3.4</span> <span class="toctext">4/5 axis workflow</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#2.5D_(milling)_workflow"><span class="tocnumber">3.5</span> <span class="toctext">2.5D (milling) workflow</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="#3D_surface_milling"><span class="tocnumber">3.6</span> <span class="toctext">3D surface milling</span></a></li>
+<li class="toclevel-2 tocsection-10"><a href="#Multi-Job_Context"><span class="tocnumber">3.7</span> <span class="toctext">Multi-Job Context</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-11"><a href="#Low_Level_Libraries"><span class="tocnumber">4</span> <span class="toctext">Low Level Libraries</span></a></li>
+<li class="toclevel-1 tocsection-12"><a href="#CAM_Modifications"><span class="tocnumber">5</span> <span class="toctext">CAM Modifications</span></a></li>
+<li class="toclevel-1 tocsection-13"><a href="#Representation_of_remaining_material"><span class="tocnumber">6</span> <span class="toctext">Representation of remaining material</span></a></li>
+<li class="toclevel-1 tocsection-14"><a href="#Post_Processing_&amp;_Advanced_Gcode"><span class="tocnumber">7</span> <span class="toctext">Post Processing &amp; Advanced Gcode</span></a></li>
+<li class="toclevel-1 tocsection-15"><a href="#CAM_Analysis"><span class="tocnumber">8</span> <span class="toctext">CAM Analysis</span></a></li>
+<li class="toclevel-1 tocsection-16"><a href="#List_of_shortcomings"><span class="tocnumber">9</span> <span class="toctext">List of shortcomings</span></a></li>
+</ul>
+</div>
+</div>
+<h2><span class="mw-headline" id="Purpose">Purpose</span></h2>
+<p>This page will discuss the strategic objectives for the <a href="CAM_Workbench.html" title="CAM Workbench">CAM Workbench</a>. This shouldn't be a list of features to implement but broader objectives that will steer the overall direction of CAM development.
+</p>
+<h2><span class="mw-headline" id="Core_Objectives">Core Objectives</span></h2>
+<p>These things make CAM a reliable, performant, and flexible tool.  Work in this area is never-ending and always high priority. New Developers should consider helping here before developing new features.
+</p>
+<ul><li>Broad test coverage</li>
+<li>DRY and well documented code base</li>
+<li>Bug fixes</li>
+<li>Support for many CNC machines (postprocessors)</li></ul>
+<h2><span class="mw-headline" id="Workflow">Workflow</span></h2>
+<p>The goal is a workflow that is efficient and resists human errors. However, the specific workflow can vary depending on the type of machine the user is working with and the type of geometry they are working on.  
+</p>
+<h3><span class="mw-headline" id="Job_Types">Job Types</span></h3>
+<p>CAM is optimized for 2.5D milling.  It needs the concept of job 'types' to handle other kinds of workflows like Lathe, 4th Axis, and pure 2D machines.
+Additional job types would help narrow the choices a user must make and eliminate the visual noise and confusion that comes from options that don't apply to the desired task.
+</p><p>Selection of Job Type should be something the user can add to a Job Template so that the selection can be automatic.
+</p>
+<h3><span class="mw-headline" id="2D_workflow">2D workflow</span></h3>
+<p>2D workflows like laser/waterjet/plasma have some unique requirements.
+</p>
+<ul><li>Nesting of parts into cut sheets</li>
+<li>marking for part ID, fold lines, stitching, etc.</li>
+<li>Efficient import from DXF</li></ul>
+<p>Additional 2D strategies
+</p>
+<ul><li>Engrave - Engrave by following a set of 2D edges. We support this partly now but the workflow is rough and keeping the 2D elements oriented with the shape is nearly impossible.</li>
+<li>Hatch Fill - Fill an arbitrary boundary with a hatching pattern</li></ul>
+<h3><span class="mw-headline" id="Lathe_Workflow">Lathe Workflow</span></h3>
+<p>Lathe setup is different from milling.  The user is generally viewing the coordinate system with Z axis pointing right and X axis pointing toward the user.
+Toolpaths are viewed as 2D relative to one side of the work or relative to the end for facing operations.
+</p><p>Lathe operations
+</p>
+<ul><li>Center Drill</li>
+<li>Contour Roughing - Remove material to approximate</li>
+<li>Contour Finishing - Contour finishing pass</li>
+<li>Facing</li>
+<li>Boring</li>
+<li>Threading External</li>
+<li>Threading Internal</li></ul>
+<h3><span id="4.2F5_axis_workflow"></span><span class="mw-headline" id="4/5_axis_workflow">4/5 axis workflow</span></h3>
+<p>Multi-axis is the broad category of strategies that involve working on a model from direction other than the typical top-down orientation in 2.5D strategies.
+</p><p>Multi-axis can be broken into two more narrow categories.
+</p><p><b>Indexed Multi-axis</b> is where the part is rotated to a specific orientation and then held in place while traditional 2.5D operations are performed.  4th axis rotation means a single additional degree-of-freedom is added to allow the part to rotate, usually around the X axis (A rotation) or Y axis (B rotation). 
+</p><p><b>Continuous 4 and 5 axis</b> rotations mean that the part is rotating while the cutter is engaged in the material.  These kinds of operations will need to visualize the toolpath relative to the part. Continuous 4/5 axis operations will require vastly new operations and toolpath generation logic.  As a result, continuous 4/5 operations are out of scope at this time.
+</p>
+<h3><span id="2.5D_.28milling.29_workflow"></span><span class="mw-headline" id="2.5D_(milling)_workflow">2.5D (milling) workflow</span></h3>
+<p>This is CAM's strongest area.  But there's room to improve.
+</p><p>Additional strategies
+</p>
+<ul><li>Threading</li>
+<li>Boring - Straightline Boring Canned operation (G85/G89)</li>
+<li>Slitting Saw - Slot cutting with saw tool on the side of the work</li></ul>
+<h3><span class="mw-headline" id="3D_surface_milling">3D surface milling</span></h3>
+<p>Additional strategies
+</p>
+<ul><li>Constant scallop</li>
+<li>Pencil</li></ul>
+<h3><span class="mw-headline" id="Multi-Job_Context">Multi-Job Context</span></h3>
+<p>Some parts require multiple setups to complete.  Each setup is represented by a separate job but no structure links them together other than the top-level document. This is insufficient because the document may contain multiple parts that have completely independent manufacturing steps/jobs/setups.
+</p><p>Commercial CNC users usually produce a document called a <a class="external text" href="https://www.cnccookbook.com/art-setup-sheet/" rel="nofollow">'setup sheet'</a> which describes to the CNC operator how to set up the machine in order to manufacture the part.  This 'setup sheet' is not at all related to the CAM setupsheet concept.  It is a human-readable document meant to communicate assumptions and notes required to correctly execute the gcode.  The setup sheet usually contains the following information:
+</p>
+<ul><li>tools required</li>
+<li>lowest z level</li>
+<li>Part name/number/version</li>
+<li>customer</li>
+<li>rough stock or starting condition</li>
+<li>operations</li>
+<li>estimated run time</li>
+<li>critical dimensions and inspection criteria</li>
+<li>notes about previous runs</li>
+<li>gcode program name</li>
+<li>Fixtures and workholding information</li></ul>
+<p>CAM Sanity is CAM's solution to the 'setup sheet'  CAM Sanity is currently an experimental feature.  Moving this to production should be a priority.
+</p>
+<h2><span class="mw-headline" id="Low_Level_Libraries">Low Level Libraries</span></h2>
+<p>CAM makes use of several libraries to generate toolpaths based on part geometry. These include libarea/patharea/clipper, <a class="external text" href="https://dev.opencascade.org/doc/overview/html/" rel="nofollow">Open CASCADE Technology</a>, and <a class="external text" href="https://github.com/aewallin/opencamlib" rel="nofollow">OpenCamLib</a>. Other libraries are available and more will likely be written in the future. We should include these whenever possible and when a native (OCCT) solution is unavailable.
+</p><p><a class="external text" href="https://github.com/Jack000/Deepnest" rel="nofollow">Deepnest</a> or an equivalent nesting/bin packing library would allow us to efficiently arrange parts in a cut-sheet to minimize stock usage.
+</p><p><a class="external text" href="https://github.com/jbuckmccready/cavalier_contours" rel="nofollow">Cavalier Contours</a> is a modern 2D offsetting library.  It is fast and actively developed and should be considered as a replacement ot libarea.  It is written in Rust so additional involvement of the development community is needed to support its use.
+</p>
+<h2><span class="mw-headline" id="CAM_Modifications">CAM Modifications</span></h2>
+<p>Some of the operations/strategies offer features and tools that are useful but not available for other op/strategies.  We should work to make things more consistent.
+</p><p>Pocket/3D Pocket has a boundary extension tool. This should be available to all operations where it makes sense.  For example adaptive, surface, waterline,
+</p>
+<h2><span class="mw-headline" id="Representation_of_remaining_material">Representation of remaining material</span></h2>
+<p>CAM should have a more robust state for the remaining material.  This would be useful for visualization, collision avoidance, and REST milling.
+</p>
+<h2><span id="Post_Processing_.26_Advanced_Gcode"></span><span class="mw-headline" id="Post_Processing_&amp;_Advanced_Gcode">Post Processing &amp; Advanced Gcode</span></h2>
+<ul><li>modular output for older machines with limited memory.</li></ul>
+<p>Many old machines have an extremely limited capacity for gcode.  While physically able to produce more complex paths, the very large output from surfacing and adaptive
+toolpaths make them unusable.  It would be useful to post-process the output with an eye on the size of the resulting file.  As a file reaches a maximum size, the post-processor could insert a spindle retraction and stop gracefully, then the next file could continue.  Output files would be numbered to indicate sequence.
+</p>
+<ul><li>Support for Macros, subprograms, variables.</li></ul>
+<h2><span class="mw-headline" id="CAM_Analysis">CAM Analysis</span></h2>
+<ul><li>Tip up Prediction / avoidance</li></ul>
+<p>When 2D cutting (laser/waterjet/plasma) of material supported on a grating, small parts cut out of the main stock can 'tip up' creating a crash hazard for the cutting tool
+during subsequent moves.  Being able to predict these events or avoid them by ordering paths would be desirable.
+(<a class="external text" href="https://shopfloorlasers.com/nesting-software/263-heads-up" rel="nofollow">Further reading</a>)
+</p>
+<ul><li>Visualization of remaining material after each operation could be improved</li></ul>
+<h2><span class="mw-headline" id="List_of_shortcomings">List of shortcomings</span></h2>
+<p>The following list is not individual bugs but shows how CAM is inconsistent in its application of concepts.
+</p>
+<ul><li>Inconsistent use of cut direction.  We should be talking about climb/conventional everywhere and not using language like CW/CCW. (I'm not sure I agree with this. What if you got a really good deal on left-hand end mills? What if you're using a plasma cutter? An EDM machine? A lathe? -KimK)</li>
+<li>Inconsistent use of stepover.  I wish we had used the terminology of DOC/WOC (depth of cut / width of cut) from the beginning but we didn't.  We use 'stepdown' and 'stepover' but inconsistently apply it. Sometimes it is an absolute value and other times a percent of cutter diameter.</li>
+<li>Inconsistent implementation of the ObjectOp class hierarchy.  Some of the ops can't be toggled off.</li>
+<li>Finishing Passes.  I think we should add an additional ObjectOp.Feature for FeatureFinishPass.  This would give a new tab where a user could configure the final finishing pass with a different tool controller, direction, etc.</li>
+<li>Inconsistent control of performance vs. accuracy.  Many operations have poorly named or inconsistent controls for tolerance.  At a minimum these could be grouped into a consistently named property group.</li>
+<li>Inconsistent use of stock shapes and extensions.</li>
+<li>No high level path optimization / automatic grouping of disjunct cutting areas.</li>
+<li>G17, G18, G19 not supported, G17 is active by default (circles and arcs must be in XY plane). This not only prevents milling in G18 and G19 modes (circles and arcs in XZ plane and YZ plane, respectively), but is an obstacle to lathe CAM, which requires G18. (This bullet point is according to the list of supported g-codes here:  <a class="external free" href="https://wiki.freecad.org/CAM_scripting" rel="nofollow">https://wiki.freecad.org/CAM_scripting</a>  -KimK)</li></ul>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="File/Workbench_CAM.svg"><img decoding="async" height="24" src="File/Workbench_CAM.svg" width="24"/></a></span> <a href="CAM_Workbench.html" title="CAM Workbench">CAM</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Project Commands:</b> <a href="CAM_Job.html" title="CAM Job">Job</a>, <a href="CAM_Post.html" title="CAM Post">Post Process</a>, <a href="CAM_Sanity.html" title="CAM Sanity">Check the CAM job for common errors</a>, <a href="CAM_ExportTemplate.html" title="CAM ExportTemplate">Export Template</a></li></ul>
+<hr/>
+<ul><li><b>Tool Commands:</b> <a href="CAM_Inspect.html" title="CAM Inspect">Inspect CAM Commands</a>, <a href="CAM_Simulator.html" title="CAM Simulator">CAM Simulator</a>, <a href="CAM_SelectLoop.html" title="CAM SelectLoop">Finish Selecting Loop</a>, <a href="CAM_OpActiveToggle.html" title="CAM OpActiveToggle">Toggle the Active State of the Operation</a>, <a href="CAM_ToolBitLibraryOpen.html" title="CAM ToolBitLibraryOpen">ToolBit Library editor</a>, <a href="CAM_ToolBitDock.html" title="CAM ToolBitDock">ToolBit Dock</a></li></ul>
+<hr/>
+<ul><li><b>Basic Operations:</b> <a href="CAM_Profile.html" title="CAM Profile">Profile</a>, <a href="CAM_Pocket_Shape.html" title="CAM Pocket Shape">Pocket Shape</a>, <a href="CAM_Drilling.html" title="CAM Drilling">Drilling</a>, <a href="CAM_MillFace.html" title="CAM MillFace">Face</a>, <a href="CAM_Helix.html" title="CAM Helix">Helix</a>, <a href="CAM_Adaptive.html" title="CAM Adaptive">Adaptive</a>, <a href="CAM_Slot.html" title="CAM Slot">Slot</a>, <a href="CAM_Engrave.html" title="CAM Engrave">Engrave</a>, <a href="CAM_Deburr.html" title="CAM Deburr">Deburr</a>, <a href="CAM_Vcarve.html" title="CAM Vcarve">Vcarve</a></li></ul>
+<hr/>
+<ul><li><b>3D Operations:</b> <a href="CAM_Pocket_3D.html" title="CAM Pocket 3D">3D Pocket</a>, <a href="CAM_Surface.html" title="CAM Surface">3D Surface</a>, <a href="CAM_Waterline.html" title="CAM Waterline">Waterline</a></li></ul>
+<hr/>
+<ul><li><b>CAM Dressup:</b> <a href="CAM_DressupAxisMap.html" title="CAM DressupAxisMap">Axis Map</a>, <a href="CAM_DressupPathBoundary.html" title="CAM DressupPathBoundary">Boundary</a>, <a href="CAM_DressupDogbone.html" title="CAM DressupDogbone">Dogbone</a>, <a href="CAM_DressupDragKnife.html" title="CAM DressupDragKnife">DragKnife</a>, <a href="CAM_DressupLeadInOut.html" title="CAM DressupLeadInOut">LeadInOut</a>, <a href="CAM_DressupRampEntry.html" title="CAM DressupRampEntry">RampEntry</a>, <a href="CAM_DressupTag.html" title="CAM DressupTag">Tag</a>, <a href="CAM_DressupZCorrect.html" title="CAM DressupZCorrect">Z Depth Correction</a></li></ul>
+<hr/>
+<ul><li><b>Supplemental Commands:</b> <a href="CAM_Fixture.html" title="CAM Fixture">Fixture</a>, <a href="CAM_Comment.html" title="CAM Comment">Comment</a>, <a href="CAM_Stop.html" title="CAM Stop">Stop</a>, <a href="CAM_Custom.html" title="CAM Custom">Custom</a>, <a href="CAM_Probe.html" title="CAM Probe">Probe</a>, <a href="CAM_Shape.html" title="CAM Shape">From Shape</a></li></ul>
+<hr/>
+<ul><li><b>CAM Modification:</b> <a href="CAM_Copy.html" title="CAM Copy">Copy the operation in the job</a>, <a href="CAM_Array.html" title="CAM Array">Array</a>, <a href="CAM_SimpleCopy.html" title="CAM SimpleCopy">Simple Copy</a></li></ul>
+<hr/>
+<ul><li><b>Specialty Operations:</b> <a href="CAM_ThreadMilling.html" title="CAM ThreadMilling">Thread Milling</a></li></ul>
+<hr/>
+<ul><li><b>Miscellaneous:</b> <a href="CAM_Area.html" title="CAM Area">Area</a>, <a href="CAM_Area_Workplane.html" title="CAM Area Workplane">Area workplane</a></li></ul>
+<hr/>
+<ul><li><b>ToolBit architecture:</b> <a href="CAM_Tools.html" title="CAM Tools">Tools</a>, <a href="CAM_ToolShape.html" title="CAM ToolShape">ToolShape</a>, <a href="CAM_ToolBit.html" title="CAM ToolBit">ToolBit</a>, <a href="CAM_ToolBit_Library.html" title="CAM ToolBit Library">ToolBit Library</a>, <a href="CAM_ToolController.html" title="CAM ToolController">ToolController</a></li></ul>
+<hr/>
+<ul><li><b>Additional:</b> <a href="CAM_Preferences.html" title="CAM Preferences">Preferences</a>,  <a href="CAM_scripting.html" title="CAM scripting">Scripting</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="File/User_hub.png"><img decoding="async" height="24" src="File/User_hub.png" srcset="/images/thumb/9/94/User_hub.png/36px-User_hub.png 1.5x, /images/thumb/9/94/User_hub.png/48px-User_hub.png 2x" width="24"/></a></span> <a href="User_hub.html" title="User hub">User documentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started">Getting started</a></b></li>
+<li><b>Installation:</b> <a href="Download.html" title="Download">Download</a>, <a href="Installing_on_Windows.html" title="Installing on Windows">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components">Additional components</a>, <a href="Compile_on_Docker.html" title="Compile on Docker">Docker</a>, <a href="AppImage.html" title="AppImage">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap">Ubuntu Snap</a></li>
+<li><b>Basics:</b> <a href="About_FreeCAD.html" title="About FreeCAD">About FreeCAD</a>, <a href="Interface.html" title="Interface">Interface</a>, <a href="Mouse_navigation.html" title="Mouse navigation">Mouse navigation</a>, <a href="Selection_methods.html" title="Selection methods">Selection methods</a>, <a href="Object_name.html" title="Object name">Object name</a>, <a href="Preferences_Editor.html" title="Preferences Editor">Preferences</a>, <a href="Workbenches.html" title="Workbenches">Workbenches</a>, <a href="Document_structure.html" title="Document structure">Document structure</a>, <a href="Property.html" title="Property">Properties</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD">Help FreeCAD</a>, <a href="Donate.html" title="Donate">Donate</a></li></ul>
+<hr/>
+<ul><li><b>Help:</b> <a href="Tutorials.html" title="Tutorials">Tutorials</a>, <a href="Video_tutorials.html" title="Video tutorials">Video tutorials</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches">Workbenches</a>:</b> <a href="Std_Base.html" title="Std Base">Std Base</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench">Assembly</a>, <a href="BIM_Workbench.html" title="BIM Workbench">BIM</a>, <a href="CAM_Workbench.html" title="CAM Workbench">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench">Draft</a>, <a href="FEM_Workbench.html" title="FEM Workbench">FEM</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench">Inspection</a>, <a href="Material_Workbench.html" title="Material Workbench">Material</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench">Mesh</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench">Part</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench">PartDesign</a>, <a href="Points_Workbench.html" title="Points Workbench">Points</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench">Reverse Engineering</a>, <a href="Robot_Workbench.html" title="Robot Workbench">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench">Sketcher</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench">Spreadsheet</a>, <a href="Surface_Workbench.html" title="Surface Workbench">Surface</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench">TechDraw</a>, <a href="Testing.html" title="Testing">Test Framework</a></li></ul>
+<hr/>
+<ul><li><b><a href="Addon.html" title="Addon">Addons</a>:</b> <a href="Std_AddonMgr.html" title="Std AddonMgr">Addon Manager</a>, <a href="External_workbenches.html" title="External workbenches">External workbenches</a>, <a href="Scripting_and_macros.html" title="Scripting and macros">Scripting and macros</a></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub">User hub</a>, <a href="Power_users_hub.html" title="Power users hub">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub">Developer hub</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129212013
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.027 seconds
+Real time usage: 0.040 seconds
+Preprocessor visited node count: 186/1000000
+Post‐expand include size: 10453/2097152 bytes
+Template argument size: 3705/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    9.517      1 -total
+ 43.39%    4.129      1 Template:CAM_Tools_navi
+ 40.04%    3.811      2 Template:Navigation_menu_2
+ 33.55%    3.193      1 Template:Userdocnavi
+ 13.25%    1.261      1 Template:TOCright
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:204337-0!canonical and timestamp 20241129212013 and revision id 1444275. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>

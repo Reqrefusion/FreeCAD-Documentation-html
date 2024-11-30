@@ -1,0 +1,314 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Custom icon in tree view/pl</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Custom_icon_in_tree_view.html" lang="de" title="Individuelles Symbol in der Baumansicht (100% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Custom_icon_in_tree_view.html" lang="en" title="Custom icon in tree view (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Custom_icon_in_tree_view.html" lang="fr" title="Icône personnalisée dans l'arborescence (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Custom_icon_in_tree_view.html" lang="it" title="Icona personalizzata nella vista ad albero (100% translated)">italiano</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="pl">polski</span></li></ul></div>
+<p><span id="Introduction"></span>
+</p>
+<h2><span class="mw-headline" id="Wprowadzenie">Wprowadzenie</span></h2>
+<p>Oto przykład modyfikacji ikony niestandardowego <a href="Viewprovider.html" title="Viewprovider/pl">Dostawcy widoku</a>, które są zwykle dodawane do <a href="Scripted_objects.html" title="Scripted objects/pl">obiektów tworzonych skryptami</a>.
+</p><p><span id="Personalized_icon_in_the_combo_view"></span>
+</p>
+<h2><span id="Spersonalizowana_ikona_w_widoku_po.C5.82.C4.85czonym"></span><span class="mw-headline" id="Spersonalizowana_ikona_w_widoku_połączonym">Spersonalizowana ikona w widoku połączonym</span></h2>
+<p>Oto przykład tworzenia obiektu z właściwościami i ikoną spersonalizowaną w Widoku połączonym. 
+</p><p>Pobierz przykładową ikonę do tego samego katalogu co makrodefinicję.<span typeof="mw:File"><a class="mw-file-description" href="../File/FreeCADIco.png" title="icon Example for the macro"><img alt="icon Example for the macro" decoding="async" height="22" src="../File/FreeCADIco.png" srcset="/images/thumb/8/86/FreeCADIco.png/36px-FreeCADIco.png 1.5x, /images/thumb/8/86/FreeCADIco.png/48px-FreeCADIco.png 2x" width="24"/></a></span>
+</p><p>Użycie ikony dla trzech różnych przypadków użycia: icon_in_file_disk <i>(format .png)</i>, icon_XPM_in_macro (format .XPM) i icon_resource_FreeCAD
+</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Qt_Example_02.png" title="icon personalised"><img alt="icon personalised" decoding="async" height="490" src="../File/Qt_Example_02.png" width="338"/></a></span>
+</p>
+<div style="clear:both"></div>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">PySide</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span><span class="o">,</span> <span class="nn">FreeCADGui</span><span class="o">,</span> <span class="nn">Part</span>
+<span class="kn">from</span> <span class="nn">pivy</span> <span class="kn">import</span> <span class="n">coin</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span> <span class="p">,</span><span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PySide.QtGui</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">PySide.QtCore</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">Draft</span>
+
+<span class="k">global</span> <span class="n">path</span>
+<span class="n">param</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ParamGet</span><span class="p">(</span><span class="s2">"User parameter:BaseApp/Preferences/Macro"</span><span class="p">)</span><span class="c1"># macro path in FreeCAD preferences</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">GetString</span><span class="p">(</span><span class="s2">"MacroPath"</span><span class="p">,</span><span class="s2">""</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"/"</span>                        <span class="c1"># macro path</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span><span class="s2">"/"</span><span class="p">)</span>                                       <span class="c1"># convert the "\" to "/"</span>
+
+
+<span class="k">class</span> <span class="nc">IconViewProviderToFile</span><span class="p">:</span>                                       <span class="c1"># Class ViewProvider create Property view of object</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">icone</span> <span class="o">=</span> <span class="n">icon</span>
+        
+    <span class="k">def</span> <span class="nf">getIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>                                              <span class="c1"># GetIcon</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">icone</span>
+        
+    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>                                          <span class="c1"># Property view of object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Flat Lines"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Shaded"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Wireframe"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Points"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addDisplayMode</span><span class="p">(</span> <span class="n">coin</span><span class="o">.</span><span class="n">SoGroup</span><span class="p">(),</span><span class="s2">"Flat Lines"</span> <span class="p">)</span>           <span class="c1"># Display Mode</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addDisplayMode</span><span class="p">(</span> <span class="n">coin</span><span class="o">.</span><span class="n">SoGroup</span><span class="p">(),</span><span class="s2">"Shaded"</span> <span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addDisplayMode</span><span class="p">(</span> <span class="n">coin</span><span class="o">.</span><span class="n">SoGroup</span><span class="p">(),</span><span class="s2">"Wireframe"</span> <span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addDisplayMode</span><span class="p">(</span> <span class="n">coin</span><span class="o">.</span><span class="n">SoGroup</span><span class="p">(),</span><span class="s2">"Points"</span> <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes</span>
+
+    <span class="k">def</span> <span class="nf">getDisplayModes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">modes</span>
+
+<span class="c1">#####################################################</span>
+<span class="c1">########## Example with icon to file # begin ########</span>
+<span class="c1">#####################################################</span>
+
+<span class="n">object1</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"App::FeaturePython"</span><span class="p">,</span> <span class="s2">"Icon_In_File_Disk"</span><span class="p">)</span>                                     <span class="c1"># create your object</span>
+<span class="n">object1</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyString"</span><span class="p">,</span><span class="s2">"Identity"</span><span class="p">,</span> <span class="s2">"ExampleTitle0"</span><span class="p">,</span> <span class="s2">"Identity of object"</span><span class="p">)</span><span class="o">.</span><span class="n">Identity</span> <span class="o">=</span> <span class="s2">"FCSpring"</span>        <span class="c1"># Identity of object</span>
+<span class="n">object1</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyFloat"</span> <span class="p">,</span><span class="s2">"Pitch"</span><span class="p">,</span>    <span class="s2">"ExampleTitle0"</span><span class="p">,</span> <span class="s2">"Pitch betwen 2 heads"</span><span class="p">)</span><span class="o">.</span><span class="n">Pitch</span>  <span class="o">=</span> <span class="mf">2.0</span>               <span class="c1"># other Property Data</span>
+<span class="n">object1</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyBool"</span>  <span class="p">,</span><span class="s2">"View"</span><span class="p">,</span>     <span class="s2">"ExampleTitle1"</span><span class="p">,</span> <span class="s2">"Hello world"</span><span class="p">)</span><span class="o">.</span><span class="n">View</span>            <span class="o">=</span> <span class="kc">True</span>              <span class="c1"># ...</span>
+<span class="n">object1</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyColor"</span> <span class="p">,</span><span class="s2">"LineColor"</span><span class="p">,</span><span class="s2">"ExampleTitle2"</span><span class="p">,</span> <span class="s2">"Color to choice"</span><span class="p">)</span><span class="o">.</span><span class="n">LineColor</span>   <span class="o">=</span> <span class="p">(</span><span class="mf">0.13</span><span class="p">,</span><span class="mf">0.15</span><span class="p">,</span><span class="mf">0.37</span><span class="p">)</span>  <span class="c1"># ...</span>
+<span class="c1">#...other Property Data</span>
+<span class="c1">#...other Property Data</span>
+<span class="c1">#</span>
+<span class="n">object1</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="n">IconViewProviderToFile</span><span class="p">(</span> <span class="n">object1</span><span class="p">,</span> <span class="n">path</span> <span class="o">+</span> <span class="s2">"FreeCADIco.png"</span><span class="p">)</span>                                      <span class="c1"># icon download to file</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+<span class="c1">#</span>
+<span class="c1">#__Detail__:</span>
+<span class="c1"># FreeCAD.ActiveDocument.addObject( = create now object personalized</span>
+<span class="c1"># "App::FeaturePython",             = object as FeaturePython</span>
+<span class="c1"># "Icon_In_File_Disk")              = internal name of your object</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1"># "App::PropertyString",    = type of Property , availlable : PropertyString, PropertyFloat, PropertyBool, PropertyColor</span>
+<span class="c1"># "Identity",               = name of the feature</span>
+<span class="c1"># "ExampleTitle0",          = title of the "section"</span>
+<span class="c1"># "Identity of object")     = tooltip displayed on mouse</span>
+<span class="c1"># .Identity                 = variable (same of name of the feature)</span>
+<span class="c1"># object1.ViewObject.Proxy  = create the view object and gives the icon</span>
+<span class="c1">#</span>
+<span class="c1">########## example with icon to file end</span>
+
+
+
+<span class="c1">#####################################################</span>
+<span class="c1">########## Example with icon in macro # begin #######</span>
+<span class="c1">#####################################################</span>
+
+<span class="k">def</span> <span class="nf">setIconInMacro</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>        <span class="c1"># def contener the icon in format .xpm</span>
+    <span class="c1"># File format XPM created by Gimp "https://www.gimp.org/"</span>
+    <span class="c1"># Choice palette Tango</span>
+    <span class="c1"># Create your masterwork ...</span>
+    <span class="c1"># For export the image in XPM format</span>
+    <span class="c1">#     Menu File &gt; Export as &gt; .xpm</span>
+    <span class="c1"># (For convert image true color in Tango color palette : </span>
+    <span class="c1">#     Menu Image &gt; Mode &gt; Indexed ... &gt; Use custom palette &gt; Tango Icon Theme &gt; Convert)</span>
+    <span class="k">return</span> <span class="s2">"""</span>
+<span class="s2">            /* XPM */</span>
+<span class="s2">            static char * XPM[] = {</span>
+<span class="s2">            "22 24 5 1",</span>
+<span class="s2">            " 	c None",</span>
+<span class="s2">            ".	c #CE5C00",</span>
+<span class="s2">            "+	c #EDD400",</span>
+<span class="s2">            "@	c #F57900",</span>
+<span class="s2">            "#	c #8F5902",</span>
+<span class="s2">            "                      ",</span>
+<span class="s2">            "                      ",</span>
+<span class="s2">            "  ....                ",</span>
+<span class="s2">            "  ..@@@@..            ",</span>
+<span class="s2">            "  . ...@......        ",</span>
+<span class="s2">            "  .+++++++++...       ",</span>
+<span class="s2">            "  .      ....++...    ",</span>
+<span class="s2">            "  .@..@@@@@@.+++++..  ",</span>
+<span class="s2">            "  .@@@@@..#  ++++ ..  ",</span>
+<span class="s2">            "  .       ++++  .@..  ",</span>
+<span class="s2">            "  .++++++++  .@@@.+.  ",</span>
+<span class="s2">            " .      ..@@@@@. ++.  ",</span>
+<span class="s2">            " ..@@@@@@@@@.  +++ .  ",</span>
+<span class="s2">            " ....@...# +++++ @..  ",</span>
+<span class="s2">            " .    ++++++++ .@. .  ",</span>
+<span class="s2">            " .++++++++  .@@@@ .   ",</span>
+<span class="s2">            " .   #....@@@@. ++.   ",</span>
+<span class="s2">            " .@@@@@@@@@.. +++ .   ",</span>
+<span class="s2">            " ........  +++++...   ",</span>
+<span class="s2">            " ...  ..+++++ ..@..   ",</span>
+<span class="s2">            "    ......  .@@@ +.   ",</span>
+<span class="s2">            "          ......++.   ",</span>
+<span class="s2">            "                ...   ",</span>
+<span class="s2">            "                      "};</span>
+<span class="s2">        """</span>
+
+<span class="n">object2</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"App::FeaturePython"</span><span class="p">,</span> <span class="s2">"Icon_XPM_In_Macro"</span><span class="p">)</span>                                    <span class="c1">#</span>
+<span class="n">object2</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyString"</span><span class="p">,</span><span class="s2">"Identity"</span><span class="p">,</span><span class="s2">"ExampleTitle"</span><span class="p">,</span><span class="s2">"Identity of object"</span><span class="p">)</span><span class="o">.</span><span class="n">Identity</span> <span class="o">=</span> <span class="s2">"FCSpring"</span>
+<span class="c1">#...other Property Data</span>
+<span class="c1">#...other Property Data</span>
+<span class="c1">#</span>
+<span class="n">object2</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="n">IconViewProviderToFile</span><span class="p">(</span> <span class="n">object2</span><span class="p">,</span> <span class="n">setIconInMacro</span><span class="p">(</span><span class="s2">""</span><span class="p">))</span>              <span class="c1"># icon in macro (.XPM)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+<span class="c1">########## example with icon in macro end</span>
+
+
+
+<span class="c1">####################################################################</span>
+<span class="c1">########## Example with icon to FreeCAD ressource # begin ##########</span>
+<span class="c1">####################################################################</span>
+
+<span class="n">object3</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"App::FeaturePython"</span><span class="p">,</span> <span class="s2">"Icon_Ressource_FreeCAD"</span><span class="p">)</span>                               <span class="c1">#</span>
+<span class="n">object3</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyString"</span><span class="p">,</span><span class="s2">"Identity"</span><span class="p">,</span><span class="s2">"ExampleTitle"</span><span class="p">,</span><span class="s2">"Identity of object"</span><span class="p">)</span><span class="o">.</span><span class="n">Identity</span> <span class="o">=</span> <span class="s2">"FCSpring"</span>
+<span class="c1">#...other Property Data</span>
+<span class="c1">#...other Property Data</span>
+<span class="c1">#</span>
+<span class="n">object3</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="n">IconViewProviderToFile</span><span class="p">(</span> <span class="n">object3</span><span class="p">,</span> <span class="s2">":/icons/Draft_Draft.svg"</span><span class="p">)</span>       <span class="c1"># icon to FreeCAD ressource</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+<span class="c1">########## example with icon to FreeCAD ressource end</span>
+</pre></div>
+<p>Kompletny przykład tworzenia kostki i jej ikony.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#https://forum.freecadweb.org/viewtopic.php?t=10255#p83319</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span><span class="o">,</span> <span class="nn">Part</span><span class="o">,</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">FreeCAD</span> <span class="kn">import</span> <span class="n">Base</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
+
+<span class="k">global</span> <span class="n">path</span>
+<span class="n">param</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ParamGet</span><span class="p">(</span><span class="s2">"User parameter:BaseApp/Preferences/Macro"</span><span class="p">)</span><span class="c1"># macro path in FreeCAD preferences</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">GetString</span><span class="p">(</span><span class="s2">"MacroPath"</span><span class="p">,</span><span class="s2">""</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"/"</span>                        <span class="c1"># macro path</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span><span class="s2">"/"</span><span class="p">)</span>                                       <span class="c1"># convert the "\" to "/"</span>
+
+<span class="k">def</span> <span class="nf">setIconInMacro</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">"""</span>
+<span class="s2">        /* XPM */</span>
+<span class="s2">        static char * xpm[] = {</span>
+<span class="s2">        "22 22 12 1",</span>
+<span class="s2">        " 	c None",</span>
+<span class="s2">        ".	c #A40000",</span>
+<span class="s2">        "+	c #2E3436",</span>
+<span class="s2">        "@	c #CE5C00",</span>
+<span class="s2">        "#	c #F57900",</span>
+<span class="s2">        "$	c #FCAF3E",</span>
+<span class="s2">        "%	c #5C3566",</span>
+<span class="s2">        "&amp;	c #204A87",</span>
+<span class="s2">        "*	c #555753",</span>
+<span class="s2">        "=	c #3465A4",</span>
+<span class="s2">        "-	c #4E9A06",</span>
+<span class="s2">        ";	c #729FCF",</span>
+<span class="s2">        "                      ",</span>
+<span class="s2">        "                      ",</span>
+<span class="s2">        "                      ",</span>
+<span class="s2">        "        ..   ..       ",</span>
+<span class="s2">        "       +@#+++.$$      ",</span>
+<span class="s2">        "       +.#+%..$$      ",</span>
+<span class="s2">        "       &amp;*$  &amp;*#*      ",</span>
+<span class="s2">        "      &amp;   =&amp;=  =      ",</span>
+<span class="s2">        "   ++&amp;  +.==   %=     ",</span>
+<span class="s2">        "  ++$@ ..$ %=   &amp;     ",</span>
+<span class="s2">        "  ..-&amp;%.#$$ &amp;## +=$   ",</span>
+<span class="s2">        "   .#  ..$ ..#</span><span class="si">%%</span><span class="s2">.#$$  ",</span>
+<span class="s2">        "     ;    =+=## %-$#  ",</span>
+<span class="s2">        "     &amp;=   ;&amp;   %=     ",</span>
+<span class="s2">        "      ;+ &amp;=;  %=      ",</span>
+<span class="s2">        "      ++$- +*$-       ",</span>
+<span class="s2">        "      .#&amp;&amp;+.@$$       ",</span>
+<span class="s2">        "      ..$# ..$#       ",</span>
+<span class="s2">        "       ..   ..        ",</span>
+<span class="s2">        "                      ",</span>
+<span class="s2">        "                      ",</span>
+<span class="s2">        "                      "};</span>
+<span class="s2">        """</span>
+
+<span class="k">class</span> <span class="nc">PartFeature</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+
+<span class="k">class</span> <span class="nc">Box</span><span class="p">(</span><span class="n">PartFeature</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="n">PartFeature</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Length"</span><span class="p">,</span> <span class="s2">"Box"</span><span class="p">,</span> <span class="s2">"Length of the box"</span><span class="p">)</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Width"</span><span class="p">,</span>  <span class="s2">"Box"</span><span class="p">,</span> <span class="s2">"Width of the box"</span> <span class="p">)</span><span class="o">.</span><span class="n">Width</span>  <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Height"</span><span class="p">,</span> <span class="s2">"Box"</span><span class="p">,</span> <span class="s2">"Height of the box"</span><span class="p">)</span><span class="o">.</span><span class="n">Height</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="k">def</span> <span class="nf">onChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">prop</span> <span class="o">==</span> <span class="s2">"Length"</span> <span class="ow">or</span> <span class="n">prop</span> <span class="o">==</span> <span class="s2">"Width"</span> <span class="ow">or</span> <span class="n">prop</span> <span class="o">==</span> <span class="s2">"Height"</span><span class="p">:</span>
+                <span class="n">fp</span><span class="o">.</span><span class="n">Shape</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">makeBox</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">Length</span><span class="p">,</span><span class="n">fp</span><span class="o">.</span><span class="n">Width</span><span class="p">,</span><span class="n">fp</span><span class="o">.</span><span class="n">Height</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fp</span><span class="p">):</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">Shape</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">makeBox</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">Length</span><span class="p">,</span><span class="n">fp</span><span class="o">.</span><span class="n">Width</span><span class="p">,</span><span class="n">fp</span><span class="o">.</span><span class="n">Height</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">ViewProviderBox</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span>  <span class="o">=</span> <span class="bp">self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">icone</span> <span class="o">=</span> <span class="n">icon</span>
+        
+    <span class="k">def</span> <span class="nf">getIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">icone</span>
+
+    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">setupContextMenu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">menu</span><span class="p">):</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">"Set default height"</span><span class="p">)</span>
+        <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">f</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">setDefaultHeight</span><span class="p">,</span> <span class="n">arg</span><span class="o">=</span><span class="n">obj</span><span class="p">:</span><span class="n">f</span><span class="p">(</span><span class="n">arg</span><span class="p">))</span>
+
+        <span class="n">action</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">"Hello World"</span><span class="p">)</span>
+        <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">showHelloWorld</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">setDefaultHeight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view</span><span class="p">):</span>
+        <span class="n">view</span><span class="o">.</span><span class="n">Object</span><span class="o">.</span><span class="n">Height</span> <span class="o">=</span> <span class="mf">15.0</span>
+
+    <span class="k">def</span> <span class="nf">showHelloWorld</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="o">.</span><span class="n">information</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">"Hi there"</span><span class="p">,</span> <span class="s2">"Hello World"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">makeBox</span><span class="p">():</span>
+    <span class="n">FreeCAD</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>
+    <span class="n">a</span><span class="o">=</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::FeaturePython"</span><span class="p">,</span><span class="s2">"Box"</span><span class="p">)</span>
+    <span class="n">Box</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="c1">#    ViewProviderBox(a.ViewObject, path + "FreeCADIco.png")    # icon download to file</span>
+<span class="c1">#    ViewProviderBox(a.ViewObject,  ":/icons/Draft_Draft.svg") # icon to FreeCAD ressource</span>
+    <span class="n">ViewProviderBox</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">,</span>  <span class="n">setIconInMacro</span><span class="p">(</span><span class="s2">""</span><span class="p">))</span>        <span class="c1"># icon in macro (.XPM)</span>
+    <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+
+<span class="n">makeBox</span><span class="p">()</span>
+</pre></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><a href="Power_users_hub.html" title="Power users hub/pl">Centrum Power użytkowników</a> <span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Tworzenie skryptów FreeCAD:</b> <a href="Python.html" title="Python/pl">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/pl">Wprowadzenie do środowiska Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/pl">Poradnik: Tworzenie skryptów Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/pl">Podstawy tworzenia skryptów FreeCAD</a></li></ul>
+<hr/>
+<ul><li><b>Moduły:</b> <a href="Builtin_modules.html" title="Builtin modules/pl">Moduły wbudowane</a>, <a href="Units.html" title="Units/pl">Jednostki miar</a>, <a href="Quantity.html" title="Quantity">Ilość</a></li>
+<li><b>Środowiska pracy:</b> <a href="Workbench_creation.html" title="Workbench creation/pl">Tworzenie Środowiska pracy</a>, <a href="Gui_Command.html" title="Gui Command/pl">Polecenia Gui</a>, <a href="Command.html" title="Command">Polecenia</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/pl">Instalacja większej liczby Środowisk pracy</a></li>
+<li><b>Siatki i elementy:</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/pl">Skrytpy w Środowisku Siatek</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/pl">v</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/pl">Konwerska Mesh na Part</a>, <a href="PythonOCC.html" title="PythonOCC/pl">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Obiekty parametryczne:</b> <a href="Scripted_objects.html" title="Scripted objects/pl">Obiekty tworzone skryptami</a>, <a href="Viewprovider.html" title="Viewprovider">Obsługa obrazu</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view">Ikonka niestandardowa w widoku drzewa</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="Scenegraph.html" title="Scenegraph/pl">Coin (Inventor) scenegraph</a>, <a href="Pivy.html" title="Pivy/pl">Pivy</a></li>
+<li><b>Interfejs graficzny:</b> <a href="Interface_creation.html" title="Interface creation">Stworzenie interfejsu</a>, <a href="Dialog_creation.html" title="Dialog creation/pl">Kompletne stworzenie interfejsu w środowisku Python</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets">5</a>)</small>, <a href="PySide.html" title="PySide/pl">PySide</a>, PySide examples <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples">początkujący</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples">średniozaawansowany</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples">zaawansowany</a></li>
+<li><b>Makrodefinicje:</b> <a href="Macros.html" title="Macros/pl">Makrodefinicje</a>, <a href="How_to_install_macros.html" title="How to install macros/pl">Instalacja makrodefinicji</a></li>
+<li><b>Osadzanie programu:</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/pl">Osadzanie programu FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/pl">Osadzanie GUI FreeCAD</a></li></ul>
+<hr/>
+<ul><li><b>Pozostałe:</b> <a href="Expressions.html" title="Expressions/pl">Wyrażenia</a>, <a href="Code_snippets.html" title="Code snippets/pl">Wycinki kodu</a>, <a href="Line_drawing_function.html" title="Line drawing function/pl">Funkcja kreślenia linii</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/pl">Biblioteka matematyczna FreeCAD dla wektorów</a> <small>(deprecated)</small></li></ul>
+<hr/>
+<ul><li><b>Węzły użytkowników:</b> <a href="User_hub.html" title="User hub/pl">Centrum użytkownika</a>, <a href="Power_users_hub.html" title="Power users hub/pl">Centrum Power użytkowników</a>, <a href="Developer_hub.html" title="Developer hub/pl">Centrum programisty</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129212439
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [no‐toc‐conversion]
+CPU time usage: 0.082 seconds
+Real time usage: 0.436 seconds
+Preprocessor visited node count: 57/1000000
+Post‐expand include size: 6485/2097152 bytes
+Template argument size: 11888/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 2/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 33818/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  336.141      1 -total
+ 99.07%  333.019      2 Template:Code
+  0.59%    1.989      1 Template:Powerdocnavi/pl
+  0.21%    0.706      1 Template:Navigation_menu_2
+  0.18%    0.603      2 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:239652-0!canonical and timestamp 20241129212438 and revision id 1355466. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

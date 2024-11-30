@@ -1,0 +1,173 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Macro at Startup/fr</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Macro_at_Startup.html" lang="de" title="Makro beim Starten (91% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Macro_at_Startup.html" lang="en" title="Macro at Startup (100% translated)">English</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="fr">français</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Macro_at_Startup.html" lang="it" title="Eseguire automaticamente una macro all'avvio (26% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Macro_at_Startup.html" lang="pl" title="Automatyczne uruchamianie makroinstrukcji. (4% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Macro_at_Startup.html" lang="ru" title="Стартовый макрос (26% translated)">русский</a></li></ul></div>
+<p><span id="Introduction"></span>
+</p>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Comment"><span class="tocnumber">2</span> <span class="toctext">Comment</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#Préparer_la_macro"><span class="tocnumber">2.1</span> <span class="toctext">Préparer la macro</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Intégration_au_démarrage_de_FreeCAD"><span class="tocnumber">2.2</span> <span class="toctext">Intégration au démarrage de FreeCAD</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-5"><a href="#Remarques_générales"><span class="tocnumber">3</span> <span class="toctext">Remarques générales</span></a>
+<ul>
+<li class="toclevel-2 tocsection-6"><a href="#Linux"><span class="tocnumber">3.1</span> <span class="toctext">Linux</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#MacOS"><span class="tocnumber">3.2</span> <span class="toctext">MacOS</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Windows"><span class="tocnumber">3.3</span> <span class="toctext">Windows</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-9"><a href="#En_relation"><span class="tocnumber">4</span> <span class="toctext">En relation</span></a></li>
+</ul>
+</div>
+</div>
+<p>Cette documentation explique comment configurer une macro pour qu'elle s'exécute automatiquement au démarrage de FreeCAD.
+</p><p>Avant de commencer, les points suivants doivent être pris en compte:
+</p>
+<ul><li>L'exécution automatique d'une macro au démarrage peut être considérée comme un risque pour la sécurité. Vous ne devez exécuter que des macros fiables et testées auparavant</li>
+<li>Vous avez probablement besoin de quelques notions de Python et de codage pour suivre cette procédure</li>
+<li>Lorsque les dossiers utilisateur ('Mod', 'Macro', ...) sont mentionnés, ils se trouvent dans votre dossier utilisateur FreeCAD. Vous pouvez les localiser au démarrage et à la configuration → <a href="Start_up_and_Configuration.html#Informations_correspondant_.C3.A0_l.27utilisateur" title="Start up and Configuration/fr">Informations relatives à l'utilisateur</a></li>
+<li>Cela ne devrait pas être fait pour les macros traitant de la modélisation de pièces. Ceci est plutôt approprié pour les macros qui ajoutent des fonctionnalités en améliorant l'interface utilisateur, ...</li></ul>
+<p><span id="How_to"></span>
+</p>
+<h2><span class="mw-headline" id="Comment">Comment</span></h2>
+<p><span id="Prepare_the_macro"></span>
+</p>
+<h3><span id="Pr.C3.A9parer_la_macro"></span><span class="mw-headline" id="Préparer_la_macro">Préparer la macro</span></h3>
+<p>Généralement, il arrivera qu'une macro ne soit pas directement compatible avec un lancement au démarrage et devra être ajustée
+</p><p>Considérez la macro ci-dessous que vous avez téléchargée quelque part et qui est stockée dans votre dossier 'Macro' avec le nom 'MySuperMacro.FCMacro':
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">## Import section ##</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
+
+<span class="c1">## Definition section (classes, functions, ...)</span>
+<span class="k">class</span> <span class="nc">MyMsgBox</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyMsgBox</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">information</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">"MyTitle"</span><span class="p">,</span> <span class="s2">"MyText"</span><span class="p">)</span>
+
+<span class="c1">## Main instruction section</span>
+<span class="n">MyMsgBox</span><span class="p">()</span>
+</pre></div>
+<p>Toutes les macros présentent généralement une structure similaire avec une première section d'importation, puis une section de définition et enfin une section d'instruction principale. Nous allons nous concentrer sur ce dernier point car les instructions principales (elles sont assez faciles à repérer car elles commencent au début de la ligne) sont en réalité celles qui "exécutent" la macro. Pour une étape ultérieure, nous devrons importer la macro avec un programme puis l'exécuter. Cela ne peut pas être fait avec la structure réelle de la macro. Pour pouvoir le faire, nous devons inclure les instructions principales dans une fonction - par exemple. run() - puis assurez-vous que cette fonction est toujours appelée lorsque la macro est exécutée manuellement par l'utilisateur. Si vous n'êtes pas totalement sûr de ce que vous faites, il est conseillé de travailler sur une copie de la macro (ou vous pouvez simplement vouloir conserver la macro d'origine telle quelle).
+Le fichier d'origine doit être modifié comme suit:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="c1">## The 2 below lines shall be added if not already present to ensure FreeCAD modules are imported</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">FreeCADGui</span> <span class="k">as</span> <span class="nn">Gui</span>
+
+<span class="k">class</span> <span class="nc">MyMsgBox</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMessageBox</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MyMsgBox</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">information</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">"MyTitle"</span><span class="p">,</span> <span class="s2">"MyText"</span><span class="p">)</span>
+
+<span class="c1">## Enclose the main instructions in a function</span>
+<span class="k">def</span> <span class="nf">run</span><span class="p">():</span>
+    <span class="n">MyMsgBox</span><span class="p">()</span>
+
+<span class="c1">## Ensure main instructions are still called in case of manual run</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
+    <span class="n">run</span><span class="p">()</span>
+</pre></div>
+<p>Bien sûr, si la fonction "run()" existe déjà dans la macro, vous pouvez choisir n'importe quel autre nom commode.
+La macro est maintenant prête à être intégrée au démarrage de FreeCAD.
+</p><p><span id="Integrate_into_FreeCAD_startup"></span>
+</p>
+<h3><span id="Int.C3.A9gration_au_d.C3.A9marrage_de_FreeCAD"></span><span class="mw-headline" id="Intégration_au_démarrage_de_FreeCAD">Intégration au démarrage de FreeCAD</span></h3>
+<p>Commencez par créer un nouveau dossier dans votre dossier utilisateur "Mod" de appelé "MacroStartup". Copiez la macro modifiée dans ce dossier nouvellement créé et renommez-la avec une extension ".py" si ce n'est pas encore le cas (notez que si vous développez la macro vous-même, vous pouvez également la nommer avec l'extension ".py" dans le dossier "Macro" pour ne pas avoir à le renommer lors de la copie). Enfin, créez dans le même dossier un fichier appelé "InitGui.py" qui contient le code suivant:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">runStartupMacros</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="c1"># Do not run when NoneWorkbench is activated because UI isn't yet completely there</span>
+    <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">"NoneWorkbench"</span><span class="p">:</span>
+        <span class="c1"># Run macro only once by disconnecting the signal at first call</span>
+        <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">getMainWindow</span><span class="p">()</span><span class="o">.</span><span class="n">workbenchActivated</span><span class="o">.</span><span class="n">disconnect</span><span class="p">(</span><span class="n">runStartupMacros</span><span class="p">)</span>
+
+        <span class="c1"># Following 2 lines shall be duplicated for each macro to run</span>
+        <span class="kn">import</span> <span class="nn">MySuperMacro</span>
+        <span class="n">MySuperMacro</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="c1"># Eg. if a second macro shall be launched at startup</span>
+        <span class="c1"># import MyWonderfulMacro</span>
+        <span class="c1"># MyWonderfulMacro.run()</span>
+
+<span class="c1"># The following 2 lines are important because InitGui.py files are passed to the exec() function...</span>
+<span class="c1"># ...and the runMacro wouldn't be visible outside. So explicitly add it to __main__</span>
+<span class="kn">import</span> <span class="nn">__main__</span>
+<span class="n">__main__</span><span class="o">.</span><span class="n">runStartupMacros</span> <span class="o">=</span> <span class="n">runStartupMacros</span>
+
+<span class="c1"># Connect the function that runs the macro to the appropriate signal</span>
+<span class="n">FreeCADGui</span><span class="o">.</span><span class="n">getMainWindow</span><span class="p">()</span><span class="o">.</span><span class="n">workbenchActivated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">runStartupMacros</span><span class="p">)</span>
+</pre></div>
+<p>Notez que cela ne sera fait qu'une fois. Si vous souhaitez exécuter plus d'une macro, vous pouvez simplement ajouter les autres macros dans le même fichier (consultez les commentaires sur le code ci-dessus).
+</p><p>Nous avons finis. Votre macro devrait s'exécuter automatiquement au prochain lancement de FreeCAD.
+</p><p>Notez que si la macro originale a été téléchargée via le gestionnaire d’addon, elle sera écrasée lors de la mise à jour et vous devrez donc à nouveau suivre les étapes décrites ici.
+</p><p><span id="General_Notes"></span>
+</p>
+<h2><span id="Remarques_g.C3.A9n.C3.A9rales"></span><span class="mw-headline" id="Remarques_générales">Remarques générales</span></h2>
+<ul><li>Dans l'exemple de script 'InitGui.py' ci-dessus, la fonction nommée 'runStartupMacros()' peut être modifiée, tant que vous modifiez également les quatre autres références à celle-ci, afin qu'elles correspondent toutes.</li>
+<li>Ce script sera exécuté avant le chargement automatique de l'atelier de démarrage de votre choix dans les préférences de FreeCAD, <a href="Preferences_Editor.html#Pr.C3.A9f.C3.A9rences_g.C3.A9n.C3.A9rales" title="Preferences Editor/fr">Préférences générales</a>.</li></ul>
+<h3><span class="mw-headline" id="Linux">Linux</span></h3>
+<h3><span class="mw-headline" id="MacOS">MacOS</span></h3>
+<h3><span class="mw-headline" id="Windows">Windows</span></h3>
+<ul><li>Dans l'exemple ci-dessus, vous pouvez placer le dossier 'MacroStartup' dans le dossier 'Mod' de votre répertoire racine FreeCAD (qu'il s'agisse de la version installée ou de la version portable), ou vous pouvez créer un dossier 'Mod' à côté du dossier 'Macro' dans '%USERPROFILE%\AppData\Roaming\FreeCAD\' et y placer le dossier 'MacroStartup'.</li>
+<li>D'après nos observations, les ateliers trouvés dans l'un ou l'autre des dossiers 'Mod' sont chargés par ordre alphabétique. Ceux qui se trouvent dans le dossier 'Mod' racine de FreeCAD sont chargés en premier, puis FreeCAD recherche dans le dossier '%USERPROFILE%\AppData\Roaming\FreeCAD\Mod' des ateliers supplémentaires.</li></ul>
+<p><span id="Related"></span>
+</p>
+<h2><span class="mw-headline" id="En_relation">En relation</span></h2>
+<p><a href="Extra_python_modules.html#LazyLoader" title="Extra python modules/fr">LazyLoader</a> est un module Python qui permet un chargement différé.
+</p><p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Scripts FreeCAD :</b> <a href="Python.html" title="Python/fr">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/fr">Introduction à Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/fr">Tutoriel sur les scripts Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/fr">Débuter avec les scripts</a></li></ul>
+<hr/>
+<ul><li><b>Modules :</b> <a href="Builtin_modules.html" title="Builtin modules/fr">Modules intégrés</a>, <a href="Units.html" title="Units/fr">Unités</a>, <a href="Quantity.html" title="Quantity/fr">Quantity</a></li>
+<li><b>Ateliers :</b> <a href="Workbench_creation.html" title="Workbench creation/fr">Création d'atelier</a>, <a href="Gui_Command.html" title="Gui Command/fr">Commands Gui</a>, <a href="Command.html" title="Command/fr">Les commandes</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/fr">Installer des ateliers supplémentaires</a></li>
+<li><b>Maillages et objets Parts :</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/fr">Scripts Mesh</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/fr">Script de données topologiques</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/fr">Conversion objet Mesh en Part</a>, <a href="PythonOCC.html" title="PythonOCC/fr">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Objets paramétriques :</b> <a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a>, <a href="Viewprovider.html" title="Viewprovider/fr">Viewproviders</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view/fr">Icône personnalisée dans l'arborescence</a>)</small></li>
+<li><b>Scénographie :</b> <a href="Scenegraph.html" title="Scenegraph/fr">Graphe de scène Coin (Inventor)</a>, <a href="Pivy.html" title="Pivy/fr">Pivy</a></li>
+<li><b>Interface graphique :</b> <a href="Interface_creation.html" title="Interface creation/fr">Création d'interface</a>, <a href="Dialog_creation.html" title="Dialog creation/fr">Création d'une boite de dialogue</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets/fr">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files/fr">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors/fr">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF/fr">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets/fr">5</a>)</small>, <a href="PySide.html" title="PySide/fr">PySide</a>, Exemples PySide <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples/fr">débutant</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/fr">intermédiaire</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples/fr">expérimenté</a></li>
+<li><b>Macros :</b> <a href="Macros.html" title="Macros/fr">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros/fr">Comment installer des macros</a></li>
+<li><b>Intégration :</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/fr">Intégrer FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/fr">Intégration de FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Autre :</b> <a href="Expressions.html" title="Expressions/fr">Expressions</a>, <a href="Code_snippets.html" title="Code snippets/fr">Extraits de codes</a>, <a href="Line_drawing_function.html" title="Line drawing function/fr">Fonction - tracer une ligne</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/fr">Bibliothèque mathématique vectorielle de FreeCAD</a> <small>(déprécié)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs :</b> <a href="User_hub.html" title="User hub/fr">Hub utilisateurs</a>, <a href="Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs expérimentés</a>, <a href="Developer_hub.html" title="Developer hub/fr">Hub développeurs</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129212059
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.068 seconds
+Real time usage: 0.633 seconds
+Preprocessor visited node count: 144/1000000
+Post‐expand include size: 6695/2097152 bytes
+Template argument size: 4033/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 3/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 6757/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  550.950      1 -total
+ 98.98%  545.314      3 Template:Code
+  0.73%    4.011      1 Template:Powerdocnavi/fr
+  0.48%    2.634      1 Template:Navigation_menu_2
+  0.18%    1.006      1 Template:TOCright
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:169811-0!canonical and timestamp 20241129212059 and revision id 1236182. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

@@ -1,0 +1,435 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">TechDraw API/de</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="de">Deutsch</span></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="TechDraw_API.html" lang="en" title="TechDraw API (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="TechDraw_API.html" lang="fr" title="API de l'atelier TechDraw (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="TechDraw_API.html" lang="it" title="TechDraw API (5% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="TechDraw_API.html" lang="pl" title="Rysunek Techniczny: API (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="TechDraw_API.html" lang="ro" title="TechDraw API (5% translated)">română</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="TechDraw_API.html" lang="ru" title="TechDraw API (2% translated)">русский</a></li></ul></div>
+<div id="itsfree" style="text-align:center;color:black;background:#FDE0A8;margin:1em 7em;padding:0.5em 2em;border:2px solid #FF5706;">(November 2018) Diese Information kann unvollständig und veraltet sein. Für die neueste API siehe die <a class="external text" href="https://www.freecadweb.org/api" rel="nofollow">autogenerierte API-Dokumentation</a>.</div>
+<p>Diese Funktionen sind Teil des Arbeitsbereichs <a href="TechDraw_Workbench.html" title="TechDraw Workbench/de">TechDraw</a> und können in <a href="Macros.html" title="Macros/de">Makros</a> und von der <a href="Python.html" title="Python/de">Python</a>-Konsole aus verwendet werden, sobald das <code>TechDraw</code>-Modul importiert wurde.
+</p><p>Gute Beispiele für grundlegendes TechDraw Skripten findest Du in den <a class="external text" href="https://github.com/FreeCAD/FreeCAD/tree/master/src/Mod/TechDraw/TDTest" rel="nofollow">unit test scripts</a>. 
+</p><p>Siehe die <a href="TechDrawGui_API.html" title="TechDrawGui API/de">TechDrawGui API</a> für weitere Funktionen.
+</p><p>Beispiel:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span>
+<span class="kn">import</span> <span class="nn">TechDraw</span>
+
+<span class="n">page</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'TechDraw::DrawPage'</span><span class="p">,</span> <span class="s1">'Page'</span><span class="p">)</span>
+<span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'TechDraw::DrawSVGTemplate'</span><span class="p">,</span> <span class="s1">'Template'</span><span class="p">)</span>
+<span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Template</span><span class="o">.</span><span class="n">Template</span> <span class="o">=</span> <span class="n">templateFileSpec</span>
+<span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Page</span><span class="o">.</span><span class="n">Template</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Template</span>
+<span class="n">page</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">view</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'TechDraw::DrawViewPart'</span><span class="p">,</span> <span class="s1">'View'</span><span class="p">)</span>
+<span class="n">rc</span> <span class="o">=</span> <span class="n">page</span><span class="o">.</span><span class="n">addView</span><span class="p">(</span><span class="n">view</span><span class="p">)</span>
+</pre></div>
+<div class="api">
+<div class="function"><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Method.png"><img decoding="async" height="16" src="../File/Method.png" width="16"/></a></span><tt> <big><b>EdgeWalker(</b><i>listOfEdges, [bool]</i><b>)</b></big></tt></div>
+<div class="description">
+<p><small><b>Description</b>:</small> Erzeugt Kantenzüge aus Kanten in der Eingabe durch planare Graphenquerung. Wahlweise den äußeren Draht (OuterWire) ausschließen, indem der optionale Parameter auf false gesetzt wird.
+</p><p><small><b>Returns</b>:</small> Liste der Kantenzüge sortiert nach Größe (absteigend)
+</p>
+</div>
+</div>
+<div class="api">
+<div class="function"><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Method.png"><img decoding="async" height="16" src="../File/Method.png" width="16"/></a></span><tt> <big><b>findOuterWire(</b><i>listOfEdges</i><b>)</b></big></tt></div>
+<div class="description">
+<p><small><b>Description</b>:</small> Findet den äußeren Draht (OuterWire) (den größten) einer Liste von Kanten (die einen planaren Graphen bilden).
+</p><p><small><b>Returns</b>:</small> Outer wire
+</p>
+</div>
+</div>
+<div class="api">
+<div class="function"><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Method.png"><img decoding="async" height="16" src="../File/Method.png" width="16"/></a></span><tt> <big><b>findShapeOutline(</b><i>TopoShape, Maßstab, Richtung</i><b>)</b></big></tt></div>
+<div class="description">
+<p><small><b>Description</b>:</small> Form in Richtung projizieren und den äußeren Draht des Ergebnisses finden.
+</p><p><small><b>Returns</b>:</small> Outline wire
+</p>
+</div>
+</div>
+<div class="api">
+<div class="function"><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Method.png"><img decoding="async" height="16" src="../File/Method.png" width="16"/></a></span><tt> <big><b>viewPartAsDxf(</b><i>DrawViewPart</i><b>)</b></big></tt></div>
+<div class="description">
+<p><small><b>Description</b>:</small> Return the edges of a DrawViewPart in Dxf format.
+</p><p><small><b>Returns</b>:</small> String
+</p>
+</div>
+</div>
+<p>Beispiel:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">fileSpecDxf</span> <span class="o">=</span> <span class="s2">"fcOut.dxf"</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">TechDraw</span><span class="o">.</span><span class="n">viewPartAsDxf</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="n">dxfEnd</span> <span class="o">=</span> <span class="s2">"0</span><span class="se">\n</span><span class="s2">EOF</span><span class="se">\n</span><span class="s2">"</span>
+<span class="n">dxfFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileSpecDxf</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span>
+<span class="n">dxfFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="n">dxfFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dxfEnd</span><span class="p">)</span>
+<span class="n">dxfFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+<div class="api">
+<div class="function"><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Method.png"><img decoding="async" height="16" src="../File/Method.png" width="16"/></a></span><tt> <big><b>viewPartAsSvg(</b><i>DrawViewPart</i><b>)</b></big></tt></div>
+<div class="description">
+<p><small><b>Description</b>:</small> Return the edges of a DrawViewPart in Svg format.
+</p><p><small><b>Returns</b>:</small> String
+</p>
+</div>
+</div>
+<p>Beispiel:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">fileSpecSvg</span> <span class="o">=</span> <span class="s2">"fcOut.svg"</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">TechDraw</span><span class="o">.</span><span class="n">viewPartAsSvg</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="n">head</span> <span class="o">=</span> <span class="s1">'&lt;svg</span><span class="se">\n</span><span class="s1">'</span> <span class="o">+</span> \
+       <span class="s1">'	xmlns="http://www.w3.org/2000/svg" version="1.1" </span><span class="se">\n</span><span class="s1">'</span> <span class="o">+</span> \
+       <span class="s1">'	xmlns:freecad="http://www.freecadweb.org/wiki/index.php?title=Svg_Namespace"&gt;</span><span class="se">\n</span><span class="s1">'</span>
+<span class="n">tail</span> <span class="o">=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">&lt;/svg&gt;'</span>
+<span class="n">svgFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fileSpecSvg</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span>
+<span class="n">svgFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">head</span><span class="p">)</span>
+<span class="n">svgFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="n">svgFile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tail</span><span class="p">)</span>
+<span class="n">svgFile</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+<div class="api">
+<div class="function"><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Method.png"><img decoding="async" height="16" src="../File/Method.png" width="16"/></a></span><tt> <big><b>writeDXFView(</b><i>DrawViewPart, FileName</i><b>)</b></big></tt></div>
+<div class="description">
+<p><small><b>Description</b>:</small> Save the DrawViewPart in Dxf.
+</p><p><small><b>Returns</b>:</small> File
+</p>
+</div>
+</div>
+<p>Beispiel:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">TechDraw</span>
+<span class="n">TechDraw</span><span class="o">.</span><span class="n">writeDXFView</span><span class="p">(</span><span class="n">myPart</span><span class="p">,</span><span class="n">myFileName</span><span class="p">)</span>
+</pre></div>
+<div class="api">
+<div class="function"><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Method.png"><img decoding="async" height="16" src="../File/Method.png" width="16"/></a></span><tt> <big><b>writeDXFPage(</b><i>DrawPage, FileName</i><b>)</b></big></tt></div>
+<div class="description">
+<p><small><b>Description</b>:</small> Save the DrawPage in Dxf.
+</p><p><small><b>Returns</b>:</small> File
+</p>
+</div>
+</div>
+<p>Beispiel:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">TechDraw</span>
+<span class="n">TechDraw</span><span class="o">.</span><span class="n">writeDXFPage</span><span class="p">(</span><span class="n">myPage</span><span class="p">,</span><span class="n">myFileName</span><span class="p">)</span>
+</pre></div>
+<p><span id="DrawViewPart_Cosmetics"></span>
+</p>
+<div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#DrawViewPart-Hilfselemente"><span class="tocnumber">1</span> <span class="toctext">DrawViewPart-Hilfselemente</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Hilfspunkt-_(CosmeticVertex,_CV)_Routinen,_auf_die_mit_Python_zugegriffen_werden_kann"><span class="tocnumber">1.1</span> <span class="toctext">Hilfspunkt- (CosmeticVertex, CV) Routinen, auf die mit Python zugegriffen werden kann</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#Hilfslinie-_(CosmeticEdge,_CE)_Routinen,_auf_die_mit_Python_zugegriffen_werden_kann"><span class="tocnumber">1.2</span> <span class="toctext">Hilfslinie- (CosmeticEdge, CE) Routinen, auf die mit Python zugegriffen werden kann</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#Mittellinie-_(CenterLine,_CL)_Routinen,_auf_die_mit_Python_zugegriffen_werden_kann"><span class="tocnumber">1.3</span> <span class="toctext">Mittellinie- (CenterLine, CL) Routinen, auf die mit Python zugegriffen werden kann</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-5"><a href="#DrawViewPart-Geometrie"><span class="tocnumber">2</span> <span class="toctext">DrawViewPart-Geometrie</span></a></li>
+</ul>
+</div>
+<h3><span class="mw-headline" id="DrawViewPart-Hilfselemente">DrawViewPart-Hilfselemente</span></h3>
+<p><span id="CosmeticVertex_(CV)_routines_accessible_from_Python"></span>
+</p>
+<h4><span id="Hilfspunkt-_.28CosmeticVertex.2C_CV.29_Routinen.2C_auf_die_mit_Python_zugegriffen_werden_kann"></span><span class="mw-headline" id="Hilfspunkt-_(CosmeticVertex,_CV)_Routinen,_auf_die_mit_Python_zugegriffen_werden_kann">Hilfspunkt- (CosmeticVertex, CV) Routinen, auf die mit Python zugegriffen werden kann</span></h4>
+<p>dvp = App.ActiveDocument.View  #Hilfspunkte gehören zu Ansichten.<br/>
+</p><p>Fügt einen Hilfspunkt bei p1 (Ansichtskoordinaten) hinzu. Gibt einen eindeutigen Tag zurück.<br/>
+tag = dvp.makeCosmeticVertex(vector p1) 
+</p><p>fFügt einen Hilfspunkt bei p1 (3D-Modellkoordinaten) hinzu. Gibt ein eindeutiges Tag zurück.<br/>
+tag = dvp.makeCosmeticVertex3d(vector p1) 
+</p><p>Gibt einen Hilfspunkt mit eindeutiger ID zurück.<br/>
+cv = dvp.getCosmeticVertex(string id) 
+</p><p>Gibt einen Hilfspunkt mit Namen zurück (Vertex6). In Auswahlen verwendet.<br/>
+cv = dvp.getCosmeticVertexBySelection(Zeichenfolgennamen) 
+</p><p>Entfernt einen Hilfspunkt aus der Ansicht. Gibt None zurück.<br/>
+dvp.removeCosmeticVertex(object cv) 
+</p><p>Entfernt alle Hilfspunkte aus der Ansicht. Gibt None zurück.<br/>
+dvp.clearCosmeticVertices()
+</p><p>KosmetikAnsicht Merkmale<br/>
+Tag: eindeutiger Bezeichner. Zeichenfolge.<br/>
+Punkt: Standort innerhalb der Ansicht. Vektor.<br/>
+</p>
+<ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li class="mw-empty-elt"></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Py CosmeticVertex demo</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span>
+<span class="kn">import</span> <span class="nn">TechDraw</span>
+
+<span class="n">v</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+<span class="c1">#make CV</span>
+<span class="n">tag</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">makeCosmeticVertex</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"t: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span>
+
+<span class="c1">#retrieve CV</span>
+<span class="n">cv</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">getCosmeticVertex</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"cv: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cv</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Tag: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cv</span><span class="o">.</span><span class="n">Tag</span><span class="p">))</span>
+
+
+<span class="n">cv2</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">getCosmeticVertexBySelection</span><span class="p">(</span><span class="s2">"Vertex4"</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"New Point: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">Point</span><span class="p">))</span>
+
+<span class="c1">#make CV from 3d</span>
+<span class="n">p3d</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"3d point in: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p3d</span><span class="p">))</span>
+<span class="n">tag3d</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">makeCosmeticVertex3d</span><span class="p">(</span><span class="n">p3d</span><span class="p">)</span>
+<span class="n">cv3</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">getCosmeticVertex</span><span class="p">(</span><span class="n">tag3d</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"3d point out: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cv3</span><span class="o">.</span><span class="n">Point</span><span class="p">))</span>
+</pre></div>
+<p><span id="CosmeticEdge_(CE)_routines_accessible_from_Python"></span>
+</p>
+<h4><span id="Hilfslinie-_.28CosmeticEdge.2C_CE.29_Routinen.2C_auf_die_mit_Python_zugegriffen_werden_kann"></span><span class="mw-headline" id="Hilfslinie-_(CosmeticEdge,_CE)_Routinen,_auf_die_mit_Python_zugegriffen_werden_kann">Hilfslinie- (CosmeticEdge, CE) Routinen, auf die mit Python zugegriffen werden kann</span></h4>
+<p>dvp = App.ActiveDocument.View  #Hilfslinien gehören zu Ansichten.<br/>
+</p><p>Erzeuge ein CosmeticEdge von p1 nach p2(Ansicht Koordinaten). Gibt eine Kennung zurück.<br/>
+tag = dvp.makeCosmeticLine(p1, p2)
+</p><p>Erzeuge ein CosmeticEdge bei center mit dem Radius radius (Ansicht Koordinaten). Gibt eine Kennung zurück.<br/>
+tag = dvp.makeCosmeticCircle(center, radius)
+</p><p>Erzeuge ein CosmeticEdge bei center mit dem Radius radius (Ansicht Koordinaten) vom Startwinkel start zum Endwinkel end. Gibt eine Kennung zurück.<br/>
+tag = dvp.makeCosmeticCircleArc(center, radius, start, end)
+</p><p>Gibt eine Hilfslinie mit eindeutiger ID zurück.<br/>
+ce = dvp.getCosmeticEdge(id)
+</p><p>Gibt eine Hilfslinie mit dem Namen ('Edge25') zurück. Wird in Auswahlen verwendet.<br/>
+ce = dvp.getCosmeticEdgeBySelection('Edge25')
+</p><p>Löscht eine Hilfslinie ce aus der Ansicht. Gibt None zurück.<br/>
+dvp.removeCosmeticEdge(ce)
+</p><p>Löscht alle Hilfslinien aus der Ansicht. Gibt None zurück.<br/>
+dvp.clearCosmeticEdges()
+</p><p>CosmeticEdge Attribute<br/>
+Tag: eindeutige Kennung. String.<br/>
+Format: Darstellung Attribute (Stil, Farbe, Linienbreite, Durchsichtigkeit). Tuple.<br/>
+</p>
+<ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li class="mw-empty-elt"></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Py CosmeticEdge demo</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span>
+<span class="kn">import</span> <span class="nn">TechDraw</span>
+
+<span class="c1">#points</span>
+<span class="n">org</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">midTop</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>   <span class="c1"># middle, top</span>
+<span class="n">midBot</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>      <span class="c1"># middle, bottom</span>
+<span class="n">stdZ</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+<span class="n">center</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">arcCenter</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">vPt</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">topRight</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">bottomLeft</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+<span class="c1">#angles</span>
+<span class="n">arcStart</span> <span class="o">=</span> <span class="o">-</span><span class="mi">45</span>
+<span class="n">arcEnd</span> <span class="o">=</span> <span class="mi">45</span>
+
+<span class="c1">#styles</span>
+<span class="n">solid</span> <span class="o">=</span> <span class="mi">1</span> 
+<span class="n">dashed</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">dotted</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="c1">#weights</span>
+<span class="n">weight15</span> <span class="o">=</span> <span class="mf">0.15</span>
+<span class="n">weight75</span> <span class="o">=</span> <span class="mf">0.75</span>
+<span class="c1">#colors</span>
+<span class="n">pyRed</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">pyBlue</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">pyGreen</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">pyBlack</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">shadow</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+<span class="n">radius</span> <span class="o">=</span> <span class="mf">5.0</span>
+<span class="n">style</span> <span class="o">=</span> <span class="n">dashed</span>
+<span class="n">weight</span> <span class="o">=</span> <span class="n">weight75</span>
+
+<span class="n">dvp</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">dvp</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"making line"</span><span class="p">)</span>
+<span class="n">tag</span> <span class="o">=</span> <span class="n">dvp</span><span class="o">.</span><span class="n">makeCosmeticLine</span><span class="p">(</span><span class="n">midTop</span><span class="p">,</span><span class="n">midBot</span><span class="p">,</span><span class="n">style</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">pyBlue</span><span class="p">)</span>
+<span class="n">ce</span> <span class="o">=</span> <span class="n">dvp</span><span class="o">.</span><span class="n">getCosmeticEdge</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"line tag: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"making diagonal"</span><span class="p">)</span>
+<span class="n">dvp</span><span class="o">.</span><span class="n">makeCosmeticLine</span><span class="p">(</span><span class="n">bottomLeft</span><span class="p">,</span><span class="n">topRight</span><span class="p">,</span><span class="n">solid</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">pyGreen</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"making circle"</span><span class="p">)</span>
+<span class="n">tag2</span> <span class="o">=</span> <span class="n">dvp</span><span class="o">.</span><span class="n">makeCosmeticCircle</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">pyRed</span><span class="p">)</span>
+<span class="n">ce2</span> <span class="o">=</span> <span class="n">dvp</span><span class="o">.</span><span class="n">getCosmeticEdge</span><span class="p">(</span><span class="n">tag2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"making circleArc"</span><span class="p">)</span>
+<span class="n">dvp</span><span class="o">.</span><span class="n">makeCosmeticCircleArc</span><span class="p">(</span><span class="n">arcCenter</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">arcStart</span><span class="p">,</span> <span class="n">arcEnd</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">shadow</span><span class="p">)</span>
+
+<span class="c1">#replace</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"making new format"</span><span class="p">)</span>
+<span class="n">oldFormat</span> <span class="o">=</span> <span class="n">ce</span><span class="o">.</span><span class="n">Format</span>
+<span class="n">newFormat</span> <span class="o">=</span> <span class="p">(</span><span class="n">dotted</span><span class="p">,</span><span class="n">oldFormat</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pyRed</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">ce</span><span class="o">.</span><span class="n">Format</span> <span class="o">=</span> <span class="n">newFormat</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"removing CE with tag: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag2</span><span class="p">))</span>
+<span class="n">dvp</span><span class="o">.</span><span class="n">removeCosmeticEdge</span><span class="p">(</span><span class="n">tag2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"finished"</span><span class="p">)</span>
+</pre></div>
+<p><span id="CenterLine_(CL)_routines_accessible_from_Python"></span>
+</p>
+<h4><span id="Mittellinie-_.28CenterLine.2C_CL.29_Routinen.2C_auf_die_mit_Python_zugegriffen_werden_kann"></span><span class="mw-headline" id="Mittellinie-_(CenterLine,_CL)_Routinen,_auf_die_mit_Python_zugegriffen_werden_kann">Mittellinie- (CenterLine, CL) Routinen, auf die mit Python zugegriffen werden kann</span></h4>
+<p>Erstellt eine neue Mittellinie<br/>
+tag = dvp.makeCenterLine(subObjs, mode)<br/>
+</p><p>Abrufen einer Mittellinie mit der eindeutigen Kennung tag.<br/>
+cl = dvp.getCenterLine(tag)
+</p><p>Abrufen einer Mittellinie mit ihrem Unterobjekt-Namen. Wird in Auswahlen verwendet.<br/>
+cl = dvp.getCenterLine("Edge5")
+</p><p>Löscht eine Mittellinie cl aus der Ansicht. Gibt None zurück.<br/>
+dvp.removeCenterLine(cl)
+</p><p>CenterLine Attribute<br/>
+Tag: eindeutige Kennung. String. ReadOnly.<br/>
+Type: 0 - Fläche, 1 - 2 Linie, 2 - 2 Punkt. Integer. ReadOnly.<br/>
+Mode: 0 - Vertikal, 1 - Horizontal, 2 - Verbunden. Integer.<br/>
+Format: Sichtbarkeits Attribute (Stil, Farbe, Linienbreite, Durchsichtigkeit). Tuple.<br/>
+HorizShift: links/rechts Abstand. Float.<br/>
+VertShift: hoch/tief Abstand. Float.<br/>
+Rotation: Verdrehwinkel in Grad. Float.<br/>
+Extension: Zusätzliche Länge die angefügt wird. Float.<br/>
+Flip: Vertauschen der Reihenfolge der Punkte bei 2 Punkt Mittellinie. Boolean.<br/>
+Edges: Namen der  Quelllinien. List of string.<br/>
+Faces: Namen der Quellflächen. List of string.<br/>
+Points: Namen der Quellpunkte (Vertices). List of string.<br/>
+</p>
+<ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li><ul><li class="mw-empty-elt"></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1"># Py CenterLine demo</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span>
+<span class="kn">import</span> <span class="nn">Part</span>
+<span class="kn">import</span> <span class="nn">TechDraw</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>   <span class="c1"># middle, top</span>
+<span class="n">end</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>      <span class="c1"># middle, bottom</span>
+<span class="n">faceNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Face0"</span><span class="p">]</span>
+<span class="n">edgeNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Edge2"</span><span class="p">,</span> <span class="s2">"Edge3"</span><span class="p">]</span>
+<span class="n">vertNames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Vertex1"</span><span class="p">,</span> <span class="s2">"Vertex2"</span><span class="p">]</span>
+<span class="n">vMode</span> <span class="o">=</span> <span class="mi">0</span>   <span class="c1">#vertical</span>
+<span class="n">hMode</span> <span class="o">=</span> <span class="mi">1</span>   <span class="c1">#horizontal</span>
+<span class="n">aMode</span> <span class="o">=</span> <span class="mi">2</span>   <span class="c1">#aligned</span>
+<span class="c1">#styles</span>
+<span class="n">solid</span> <span class="o">=</span> <span class="mi">1</span> 
+<span class="n">dashed</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">dotted</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="c1">#weights</span>
+<span class="n">weight15</span> <span class="o">=</span> <span class="mf">0.15</span>
+<span class="n">weight75</span> <span class="o">=</span> <span class="mf">0.75</span>
+<span class="c1">#colors</span>
+<span class="n">pyRed</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">pyBlue</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="n">pyBlack</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+<span class="c1">#adjustments</span>
+<span class="n">hShift</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">vShift</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">extend</span> <span class="o">=</span> <span class="mf">4.0</span>
+<span class="n">rotate</span> <span class="o">=</span> <span class="mf">30.0</span>
+<span class="n">flip</span> <span class="o">=</span> <span class="kc">False</span><span class="p">;</span>
+
+<span class="n">dvp</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"making face CenterLine"</span><span class="p">)</span>
+<span class="n">tag</span> <span class="o">=</span> <span class="n">dvp</span><span class="o">.</span><span class="n">makeCenterLine</span><span class="p">(</span><span class="n">faceNames</span><span class="p">,</span><span class="n">vMode</span><span class="p">)</span>
+<span class="n">cline</span> <span class="o">=</span> <span class="n">dvp</span><span class="o">.</span><span class="n">getCenterLine</span><span class="p">(</span><span class="n">tag</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"cline tag: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tag</span><span class="p">))</span>
+
+<span class="c1">#replace</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"making new format"</span><span class="p">)</span>
+<span class="n">oldFormat</span> <span class="o">=</span> <span class="n">cline</span><span class="o">.</span><span class="n">Format</span>
+<span class="n">newFormat</span> <span class="o">=</span> <span class="p">(</span><span class="n">dotted</span><span class="p">,</span><span class="n">oldFormat</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">pyRed</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<span class="n">cline</span><span class="o">.</span><span class="n">Format</span> <span class="o">=</span> <span class="n">newFormat</span>
+<span class="n">cline</span><span class="o">.</span><span class="n">Extension</span> <span class="o">=</span> <span class="mf">10.0</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"making edgeCenterLine"</span><span class="p">)</span>
+<span class="n">cline2</span> <span class="o">=</span> <span class="n">dvp</span><span class="o">.</span><span class="n">makeCenterLine</span><span class="p">(</span><span class="n">edgeNames</span><span class="p">,</span><span class="n">hMode</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"making vertexCenterLine"</span><span class="p">)</span>
+<span class="n">cline3</span> <span class="o">=</span> <span class="n">dvp</span><span class="o">.</span><span class="n">makeCenterLine</span><span class="p">(</span><span class="n">vertNames</span><span class="p">,</span><span class="n">aMode</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"finished"</span><span class="p">)</span>
+</pre></div>
+<p><span id="DrawViewPart_Geometry"></span>
+</p>
+<h3><span class="mw-headline" id="DrawViewPart-Geometrie">DrawViewPart-Geometrie</span></h3>
+<p>[topoShapeEdge] = dvp.getVisibleEdges() 
+</p><p>[topoShapeEdge] = dvp.getHiddenEdges()
+</p><p>topoShapeEdge = dvp.getEdgeByIndex(i) <br/>
+topoShapeEdge = dvp.getEdgeBySelection("Edge1")
+</p><p>topoShapeVertex = dvp.getVertexByIndex(i) <br/>
+topoShapeVertex = dvp.getVertexBySelection("Vertex1")
+</p><p>Zeichnet die Graphik für diese Ansicht neu.<br/>
+dvp.requestPaint()
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_TechDraw.svg"><img decoding="async" height="24" src="../File/Workbench_TechDraw.svg" width="24"/></a></span> <a href="TechDraw_Workbench.html" title="TechDraw Workbench/de">TechDraw</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Blätter (Seiten):</b> <a href="TechDraw_PageDefault.html" title="TechDraw PageDefault/de">Neues Zeichnungsblatt aus der Standardvorlage erstellen</a>, <a href="TechDraw_PageTemplate.html" title="TechDraw PageTemplate/de">Neues Zeichnungsblatt aus einer Vorlage erstellen</a>, <a href="TechDraw_RedrawPage.html" title="TechDraw RedrawPage/de">Seite neu zeichnen</a>, <a href="TechDraw_PrintAll.html" title="TechDraw PrintAll/de">Alle Seiten drucken</a></li>
+<li><b>Ansichten:</b> <a href="TechDraw_View.html" title="TechDraw View/de">Ansicht einfügen</a>, <a href="TechDraw_ActiveView.html" title="TechDraw ActiveView/de">Aktive (3D-)Ansicht einfügen</a>, <a href="TechDraw_ProjectionGroup.html" title="TechDraw ProjectionGroup/de">Ansichtengruppe einfügen</a>, <a href="TechDraw_SectionView.html" title="TechDraw SectionView/de">Schnittansicht einfügen</a>, <a href="TechDraw_ComplexSection.html" title="TechDraw ComplexSection/de">Komplexe Schnittansicht einfügen</a>, <a href="TechDraw_DetailView.html" title="TechDraw DetailView/de">Detailansicht einfügen</a>, <a href="TechDraw_DraftView.html" title="TechDraw DraftView/de">Objekt des Arbeitsbereichs Draft einfügen</a>, <a href="TechDraw_ArchView.html" title="TechDraw ArchView/de">Objekt des Arbeitsbereichs Arch einfügent</a>, <a href="TechDraw_SpreadsheetView.html" title="TechDraw SpreadsheetView/de">Tabellenansicht einfügen</a>, <a href="TechDraw_ClipGroup.html" title="TechDraw ClipGroup/de">Ausschnittsgruppe einfügen</a>, <a href="TechDraw_ShareView.html" title="TechDraw ShareView/de">Ansicht teilen</a>, <a href="TechDraw_ProjectShape.html" title="TechDraw ProjectShape/de">Form projizieren</a></li>
+<li><b>Stapeln:</b> <a href="TechDraw_StackTop.html" title="TechDraw StackTop/de">Ansicht auf die Stapeloberseite bewegen</a>, <a href="TechDraw_StackBottom.html" title="TechDraw StackBottom/de">Ansicht auf die Stapelunterseite bewegen</a>, <a href="TechDraw_StackUp.html" title="TechDraw StackUp/de">Ansicht um eine Ebene nach oben bewegen</a>, <a href="TechDraw_StackDown.html" title="TechDraw StackDown/de">Ansicht um eine Ebene nach unten bewegen</a></li></ul>
+<hr/>
+<ul><li><b>Verzierungen:</b> <a href="TechDraw_Hatch.html" title="TechDraw Hatch/de">Fläche mit Muster aus einer Bilddatei schraffieren</a>, <a href="TechDraw_GeometricHatch.html" title="TechDraw GeometricHatch/de">Fläche mit einer geometrischen Schraffur versehen</a>, <a href="TechDraw_Symbol.html" title="TechDraw Symbol/de">SVG-Zeichnungselement einfügen</a>, <a href="TechDraw_Image.html" title="TechDraw Image/de">Bitmap-Grafik einfügen</a>, <a href="TechDraw_ToggleFrame.html" title="TechDraw ToggleFrame/de">Ansichtsrahmen ein- oder ausschalten</a></li>
+<li><b>Maßeinträge:</b> <a href="TechDraw_LengthDimension.html" title="TechDraw LengthDimension/de">Längenmaß einfügen</a>, <a href="TechDraw_HorizontalDimension.html" title="TechDraw HorizontalDimension/de">Horizontales Maß einfügen</a>, <a href="TechDraw_VerticalDimension.html" title="TechDraw VerticalDimension/de">Vertikales Maß einfügen</a>, <a href="TechDraw_RadiusDimension.html" title="TechDraw RadiusDimension/de">Radienmaß einfügen</a>, <a href="TechDraw_DiameterDimension.html" title="TechDraw DiameterDimension/de">Durchmessermaß einfügen</a>, <a href="TechDraw_AngleDimension.html" title="TechDraw AngleDimension/de">Winkelmaß einfügen</a>, <a href="TechDraw_3PtAngleDimension.html" title="TechDraw 3PtAngleDimension/de">Winkelmaß über 3 Punkte einfügen</a>, <a href="TechDraw_HorizontalExtentDimension.html" title="TechDraw HorizontalExtentDimension/de">Maß für die horizontale Ausdehnung einfügen</a>, <a href="TechDraw_VerticalExtentDimension.html" title="TechDraw VerticalExtentDimension/de">Maß für die Vertikale Ausdehnung einfügen</a>, <a href="TechDraw_LinkDimension.html" title="TechDraw LinkDimension/de">Maß mit 3D-Geometrie verknüpfen</a>, <a href="TechDraw_Balloon.html" title="TechDraw Balloon/de">Hinweisfeld einfügen</a>, <a href="TechDraw_AxoLengthDimension.html" title="TechDraw AxoLengthDimension/de">Axonometrisches Längenmaß</a>, <a href="TechDraw_LandmarkDimension.html" title="TechDraw LandmarkDimension/de">Maß zwischen Orientierungspunkten einfügen</a>, <a href="TechDraw_DimensionRepair.html" title="TechDraw DimensionRepair/de">Maßreferenzen reparieren</a></li>
+<li><b>Anmerkungen:</b> <a href="TechDraw_Annotation.html" title="TechDraw Annotation/de">Anmerkung einfügen</a>, <a href="TechDraw_LeaderLine.html" title="TechDraw LeaderLine/de">Hinweislinie zur Ansicht hinzufügen</a>, <a href="TechDraw_RichTextAnnotation.html" title="TechDraw RichTextAnnotation/de">Rich-Text-Anmerkung einfügen</a>, <a href="TechDraw_CosmeticVertex.html" title="TechDraw CosmeticVertex/de">Hilfspunkt hinzufügen</a>, <a href="TechDraw_Midpoints.html" title="TechDraw Midpoints/de">Kantenmittelpunkte hinzufügen</a>, <a href="TechDraw_Quadrants.html" title="TechDraw Quadrants/de">Quadrantengrenzpunkte hinzufügen</a>, <a href="TechDraw_FaceCenterLine.html" title="TechDraw FaceCenterLine/de">Mittellinie zu Fläche(n) hinzufügen</a>, <a href="TechDraw_2LineCenterLine.html" title="TechDraw 2LineCenterLine/de">Mittellinie zwischen 2 Linien hinzufügen</a>, <a href="TechDraw_2PointCenterLine.html" title="TechDraw 2PointCenterLine/de">Mittellinie zwischen 2 Punkte hinzufügen</a>, <a href="TechDraw_2PointCosmeticLine.html" title="TechDraw 2PointCosmeticLine/de">Hilfslinie durch 2 Punkte hinzufügen</a>, <a href="TechDraw_CosmeticCircle.html" title="TechDraw CosmeticCircle/de">Hilfskreis hinzufügen</a>, <a href="TechDraw_DecorateLine.html" title="TechDraw DecorateLine/de">Liniendarstellung ändern</a>, <a href="TechDraw_ShowAll.html" title="TechDraw ShowAll/de">Ausgeblendete Kanten ein-/ausblenden</a>, <a href="TechDraw_WeldSymbol.html" title="TechDraw WeldSymbol/de">Hinzufügen von Schweißinformationen zur Hinweislinie</a>, <a href="TechDraw_SurfaceFinishSymbols.html" title="TechDraw SurfaceFinishSymbols/de">Oberflächensymbol erstellen</a>, <a href="TechDraw_HoleShaftFit.html" title="TechDraw HoleShaftFit/de">Wellen- oder Bohrungspassung hinzufügen</a></li></ul>
+<hr/>
+<ul><li><b>Ergänzungen:</b>
+<ul><li><b>Merkmale und Änderungen:</b> <a href="TechDraw_ExtensionSelectLineAttributes.html" title="TechDraw ExtensionSelectLineAttributes/de">Linienmerkmale, Zeilenabstand und Längendifferenz auswählen</a>, <a href="TechDraw_ExtensionChangeLineAttributes.html" title="TechDraw ExtensionChangeLineAttributes/de">Linienmerkmale ändern</a>, <a href="TechDraw_ExtensionExtendLine.html" title="TechDraw ExtensionExtendLine/de">Linie verlängern</a>, <a href="TechDraw_ExtensionShortenLine.html" title="TechDraw ExtensionShortenLine/de">Linie kürzen</a>, <a href="TechDraw_ExtensionLockUnlockView.html" title="TechDraw ExtensionLockUnlockView/de">Ansicht fixieren/lösen</a>, <a href="TechDraw_ExtensionPositionSectionView.html" title="TechDraw ExtensionPositionSectionView/de">Schnittansicht ausrichten</a>, <a href="TechDraw_ExtensionPosHorizChainDimension.html" title="TechDraw ExtensionPosHorizChainDimension/de">Horizontale Kettenmaße anordnen</a>, <a href="TechDraw_ExtensionPosVertChainDimension.html" title="TechDraw ExtensionPosVertChainDimension/de">Vertikale Kettenmaße anordnen</a>, <a href="TechDraw_ExtensionPosObliqueChainDimension.html" title="TechDraw ExtensionPosObliqueChainDimension/de">Schräge Kettenmaße anordnen</a>, <a href="TechDraw_ExtensionCascadeHorizDimension.html" title="TechDraw ExtensionCascadeHorizDimension/de">Horizontale Maße anordnen</a>, <a href="TechDraw_ExtensionCascadeVertDimension.html" title="TechDraw ExtensionCascadeVertDimension/de">Vertikale Maße anordnen</a>, <a href="TechDraw_ExtensionCascadeObliqueDimension.html" title="TechDraw ExtensionCascadeObliqueDimension/de">Schräge Maße anordnen</a>, <a href="TechDraw_ExtensionAreaAnnotation.html" title="TechDraw ExtensionAreaAnnotation/de">Flächeninhalt der ausgewählten Flächen berechnen</a>, <a href="TechDraw_ExtensionArcLengthAnnotation.html" title="TechDraw ExtensionArcLengthAnnotation/de">Bogenlänge der ausgewählten Kanten berechnen</a>, <a href="TechDraw_ExtensionCustomizeFormat.html" title="TechDraw ExtensionCustomizeFormat/de">Formatierung anpassen</a></li>
+<li><b>Mittellinien und Gewinde:</b> <a href="TechDraw_ExtensionCircleCenterLines.html" title="TechDraw ExtensionCircleCenterLines/de">Kreismittellinien hinzufügen</a>, <a href="TechDraw_ExtensionHoleCircle.html" title="TechDraw ExtensionHoleCircle/de">Lochkreismittellinien hinzufügen</a>, <a href="TechDraw_ExtensionThreadHoleSide.html" title="TechDraw ExtensionThreadHoleSide/de">Hilfslinien für Innengewinde in Seitenansicht hinzufügen</a>, <a href="TechDraw_ExtensionThreadHoleBottom.html" title="TechDraw ExtensionThreadHoleBottom/de">Hilfslinien für Innengewinde in Achsansicht hinzufügen</a>, <a href="TechDraw_ExtensionThreadBoltSide.html" title="TechDraw ExtensionThreadBoltSide/de">Hilfslinien für Außengewinde in Seitenansicht hinzufügen</a>, <a href="TechDraw_ExtensionThreadBoltBottom.html" title="TechDraw ExtensionThreadBoltBottom/de">Hilfslinien für Außengewinde in Achsansicht hinzufügen</a>, <a href="TechDraw_ExtensionVertexAtIntersection.html" title="TechDraw ExtensionVertexAtIntersection/de">Hilfsschnittpunkte hinzufügen</a>, <a href="TechDraw_CommandAddOffsetVertex.html" title="TechDraw CommandAddOffsetVertex/de">Add an offset vertex</a>, <a href="TechDraw_ExtensionDrawCosmCircle.html" title="TechDraw ExtensionDrawCosmCircle/de">Hilfskreis hinzufügen</a>, <a href="TechDraw_ExtensionDrawCosmArc.html" title="TechDraw ExtensionDrawCosmArc/de">Hilfsbogen hinzufügen</a>, <a href="TechDraw_ExtensionDrawCosmCircle3Points.html" title="TechDraw ExtensionDrawCosmCircle3Points/de">Hilfskreis über 3 Punkte hinzufügen</a>, <a href="TechDraw_ExtensionLineParallel.html" title="TechDraw ExtensionLineParallel/de">Parallele Hilfslinie hinzufügen</a>, <a href="TechDraw_ExtensionLinePerpendicular.html" title="TechDraw ExtensionLinePerpendicular/de">Senkrechte Hilfslinie hinzufügen</a></li>
+<li><b>Maße:</b> <a href="TechDraw_ExtensionCreateHorizChainDimension.html" title="TechDraw ExtensionCreateHorizChainDimension/de">Horizontale Maßkette erstellen</a>, <a href="TechDraw_ExtensionCreateVertChainDimension.html" title="TechDraw ExtensionCreateVertChainDimension/de">Vertikale Maßkette erstellen</a>, <a href="TechDraw_ExtensionCreateObliqueChainDimension.html" title="TechDraw ExtensionCreateObliqueChainDimension/de">Schräge Maßketten erstellen</a>, <a href="TechDraw_ExtensionCreateHorizCoordDimension.html" title="TechDraw ExtensionCreateHorizCoordDimension/de">Horizontale Koordinatenmaße erstellen</a>, <a href="TechDraw_ExtensionCreateVertCoordDimension.html" title="TechDraw ExtensionCreateVertCoordDimension/de">Vertikale Koordinatenmaße erstellen</a>, <a href="TechDraw_ExtensionCreateObliqueCoordDimension.html" title="TechDraw ExtensionCreateObliqueCoordDimension/de">Schräge Koordinatenmaße erstellen</a>, <a href="TechDraw_ExtensionCreateHorizChamferDimension.html" title="TechDraw ExtensionCreateHorizChamferDimension/de">Horizontales Maß an Fase erstellen</a>, <a href="TechDraw_ExtensionCreateVertChamferDimension.html" title="TechDraw ExtensionCreateVertChamferDimension/de">Vertikales Maß an Fase erstellen</a>, <a href="TechDraw_ExtensionCreateLengthArc.html" title="TechDraw ExtensionCreateLengthArc/de">Bogenmaß erstellen</a>, <a href="TechDraw_ExtensionInsertDiameter.html" title="TechDraw ExtensionInsertDiameter/de"> '⌀'-Symbol einfügen</a>, <a href="TechDraw_ExtensionInsertSquare.html" title="TechDraw ExtensionInsertSquare/de">'□'-Symbol einfügen</a>, <a href="TechDraw_ExtensionRemovePrefixChar.html" title="TechDraw ExtensionRemovePrefixChar/de">Präfixsymbol entfernen</a>, <a href="TechDraw_ExtensionIncreaseDecimal.html" title="TechDraw ExtensionIncreaseDecimal/de">Dezimalstellenanzahl erhöhen</a>, <a href="TechDraw_ExtensionDecreaseDecimal.html" title="TechDraw ExtensionDecreaseDecimal/de">Dezimalstellenanzahl verringern</a></li></ul></li></ul>
+<hr/>
+<ul><li><b>Exportieren:</b> <a href="TechDraw_ExportPageSVG.html" title="TechDraw ExportPageSVG/de">Seite als SVG-Datei exportieren</a>, <a href="TechDraw_ExportPageDXF.html" title="TechDraw ExportPageDXF/de">Seite als DXF-Datei exportieren</a></li>
+<li><b>Zusätzliche Funktionen:</b> <a href="TechDraw_LineGroup.html" title="TechDraw LineGroup/de">Liniengruppen</a>, <a href="TechDraw_Templates.html" title="TechDraw Templates/de">Vorlagen</a>, <a href="TechDraw_Hatching.html" title="TechDraw Hatching/de">Schraffieren</a>, <a href="TechDraw_Geometric_dimensioning_and_tolerancing.html" title="TechDraw Geometric dimensioning and tolerancing/de">Form- und Lagetolerierung</a>, <a href="TechDraw_Preferences.html" title="TechDraw Preferences/de">Einstellungen</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/User_hub.png"><img decoding="async" height="24" src="../File/User_hub.png" srcset="/images/thumb/9/94/User_hub.png/36px-User_hub.png 1.5x, /images/thumb/9/94/User_hub.png/48px-User_hub.png 2x" width="24"/></a></span> <a href="User_hub.html" title="User hub/de">Anwenderdokumentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started/de">Erste Schritte</a></b></li>
+<li><b>Installation:</b> <a href="Download.html" title="Download/de">Herunterladen</a>, <a href="Installing_on_Windows.html" title="Installing on Windows/de">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux/de">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac/de">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components/de">Zusätzliche Komponenten</a>, <a href="Compile_on_Docker.html" title="Compile on Docker/de">Docker</a>, <a href="AppImage.html" title="AppImage/de">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap/de">Ubuntu Snap</a></li>
+<li><b>Grundlagen:</b> <a href="About_FreeCAD.html" title="About FreeCAD/de">Über FreeCAD</a>, <a href="Interface.html" title="Interface/de">Graphische Oberfläche</a>, <a href="Mouse_navigation.html" title="Mouse navigation/de">Mausbedienung</a>, <a href="Selection_methods.html" title="Selection methods/de">Auswahlmethoden</a>, <a href="Object_name.html" title="Object name/de">Objektname</a>, <a href="Preferences_Editor.html" title="Preferences Editor/de">Voreinstellungseditor</a>, <a href="Workbenches.html" title="Workbenches/de">Arbeitsbereiche</a>, <a href="Document_structure.html" title="Document structure/de">Dokumentstruktur</a>, <a href="Property.html" title="Property/de">Objekteigenschaften</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD/de">FreeCAD unterstützen</a>, <a href="Donate.html" title="Donate/de">Spenden</a></li></ul>
+<hr/>
+<ul><li><b>Hilfe:</b> <a href="Tutorials.html" title="Tutorials/de">Anleitungen</a>, <a href="Video_tutorials.html" title="Video tutorials/de">Videoanleitungen</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches/de">Arbeitsbereiche</a>:</b> <a href="Std_Base.html" title="Std Base/de">Std Base</a>, <a href="Arch_Workbench.html" title="Arch Workbench/de">Arch</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench/de">Assembly</a>, <a href="BIM_Workbench.html" title="BIM Workbench/de">BIM</a>, <a href="CAM_Workbench.html" title="CAM Workbench/de">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench/de">Draft</a>, <a href="FEM_Workbench.html" title="FEM Workbench/de">FEM</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench/de">Inspection</a>, <a href="Material_Workbench.html" title="Material Workbench/de">Material</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench/de">Mesh</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench/de">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench/de">Part</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench/de">PartDesign</a>, <a href="Points_Workbench.html" title="Points Workbench/de">Points</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/de">Reverse Engineering</a>, <a href="Robot_Workbench.html" title="Robot Workbench/de">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench/de">Sketcher</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench/de">Spreadsheet</a>, <a href="Surface_Workbench.html" title="Surface Workbench/de">Surface</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench/de">TechDraw</a>, <a href="Testing.html" title="Testing/de">Test Framework</a></li></ul>
+<hr/>
+<ul><li><b><a href="Addon.html" title="Addon/de">Addon</a>:</b> <a href="Std_AddonMgr.html" title="Std AddonMgr/de">Addon-Manager</a>, <a href="External_workbenches.html" title="External workbenches/de">Externe Arbeitsbereiche</a>, <a href="Scripting_and_macros.html" title="Scripting and macros/de">Skripten und Makros</a></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub/de">Anwenderzentrum</a>, <a href="Power_users_hub.html" title="Power users hub/de">Hauptanwenderzentrum</a>, <a href="Developer_hub.html" title="Developer hub/de">Entwicklerzentrum</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129212708
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.151 seconds
+Real time usage: 1.399 seconds
+Preprocessor visited node count: 396/1000000
+Post‐expand include size: 25650/2097152 bytes
+Template argument size: 14973/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 8/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 30015/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 1247.127      1 -total
+ 99.20% 1237.191      8 Template:Code
+  0.29%    3.576      1 Template:TechDraw_Tools_navi/de
+  0.18%    2.231      2 Template:Navigation_menu_2
+  0.11%    1.400      7 Template:APIFunction
+  0.08%    0.996      1 Template:Userdocnavi/de
+  0.05%    0.664      1 Template:Incode
+  0.05%    0.622      1 Template:VeryImportantMessage
+  0.04%    0.549      1 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:136677-0!canonical and timestamp 20241129212707 and revision id 1298925. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

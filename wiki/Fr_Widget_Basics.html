@@ -1,0 +1,275 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Fr Widget Basics</span></h1><div class="mw-parser-output"><p>This chapter teaches you the basics of Fr_Widget toolkit
+</p>
+<div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Writing_your_first_Fr_Widget_based_program"><span class="tocnumber">1</span> <span class="toctext">Writing your first Fr_Widget based program</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Explaining_the_code"><span class="tocnumber">1.1</span> <span class="toctext">Explaining the code</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-3"><a href="#Creating_Fr_Line_widget_as_an_example"><span class="tocnumber">2</span> <span class="toctext">Creating Fr_Line_widget as an example</span></a>
+<ul>
+<li class="toclevel-2 tocsection-4"><a href="#Part_1"><span class="tocnumber">2.1</span> <span class="toctext">Part 1</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Part_2"><span class="tocnumber">2.2</span> <span class="toctext">Part 2</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Part_3"><span class="tocnumber">2.3</span> <span class="toctext">Part 3</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#Part_4"><span class="tocnumber">2.4</span> <span class="toctext">Part 4</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Part_5"><span class="tocnumber">2.5</span> <span class="toctext">Part 5</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="#Part_6"><span class="tocnumber">2.6</span> <span class="toctext">Part 6</span></a></li>
+<li class="toclevel-2 tocsection-10"><a href="#Part_7"><span class="tocnumber">2.7</span> <span class="toctext">Part 7</span></a></li>
+<li class="toclevel-2 tocsection-11"><a href="#Part_8"><span class="tocnumber">2.8</span> <span class="toctext">Part 8</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2><span class="mw-headline" id="Writing_your_first_Fr_Widget_based_program">Writing your first Fr_Widget based program</span></h2>
+<p>Basically, you need always to have a Fr_CoinWindow. This widget is the container of the other widgets you create. It is a subclass of Fr_Group. The Fr_CoinWindow used to distribute events and hold a link to each widget you have in your window. 
+</p><p>Fr_CoinWindow doesn't draw any thing and it is not restricted to any dimensions. But there must be a such windows for getting your Fr_Widgets work. If FreeCAD adapt this toolkit someday, the Fr_CoinWindow should be always available and you shouldn't required to create one. But at the moment, you have to create one Fr_CoinWindow whenever you need to use the toolkit. Notice that you shouldn't make several of Fr_CoinWindow.. Only once. 
+</p><p>The widgets interact with the user using the callback system. 
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">ThreeDWidgets.fr_arrow_widget</span> <span class="k">as</span> <span class="nn">wd</span>
+<span class="kn">import</span> <span class="nn">ThreeDWidgets.fr_coinwindow</span> <span class="k">as</span> <span class="nn">wnn</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="n">mywin</span> <span class="o">=</span> <span class="n">wnn</span><span class="o">.</span><span class="n">Fr_CoinWindow</span><span class="p">()</span>       <span class="c1">#Create an instance of the CoinWindow                         </span>
+<span class="n">vec</span><span class="o">=</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>             <span class="c1">#Position of the widget </span>
+<span class="n">arrows</span><span class="o">=</span><span class="p">(</span><span class="n">wd</span><span class="o">.</span><span class="n">Fr_Arrow_Widget</span><span class="p">(</span><span class="n">vec</span><span class="p">))</span>  <span class="c1">#An instance of the arrow widget </span>
+<span class="n">rotation</span><span class="o">=</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mi">45</span><span class="p">])</span>      <span class="c1">#Internally is radians but the widget system takes degree</span>
+<span class="n">arrows</span><span class="o">.</span><span class="n">w_color</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>         <span class="c1">#Color of the widget. Basically it R,G,B in the range of 0 to 1 in float values</span>
+<span class="n">arrows</span><span class="o">.</span><span class="n">setRotationAngle</span><span class="p">(</span><span class="n">rotation</span><span class="p">)</span> <span class="c1">#Rotation of the widget. It consist of the axis in three float values, and an angle</span>
+<span class="n">mywin</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">arrows</span><span class="p">)</span>           <span class="c1">#Add the widget to the window </span>
+<span class="n">mywin</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>                      <span class="c1">#Show the window</span>
+</pre></div>
+<h5><span class="mw-headline" id="Explaining_the_code">Explaining the code</span></h5>
+<ul><li>First  line imports the fr_arrow_widget. Later we use it to create the widget itself.</li>
+<li>Second line imports the fr_coinwindow. As mentioned this is the container of the system. Without this widget, you will not be able to show anything</li>
+<li>Third line is math library from Python. It is required for now but this will change. It is used to convert the rotation angle to radians. But in the future the interface angles will be in degree. Internally is still radians as COIN3D is in radians.</li></ul>
+<h2><span class="mw-headline" id="Creating_Fr_Line_widget_as_an_example">Creating Fr_Line_widget as an example</span></h2>
+<p>Lets start creating a new drawing widget. This widget will draw a line and has a label. We need to get two vertices to draw the line. The widget itself is a subclass of the abstract object called Fr_Widget.
+</p><p>Fr_Widget is the base class for all widgets. It contains basic variable, objects and functions definitions. Some of these are not implemented and you have to implemented. If you will use any function that aren't implemented, an exception will popup. 
+</p>
+<h4><span class="mw-headline" id="Part_1">Part 1</span></h4>
+<p>The class declaration for our new object:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">ThreeDWidgets</span> <span class="kn">import</span> <span class="n">fr_widget</span>
+
+<span class="k">class</span> <span class="nc">Fr_Line_Widget</span><span class="p">(</span><span class="n">fr_widget</span><span class="o">.</span><span class="n">Fr_Widget</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vectors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span> <span class="n">lineWidth</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        This class is for drawing a line in coin3D world</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>        
+        <span class="c1">#Must be initialized first as per the following discussion. </span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_lineWidth</span> <span class="o">=</span> <span class="n">lineWidth</span>  <span class="c1"># Default line width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_widgetType</span> <span class="o">=</span> <span class="n">constant</span><span class="o">.</span><span class="n">FR_WidgetType</span><span class="o">.</span><span class="n">FR_EDGE</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_callback_</span><span class="o">=</span><span class="n">callback</span>           <span class="c1">#External function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_lbl_calback_</span><span class="o">=</span><span class="n">lblcallback</span>     <span class="c1">#External function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_KB_callback_</span><span class="o">=</span><span class="n">KBcallback</span>      <span class="c1">#External function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_move_callback_</span><span class="o">=</span><span class="n">movecallback</span>  <span class="c1">#External function</span>
+        <span class="n">w_wdgsoSwitch</span> <span class="o">=</span> <span class="n">coin</span><span class="o">.</span><span class="n">SoSwitch</span><span class="p">()</span>        
+        <span class="n">w_wdgsoSwitch</span><span class="o">.</span><span class="n">whichChild</span> <span class="o">=</span> <span class="n">coin</span><span class="o">.</span><span class="n">SO_SWITCH_ALL</span>  <span class="c1"># Show all</span>
+</pre></div>
+<p>The line (super) must be written in the first line after the definition of the class since we want to initialize the abstract widget(Fr_Widget) before changing the internal objects and variables.
+</p><p>We have as arguments to the widget:(vertices, label and line width). You must give exactly 2 vertices to the class, but line width and label is optional. Default line width is be 1. 
+</p><p>There are four callbacks that we should define if we want to take benefit of the events. These are external function user should define them to do other tasks as events occur. For example mouse click or keyboard events etc...
+</p><p>The last two lines are related to Coin3d. The first one is a coin.SoSwitch object in coin which can be used to hide or show the drawn object. The other line is the configuration of that switch. We allow by default showing all objects.
+</p>
+<h4><span class="mw-headline" id="Part_2">Part 2</span></h4>
+<p>Look at Fr_Widget. The functions that have no implementation must be implemented here. The most important functions are (draw, handle, redraw, label_draw,label_redraw). Drawing the object will be different from widget to widget. But they have many things in common. The uses the drawing functions implemented in fr_draw.py. Since the actual drawing is implemented in fr_draw, we will not describe here the COIN3D commands. 
+</p><p>Each function in the fr_draw returns the same object which is a coin.SoSeparator. This object is a container (group) of several coin commands. Details of those commands could be found in the documentation of COIN3D. But we will be describing the most common used commands when we explain the fr_draw.py.
+</p>
+<h4><span class="mw-headline" id="Part_3">Part 3</span></h4>
+<p>We start to explain the code. This part is not difficult to understand .. It sets the width.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">lineWidth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+        <span class="sd">""" Set the line width"""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_lineWidth</span> <span class="o">=</span> <span class="n">width</span>
+</pre></div>
+<p>This is the most important function in this toolkit. It handles the events occur in the coin window and try to distinguish between different events. Coin3d doesn't implement by default double-click, but this function is implementing that also.   
+</p><p>For Keyboard events, at the moment the toolkit doesn't mask the events. They are still the coin3d definition. This might change in the future. Whenever a widget uses the event, it must return 1 as an indication that the event(s) is/are processed.  I think the code is self explanatory. Events, colors, and other constants could be found in the file constant.py.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        This function is responsible of taking events and processing </span>
+<span class="sd">        it. Required action will be executed here. If the object is not targeted, </span>
+<span class="sd">        the function will skip the events. But if the widget was</span>
+<span class="sd">        targeted, it returns 1. Returning 1 means that the widget</span>
+<span class="sd">        processed the event and no other widgets needs to get the </span>
+<span class="sd">        event. Window object is responsible for distributing the events.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">event</span><span class="p">)</span><span class="o">==</span><span class="nb">int</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event</span><span class="o">==</span><span class="n">FR_EVENTS</span><span class="o">.</span><span class="n">FR_NO_EVENT</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mi">1</span>    <span class="c1"># we treat this event. Nothing to do </span>
+        
+            <span class="n">clickwdgdNode</span> <span class="o">=</span> <span class="n">fr_coin3d</span><span class="o">.</span><span class="n">objectMouseClick_Coin3d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_parent</span><span class="o">.</span><span class="n">link_to_root_handle</span><span class="o">.</span><span class="n">w_lastEventXYZ</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span>
+                                                            <span class="bp">self</span><span class="o">.</span><span class="n">w_pick_radius</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_widgetSoNodes</span><span class="p">)</span>
+            <span class="n">clickwdglblNode</span> <span class="o">=</span> <span class="n">fr_coin3d</span><span class="o">.</span><span class="n">objectMouseClick_Coin3d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_parent</span><span class="o">.</span><span class="n">link_to_root_handle</span><span class="o">.</span><span class="n">w_lastEventXYZ</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span>
+                                                            <span class="bp">self</span><span class="o">.</span><span class="n">w_pick_radius</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_widgetlblSoNodes</span><span class="p">)</span> 
+
+            <span class="k">if</span> <span class="n">clickwdgdNode</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">clickwdglblNode</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1">#SoSwitch not found </span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remove_focus</span><span class="p">()</span>
+                <span class="k">return</span> <span class="mi">0</span> 
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_parent</span><span class="o">.</span><span class="n">link_to_root_handle</span><span class="o">.</span><span class="n">w_lastEvent</span> <span class="o">==</span> <span class="n">FR_EVENTS</span><span class="o">.</span><span class="n">FR_MOUSE_LEFT_DOUBLECLICK</span><span class="p">:</span>
+                <span class="c1"># Double click event.</span>
+                <span class="k">if</span> <span class="n">clickwdglblNode</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">"Double click detected"</span><span class="p">)</span>
+                    <span class="c1">#if not self.has_focus():</span>
+                    <span class="c1">#    self.take_focus()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">do_lblcallback</span><span class="p">()</span>
+                    <span class="k">return</span> <span class="mi">1</span>
+
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_parent</span><span class="o">.</span><span class="n">link_to_root_handle</span><span class="o">.</span><span class="n">w_lastEvent</span> <span class="o">==</span> <span class="n">FR_EVENTS</span><span class="o">.</span><span class="n">FR_MOUSE_LEFT_RELEASE</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">clickwdgdNode</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">clickwdglblNode</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_focus</span><span class="p">():</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">take_focus</span><span class="p">()</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">do_callback</span><span class="p">()</span>
+                    <span class="k">return</span> <span class="mi">1</span>            
+
+            <span class="c1">#Don't care events, return the event to other widgets    </span>
+        <span class="k">return</span> <span class="mi">0</span>  <span class="c1"># We couldn't use the event .. so return 0</span>
+</pre></div>
+<h4><span class="mw-headline" id="Part_4">Part 4</span></h4>
+<p>This part is about the function 'draw'. This function is responsible for drawing the whole widget. It takes care of drawing the widget when it is active, inactive, selected, has focus, lost focus etc...
+</p><p>It has a direct connection to the fr_draw library that provides the primitive drawings for ex. (Line, Square, Box, Arrow, 2D Arrow, Cube, Cylinder etc...). For our widget we uses the line drawing. Lets look at the code:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Main draw function. It is responsible for creating the SoSeparator node,</span>
+<span class="sd">        and draw the line on the screen - in the COIN3D world. </span>
+<span class="sd">        """</span>
+        <span class="k">try</span><span class="p">:</span>
+            
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_vector</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'Must be 2 Vectors'</span><span class="p">)</span>
+            <span class="n">p1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_vector</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">p2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_vector</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_focus</span><span class="p">():</span>
+                <span class="n">usedColor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_selColor</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">has_focus</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">usedColor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_color</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">usedColor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_inactiveColor</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_visible</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">saveSoNodesToWidget</span><span class="p">(</span><span class="n">fr_draw</span><span class="o">.</span><span class="n">draw_line</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">,</span> <span class="n">usedColor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_lineWidth</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">saveSoNodeslblToWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">draw_label</span><span class="p">(</span><span class="n">usedColor</span><span class="p">))</span>
+                <span class="c1">#add both to the same switch. and add them to the senegraph automatically</span>
+                <span class="n">allSwitch</span><span class="o">=</span><span class="p">[]</span>
+                <span class="n">allSwitch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_widgetSoNodes</span><span class="p">)</span>
+                <span class="n">allSwitch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_widgetlblSoNodes</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">addSoNodeToSoSwitch</span><span class="p">(</span><span class="n">allSwitch</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span>  <span class="c1"># We draw nothing .. This is here just for clarifying the code</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintError</span><span class="p">(</span><span class="s2">"'Fr_Line_Widget' Failed. "</span>
+                                   <span class="s2">"</span><span class="si">{err}</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)))</span>
+            <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_obj</span><span class="p">,</span> <span class="n">exc_tb</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">exc_tb</span><span class="o">.</span><span class="n">tb_frame</span><span class="o">.</span><span class="n">f_code</span><span class="o">.</span><span class="n">co_filename</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">fname</span><span class="p">,</span> <span class="n">exc_tb</span><span class="o">.</span><span class="n">tb_lineno</span><span class="p">)</span>
+</pre></div>
+<p>The function checks if we have got two vectors since the line needs two vectors. And after that it chooses the desired color based on the widgets status. Every widget needs to save the node to the widget and to the switch the widget has. The SoSwitch is to hide the widget when that is required. When the widget needs to redraw the whole drawing, first it removes the SoSeparator from the COIN3D scene graph and it should remove it from the widget also. And then it will recreate the whole thing again. that function is called redraw. The label is also drawn here. But we will talk about the labels later. But you need to call the draw_label here. COIN3D drawings will be discussed in a separate page. Something to remember, draw your coin3d objects in the same way you draw in FreeCAD. Always make the default position (0,0,1). .i.e. the object should be drawn towards +Z axis. This is useful since when you apply rotation of other FreeCAD object your COIN object will take that direction without any problem. This is why my arrows (2d or 3D) are all located on the Z axis by default if you don't change them.
+</p>
+<h4><span class="mw-headline" id="Part_5">Part 5</span></h4>
+<p>Widgets Label: Labels are necessary for the widget toolkit. For example the label for line widget can be used to show the length of the side the line is drawn for. It has also the call back mechanism so you can interact with the text shown on the screen.
+</p><p>For our widget (Fr_Line_Widget) the label is drawn near to the beginning of the line i.e. near to the first Vertex. At the moment there is no alignment mechanism but that is in the todo list. This part will be updated later when that is implemented.
+</p><p>Label drawings are collect in the file fr_label_draw.py.
+</p><p>The text drawn is only 2D. There might be the need of making 3D text, but this will/must come to the todo list.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">draw_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">usedColor</span><span class="p">):</span>
+        <span class="n">LabelData</span> <span class="o">=</span> <span class="n">fr_widget</span><span class="o">.</span><span class="n">propertyValues</span><span class="p">()</span>
+        <span class="n">LabelData</span><span class="o">.</span><span class="n">linewidth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_lineWidth</span>
+        <span class="n">LabelData</span><span class="o">.</span><span class="n">labelfont</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_font</span>
+        <span class="n">LabelData</span><span class="o">.</span><span class="n">fontsize</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_fontsize</span>
+        <span class="n">LabelData</span><span class="o">.</span><span class="n">labelcolor</span> <span class="o">=</span> <span class="n">usedColor</span>
+        <span class="n">LabelData</span><span class="o">.</span><span class="n">vectors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_vector</span>
+        <span class="n">LabelData</span><span class="o">.</span><span class="n">alignment</span> <span class="o">=</span> <span class="n">FR_ALIGN</span><span class="o">.</span><span class="n">FR_ALIGN_LEFT_BOTTOM</span>
+        <span class="n">lbl</span> <span class="o">=</span> <span class="n">fr_label_draw</span><span class="o">.</span><span class="n">draw_label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_label</span><span class="p">,</span> <span class="n">LabelData</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_widgetlblSoNodes</span> <span class="o">=</span> <span class="n">lbl</span>
+        <span class="k">return</span> <span class="n">lbl</span>
+</pre></div>
+<p>PropertyValues is an object that is used to send the parameter to the drawing function. It simplifies the API interface for the label drawing. Many parameter must be defined for the label. For example (font name, font size, used color , position or the vector , alignment (which is not implemented yet) etc... All these are used to determine how the draw_label will draw the actual text. The returned value from the draw_label is an SoSeparator which should be added to the scene graph. 
+</p>
+<h4><span class="mw-headline" id="Part_6">Part 6</span></h4>
+<p>This part is also relate to draw function. We need a mechanism to redraw the drawings. Normally you must remove the drawings and redraw the objects to get the coin3d objects changed. Fr_Wdiget do the same. Looking to the following code:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">redraw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        After the widgets damages, this function should be called.        </span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_visible</span><span class="p">():</span>
+            <span class="c1"># Remove the SoSwitch from fr_coinwindo</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">w_parent</span><span class="o">.</span><span class="n">removeSoSwitchFromSeneGraph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_wdgsoSwitch</span><span class="p">)</span>
+
+            <span class="c1"># Remove the node from the switch as a child</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">removeSoNodeFromSoSwitch</span><span class="p">()</span>
+           
+            <span class="c1"># Remove the seneNodes from the widget</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">removeSoNodes</span><span class="p">()</span>
+            <span class="c1">#Redraw label</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">lblRedraw</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">lblRedraw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w_widgetlblSoNodes</span><span class="o">!=</span><span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">w_widgetlblSoNodes</span><span class="o">.</span><span class="n">removeAllChildren</span><span class="p">()</span>
+</pre></div>
+<p>First function (redraw) will remove the drawings from the scene graph and remove the holder of the objects inside the widget. SoSepartor will be deleted since it will be recreated when draw function activates. But the SoSwitch object inside the widget doesn't need to be delete. It will not have any child/children. The same should happen to the label. That is why we have another function for redrawing the label (lblRedraw).
+</p>
+<h4><span class="mw-headline" id="Part_7">Part 7</span></h4>
+<p>We need also functions that will put the size of the object, resize it and move it. Bellow are the functions: 
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newVecPos</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Move the object to the new location referenced by the </span>
+<span class="sd">        left-top corner of the object. Or the start of the line</span>
+<span class="sd">        if it is a line.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">([</span><span class="n">newVecPos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">newVecPos</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vectors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">]):</span>  <span class="c1"># Width, height, thickness</span>
+        <span class="sd">"""Resize the widget by using the new vectors"""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_vector</span> <span class="o">=</span> <span class="n">vectors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redraw</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vectors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">]):</span>
+        <span class="sd">"""Resize the widget by using the new vectors"""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">vectors</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">label_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newPos</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+<p>Label move is not implemented yet. But drawing move, size and resize indeed is the same function. There are many ways to do this job but to make it simple, Fr_Widget delete the original vectors and simply redraw the whole object. There is not so much to clarify. It is clear how the function works. 
+</p>
+<h4><span class="mw-headline" id="Part_8">Part 8</span></h4>
+<p>to be continued...
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20241129213337
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.058 seconds
+Real time usage: 1.431 seconds
+Preprocessor visited node count: 137/1000000
+Post‐expand include size: 688/2097152 bytes
+Template argument size: 7214/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 8/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 27201/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 1389.113      1 -total
+ 99.93% 1388.086      8 Template:Code
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:255511-0!canonical and timestamp 20241129213335 and revision id 1220420. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>

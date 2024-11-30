@@ -1,0 +1,256 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Translating an external workbench/it</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Translating_an_external_workbench.html" lang="de" title="Übersetzen eines externen Arbeitsbereichs (89% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Translating_an_external_workbench.html" lang="en" title="Translating an external workbench (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Translating_an_external_workbench.html" lang="es" title="Traduciendo un banco de trabajo externo (6% translated)">español</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Translating_an_external_workbench.html" lang="fr" title="Traduction d'un atelier externe (100% translated)">français</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--stub" dir="ltr" lang="it">italiano</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Translating_an_external_workbench.html" lang="pl" title="Tłumaczenie interfejsu zewnętrznych środowisk pracy (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Translating_an_external_workbench.html" lang="pt-BR" title="Translating an external workbench/pt-br (2% translated)">português do Brasil</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Translating_an_external_workbench.html" lang="ru" title="Перевод внешних верстаков (14% translated)">русский</a></li></ul></div>
+<p>In the following notes, <code>"context"</code> should be your addon's or workbench's name, for example, <code>"MySuperAddon"</code> or <code>"DraftPlus"</code>, or whatever. Capitalization matters here: <code>"Context"</code> is not the same as <code>"context"</code> for example. The context makes it so that all translation of your code will be gathered under the same name, to be more easily identified by translators. That is, they will know exactly to which addon or workbench a particular string belongs.
+</p><p><b>Note</b>: Here is an all-in-one script that automates the complete procedure mentioned below (you are still advised to read the procedure to know what the script should do, though): <a class="external free" href="https://github.com/yorikvanhavre/BIM_Workbench/blob/master/utils/updateTranslations.py" rel="nofollow">https://github.com/yorikvanhavre/BIM_Workbench/blob/master/utils/updateTranslations.py</a>
+</p>
+<div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Preparing_the_sources"><span class="tocnumber">1</span> <span class="toctext">Preparing the sources</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#General"><span class="tocnumber">1.1</span> <span class="toctext">General</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#In_every_Python_.py_file"><span class="tocnumber">1.2</span> <span class="toctext">In every Python .py file</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#In_InitGui.py"><span class="tocnumber">1.3</span> <span class="toctext">In InitGui.py</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Inside_each_FreeCAD_command_class"><span class="tocnumber">1.4</span> <span class="toctext">Inside each FreeCAD command class</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-6"><a href="#Gather_all_the_strings_from_your_module"><span class="tocnumber">2</span> <span class="toctext">Gather all the strings from your module</span></a></li>
+<li class="toclevel-1 tocsection-7"><a href="#Send_the_.ts_file_to_a_translation_platform"><span class="tocnumber">3</span> <span class="toctext">Send the .ts file to a translation platform</span></a></li>
+<li class="toclevel-1 tocsection-8"><a href="#Merge_the_translations"><span class="tocnumber">4</span> <span class="toctext">Merge the translations</span></a></li>
+<li class="toclevel-1 tocsection-9"><a href="#Compile_the_translations"><span class="tocnumber">5</span> <span class="toctext">Compile the translations</span></a></li>
+<li class="toclevel-1 tocsection-10"><a href="#Testing_translations"><span class="tocnumber">6</span> <span class="toctext">Testing translations</span></a>
+<ul>
+<li class="toclevel-2 tocsection-11"><a href="#Important_notes"><span class="tocnumber">6.1</span> <span class="toctext">Important notes</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-12"><a href="#Convenience_script"><span class="tocnumber">7</span> <span class="toctext">Convenience script</span></a></li>
+<li class="toclevel-1 tocsection-13"><a href="#Technical_details_and_advanced_usage"><span class="tocnumber">8</span> <span class="toctext">Technical details and advanced usage</span></a></li>
+<li class="toclevel-1 tocsection-14"><a href="#Important_references"><span class="tocnumber">9</span> <span class="toctext">Important references</span></a></li>
+<li class="toclevel-1 tocsection-15"><a href="#Related_Pages"><span class="tocnumber">10</span> <span class="toctext">Related Pages</span></a></li>
+<li class="toclevel-1 tocsection-16"><a href="#Pagine_correlate"><span class="tocnumber">11</span> <span class="toctext">Pagine correlate</span></a></li>
+</ul>
+</div>
+<h2><span class="mw-headline" id="Preparing_the_sources">Preparing the sources</span></h2>
+<h3><span class="mw-headline" id="General">General</span></h3>
+<ul><li>Add a <code>translations/</code> folder. You can name it to something else, but this will be easier as it is the same throughout FreeCAD. In this folder, you will place the <code>.ts</code> files (the "source" translation files) and <code>.qm</code> files (compiled translation files).</li>
+<li>Only the text that is shown to the user in the FreeCAD UI should be translated. Text that is only shown in the Python console should not be translated.</li>
+<li>Text that prints to the <code>FreeCAD.Console</code> is shown in the "Report view", and therefore should be translated. The "Report view" is different from the Python console.</li></ul>
+<h3><span class="mw-headline" id="In_every_Python_.py_file">In every Python .py file</span></h3>
+<ul><li>In every file where you need to translate text, you need a <code>translate()</code> function defined. It must be named exactly <code>translate</code>: the string extractor relies on that exact name. You can use the fully-qualified name from Qt, but it's a little cleaner to use:</li></ul>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span>
+<span class="n">translate</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">translate</span>
+</pre></div></dd></dl>
+<ul><li>All text that must be translated must be passed through the <code>translate()</code> function:</li></ul>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">"My text"</span><span class="p">)</span>
+</pre></div></dd></dl>
+<dl><dd>becomes:</dd></dl>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">translate</span><span class="p">(</span><span class="s2">"context"</span><span class="p">,</span> <span class="s2">"My text"</span><span class="p">))</span>
+</pre></div></dd></dl>
+<dl><dd>Be aware that <code>translate()</code> is not just a normal function: it also serves as a "tag" for the <code>lupdate</code> text-processing utility, so must be named exactly "translate". The <code>lupdate</code> program is a simple text processor, it does not execute your code. You must pass string literals directly to the <code>translate()</code> function: you cannot pass variables, constants, etc. For example:</dd></dl>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># This works:</span>
+<span class="n">FreeCAD</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="n">translate</span><span class="p">(</span><span class="s2">"context"</span><span class="p">,</span> <span class="s2">"My text"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># This does not, lupdate only sees the word "a_variable", and doesn't know what that is:</span>
+<span class="n">a_variable</span> <span class="o">=</span> <span class="s2">"My text"</span>
+<span class="n">FreeCAD</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="n">translate</span><span class="p">(</span><span class="s2">"context"</span><span class="p">,</span> <span class="n">a_variable</span> <span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="c1"># But this works -- a_variable will contain the translated string:</span>
+<span class="n">a_variable</span> <span class="o">=</span> <span class="n">translate</span><span class="p">(</span><span class="s2">"context"</span><span class="p">,</span> <span class="s2">"My text"</span><span class="p">)</span>
+<span class="n">FreeCAD</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="n">a_variable</span>  <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div></dd></dl>
+<dl><dd>This can be used anywhere: in <code>print()</code>, in <code>FreeCAD.Console.PrintMessage()</code>, in Qt dialogs, etc. The <code>FreeCAD.Console</code> functions do not automatically add the newline character (<code>\n</code>), so this must be added at the end if desired. This character doesn't need translation either, so it can be outside the translating function:</dd></dl>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="n">translate</span><span class="p">(</span><span class="s2">"context"</span><span class="p">,</span> <span class="s2">"My text"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div></dd></dl>
+<ul><li>If you are using <code>.ui</code> files made with QtDesigner, nothing special needs to be done with them.</li>
+<li>When creating new objects, do not translate the object's "Name". Rather, translate the object's "Label". The difference is that a "Name" is unique; it stays the same throughout the life of the object; on the other hand, a "Label" can be changed by the user as desired.</li>
+<li>When creating properties for your objects, don't translate the property name. But place the description inside <code>QT_TRANSLATE_NOOP</code>:</li></ul>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyBool"</span><span class="p">,</span> <span class="s2">"MyProperty"</span><span class="p">,</span> <span class="s2">"PropertyGroup"</span><span class="p">,</span> <span class="n">QT_TRANSLATE_NOOP</span><span class="p">(</span><span class="s2">"App::Property"</span><span class="p">,</span> <span class="s2">"This is what My Property does"</span><span class="p">))</span>
+</pre></div></dd></dl>
+<dl><dd>Don't use your own <code>"context"</code> in this specific case. Keep <code>"App::Property"</code>.</dd></dl>
+<h3><span class="mw-headline" id="In_InitGui.py">In InitGui.py</span></h3>
+<ul><li>Add the following line near the top of the file:</li></ul>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">QT_TRANSLATE_NOOP</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">text</span>
+</pre></div></dd></dl>
+<dl><dd>The <code>QT_TRANSLATE_NOOP</code> macro doesn't do anything, but it marks texts to be picked up by the <code>lupdate</code> utility later on. We only use it in special cases where FreeCAD itself takes care of everything.</dd></dl>
+<ul><li>To translate menu and toolbar names use the word <code>"Workbench"</code> as the context:</li></ul>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">appendMenu</span><span class="p">(</span><span class="n">QT_TRANSLATE_NOOP</span><span class="p">(</span><span class="s2">"Workbench"</span><span class="p">,</span> <span class="s2">"My menu"</span><span class="p">),</span> <span class="p">[</span><span class="nb">list</span> <span class="n">of</span> <span class="n">commands</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">appendToolbar</span><span class="p">(</span><span class="n">QT_TRANSLATE_NOOP</span><span class="p">(</span><span class="s2">"Workbench"</span><span class="p">,</span> <span class="s2">"My toolbar"</span><span class="p">),</span> <span class="p">[</span><span class="nb">list</span> <span class="n">of</span> <span class="n">commands</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span>
+</pre></div></dd></dl>
+<ul><li>Add the path to your <code>translations/</code> folder and update the locale in the Initialized function:</li></ul>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">FreeCADGui</span><span class="o">.</span><span class="n">addLanguagePath</span><span class="p">(</span><span class="s2">"/path/to/translations"</span><span class="p">)</span>
+<span class="n">FreeCADGui</span><span class="o">.</span><span class="n">updateLocale</span><span class="p">()</span>
+</pre></div></dd></dl>
+<dl><dd>The <code>InitGui.py</code> file has no <b>file</b> attribute, so it is not easy to find the translations folder's relative location. An easy way to work around this is to make it import another file from the same folder, and in that file do:</dd></dl>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">FreeCADGui</span><span class="o">.</span><span class="n">addLanguagePath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">"translations"</span><span class="p">))</span>
+<span class="n">FreeCADGui</span><span class="o">.</span><span class="n">updateLocale</span><span class="p">()</span>
+</pre></div></dd></dl>
+<h3><span class="mw-headline" id="Inside_each_FreeCAD_command_class">Inside each FreeCAD command class</span></h3>
+<ul><li>Add the following line near the top of the file:</li></ul>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">QT_TRANSLATE_NOOP</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">text</span>
+</pre></div></dd></dl>
+<ul><li>Translate the <code>'MenuText'</code> and <code>'Tooltip'</code> of the command like this:</li></ul>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">GetResources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">'Pixmap'</span>  <span class="p">:</span> <span class="s2">"path/to/icon.svg"</span><span class="p">),</span>
+            <span class="s1">'MenuText'</span><span class="p">:</span> <span class="n">QT_TRANSLATE_NOOP</span><span class="p">(</span><span class="s2">"CommandName"</span><span class="p">,</span> <span class="s2">"My Command"</span><span class="p">),</span>
+            <span class="s1">'ToolTip'</span> <span class="p">:</span> <span class="n">QT_TRANSLATE_NOOP</span><span class="p">(</span><span class="s2">"CommandName"</span><span class="p">,</span> <span class="s2">"Describes what the command does"</span><span class="p">),</span>
+            <span class="s1">'Accel'</span>   <span class="p">:</span> <span class="s2">"Shift+A"</span>
+    <span class="p">}</span>
+</pre></div></dd></dl>
+<dl><dd>where <code>"CommandName"</code> is the name of the command, defined by:</dd></dl>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">FreeCADGui</span><span class="o">.</span><span class="n">addCommand</span><span class="p">(</span><span class="s1">'CommandName'</span><span class="p">,</span> <span class="n">My_Command_Class</span><span class="p">())</span>
+</pre></div></dd></dl>
+<h2><span class="mw-headline" id="Gather_all_the_strings_from_your_module">Gather all the strings from your module</span></h2>
+<ul><li>You will need the <code>lupdate</code>, <code>lconvert</code>, <code>lrelease</code> and <code>pylupdate</code> tools installed on your system. In Linux distributions they usually come in packages named <code>pyside-tools</code> or <code>pyside2-tools</code>. On some systems <code>lupdate</code> is named <code>lupdate4</code> or <code>lupdate5</code> or <code>lupdate-qt4</code> or similar. Same for the other tools. You may use the Qt4 or Qt5 version at your choice. In Qt6 there is no separate translation system for Python files, <code>lupdate</code> is used to extract strings from all types of source files.</li>
+<li>If you have <code>.ui</code> files, you need to run <code>lupdate</code> first:</li></ul>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">lupdate</span> <span class="o">*.</span><span class="n">ui</span> <span class="o">-</span><span class="n">ts</span> <span class="n">translations</span><span class="o">/</span><span class="n">uifiles</span><span class="o">.</span><span class="n">ts</span>
+</pre></div></dd></dl>
+<dl><dd>This is recursive and will find <code>.ui</code> files inside your whole directory structure.</dd></dl>
+<ul><li>If you have <code>.py</code> files, you need to run <code>pylupdate</code> too:</li></ul>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">pylupdate</span> <span class="o">*.</span><span class="n">py</span> <span class="o">-</span><span class="n">ts</span> <span class="n">translations</span><span class="o">/</span><span class="n">pyfiles</span><span class="o">.</span><span class="n">ts</span>
+</pre></div></dd></dl>
+<ul><li>If you ran both operations, you now need to unify these two files into one:</li></ul>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">lconvert</span> <span class="o">-</span><span class="n">i</span> <span class="n">translations</span><span class="o">/</span><span class="n">uifiles</span><span class="o">.</span><span class="n">ts</span> <span class="n">translations</span><span class="o">/</span><span class="n">pyfiles</span><span class="o">.</span><span class="n">ts</span> <span class="o">-</span><span class="n">o</span> <span class="n">translations</span><span class="o">/</span><span class="n">MyModule</span><span class="o">.</span><span class="n">ts</span>
+</pre></div></dd></dl>
+<ul><li>Check the contents of the three <code>.ts</code> files to make sure that they contain the strings, then you can delete both <code>pyfiles.ts</code> and <code>uifiles.ts</code>.</li>
+<li>You can do it all in one bash script like this:</li></ul>
+<dl><dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="ch">#!/bin/sh</span>
+<span class="n">lupdate</span> <span class="o">*.</span><span class="n">ui</span> <span class="o">-</span><span class="n">ts</span> <span class="n">translations</span><span class="o">/</span><span class="n">uifiles</span><span class="o">.</span><span class="n">ts</span>
+<span class="n">pylupdate</span> <span class="o">*.</span><span class="n">py</span> <span class="o">-</span><span class="n">ts</span> <span class="n">translations</span><span class="o">/</span><span class="n">pyfiles</span><span class="o">.</span><span class="n">ts</span>
+<span class="n">lconvert</span> <span class="o">-</span><span class="n">i</span> <span class="n">translations</span><span class="o">/</span><span class="n">uifiles</span><span class="o">.</span><span class="n">ts</span> <span class="n">translations</span><span class="o">/</span><span class="n">pyfiles</span><span class="o">.</span><span class="n">ts</span> <span class="o">-</span><span class="n">o</span> <span class="n">translations</span><span class="o">/</span><span class="n">MyModule</span><span class="o">.</span><span class="n">ts</span>
+<span class="n">rm</span> <span class="n">translations</span><span class="o">/</span><span class="n">pyfiles</span><span class="o">.</span><span class="n">ts</span>
+<span class="n">rm</span> <span class="n">translations</span><span class="o">/</span><span class="n">uifiles</span><span class="o">.</span><span class="n">ts</span>
+</pre></div></dd></dl>
+<h2><span class="mw-headline" id="Send_the_.ts_file_to_a_translation_platform">Send the .ts file to a translation platform</span></h2>
+<p>It is time to have your <code>.ts</code> file translated. You can choose to set up an account on a public translation platform such as <a class="external text" href="https://crowdin.com/" rel="nofollow">Crowdin</a> or <a class="external text" href="https://www.transifex.com/" rel="nofollow">Transifex</a>, or you can benefit from our existing <a class="external text" href="https://crowdin.com/project/freecad-addons" rel="nofollow">FreeCAD-addons account at Crowdin</a>, which has many users already, and therefore more chance to have your file translated quickly and by people who know FreeCAD.
+</p><p>If you wish to host your file on the FreeCAD Crowdin account, get in touch with <a class="external text" href="https://forum.freecadweb.org/memberlist.php?mode=viewprofile&amp;u=68" rel="nofollow">Yorik</a> on the <a class="external text" href="https://forum.freecadweb.org/" rel="nofollow">FreeCAD forum</a>.
+</p><p><i>Note:</i> some platforms like Crowdin can integrate with GitHub and do all the process from points 2, 3 and 4 automatically. For that, you can't use the FreeCAD Crowdin account; you will need to set up your own account.
+</p>
+<h2><span class="mw-headline" id="Merge_the_translations">Merge the translations</span></h2>
+<p>Once your <code>.ts</code> file has been translated, even if partially, you can download the translations from the site:
+</p>
+<ul><li>You will usually download a <code>.zip</code> file containing one <code>.ts</code> per language</li>
+<li>Place all the translated <code>.ts</code> files, together with your base <code>.ts</code> file, in the <code>translations/</code> folder</li></ul>
+<h2><span class="mw-headline" id="Compile_the_translations">Compile the translations</span></h2>
+<p>Now run the <code>lrelease</code> program on each file that you have:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">lrelease</span> <span class="s2">"translations/Draft_de.ts"</span>
+<span class="n">lrelease</span> <span class="s2">"translations/Draft_fr.ts"</span>
+<span class="n">lrelease</span> <span class="s2">"translations/Draft_pt-BR.ts"</span>
+</pre></div>
+<p>You can automate the process:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">translations</span><span class="o">/*</span><span class="n">_</span><span class="o">*.</span><span class="n">ts</span>
+<span class="n">do</span>
+    <span class="n">lrelease</span> <span class="s2">"translations/$f"</span>
+<span class="n">done</span>
+</pre></div>
+<p>You should find one <code>.qm</code> file for each translated <code>.ts</code> file. The <code>.qm</code> files is what will be used by Qt and FreeCAD at runtime.
+</p><p>That's all you need. Note that certain parts of your workbench cannot be translated on-the-fly if you decide to switch languages. If this is the case, you will need to restart FreeCAD for the new language to take effect.
+</p>
+<h2><span class="mw-headline" id="Testing_translations">Testing translations</span></h2>
+<ol><li>Switch FreeCAD to a language you have translated (for example German)</li>
+<li>Load translation into FreeCAD, ex. <code>FreeCADGui.addTranslationPath("/path/to/the/folder/containing/qmfile")</code></li>
+<li>Test something, for example <code>FreeCAD.Qt.translate("your context","some string")</code></li></ol>
+<p>Result: This should give you the German translation. If this works, then the basic setup is OK. Then we can look at something else. For example, command names should always use a special context that is the name of the command as registered to FreeCAD.
+</p>
+<h3><span class="mw-headline" id="Important_notes">Important notes</span></h3>
+<ul><li>Make sure you are using a *context* and *string* that actually are in the ts/qm file of course.</li></ul>
+<h2><span class="mw-headline" id="Convenience_script">Convenience script</span></h2>
+<p>Yorik maintains a convenience script for the BIM workbench, that can gather, upload and download ts files.
+You can just copy and adapt that script for your workbench:
+</p><p><a class="external free" href="https://github.com/yorikvanhavre/BIM_Workbench/blob/master/utils/updateTranslations.py" rel="nofollow">https://github.com/yorikvanhavre/BIM_Workbench/blob/master/utils/updateTranslations.py</a>
+</p>
+<h2><span class="mw-headline" id="Technical_details_and_advanced_usage">Technical details and advanced usage</span></h2>
+<p>In the above examples there are two separate functions being used: <code>translate()</code> and <code>QT_TRANSLATE_NOOP</code>. You may also run across <code>tr()</code> and <code>QT_TR_NOOP</code>, which automatically provide the "context" argument based on their calling location. These two pairs of functions are fundamentally different. 
+</p><p><code>translate()</code> and <code>tr()</code> accomplish two separate tasks: at runtime they perform the actual translation from the string passed into them to the final translated string. This is true whether they are provided a literal string, or a variable, or a constant: the lookup is dynamic and real-time during the run of the code. However, they provide an additional non-runtime function: they are recognized by the <code>pylupdate</code> utility. If (and only if) they contain a string literal, that literal is extracted by the utility. ONLY string literals are extracted by <code>pylupdate</code> -- if a variable is passed it is ignored by the <code>pylupdate</code> utility. Qt will attempt to provide a translation at runtime, but this will only work if some other piece of code called one of the translation functions with the literal string that needs to be translated, so that <code>pylupdate</code> can extract it. Note that the code with the string literal need not actually ever execute, it must simply exist as a line of code in a file somewhere: <code>pylupdate</code> performs no analysis or code execution, it is simply performing a string search and extraction.
+</p><p>In contrast, <code>QT_TRANSLATE_NOOP</code> and <code>QT_TR_NOOP</code> do nothing at all at runtime: they are literal "no-ops", and are completely ignored by running code. Their only use is to mark a literal string for extraction by <code>pylupdate</code>: it never makes sense to place a variable within a call to one of these functions, it will have no effect. They are used in circumstances where <code>translate()</code> or <code>tr()</code> will be called with a variable containing the text to translate. For example, any code that is used to create a Command or a Property will use a NOOP-type function around the command menu text or tooltip, or the property docstring: at runtime when FreeCAD displays these items to the user it calls <code>translate()</code>: the literal strings must have been extracted by <code>pylupdate</code> at the point of creation, for example:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">GetResources</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">'Pixmap'</span>  <span class="p">:</span> <span class="s2">"path/to/icon.svg"</span><span class="p">,</span>
+            <span class="s1">'MenuText'</span><span class="p">:</span> <span class="n">QT_TRANSLATE_NOOP</span><span class="p">(</span><span class="s2">"CommandName"</span><span class="p">,</span> <span class="s2">"My Command"</span><span class="p">),</span>
+            <span class="s1">'ToolTip'</span> <span class="p">:</span> <span class="n">QT_TRANSLATE_NOOP</span><span class="p">(</span><span class="s2">"CommandName"</span><span class="p">,</span> <span class="s2">"Describes what the command does"</span><span class="p">),</span>
+            <span class="s1">'Accel'</span>   <span class="p">:</span> <span class="s2">"Shift+A"</span>
+    <span class="p">}</span>
+</pre></div>
+<p>In this usage, at runtime the dictionary returned by this function is literally:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="p">{</span> 
+    <span class="s1">'Pixmap'</span>  <span class="p">:</span> <span class="s2">"path/to/icon.svg"</span><span class="p">,</span>
+    <span class="s1">'MenuText'</span><span class="p">:</span> <span class="s2">"My Command"</span><span class="p">,</span>
+    <span class="s1">'ToolTip'</span> <span class="p">:</span> <span class="s2">"Describes what the command does"</span><span class="p">,</span>
+    <span class="s1">'Accel'</span>   <span class="p">:</span> <span class="s2">"Shift+A"</span>
+<span class="p">}</span>
+</pre></div>
+<p>There is no reference to any type of translation information. When FreeCAD actually displays this information to the user, the pseudo-code is:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">for</span> <span class="n">command</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
+    <span class="n">resources</span> <span class="o">=</span> <span class="n">command</span><span class="o">.</span><span class="n">GetResources</span><span class="p">()</span>
+    <span class="n">menu_text</span> <span class="o">=</span> <span class="n">translate</span><span class="p">(</span><span class="n">resources</span><span class="p">[</span><span class="s1">'MenuText'</span><span class="p">])</span>
+</pre></div>
+<p>In this case, <code>lupdate</code> cannot extract any string from the call to <code>translate()</code> because it refers to a variable. So <code>lupdate</code> ignores that call, but at runtime Qt searches for the string that's passed to it. As long as someplace in the code there is a call to one of the translation functions with a matching literal string (in this case, in the <code>GetResources()</code> function), this translation call will succeed.
+</p><p>To verify that the expected strings are being extracted, you can manually run the <code>pylupdate</code> command:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">pylupdate</span> <span class="n">myfile</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">ts</span> <span class="n">outfile</span><span class="o">.</span><span class="n">ts</span>
+</pre></div>
+<p>The file <code>outfile.ts</code> will contain the set of strings that are uploaded to CrowdIn for translation.
+</p>
+<h2><span class="mw-headline" id="Important_references">Important references</span></h2>
+<ul><li>Why and how to translate <code>openCommand()</code> functions (<a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=10&amp;t=55869" rel="nofollow">forum thread</a>)</li></ul>
+<h2><span class="mw-headline" id="Related_Pages">Related Pages</span></h2>
+<div class="mw-translate-fuzzy">
+<h2><span class="mw-headline" id="Pagine_correlate">Pagine correlate</span></h2>
+<ul><li><a class="mw-redirect" href="External_Workbenches.html" title="External Workbenches/it">Ambienti esterni</a></li>
+<li><a href="Localisation.html" title="Localisation/it">Localizzazione</a></li></ul>
+</div>
+<p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/User_hub.png"><img decoding="async" height="24" src="../File/User_hub.png" srcset="/images/thumb/9/94/User_hub.png/36px-User_hub.png 1.5x, /images/thumb/9/94/User_hub.png/48px-User_hub.png 2x" width="24"/></a></span> <a href="User_hub.html" title="User hub/it">User documentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started/it">Getting started</a></b></li>
+<li><b>Installation:</b> <a href="Download.html" title="Download/it">Download</a>, <a href="Installing_on_Windows.html" title="Installing on Windows/it">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux/it">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac/it">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components/it">Additional components</a>, <a href="Compile_on_Docker.html" title="Compile on Docker/it">Docker</a>, <a href="AppImage.html" title="AppImage/it">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap/it">Ubuntu Snap</a></li>
+<li><b>Basics:</b> <a href="About_FreeCAD.html" title="About FreeCAD/it">About FreeCAD</a>, <a href="Interface.html" title="Interface/it">Interface</a>, <a href="Mouse_navigation.html" title="Mouse navigation/it">Mouse navigation</a>, <a href="Selection_methods.html" title="Selection methods/it">Selection methods</a>, <a href="Object_name.html" title="Object name/it">Object name</a>, <a href="Preferences_Editor.html" title="Preferences Editor/it">Preferences</a>, <a href="Workbenches.html" title="Workbenches/it">Workbenches</a>, <a href="Document_structure.html" title="Document structure/it">Document structure</a>, <a href="Property.html" title="Property/it">Properties</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD/it">Help FreeCAD</a>, <a href="Donate.html" title="Donate/it">Donate</a></li></ul>
+<hr/>
+<ul><li><b>Help:</b> <a href="Tutorials.html" title="Tutorials/it">Tutorials</a>, <a href="Video_tutorials.html" title="Video tutorials/it">Video tutorials</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches/it">Workbenches</a>:</b> <a href="Std_Base.html" title="Std Base/it">Std Base</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench/it">Assembly</a>, <a href="BIM_Workbench.html" title="BIM Workbench/it">BIM</a>, <a href="CAM_Workbench.html" title="CAM Workbench/it">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench/it">Draft</a>, <a href="FEM_Workbench.html" title="FEM Workbench/it">FEM</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench/it">Inspection</a>, <a href="Material_Workbench.html" title="Material Workbench/it">Material</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench/it">Mesh</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench/it">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench/it">Part</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench/it">PartDesign</a>, <a href="Points_Workbench.html" title="Points Workbench/it">Points</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/it">Reverse Engineering</a>, <a href="Robot_Workbench.html" title="Robot Workbench/it">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench/it">Sketcher</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench/it">Spreadsheet</a>, <a href="Surface_Workbench.html" title="Surface Workbench/it">Surface</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench/it">TechDraw</a>, <a href="Testing.html" title="Testing/it">Test Framework</a></li></ul>
+<hr/>
+<ul><li><b><a href="Addon.html" title="Addon/it">Addons</a>:</b> <a href="Std_AddonMgr.html" title="Std AddonMgr/it">Addon Manager</a>, <a href="External_workbenches.html" title="External workbenches/it">External workbenches</a>, <a href="Scripting_and_macros.html" title="Scripting and macros/it">Scripting and macros</a></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub/it">User hub</a>, <a href="Power_users_hub.html" title="Power users hub/it">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub/it">Developer hub</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211323
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.111 seconds
+Real time usage: 1.100 seconds
+Preprocessor visited node count: 959/1000000
+Post‐expand include size: 9488/2097152 bytes
+Template argument size: 5483/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 23/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 18453/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 1023.373      1 -total
+ 98.58% 1008.811     23 Template:Code
+  0.39%    4.041      1 Template:Userdocnavi/it
+  0.34%    3.468     89 Template:Incode
+  0.17%    1.761      1 Template:Navigation_menu_2
+  0.07%    0.698      1 Template:Emphasis
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:149051-0!canonical and timestamp 20241129211322 and revision id 1367483. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

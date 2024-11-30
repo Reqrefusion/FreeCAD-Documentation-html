@@ -1,0 +1,437 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Create a FeaturePython object part II/pl</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Create_a_FeaturePython_object_part_II.html" lang="de" title="Ein FeaturePython-Objekt erstellen Teil II (34% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Create_a_FeaturePython_object_part_II.html" lang="en" title="Create a FeaturePython object part II (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Create_a_FeaturePython_object_part_II.html" lang="fr" title="Créer un objet FeaturePython partie II (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Create_a_FeaturePython_object_part_II.html" lang="it" title="Creare un Box FeaturePython, Parte II (8% translated)">italiano</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="pl">polski</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Create_a_FeaturePython_object_part_II.html" lang="ru" title="Create a FeaturePython object part II/ru (24% translated)">русский</a></li></ul></div>
+<div class="docnav" style="background-color: #ececef; border: 1px solid #a2a9b1; padding: 2px 10px; margin: 10px 0; line-height: 1; clear: both; overflow: hidden;">
+<div style="margin: 4px 0; float: left;"><span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="16" src="../File/Arrow-left.svg" width="16"/></span></span> <a href="Create_a_FeaturePython_object_part_I.html" title="Create a FeaturePython object part I/pl">Tworzenie obiektów FeaturePython - część I</a></div>
+<div style="margin: 4px 0; float: right;"><span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="16" src="../File/Freecad.svg" width="16"/></span></span></div>
+<div style="text-align:center"><a href="Online_Help_Toc.html" title="Online Help Toc/pl">Spis treści</a> <span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="24" src="../File/Online_Help_Toc.svg" width="24"/></span></span></div>
+</div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Wprowadzenie"><span class="tocnumber">1</span> <span class="toctext">Wprowadzenie</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Dodawanie_prostopadłościanu"><span class="tocnumber">2</span> <span class="toctext">Dodawanie prostopadłościanu</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Naprawa_kodu"><span class="tocnumber">3</span> <span class="toctext">Naprawa kodu</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Piszemy_ViewProvider"><span class="tocnumber">4</span> <span class="toctext">Piszemy ViewProvider</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Zdarzenia_związane_z_łapaniem"><span class="tocnumber">5</span> <span class="toctext">Zdarzenia związane z łapaniem</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Kompletny_kod"><span class="tocnumber">6</span> <span class="toctext">Kompletny kod</span></a></li>
+</ul>
+</div>
+</div>
+<p><span id="Introduction"></span>
+</p>
+<h2><span class="mw-headline" id="Wprowadzenie">Wprowadzenie</span></h2>
+<p>Na stronie <a href="Create_a_FeaturePython_object_part_I.html" title="Create a FeaturePython object part I/pl">Tworzenie obiektów FeaturePython - część I</a> skupiliśmy się na wewnętrznych aspektach klasy Python zbudowanej wokół obiektu FeaturePython, a konkretnie obiektu <code>App::FeaturePython</code>. Stworzyliśmy obiekt, zdefiniowaliśmy niektóre właściwości i dodaliśmy wywołanie zwrotne zdarzenia na poziomie dokumentu, które pozwala naszemu obiektowi odpowiedzieć na ponowne obliczenie dokumentu za pomocą metody <code>execute()</code>. Ale nasz obiekt wciąż nie jest obecny w <a href="3D_view.html" title="3D view/pl">widoku 3D</a>. Naprawmy to, dodając ramkę.
+</p><p><span id="Adding_a_box"></span>
+</p>
+<h2><span id="Dodawanie_prostopad.C5.82o.C5.9Bcianu"></span><span class="mw-headline" id="Dodawanie_prostopadłościanu">Dodawanie prostopadłościanu</span></h2>
+<p>Najpierw na górze pliku <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">box.py</span>, poniżej istniejącego importu, dodaj:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Part</span>
+</pre></div>
+<p>Następnie w <code>execute()</code> usuń instrukcję <code>print()</code> i dodaj następującą linię w jej miejsce:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">Part</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">makeBox</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Length</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">Width</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">Height</span><span class="p">))</span>
+</pre></div>
+<figure class="mw-default-size mw-halign-right" typeof="mw:File"><a class="mw-file-description" href="../File/App_featurepython_box.png"><img decoding="async" height="180" src="../File/App_featurepython_box.png" width="205"/></a><figcaption></figcaption></figure>
+<p>Polecenia te wykonują metody Python, które są domyślnie dostarczane z FreeCAD:
+</p>
+<ul><li>Metoda <code>Part.makeBox()</code> generuje kształt prostopadłościanu.</li>
+<li>Obejmujące wywołanie <code>Part.show()</code> dodaje kształt do dokumentu i czyni go widocznym.</li></ul>
+<p>Usuń wszystkie istniejące obiekty, przeładuj moduł box i utwórz nowy obiekt box za pomocą <code>box.create()</code>. Zauważ, że na ekranie natychmiast pojawia się prostopadłościan. Dzieje się tak, ponieważ wymuszamy ponowne obliczenie dokumentu na końcu <code>box.create()</code>, co z kolei uruchamia metodę <code>execute()</code> naszej klasy <code>box</code>.
+</p><p>Na pierwszy rzut oka wynik może wyglądać dobrze, ale są pewne problemy. Najbardziej oczywistym z nich jest to, że prostopadłościan jest reprezentowany przez zupełnie inny obiekt niż nasz obiekt FeaturePython. <code>Part.show()</code> po prostu tworzy osobny obiekt prostopadłościanu i dodaje go do dokumentu. Co gorsza, jeśli zmienisz wymiary obiektu FeaturePython, zostanie utworzony inny kształt prostopadłościanu, a stary pozostanie na swoim miejscu. A jeśli masz otwarty panel <a href="Report_view.html" title="Report view">Widoku raportu</a>, być może zauważyłeś błąd "Recursive calling of recompute for document Unnamed". Ma to związek z użyciem metody <code>Part.show()</code> wewnątrz obiektu FeaturePython.
+</p>
+<div style="clear:both"></div>
+<p><a href="#top">na początek strony</a>
+</p><p><span id="Fixing_the_code"></span>
+</p>
+<h2><span class="mw-headline" id="Naprawa_kodu">Naprawa kodu</span></h2>
+<p>Aby rozwiązać te problemy, musimy wprowadzić kilka zmian. Do tej pory używaliśmy obiektu <code>App::FeaturePython</code>, który w rzeczywistości nie jest przeznaczony do wizualnej reprezentacji w widoku 3D. Zamiast tego musimy użyć obiektu <code>Part::FeaturePython</code>. W <code>create()</code> zmień następującą linię:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">obj</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'App::FeaturePython'</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">)</span>
+</pre></div>
+<p>na:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">obj</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'Part::FeaturePython'</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">)</span>
+</pre></div>
+<p>Aby pozbyć się oddzielnego obiektu pudełka, musimy przypisać wynik metody <code>makeBox()</code> do właściwości <code>Shape</code> naszego obiektu <code>Part::FeaturePython</code>. Zmień tę linię w <code>execute()</code>:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">Part</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">makeBox</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Length</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">Width</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">Height</span><span class="p">))</span>
+</pre></div>
+<p>na:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">obj</span><span class="o">.</span><span class="n">Shape</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">makeBox</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Length</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">Width</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">Height</span><span class="p">)</span>
+</pre></div>
+<figure class="mw-default-size mw-halign-right" typeof="mw:File"><a class="mw-file-description" href="../File/Part_featurepython_no_vp.png"><img decoding="async" height="156" src="../File/Part_featurepython_no_vp.png" width="201"/></a><figcaption></figcaption></figure>
+<p>Zapisz zmiany, przełącz się z powrotem do FreeCAD, usuń wszystkie istniejące obiekty, przeładuj moduł prostopadłoscianu i utwórz nowy obiekt prostopadłoscianu. Nowy wynik jest nieco rozczarowujący. Nie ma już dodatkowego obiektu w widoku drzewa, a ikona w widoku drzewa zmieniła się, ale nasz prostopadłościan w widoku 3D również zniknął (dlatego ikona jest szara). Co się stało? Chociaż poprawnie utworzyliśmy nasz kształt prostopadłoscianu i przypisaliśmy go do obiektu <code>Part::FeaturePython</code>, aby faktycznie pojawił się w widoku 3D, musimy przypisać <a href="Viewprovider.html" title="Viewprovider">ViewProvider</a>.
+</p>
+<div style="clear:both"></div><p>.
+</p><p><a href="#top">na początek strony</a>
+</p><p><span id="Writing_a_ViewProvider"></span>
+</p>
+<h2><span class="mw-headline" id="Piszemy_ViewProvider">Piszemy ViewProvider</span></h2>
+<p>Dostawca widoku jest składnikiem obiektu, który pozwala mu na wizualną reprezentację w widoku 3D. FreeCAD wykorzystuje strukturę aplikacji, która została zaprojektowana w celu oddzielenia danych ("modelu") od ich wizualnej reprezentacji ("widoku"). Jeśli spędziłeś trochę czasu pracując z FreeCAD w Python, prawdopodobnie jesteś już tego świadomy dzięki wykorzystaniu dwóch podstawowych modułów Python: <code>FreeCAD</code> i <code>FreeCADGui</code>. <i>(często aliasowanych odpowiednio jako <code>App</code> i <code>Gui</code>)</i>
+</p><p>Nasz obiekt FeaturePython również wymaga tych elementów. Do tej pory skupialiśmy się wyłącznie na części "modelowej" kodu, teraz nadszedł czas na napisanie części "widokowej". Na szczęście większość ViewProviderów jest prosta i nie wymaga wiele wysiłku do napisania, przynajmniej na początek. Oto przykładowy ViewProvider zapożyczony i nieco zmodyfikowany z <a class="external autonumber" href="https://github.com/FreeCAD/FreeCAD/blob/master/src/Mod/TemplatePyMod/FeaturePython.py" rel="nofollow">[1]</a>:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">ViewProviderBox</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Set this object to the proxy object of the actual view provider</span>
+<span class="sd">        """</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Setup the scene sub-graph of the view provider, this method is mandatory</span>
+<span class="sd">        """</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">updateData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        If a property of the handled feature has changed we have the chance to handle this here</span>
+<span class="sd">        """</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">getDisplayModes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Return a list of display modes.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">getDefaultDisplayMode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Return the name of the default display mode. It must be defined in getDisplayModes.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="s2">"Shaded"</span>
+
+    <span class="k">def</span> <span class="nf">setDisplayMode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mode</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Map the display mode defined in attach with those defined in getDisplayModes.</span>
+<span class="sd">        Since they have the same names nothing needs to be done.</span>
+<span class="sd">        This method is optional.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">mode</span>
+
+    <span class="k">def</span> <span class="nf">onChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Print the name of the property that has changed</span>
+<span class="sd">        """</span>
+
+        <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="s2">"Change property: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Return the icon in XMP format which will appear in the tree view. This method is optional and if not defined a default icon is shown.</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="s2">"""</span>
+<span class="s2">            /* XPM */</span>
+<span class="s2">            static const char * ViewProviderBox_xpm[] = {</span>
+<span class="s2">            "16 16 6 1",</span>
+<span class="s2">            "    c None",</span>
+<span class="s2">            ".   c #141010",</span>
+<span class="s2">            "+   c #615BD2",</span>
+<span class="s2">            "@   c #C39D55",</span>
+<span class="s2">            "#   c #000000",</span>
+<span class="s2">            "$   c #57C355",</span>
+<span class="s2">            "        ........",</span>
+<span class="s2">            "   ......++..+..",</span>
+<span class="s2">            "   .@@@@.++..++.",</span>
+<span class="s2">            "   .@@@@.++..++.",</span>
+<span class="s2">            "   .@@  .++++++.",</span>
+<span class="s2">            "  ..@@  .++..++.",</span>
+<span class="s2">            "###@@@@ .++..++.",</span>
+<span class="s2">            "##$.@@$#.++++++.",</span>
+<span class="s2">            "#$#$.$$$........",</span>
+<span class="s2">            "#$$#######      ",</span>
+<span class="s2">            "#$$#$$$$$#      ",</span>
+<span class="s2">            "#$$#$$$$$#      ",</span>
+<span class="s2">            "#$$#$$$$$#      ",</span>
+<span class="s2">            " #$#$$$$$#      ",</span>
+<span class="s2">            "  ##$$$$$#      ",</span>
+<span class="s2">            "   #######      "};</span>
+<span class="s2">            """</span>
+
+    <span class="k">def</span> <span class="nf">dumps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Called during document saving.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">state</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Called during document restore.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+<p>W powyższym kodzie definiujemy ikonę XMP dla tego obiektu. Projektowanie ikon wykracza poza zakres tego poradnika, ale podstawowym projektowaniem można zarządzać za pomocą narzędzi open source, takich jak <a class="external text" href="https://www.gimp.org" rel="nofollow">GIMP</a>, <a class="external text" href="https://krita.org/en/" rel="nofollow">Krita</a> i <a class="external text" href="https://inkscape.org/" rel="nofollow">Inkscape</a>. Metoda <code>getIcon()</code> jest opcjonalna, FreeCAD użyje domyślnej ikony, jeśli ta metoda nie zostanie podana.
+</p><p>Dodaj kod ViewProvider na końcu <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">box.py</span> i w metodzie <code>create()</code> wstaw następującą linię nad instrukcją <code>recompute()</code>:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">ViewProviderBox</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
+</pre></div>
+<p>Powoduje to instancję niestandardowej klasy ViewProvider i przekazuje do niej wbudowany obiekt ViewObject FeaturePython. Podczas inicjalizacji klasa ViewProvider zapisuje odniesienie do siebie w atrybucie FeaturePython <code>ViewObject.Proxy</code>. W ten sposób, gdy FreeCAD musi wizualnie wyrenderować nasz prostopadłościan, może znaleźć klasę ViewProvider, aby to zrobić.
+</p><p>Teraz zapisz zmiany i wróć do FreeCAD. Zaimportuj lub przeładuj moduł prostopadłościanu i wywołaj <code>box.create()</code>. Powinieneś teraz zobaczyć dwie rzeczy:
+</p>
+<ul><li>Ikona obiektu prostopadłościanu uległa zmianie.</li>
+<li>I, co ważniejsze, w widoku 3D pojawia się prostopadłościan. Jeśli go nie widzisz, naciśnij przycisk <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Std_ViewFitAll.svg"><img decoding="async" height="16" src="../File/Std_ViewFitAll.svg" width="16"/></a></span> <a href="Std_ViewFitAll.html" title="Std ViewFitAll/pl">Std: Przybliż i dopasuj wszystko</a></span>. Możesz nawet zmienić wymiary prostopadłościanu, zmieniając wartości w <a href="Property_editor.html" title="Property editor/pl">Edytorze właściwości</a>. Spróbuj!</li></ul>
+<p><a href="#top">na początek strony</a>
+</p><p><span id="Trapping_events"></span>
+</p>
+<h2><span id="Zdarzenia_zwi.C4.85zane_z_.C5.82apaniem"></span><span class="mw-headline" id="Zdarzenia_związane_z_łapaniem">Zdarzenia związane z łapaniem</span></h2>
+<p>Omówiliśmy już pułapkowanie zdarzeń. Prawie każda metoda klasy FeaturePython służy jako wywołanie zwrotne dostępne dla obiektu FeaturePython <i>(który uzyskuje dostęp do instancji naszej klasy poprzez atrybut <code>Proxy</code>)</i>.
+</p><p>Poniżej znajduje się lista wywołań zwrotnych, które mogą być zaimplementowane w podstawowym obiekcie FeaturePython:
+</p>
+<table cellpadding="5px" class="wikitable" width="100%">
+<caption>Podstawowe wywołania zwrotne FeaturePython
+</caption>
+<tbody><tr>
+<td style="width:25%"><code>execute(self, obj)</code>
+</td>
+<td style="width:25%">Wywoływany podczas ponownego obliczania dokumentu
+</td>
+<td style="width:50%">Nie wywołuj <code>recompute()</code> z tej metody (lub jakiejkolwiek metody wywołanej z <code>execute()</code>), ponieważ spowoduje to zagnieżdżone ponowne obliczenie.
+</td></tr>
+<tr>
+<td><code>onBeforeChange(self, obj, prop)</code>
+</td>
+<td>Wywoływana przed zmianą wartości właściwości
+</td>
+<td><code>prop</code> to nazwa właściwości, która ma zostać zmieniona, a nie sam obiekt właściwości. Zmian właściwości nie można anulować.  Poprzednie / następne wartości właściwości nie są jednocześnie dostępne do porównania.
+</td></tr>
+<tr>
+<td><code>onChanged(self, obj, prop)</code>
+</td>
+<td>Wywoływana po zmianie właściwości
+</td>
+<td><code>prop</code> to nazwa właściwości, która ma zostać zmieniona, a nie sam obiekt właściwości.
+</td></tr>
+<tr>
+<td><code>onDocumentRestored(self, obj)</code>
+</td>
+<td>Wywoływana po przywróceniu dokumentu lub skopiowaniu obiektu FeaturePython.
+</td>
+<td>Czasami odniesienia do obiektu FeaturePython z klasy lub klasy z obiektu FeaturePython mogą być uszkodzone, ponieważ metoda klasy <code>__init__()</code> nie jest wywoływana podczas rekonstrukcji obiektu. Dodanie <code>self.Object = obj</code> lub <code>obj.Proxy = self</code> często rozwiązuje te problemy.
+</td></tr></tbody></table>
+<p>Aby uzyskać pełną listę dostępnych metod FeaturePython, zobacz stronę <a href="FeaturePython_methods.html" title="FeaturePython methods/pl">metody FeaturePython</a>.
+</p><p>Ponadto w klasie ViewProvider znajdują się dwa wywołania zwrotne, które mogą czasami okazać się przydatne:
+</p>
+<table cellpadding="5px" class="wikitable" width="100%">
+<caption>Podstawowe wywołania zwrotne ViewProvider
+</caption>
+<tbody><tr>
+<td style="width:25%"><code>updateData(self, obj, prop)</code>
+</td>
+<td style="width:25%">Wywoływana po zmianie właściwości danych <i>(modelu)</i>
+</td>
+<td style="width:50%"><code>obj</code> jest odwołaniem do instancji klasy FeaturePython, a nie instancji ViewProvider.  <code>prop</code> to nazwa właściwości, która ma zostać zmieniona, a nie sam obiekt właściwości.
+</td></tr>
+<tr>
+<td><code>onChanged(self, vobj, prop)</code>
+</td>
+<td>Wywoływane po zmianie właściwości widoku
+</td>
+<td><code>vobj</code> jest odwołaniem do instancji ViewProvider.  <code>prop</code> jest nazwą właściwości widoku, która została zmieniona.
+</td></tr></tbody></table>
+<p>Nierzadko można spotkać się z sytuacją, w której wywołania zwrotne Python nie są uruchamiane tak, jak powinny. Początkujący w tej dziedzinie mogą być pewni, że system wywołań zwrotnych FeaturePython nie jest kruchy ani uszkodzony. Niezmiennie, gdy wywołania zwrotne nie są uruchamiane, jest to spowodowane utratą lub niezdefiniowaniem odniesienia w kodzie bazowym. Jeśli jednak wydaje się, że wywołania zwrotne nie działają bez wyjaśnienia, dostarczenie odwołań do obiektów/proxy w wywołaniu zwrotnym <code>onDocumentRestored()</code> <i>(jak wspomniano w pierwszej tabeli powyżej)</i> może złagodzić te problemy. Dopóki nie poczujesz się komfortowo z systemem wywołań zwrotnych, przydatne może być dodanie instrukcji drukowania w każdym wywołaniu zwrotnym, aby drukować komunikaty na konsoli podczas programowania.
+</p><p><a href="#top">na początek strony</a>
+</p><p><span id="Complete_code"></span>
+</p>
+<h2><span class="mw-headline" id="Kompletny_kod">Kompletny kod</span></h2>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">Part</span>
+
+<span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">obj_name</span><span class="p">):</span>
+    <span class="sd">"""</span>
+<span class="sd">    Object creation method</span>
+<span class="sd">    """</span>
+
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'Part::FeaturePython'</span><span class="p">,</span> <span class="n">obj_name</span><span class="p">)</span>
+
+    <span class="n">box</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+
+    <span class="n">ViewProviderBox</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
+
+    <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">obj</span>
+
+<span class="k">class</span> <span class="nc">box</span><span class="p">():</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Default constructor</span>
+<span class="sd">        """</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="s1">'box'</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s1">'App::PropertyString'</span><span class="p">,</span> <span class="s1">'Description'</span><span class="p">,</span> <span class="s1">'Base'</span><span class="p">,</span> <span class="s1">'Box description'</span><span class="p">)</span><span class="o">.</span><span class="n">Description</span> <span class="o">=</span> <span class="s2">""</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s1">'App::PropertyLength'</span><span class="p">,</span> <span class="s1">'Length'</span><span class="p">,</span> <span class="s1">'Dimensions'</span><span class="p">,</span> <span class="s1">'Box length'</span><span class="p">)</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mf">10.0</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s1">'App::PropertyLength'</span><span class="p">,</span> <span class="s1">'Width'</span><span class="p">,</span> <span class="s1">'Dimensions'</span><span class="p">,</span> <span class="s1">'Box width'</span><span class="p">)</span><span class="o">.</span><span class="n">Width</span> <span class="o">=</span> <span class="s1">'10 mm'</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s1">'App::PropertyLength'</span><span class="p">,</span> <span class="s1">'Height'</span><span class="p">,</span> <span class="s1">'Dimensions'</span><span class="p">,</span> <span class="s1">'Box height'</span><span class="p">)</span><span class="o">.</span><span class="n">Height</span> <span class="o">=</span> <span class="s1">'1 cm'</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Called on document recompute</span>
+<span class="sd">        """</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">Shape</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">makeBox</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Length</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">Width</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">Height</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">ViewProviderBox</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Set this object to the proxy object of the actual view provider</span>
+<span class="sd">        """</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Setup the scene sub-graph of the view provider, this method is mandatory</span>
+<span class="sd">        """</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">updateData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        If a property of the handled feature has changed we have the chance to handle this here</span>
+<span class="sd">        """</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">getDisplayModes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Return a list of display modes.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">getDefaultDisplayMode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Return the name of the default display mode. It must be defined in getDisplayModes.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="s2">"Shaded"</span>
+
+    <span class="k">def</span> <span class="nf">setDisplayMode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mode</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Map the display mode defined in attach with those defined in getDisplayModes.</span>
+<span class="sd">        Since they have the same names nothing needs to be done.</span>
+<span class="sd">        This method is optional.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">mode</span>
+
+    <span class="k">def</span> <span class="nf">onChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Print the name of the property that has changed</span>
+<span class="sd">        """</span>
+
+        <span class="n">App</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="s2">"Change property: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">getIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Return the icon in XMP format which will appear in the tree view. This method is optional and if not defined a default icon is shown.</span>
+<span class="sd">        """</span>
+
+        <span class="k">return</span> <span class="s2">"""</span>
+<span class="s2">            /* XPM */</span>
+<span class="s2">            static const char * ViewProviderBox_xpm[] = {</span>
+<span class="s2">            "16 16 6 1",</span>
+<span class="s2">            "    c None",</span>
+<span class="s2">            ".   c #141010",</span>
+<span class="s2">            "+   c #615BD2",</span>
+<span class="s2">            "@   c #C39D55",</span>
+<span class="s2">            "#   c #000000",</span>
+<span class="s2">            "$   c #57C355",</span>
+<span class="s2">            "        ........",</span>
+<span class="s2">            "   ......++..+..",</span>
+<span class="s2">            "   .@@@@.++..++.",</span>
+<span class="s2">            "   .@@@@.++..++.",</span>
+<span class="s2">            "   .@@  .++++++.",</span>
+<span class="s2">            "  ..@@  .++..++.",</span>
+<span class="s2">            "###@@@@ .++..++.",</span>
+<span class="s2">            "##$.@@$#.++++++.",</span>
+<span class="s2">            "#$#$.$$$........",</span>
+<span class="s2">            "#$$#######      ",</span>
+<span class="s2">            "#$$#$$$$$#      ",</span>
+<span class="s2">            "#$$#$$$$$#      ",</span>
+<span class="s2">            "#$$#$$$$$#      ",</span>
+<span class="s2">            " #$#$$$$$#      ",</span>
+<span class="s2">            "  ##$$$$$#      ",</span>
+<span class="s2">            "   #######      "};</span>
+<span class="s2">            """</span>
+
+    <span class="k">def</span> <span class="nf">dumps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Called during document saving.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">state</span><span class="p">):</span>
+        <span class="sd">"""</span>
+<span class="sd">        Called during document restore.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+<p><a href="#top">na początek strony</a>
+</p>
+<div class="docnav" style="background-color: #ececef; border: 1px solid #a2a9b1; padding: 2px 10px; margin: 10px 0; line-height: 1; clear: both; overflow: hidden;">
+<div style="margin: 4px 0; float: left;"><span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="16" src="../File/Arrow-left.svg" width="16"/></span></span> <a href="Create_a_FeaturePython_object_part_I.html" title="Create a FeaturePython object part I/pl">Tworzenie obiektów FeaturePython - część I</a></div>
+<div style="margin: 4px 0; float: right;"><span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="16" src="../File/Freecad.svg" width="16"/></span></span></div>
+<div style="text-align:center"><a href="Online_Help_Toc.html" title="Online Help Toc/pl">Spis treści</a> <span class="mw-default-size" typeof="mw:File"><span><img decoding="async" height="24" src="../File/Online_Help_Toc.svg" width="24"/></span></span></div>
+</div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><a href="Power_users_hub.html" title="Power users hub/pl">Centrum Power użytkowników</a> <span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Tworzenie skryptów FreeCAD:</b> <a href="Python.html" title="Python/pl">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/pl">Wprowadzenie do środowiska Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/pl">Poradnik: Tworzenie skryptów Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/pl">Podstawy tworzenia skryptów FreeCAD</a></li></ul>
+<hr/>
+<ul><li><b>Moduły:</b> <a href="Builtin_modules.html" title="Builtin modules/pl">Moduły wbudowane</a>, <a href="Units.html" title="Units/pl">Jednostki miar</a>, <a href="Quantity.html" title="Quantity">Ilość</a></li>
+<li><b>Środowiska pracy:</b> <a href="Workbench_creation.html" title="Workbench creation/pl">Tworzenie Środowiska pracy</a>, <a href="Gui_Command.html" title="Gui Command/pl">Polecenia Gui</a>, <a href="Command.html" title="Command">Polecenia</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/pl">Instalacja większej liczby Środowisk pracy</a></li>
+<li><b>Siatki i elementy:</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/pl">Skrytpy w Środowisku Siatek</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/pl">v</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/pl">Konwerska Mesh na Part</a>, <a href="PythonOCC.html" title="PythonOCC/pl">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Obiekty parametryczne:</b> <a href="Scripted_objects.html" title="Scripted objects/pl">Obiekty tworzone skryptami</a>, <a href="Viewprovider.html" title="Viewprovider">Obsługa obrazu</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view">Ikonka niestandardowa w widoku drzewa</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="Scenegraph.html" title="Scenegraph/pl">Coin (Inventor) scenegraph</a>, <a href="Pivy.html" title="Pivy/pl">Pivy</a></li>
+<li><b>Interfejs graficzny:</b> <a href="Interface_creation.html" title="Interface creation">Stworzenie interfejsu</a>, <a href="Dialog_creation.html" title="Dialog creation/pl">Kompletne stworzenie interfejsu w środowisku Python</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets">5</a>)</small>, <a href="PySide.html" title="PySide/pl">PySide</a>, PySide examples <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples">początkujący</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples">średniozaawansowany</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples">zaawansowany</a></li>
+<li><b>Makrodefinicje:</b> <a href="Macros.html" title="Macros/pl">Makrodefinicje</a>, <a href="How_to_install_macros.html" title="How to install macros/pl">Instalacja makrodefinicji</a></li>
+<li><b>Osadzanie programu:</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/pl">Osadzanie programu FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/pl">Osadzanie GUI FreeCAD</a></li></ul>
+<hr/>
+<ul><li><b>Pozostałe:</b> <a href="Expressions.html" title="Expressions/pl">Wyrażenia</a>, <a href="Code_snippets.html" title="Code snippets/pl">Wycinki kodu</a>, <a href="Line_drawing_function.html" title="Line drawing function/pl">Funkcja kreślenia linii</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/pl">Biblioteka matematyczna FreeCAD dla wektorów</a> <small>(deprecated)</small></li></ul>
+<hr/>
+<ul><li><b>Węzły użytkowników:</b> <a href="User_hub.html" title="User hub/pl">Centrum użytkownika</a>, <a href="Power_users_hub.html" title="Power users hub/pl">Centrum Power użytkowników</a>, <a href="Developer_hub.html" title="Developer hub/pl">Centrum programisty</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211342
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.085 seconds
+Real time usage: 0.122 seconds
+Preprocessor visited node count: 552/1000000
+Post‐expand include size: 10913/2097152 bytes
+Template argument size: 9789/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 9/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 24103/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   19.697      1 -total
+ 34.25%    6.747      9 Template:Code
+ 10.59%    2.085      1 Template:Powerdocnavi/pl
+ 10.22%    2.013     48 Template:Incode
+  8.11%    1.597      1 Template:Button
+  7.47%    1.471      2 Template:Docnav/pl
+  5.53%    1.089      1 Template:Navigation_menu_2
+  3.89%    0.766      2 Template:FileName
+  3.76%    0.741      1 Template:TOCright
+  3.65%    0.718      3 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:202092-0!canonical and timestamp 20241129211341 and revision id 1421442. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

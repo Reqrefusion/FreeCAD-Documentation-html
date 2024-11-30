@@ -1,0 +1,132 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Scripting PartDesign Workbench</span></h1><div class="mw-parser-output"><div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Code_Preamble"><span class="tocnumber">2</span> <span class="toctext">Code Preamble</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="#See_also"><span class="tocnumber">2.1</span> <span class="toctext">See also</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>Here we will explain to you how to control the <span typeof="mw:File"><a class="mw-file-description" href="File/Workbench_PartDesign.svg"><img decoding="async" height="24" src="File/Workbench_PartDesign.svg" width="24"/></a></span> <a href="PartDesign_Workbench.html" title="PartDesign Workbench">PartDesign</a> using a script. Be sure to browse the <a class="mw-redirect" href="Scripting.html" title="Scripting">Scripting</a> section and the <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics">FreeCAD Scripting Basics</a> pages if you need more information about how Python scripting works in FreeCAD. If you are new to Python, it is a good idea to first read the  <a href="Introduction_to_Python.html" title="Introduction to Python">Introduction to Python</a>.
+</p><p>This code aim to replicate the solid shown in:
+</p><p><a class="external free" href="https://wiki.freecad.org/Basic_Part_Design_Tutorial_019" rel="nofollow">https://wiki.freecad.org/Basic_Part_Design_Tutorial_019</a>
+</p><p><br/>
+Following are some preamble lines, that will ease the process.
+</p><p>using this code, when relaunching the script, if there is an existing document with the specified name, it will be emptied and all the objects are rebuild, avoiding to have many documents that will pollute the interface.
+</p><p>In case of some intermediate work, is interesting, you could always save it using <b>File → Save As</b>.
+</p><p><br/>
+</p>
+<h2><span class="mw-headline" id="Code_Preamble">Code Preamble</span></h2>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="sd">"""Script to replicate Part Design Tutorial Example.</span>
+
+<span class="sd">https://wiki.freecad.org/Basic_Part_Design_Tutorial_019</span>
+
+<span class="sd">This code was written for this wiki page:</span>
+
+<span class="sd">https://wiki.freecad.org/Scripting_PartDesign_Workbench</span>
+
+<span class="sd">Name: 20230302_pdtut_ew.py</span>
+
+<span class="sd">Authors: Carlo Dormeletti - onnekk</span>
+<span class="sd">         edwilliams16</span>
+
+<span class="sd">Copyright: 2023</span>
+<span class="sd">Licence: CC BY-NC-ND 4.0</span>
+
+<span class="sd">"""</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">FreeCAD</span>  <span class="c1"># noqa</span>
+<span class="kn">import</span> <span class="nn">FreeCADGui</span>  <span class="c1"># noqa</span>
+<span class="kn">import</span> <span class="nn">Sketcher</span>
+<span class="kn">import</span> <span class="nn">Part</span>
+
+<span class="kn">from</span> <span class="nn">FreeCAD</span> <span class="kn">import</span> <span class="n">Placement</span><span class="p">,</span> <span class="n">Rotation</span>  <span class="c1"># noqa</span>
+
+<span class="n">V3d</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span>
+
+<span class="k">def</span> <span class="nf">activate_doc</span><span class="p">(</span><span class="n">doc_name</span><span class="p">):</span>
+    <span class="sd">"""Activate a specific document."""</span>
+    <span class="n">FreeCAD</span><span class="o">.</span><span class="n">setActiveDocument</span><span class="p">(</span><span class="n">doc_name</span><span class="p">)</span>
+    <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">getDocument</span><span class="p">(</span><span class="n">doc_name</span><span class="p">)</span>
+    <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">ActiveDocument</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">getDocument</span><span class="p">(</span><span class="n">doc_name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Document: </span><span class="si">{</span><span class="n">doc_name</span><span class="si">}</span><span class="s2"> activated"</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">clear_doc</span><span class="p">(</span><span class="n">doc_name</span><span class="p">):</span>
+    <span class="sd">"""Clear the document deleting all the objects.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    name       type        description</span>
+<span class="sd">    doc_name   string      document name</span>
+<span class="sd">    """</span>
+    <span class="n">doc</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">getDocument</span><span class="p">(</span><span class="n">doc_name</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">Objects</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> 
+            <span class="n">doc</span><span class="o">.</span><span class="n">removeObject</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">Objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Exception:  </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">setview</span><span class="p">(</span><span class="n">doc</span><span class="p">):</span>
+    <span class="sd">"""Rearrange View."""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">doc_v</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Gui</span><span class="o">.</span><span class="n">activeView</span><span class="p">()</span>
+        <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Gui</span><span class="o">.</span><span class="n">SendMsgToActiveView</span><span class="p">(</span><span class="s2">"ViewFit"</span><span class="p">)</span>
+        <span class="n">doc_v</span><span class="o">.</span><span class="n">viewAxometric</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+
+<span class="k">def</span> <span class="nf">check_exist</span><span class="p">(</span><span class="n">doc_name</span><span class="p">):</span>
+    <span class="sd">"""Check the existence of a FC document named doc_name.</span>
+
+<span class="sd">    If it not exist create one.</span>
+<span class="sd">    """</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">getDocument</span><span class="p">(</span><span class="n">doc_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">newDocument</span><span class="p">(</span><span class="n">doc_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">doc</span>
+
+
+<span class="c1"># Some handy abbreviations</span>
+
+<span class="n">VEC0</span> <span class="o">=</span> <span class="n">V3d</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">ROT0</span> <span class="o">=</span> <span class="n">Rotation</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># CODE start here</span>
+</pre></div>
+<h3><span class="mw-headline" id="See_also">See also</span></h3>
+<ul><li><a href="Part_scripting.html" title="Part scripting">Part scripting</a></li></ul>
+<!-- 
+NewPP limit report
+Cached time: 20241129210510
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.018 seconds
+Real time usage: 0.199 seconds
+Preprocessor visited node count: 38/1000000
+Post‐expand include size: 228/2097152 bytes
+Template argument size: 1747/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 1/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 7125/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  186.262      1 -total
+ 99.08%  184.552      1 Template:Code
+  0.54%    1.000      1 Template:TOCright
+  0.29%    0.544      1 Template:MenuCommand
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:306823-0!canonical and timestamp 20241129210510 and revision id 1234926. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>

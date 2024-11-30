@@ -1,0 +1,135 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">PySide Advanced Examples/pl</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="PySide_Advanced_Examples.html" lang="de" title="PySide Fortgeschrittene Beispiele (35% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="PySide_Advanced_Examples.html" lang="en" title="PySide Advanced Examples (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="PySide_Advanced_Examples.html" lang="fr" title="PySide : Exemples avancés (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="PySide_Advanced_Examples.html" lang="it" title=" Esempi di PySide di livello avanzato (35% translated)">italiano</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--stub" dir="ltr" lang="pl">polski</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="PySide_Advanced_Examples.html" lang="ru" title="Сложные примеры PySide (12% translated)">русский</a></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Create_Reference_to_the_Main_Window"><span class="tocnumber">2</span> <span class="toctext">Create Reference to the Main Window</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Browse_the_Children_of_the_Main_Window"><span class="tocnumber">3</span> <span class="toctext">Browse the Children of the Main Window</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Add_New_Widget_Manually"><span class="tocnumber">4</span> <span class="toctext">Add New Widget Manually</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Add_New_Widget_by_Creating_UI_Object"><span class="tocnumber">5</span> <span class="toctext">Add New Widget by Creating UI Object</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Loading_the_UI_from_a_Qt_Designer_.ui_File"><span class="tocnumber">6</span> <span class="toctext">Loading the UI from a Qt Designer .ui File</span></a></li>
+</ul>
+</div>
+</div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>The purpose of this page is to cover advanced  level examples of the <a href="PySide.html" title="PySide">PySide</a> GUI manager (there are accompanying pages <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples">PySide Beginner Examples</a> and <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples">PySide Intermediate Examples</a>).
+</p><p>By using the PySide module from inside FreeCAD, you have full control over its interface. You can for example:
+</p>
+<ul><li>Add your own panels, widgets and toolbars</li>
+<li>Add or hide elements to existing panels</li>
+<li>Change, redirect or add connections between all those elements</li></ul>
+<h2><span class="mw-headline" id="Create_Reference_to_the_Main_Window">Create Reference to the Main Window</span></h2>
+<p>If you want to work on the FreeCAD interface, the very first thing to do is create a reference to the FreeCAD main window:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span> <span class="p">,</span><span class="n">QtCore</span> 
+<span class="n">app</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span>
+<span class="n">mw</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">getMainWindow</span><span class="p">()</span>
+</pre></div>
+<h2><span class="mw-headline" id="Browse_the_Children_of_the_Main_Window">Browse the Children of the Main Window</span></h2>
+<p>Then, you can for example browse through all the widgets of the interface:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">mw</span><span class="o">.</span><span class="n">children</span><span class="p">():</span>
+   <span class="nb">print</span><span class="p">(</span><span class="s1">'widget name = '</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">objectName</span><span class="p">(),</span> <span class="s1">', widget type = '</span><span class="p">,</span> <span class="n">child</span><span class="p">)</span>
+</pre></div>
+<p>The widgets in a Qt interface are usually nested into "container" widgets, so the children of our main window can themselves contain other children. Depending on the widget type, there are a lot of things you can do. Check the API documentation to see what is possible.
+</p>
+<h2><span class="mw-headline" id="Add_New_Widget_Manually">Add New Widget Manually</span></h2>
+<p>Adding a new widget, for example a dockWidget (which can be placed in one of FreeCAD's side panels) is easy:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">myWidget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDockWidget</span><span class="p">()</span>
+<span class="n">mw</span><span class="o">.</span><span class="n">addDockWidget</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">RightDockWidgetArea</span><span class="p">,</span><span class="n">myWidget</span><span class="p">)</span>
+</pre></div>
+<p>You could then add stuff directly to your widget:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">myWidget</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">"my Nice New Widget"</span><span class="p">)</span>
+<span class="n">myWidget</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span> <span class="c1"># sets size of the widget</span>
+<span class="n">label</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="s2">"Hello World"</span><span class="p">,</span> <span class="n">myWidget</span><span class="p">)</span> <span class="c1"># creates a label</span>
+<span class="n">label</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">24</span><span class="p">))</span>  <span class="c1"># sets its size</span>
+<span class="n">label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">"myLabel"</span><span class="p">)</span> <span class="c1"># sets its name, so it can be found by name</span>
+</pre></div>
+<h2><span class="mw-headline" id="Add_New_Widget_by_Creating_UI_Object">Add New Widget by Creating UI Object</span></h2>
+<p>But a preferred method is to create a UI object which will do all of the setup of your widget at once. The big advantage is that such an UI object can be <a href="Dialog_creation.html" title="Dialog creation">created graphically</a> with the Qt Designer program. A typical object generated by Qt Designer is like this:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">myWidget_Ui</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+  <span class="k">def</span> <span class="nf">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">myWidget</span><span class="p">):</span>
+    <span class="n">myWidget</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">"my Nice New Widget"</span><span class="p">)</span>
+    <span class="n">myWidget</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">expandedTo</span><span class="p">(</span><span class="n">myWidget</span><span class="o">.</span><span class="n">minimumSizeHint</span><span class="p">()))</span> <span class="c1"># sets size of the widget</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QLabel</span><span class="p">(</span><span class="n">myWidget</span><span class="p">)</span> <span class="c1"># creates a label</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">QRect</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">24</span><span class="p">))</span> <span class="c1"># sets its size</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="s2">"label"</span><span class="p">)</span> <span class="c1"># sets its name, so it can be found by name</span>
+
+  <span class="k">def</span> <span class="nf">retranslateUi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">draftToolbar</span><span class="p">):</span> <span class="c1"># built-in QT function that manages translations of widgets</span>
+    <span class="n">myWidget</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">"myWidget"</span><span class="p">,</span> <span class="s2">"My Widget"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">UnicodeUTF8</span><span class="p">))</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">"myWidget"</span><span class="p">,</span> <span class="s2">"Welcome to my new widget!"</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QApplication</span><span class="o">.</span><span class="n">UnicodeUTF8</span><span class="p">))</span>
+</pre></div>
+<p>To use it, you just need to apply it to your freshly created widget like this:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span>
+<span class="n">FCmw</span> <span class="o">=</span> <span class="n">app</span><span class="o">.</span><span class="n">activeWindow</span><span class="p">()</span>
+<span class="n">myNewFreeCADWidget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDockWidget</span><span class="p">()</span> <span class="c1"># create a new dckwidget</span>
+<span class="n">myNewFreeCADWidget</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">myWidget_Ui</span><span class="p">()</span> <span class="c1"># load the Ui script</span>
+<span class="n">myNewFreeCADWidget</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="n">myNewFreeCADWidget</span><span class="p">)</span> <span class="c1"># setup the ui</span>
+<span class="n">FCmw</span><span class="o">.</span><span class="n">addDockWidget</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">RightDockWidgetArea</span><span class="p">,</span><span class="n">myNewFreeCADWidget</span><span class="p">)</span> <span class="c1"># add the widget to the main window</span>
+</pre></div>
+<h2><span class="mw-headline" id="Loading_the_UI_from_a_Qt_Designer_.ui_File">Loading the UI from a Qt Designer .ui File</span></h2>
+<p>The key to loading a UI file successfully is to use the full path to the file. As an example, the <a href="Std_AddonMgr.html" title="Std AddonMgr">Addon Manager</a> does it like this:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">dialog</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">PySideUic</span><span class="o">.</span><span class="n">loadUi</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">"AddonManager.ui"</span><span class="p">))</span>
+</pre></div>
+<p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><a href="Power_users_hub.html" title="Power users hub/pl">Centrum Power użytkowników</a> <span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Tworzenie skryptów FreeCAD:</b> <a href="Python.html" title="Python/pl">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/pl">Wprowadzenie do środowiska Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/pl">Poradnik: Tworzenie skryptów Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/pl">Podstawy tworzenia skryptów FreeCAD</a></li></ul>
+<hr/>
+<ul><li><b>Moduły:</b> <a href="Builtin_modules.html" title="Builtin modules/pl">Moduły wbudowane</a>, <a href="Units.html" title="Units/pl">Jednostki miar</a>, <a href="Quantity.html" title="Quantity">Ilość</a></li>
+<li><b>Środowiska pracy:</b> <a href="Workbench_creation.html" title="Workbench creation/pl">Tworzenie Środowiska pracy</a>, <a href="Gui_Command.html" title="Gui Command/pl">Polecenia Gui</a>, <a href="Command.html" title="Command">Polecenia</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/pl">Instalacja większej liczby Środowisk pracy</a></li>
+<li><b>Siatki i elementy:</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/pl">Skrytpy w Środowisku Siatek</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/pl">v</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/pl">Konwerska Mesh na Part</a>, <a href="PythonOCC.html" title="PythonOCC/pl">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Obiekty parametryczne:</b> <a href="Scripted_objects.html" title="Scripted objects/pl">Obiekty tworzone skryptami</a>, <a href="Viewprovider.html" title="Viewprovider">Obsługa obrazu</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view">Ikonka niestandardowa w widoku drzewa</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="Scenegraph.html" title="Scenegraph/pl">Coin (Inventor) scenegraph</a>, <a href="Pivy.html" title="Pivy/pl">Pivy</a></li>
+<li><b>Interfejs graficzny:</b> <a href="Interface_creation.html" title="Interface creation">Stworzenie interfejsu</a>, <a href="Dialog_creation.html" title="Dialog creation/pl">Kompletne stworzenie interfejsu w środowisku Python</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets">5</a>)</small>, <a href="PySide.html" title="PySide/pl">PySide</a>, PySide examples <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples">początkujący</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples">średniozaawansowany</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples">zaawansowany</a></li>
+<li><b>Makrodefinicje:</b> <a href="Macros.html" title="Macros/pl">Makrodefinicje</a>, <a href="How_to_install_macros.html" title="How to install macros/pl">Instalacja makrodefinicji</a></li>
+<li><b>Osadzanie programu:</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/pl">Osadzanie programu FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/pl">Osadzanie GUI FreeCAD</a></li></ul>
+<hr/>
+<ul><li><b>Pozostałe:</b> <a href="Expressions.html" title="Expressions/pl">Wyrażenia</a>, <a href="Code_snippets.html" title="Code snippets/pl">Wycinki kodu</a>, <a href="Line_drawing_function.html" title="Line drawing function/pl">Funkcja kreślenia linii</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/pl">Biblioteka matematyczna FreeCAD dla wektorów</a> <small>(deprecated)</small></li></ul>
+<hr/>
+<ul><li><b>Węzły użytkowników:</b> <a href="User_hub.html" title="User hub/pl">Centrum użytkownika</a>, <a href="Power_users_hub.html" title="Power users hub/pl">Centrum Power użytkowników</a>, <a href="Developer_hub.html" title="Developer hub/pl">Centrum programisty</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129212910
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.066 seconds
+Real time usage: 0.107 seconds
+Preprocessor visited node count: 139/1000000
+Post‐expand include size: 7005/2097152 bytes
+Template argument size: 4193/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 7/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 11506/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   16.194      1 -total
+ 51.68%    8.369      7 Template:Code
+ 18.96%    3.071      1 Template:Powerdocnavi/pl
+ 17.01%    2.755      1 Template:TOCright
+  9.74%    1.577      1 Template:Navigation_menu_2
+  7.76%    1.257      1 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:239663-0!canonical and timestamp 20241129212910 and revision id 1233932. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

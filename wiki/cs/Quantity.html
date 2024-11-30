@@ -1,0 +1,363 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Quantity/cs</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--high" dir="ltr" href="Quantity.html" lang="de" title="Größe (61% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Quantity.html" lang="en" title="Quantity (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Quantity.html" lang="fr" title="Quantity (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Quantity.html" lang="it" title="Quantity (100% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Quantity.html" lang="pl" title="Ilość (3% translated)">polski</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--low" dir="ltr" lang="cs">čeština</span></li></ul></div>
+<div class="mw-translate-fuzzy">
+<p>Veličina je kombinace čísla a jednotky. Je využívána všude ve FreeCADu k práci s parametry a všemi dalšími druhy vstupů a výstupů.
+</p>
+</div>
+<p><span id="General"></span>
+</p>
+<div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Základní"><span class="tocnumber">1</span> <span class="toctext">Základní</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Podporované_jednotky"><span class="tocnumber">2</span> <span class="toctext">Podporované jednotky</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Interní_reprezentace"><span class="tocnumber">3</span> <span class="toctext">Interní reprezentace</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Kalkulátor_jednotek"><span class="tocnumber">4</span> <span class="toctext">Kalkulátor jednotek</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#VstupníPole"><span class="tocnumber">5</span> <span class="toctext">VstupníPole</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Skriptování_v_Pythonu"><span class="tocnumber">6</span> <span class="toctext">Skriptování v Pythonu</span></a>
+<ul>
+<li class="toclevel-2 tocsection-7"><a href="#Jednotka"><span class="tocnumber">6.1</span> <span class="toctext">Jednotka</span></a></li>
+<li class="toclevel-2 tocsection-8"><a href="#Veličina"><span class="tocnumber">6.2</span> <span class="toctext">Veličina</span></a></li>
+<li class="toclevel-2 tocsection-9"><a href="#Hodnoty_pro_uživatele"><span class="tocnumber">6.3</span> <span class="toctext">Hodnoty pro uživatele</span></a></li>
+<li class="toclevel-2 tocsection-10"><a href="#Precision"><span class="tocnumber">6.4</span> <span class="toctext">Precision</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-11"><a href="#Dodatek"><span class="tocnumber">7</span> <span class="toctext">Dodatek</span></a>
+<ul>
+<li class="toclevel-2 tocsection-12"><a href="#Jednotky_podporované_parserem"><span class="tocnumber">7.1</span> <span class="toctext">Jednotky podporované parserem</span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h3><span id="Z.C3.A1kladn.C3.AD"></span><span class="mw-headline" id="Základní">Základní</span></h3>
+<div class="mw-translate-fuzzy">
+<p>V CAD a CAE systémech je velmi důležité sledovat  jednotky hodnot. Mnoho problémů může nastat když se míchají různé jednotky nebo vypočítané výsledky v různých jednotkových systémech. Jeden známý případ je  <a class="external text" href="http://en.wikipedia.org/wiki/Mars_Climate_Orbiter#Cause_of_failure" rel="nofollow">havárie Mars Climate Orbiteru</a> kvůli pomíchání jednotek. I ve stejném jednotkovém systému přicházejí jednotky se spoustou variant šitých vždy na dané použití. Jednoduché příklady jsou např. rychlost v km/h (auta), m/s (roboti) nebo mm/min (frézování). CAD systém musí spolehlivě sledovat jednotky. Také s nimi dělat výpočty a kontrolovat správné jednoty u speciálních parametrů.
+</p>
+</div>
+<div class="mw-translate-fuzzy">
+<p>Z těchto důvodů byl vytvořen Framework veličin FreeCADu. Zahrnuje všechny kódy a objekty, které pracují s jednotkami, výpočty jednotek, uživatelské vstupy, konverze do jiných jednotkových systémů a pěkný výstup jednotek a hodnot. V dlouhodobém horizontu by žádný paramater ve FreeCADu neměl být pouze jen číslo.
+</p>
+</div>
+<p><span id="Supported_units"></span>
+</p>
+<h3><span id="Podporovan.C3.A9_jednotky"></span><span class="mw-headline" id="Podporované_jednotky">Podporované jednotky</span></h3>
+<div class="mw-translate-fuzzy">
+<p>Vstupní parser FreeCADu podporuje balík jednotek a jednotkových systémů. Používáme řecké písmeno pro mikro, ale jako náhrada je akceptováno i 'u'.
+</p>
+</div>
+<div class="mw-translate-fuzzy">
+<p>Detailní informace najdete v kódu:
+</p>
+<ul><li>Slovník veličin: <a class="external free" href="http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Base/QuantityParser.l" rel="nofollow">http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Base/QuantityParser.l</a></li>
+<li>Definice veličin: <a class="external free" href="http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Base/Quantity.cpp#l167" rel="nofollow">http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Base/Quantity.cpp#l167</a></li></ul>
+</div>
+<h2><span id="Intern.C3.AD_reprezentace"></span><span class="mw-headline" id="Interní_reprezentace">Interní reprezentace</span></h2>
+<p>Všechny fyzické jednotky mohou být vyjádřeny jako kombinace sedmi  <a class="external text" href="http://en.wikipedia.org/wiki/International_System_of_Units" rel="nofollow">SI-jednotek</a>:
+</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/SI-Derived-Units.jpg"><img decoding="async" height="592" src="../File/SI-Derived-Units.jpg" srcset="/images/4/4b/SI-Derived-Units.jpg 1.5x" width="750"/></a></span>
+</p><p><br/>
+</p>
+<div class="mw-translate-fuzzy">
+<p>Jednoduchým způsobem jak vyjádřit jednotku je celočíselné pole 7 čísel (počet základních jednotek), které definuje o jakou jednotku se jedná.
+Signatury 7 základních jednotek jsou:
+</p>
+<ul><li>DĚLKA: [1,0,0,0,0,0,0]</li>
+<li>HMOTNOST: [0,1,0,0,0,0,0]</li>
+<li>ČAS: [0,0,1,0,0,0,0]</li>
+<li>ELEKTRICKÝ PROUD: [0,0,0,1,0,0,0]</li>
+<li>TERMODYNAMICKÁ TEPLOTA: [0,0,0,0,1,0,0]</li>
+<li>LÁTKOVÉ MNOŽSTVÍ: [0,0,0,0,0,1,0]</li>
+<li>SVĚTELNÁ INTENZITA: [0,0,0,0,0,0,1]</li></ul>
+</div>
+<div class="mw-translate-fuzzy">
+<p>Těmito 7 jednotkami můžeme vyjádřit všechny odvozené jednotky definované v <a class="external text" href="http://physics.nist.gov/cuu/pdf/sp811.pdf" rel="nofollow">Průvodci pro použití Mezinárodního jednotkového systému (SI)</a> a vytvářet nové jednotky podle potřeby jako například:
+</p>
+<ul><li>MĚRNÁ HMOTNOST: [-3,1,0,0,0,0,0]</li>
+<li>PLOCHA: [0,2,0,0,0,0,0]</li></ul>
+</div>
+<div class="mw-translate-fuzzy">
+<p>Protože úhly jsou fyzikálně bezrozměrné, ale ne méně důležité v CAD systému, přidali jsme jednu další virtuální jednotku pro úhel. To dotváří 8-mi místný vektor v jednotkové signatuře FreeCADu.
+</p>
+</div>
+<div class="mw-translate-fuzzy">
+<h2><span id="Kalkul.C3.A1tor_jednotek"></span><span class="mw-headline" id="Kalkulátor_jednotek">Kalkulátor jednotek</span></h2>
+<p>Často potřebujete přepočítávat jednotky z jednoho systému do druhého. Například máte starou tabulku parametrů s drátovými jednotkami. Pro takový případ FreeCAD nabízí konverzní nástroj nazývaný Kalkulátor jednotek, který pomáhá s přepočtem jednotek.
+</p>
+</div>
+<div class="mw-translate-fuzzy">
+<p>Detailní popis je zde:
+<a href="Std_UnitsCalculator.html" title="Std UnitsCalculator">Std_UnitsCalculator</a>
+</p>
+</div>
+<div class="mw-translate-fuzzy">
+<h2><span id="Vstupn.C3.ADPole"></span><span class="mw-headline" id="VstupníPole">VstupníPole</span></h2>
+<p>VstupníPole je QLineEdit odvozený z Qt widgetu k práci se všemi druhy uživatelských vstupů veličin a parametrů. Má následující vlastnosti:
+</p>
+<ul><li>zpracovává libovolné hodnoty/jednotky na vstupu</li>
+<li>kontrola na správnou jednotku (je-li zadána) a dává uživatelskou odezvu</li>
+<li>speciální kontextové menu pro operace s veličinami/jednotkami</li>
+<li>správa historie (ukládá poslední použitou hodnotu)</li>
+<li>ukládá často používané hodnoty jako klávesové zkratky v kontextovém menu</li>
+<li>vytáčené hodnoty pomocí kolečka myši a klávesových šipek (tbd)</li>
+<li>vytáčené hodnoty pomocí středního tlačítka  myši a posunů myši (tbd)</li>
+<li>integrace do Pythonu pro použití v dialogových oknech Pythonu (tbd)</li></ul>
+</div>
+<p>Kalkulátor jednotek již VstupníPole používá. 
+</p>
+<div class="mw-translate-fuzzy">
+<p>Kód:
+</p>
+<ul><li><a class="external free" href="http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Gui/InputField.h" rel="nofollow">http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Gui/InputField.h</a></li>
+<li><a class="external free" href="http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Gui/InputField.cpp" rel="nofollow">http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Gui/InputField.cpp</a></li></ul>
+</div>
+<h2><span id="Skriptov.C3.A1n.C3.AD_v_Pythonu"></span><span class="mw-headline" id="Skriptování_v_Pythonu">Skriptování v Pythonu</span></h2>
+<p>Systém veličin a jednotek ve FreeCADu je (jako téměř všechno) plně přístupný v Pythonu. 
+</p>
+<div class="mw-translate-fuzzy">
+<h3><span class="mw-headline" id="Jednotka">Jednotka</span></h3>
+<p>Třída Unit (jednotka) reprezentuje identifikaci fyzické jednotky. Jek je popsáno v základní části je pro reprezentaci jednotky použít vektor 8 čísel. Třída Unit umožňuje práci a výpočty s těmito informacemi.
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">FreeCAD</span> <span class="kn">import</span> <span class="n">Units</span>
+
+<span class="c1"># creating a unit with certain signature</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>      <span class="c1"># Mass     (kg)</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>        <span class="c1"># Length   (mm)</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Pressure (kg/mm*s^2)</span>
+
+<span class="c1"># using predefined constants</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">Units</span><span class="o">.</span><span class="n">Length</span><span class="p">)</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">Units</span><span class="o">.</span><span class="n">Mass</span><span class="p">)</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">Units</span><span class="o">.</span><span class="n">Pressure</span><span class="p">)</span>
+
+<span class="c1"># parsing unit out of a string</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">'kg/(m*s^2)'</span><span class="p">)</span>    <span class="c1"># Pressure</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">'Pa'</span><span class="p">)</span>            <span class="c1"># the same as combined unit Pascale</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">'J'</span><span class="p">)</span>             <span class="c1"># Joule (work,energy) mm^2*kg/(s^2)</span>
+
+<span class="c1"># you can use units from all supported systems of units</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">'psi'</span><span class="p">)</span>           <span class="c1"># imperial pressure</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">'lb'</span><span class="p">)</span>            <span class="c1"># imperial  mass</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">'ft^2'</span><span class="p">)</span>          <span class="c1"># imperial area</span>
+
+<span class="c1"># comparing units</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">Unit</span><span class="p">(</span><span class="n">Units</span><span class="o">.</span><span class="n">Mass</span><span class="p">)</span>
+
+<span class="c1"># getting type of unit</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">'kg/(m*s^2)'</span><span class="p">)</span><span class="o">.</span><span class="n">Type</span> <span class="o">==</span> <span class="s1">'Pressure'</span>
+
+<span class="c1"># calculating</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">'kg'</span><span class="p">)</span> <span class="o">*</span> <span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">'m^-1*s^-2'</span><span class="p">)</span> <span class="o">==</span> <span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s1">'kg/(m*s^2)'</span><span class="p">)</span>
+</pre></div>
+<div class="mw-translate-fuzzy">
+<p>Jednotka je používaná hlavně k popisu typu jednotky parametru. Proto speciální typ vlastnosti ve FreeCADu může předávat jednotky pro jejich kontrolu a zaručuje správnou jednotku.
+Hodnota jednotky a čísla je nazývána Veličina.
+</p>
+</div>
+<p><span id="Quantity"></span>
+</p>
+<h3><span id="Veli.C4.8Dina"></span><span class="mw-headline" id="Veličina">Veličina</span></h3>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">FreeCAD</span> <span class="kn">import</span> <span class="n">Units</span>
+
+<span class="c1"># to create a quantity you need a value (float) and a unit</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>     <span class="c1"># Mass       1.0 kg</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>       <span class="c1"># Length    1.0 mm</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span> <span class="c1"># Pressure  1.0 kg/mm*s^2</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Pressure</span><span class="p">)</span>      <span class="c1"># Pressure  1.0 kg/mm*s^2</span>
+
+<span class="c1"># you can directly give a signature</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>     <span class="c1"># Mass       1.0 kg</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>       <span class="c1"># Length    1.0 mm</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># Pressure  1.0 kg/mm*s^2</span>
+
+<span class="c1"># parsing quantities out of a string</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1.0 kg/(m*s^2)'</span><span class="p">)</span> <span class="c1"># Pressure</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1.0 Pa'</span><span class="p">)</span>         <span class="c1"># the same as combined Unit Pascale</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1.0 J'</span><span class="p">)</span>          <span class="c1"># Joule (Work,Energy) mm^2*kg/(s^2)</span>
+
+<span class="c1"># You can use a point or comma as float delimiter</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1,0 m'</span><span class="p">)</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1.0 m'</span><span class="p">)</span>
+
+<span class="c1"># you can use units from all supported systems of units</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1.0 psi'</span><span class="p">)</span>  <span class="c1"># imperial pressure</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1.0 lb'</span><span class="p">)</span>   <span class="c1"># imperial mass</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1.0 ft^2'</span><span class="p">)</span> <span class="c1"># imperial area</span>
+
+<span class="c1"># the quantity parser can do calculations too</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'360/5 deg'</span><span class="p">)</span>        <span class="c1"># splitting circle </span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1/16 in'</span><span class="p">)</span>          <span class="c1"># fractions</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'5.3*6.3 m^2'</span><span class="p">)</span>      <span class="c1"># calculating an area</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1/(log(2.3)/sin(pi)*3.4)+1.8e-3 m'</span><span class="p">)</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1ft 3in'</span><span class="p">)</span>          <span class="c1"># imperial style</span>
+
+<span class="c1"># and for sure calculation and comparison</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 Pa'</span><span class="p">)</span> <span class="o">*</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">==</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'2 Pa'</span><span class="p">)</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 m'</span><span class="p">)</span> <span class="o">*</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'2 m'</span><span class="p">)</span> <span class="o">==</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'2 m^2'</span><span class="p">)</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 m'</span><span class="p">)</span> <span class="o">*</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'2 ft'</span><span class="p">)</span> <span class="o">+</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'2 mm^2'</span><span class="p">)</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 m'</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'2 ft'</span><span class="p">)</span>
+
+<span class="c1"># accessing the components</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 m'</span><span class="p">)</span><span class="o">.</span><span class="n">Value</span> <span class="c1"># get the number (always internal system (mm/kg/s))</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 m'</span><span class="p">)</span><span class="o">.</span><span class="n">Unit</span>  <span class="c1"># get the unit</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 m'</span><span class="p">)</span> <span class="o">==</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 m'</span><span class="p">)</span><span class="o">.</span><span class="n">Value</span> <span class="p">,</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 m'</span><span class="p">)</span><span class="o">.</span><span class="n">Unit</span><span class="p">)</span>
+
+<span class="c1"># translating the value into other units than the internal system (mm/kg/s)</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 km/h'</span><span class="p">)</span><span class="o">.</span><span class="n">getValueAs</span><span class="p">(</span><span class="s1">'m/s'</span><span class="p">)</span>                  <span class="c1"># translate value</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 m'</span><span class="p">)</span><span class="o">.</span><span class="n">getValueAs</span><span class="p">(</span><span class="mf">2.45</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>                    <span class="c1"># translation value and unit signature</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 kPa'</span><span class="p">)</span><span class="o">.</span><span class="n">getValueAs</span><span class="p">(</span><span class="n">Units</span><span class="o">.</span><span class="n">Pascal</span><span class="p">)</span>            <span class="c1"># predefined standard units </span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1 MPa'</span><span class="p">)</span><span class="o">.</span><span class="n">getValueAs</span><span class="p">(</span><span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'N/m^2'</span><span class="p">))</span> <span class="c1"># a quantity</span>
+</pre></div>
+<div class="mw-translate-fuzzy">
+<h3><span id="Hodnoty_pro_u.C5.BEivatele"></span><span class="mw-headline" id="Hodnoty_pro_uživatele">Hodnoty pro uživatele</span></h3>
+<p>Ve skriptech můžete používat veličiny pro všechny druhy výpočtů a kontrol, přijde čas, kdy budete muset vytvořit výstupní informaci pro uživatele. Můžete použít getValueAs() pro vynucení určité jednotky, ale normálně uživatel nastaví svoje preferované jednotkové schéma v předvolbách. Toto jednotkové schema dělá všechny převody do reprezentace, kterou chce uživatel vidět. V této době jsou implementována 3 schemata:
+</p>
+<ul><li>1: Vnitřní     (mm/kg/s)</li>
+<li>2: MKS          (m/kg/s)</li>
+<li>3: US customary (in/lb)</li></ul>
+<p>Přidální dalších schemat bude v budoucnosti snadné ...
+</p>
+</div>
+<div class="mw-translate-fuzzy">
+<p>Třída pro veličinu má dvě možnosti použití aktuálních převodového schematu:
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">FreeCAD</span> <span class="kn">import</span> <span class="n">Units</span>
+
+<span class="c1"># Use the translated string:</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'1m'</span><span class="p">)</span><span class="o">.</span><span class="n">UserString</span>           <span class="c1"># '1000 mm' in 1; '1 m' in 2; and '1.09361 yr' in 3</span>
+</pre></div>
+<div class="mw-translate-fuzzy">
+<p>To funguje jenom když potřebujete řetězce (texty). Ale někdy potřebujete větší řízení, např. když máte dialogové tlačítko a možností posunu nahoru a dolu. Pak potřebujete mnohe víc informací o převodu do výstupu. Proto je pro veličiny používána metoda getUserPrefered():
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'22 m'</span><span class="p">)</span><span class="o">.</span><span class="n">getUserPreferred</span><span class="p">()</span> <span class="c1"># gets a tuple:('22 m', 1000.0, 'm')</span>
+<span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s1">'2  m'</span><span class="p">)</span><span class="o">.</span><span class="n">getUserPreferred</span><span class="p">()</span> <span class="c1"># Tuple: ('2000 mm', 1.0, 'mm')</span>
+</pre></div>
+<div class="mw-translate-fuzzy">
+<p>Zde získáte dvě další informace jako pole o velikosti 3. Dostanete řetězec jako předtím, plus faktor, kterým je číslo převedeno a neupravený řetězec pouze s jednotkou vybranou převodovým schematem. S takovou informací můžete implementovat mnohem bohatší odezvu.
+</p>
+</div>
+<div class="mw-translate-fuzzy">
+<p>Kódy pro převodní schema můžete najít zde:
+</p>
+<ul><li><a class="external free" href="http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Base/UnitsSchemaInternal.cpp" rel="nofollow">http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Base/UnitsSchemaInternal.cpp</a></li>
+<li><a class="external free" href="http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Base/UnitsSchemaMKS.cpp" rel="nofollow">http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Base/UnitsSchemaMKS.cpp</a></li>
+<li><a class="external free" href="http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Base/UnitsSchemaImperial1.cpp" rel="nofollow">http://sourceforge.net/p/free-cad/code/ci/master/tree/src/Base/UnitsSchemaImperial1.cpp</a></li></ul>
+</div>
+<h3><span class="mw-headline" id="Precision">Precision</span></h3>
+<p>The precision of quantities is within FreeCAD dialogs the number of decimals specified <a href="Preferences_Editor.html#Units" title="Preferences Editor">in the preferences</a>. To use this settings for your script (for example in dialogs), you can get it with this code:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span>
+
+<span class="n">params</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ParamGet</span><span class="p">(</span><span class="s2">"User parameter:BaseApp/Preferences/Units"</span><span class="p">)</span>
+<span class="n">params</span><span class="o">.</span><span class="n">GetInt</span><span class="p">(</span><span class="s1">'Decimals'</span><span class="p">)</span> <span class="c1"># returns an int</span>
+</pre></div>
+<p><span id="Appendix"></span>
+</p>
+<h2><span class="mw-headline" id="Dodatek">Dodatek</span></h2>
+<div class="mw-translate-fuzzy">
+<h3><span id="Jednotky_podporovan.C3.A9_parserem"></span><span class="mw-headline" id="Jednotky_podporované_parserem">Jednotky podporované parserem</span></h3>
+<p>Ačkoliv všechny fyzické jednotky mohou být popsány 7 jednotkami SI, většina jednotek používaných v technické oblasti jsou obecné kombinované jednotky (jako Pa = N/m^2 Pascal ). Proto parser jednotek ve FreeCADu podporuje spoustu SI a Imperiálních jednotek. Tyto jednotky jsou jsou definovány v souboru src/Base/QuantityParser.l a mohou být v budoucnosti dále rozšiřovány.
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">FreeCAD</span> <span class="kn">import</span> <span class="n">Units</span>
+
+ <span class="s2">"nm"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0e-6</span>    <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>         <span class="o">//</span> <span class="n">nano</span> <span class="n">meter</span>
+ <span class="s2">"µm"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0e-3</span>    <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>         <span class="o">//</span> <span class="n">micro</span> <span class="n">meter</span>
+ <span class="s2">"mm"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span>       <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>         <span class="o">//</span> <span class="n">milli</span> <span class="n">meter</span>
+ <span class="s2">"cm"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">10.0</span>      <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>         <span class="o">//</span> <span class="n">centi</span> <span class="n">meter</span>
+ <span class="s2">"dm"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">100.0</span>     <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>         <span class="o">//</span> <span class="n">deci</span> <span class="n">meter</span>
+ <span class="s2">"m"</span>   <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0e3</span>     <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>         <span class="o">//</span> <span class="n">meter</span>
+ <span class="s2">"km"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0e6</span>     <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>         <span class="o">//</span> <span class="n">kilo</span> <span class="n">meter</span>
+ <span class="s2">"l"</span>   <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1000000.0</span> <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>         <span class="o">//</span> <span class="n">liter</span> <span class="n">dm</span><span class="o">^</span><span class="mi">3</span>
+                                                  
+ <span class="s2">"µg"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0e-9</span>    <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>       <span class="o">//</span> <span class="n">micro</span> <span class="n">gram</span>
+ <span class="s2">"mg"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0e-6</span>    <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>       <span class="o">//</span> <span class="n">milli</span> <span class="n">gram</span>
+ <span class="s2">"g"</span>   <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0e-3</span>    <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>       <span class="o">//</span> <span class="n">gram</span>
+ <span class="s2">"kg"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span>       <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>       <span class="o">//</span> <span class="n">kilo</span> <span class="n">gram</span>
+ <span class="s2">"t"</span>   <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1000.0</span>    <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>       <span class="o">//</span> <span class="n">ton</span>
+                                                  
+ <span class="s2">"s"</span>   <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span>       <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>     <span class="o">//</span> <span class="n">second</span> <span class="p">(</span><span class="n">internal</span> <span class="n">standard</span> <span class="n">time</span><span class="p">)</span>
+ <span class="s2">"min"</span> <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">60.0</span>      <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>     <span class="o">//</span> <span class="n">minute</span>
+ <span class="s2">"h"</span>   <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">3600.0</span>    <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>     <span class="o">//</span> <span class="n">hour</span>  
+                                                  
+ <span class="s2">"A"</span>   <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span>       <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>   <span class="o">//</span> <span class="n">Ampere</span> <span class="p">(</span><span class="n">internal</span> <span class="n">standard</span> <span class="n">electric</span> <span class="n">current</span><span class="p">)</span>
+ <span class="s2">"mA"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">0.001</span>     <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>   <span class="o">//</span> <span class="n">milli</span> <span class="n">Ampere</span>         
+ <span class="s2">"kA"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1000.0</span>    <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>   <span class="o">//</span> <span class="n">kilo</span> <span class="n">Ampere</span>         
+ <span class="s2">"MA"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0e6</span>     <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>   <span class="o">//</span> <span class="n">Mega</span> <span class="n">Ampere</span>         
+                                                  
+ <span class="s2">"K"</span>   <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span>       <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span> <span class="o">//</span> <span class="n">Kelvin</span> <span class="p">(</span><span class="n">internal</span> <span class="n">standard</span> <span class="n">thermodynamic</span> <span class="n">temperature</span><span class="p">)</span>
+ <span class="s2">"mK"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">0.001</span>     <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span> <span class="o">//</span> <span class="n">Kelvin</span>         
+ <span class="s2">"µK"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">0.000001</span>  <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span> <span class="o">//</span> <span class="n">Kelvin</span>         
+
+ <span class="s2">"mol"</span> <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span>       <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span> <span class="o">//</span> <span class="n">Mole</span> <span class="p">(</span><span class="n">internal</span> <span class="n">standard</span> <span class="n">amount</span> <span class="n">of</span> <span class="n">substance</span><span class="p">)</span>        
+
+ <span class="s2">"cd"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span>       <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span> <span class="o">//</span> <span class="n">Candela</span> <span class="p">(</span><span class="n">internal</span> <span class="n">standard</span> <span class="n">luminous</span> <span class="n">intensity</span><span class="p">)</span>        
+
+ <span class="s2">"deg"</span> <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">1.0</span>         <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span> <span class="o">//</span> <span class="n">degree</span> <span class="p">(</span><span class="n">internal</span> <span class="n">standard</span> <span class="n">angle</span><span class="p">)</span>
+ <span class="s2">"rad"</span> <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mi">180</span><span class="o">/</span><span class="n">M_PI</span>    <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span> <span class="o">//</span> <span class="n">radian</span>         
+ <span class="s2">"gon"</span> <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">360.0</span><span class="o">/</span><span class="mf">400.0</span> <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span> <span class="o">//</span> <span class="n">gon</span>         
+
+ <span class="s2">"in"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">25.4</span>        <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>       <span class="o">//</span> <span class="n">inch</span>
+ <span class="s2">"</span><span class="se">\"</span><span class="s2">"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">25.4</span>        <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>       <span class="o">//</span> <span class="n">inch</span>
+ <span class="s2">"fo"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">304.8</span>       <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>       <span class="o">//</span> <span class="n">foot</span>
+ <span class="s2">"'"</span>   <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">304.8</span>       <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>       <span class="o">//</span> <span class="n">foot</span>
+ <span class="s2">"th"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">0.0254</span>      <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>       <span class="o">//</span> <span class="n">thou</span>
+ <span class="s2">"yd"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">914.4</span>       <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>       <span class="o">//</span> <span class="n">yard</span>
+
+ <span class="s2">"lb"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">0.45359237</span>   <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>    <span class="o">//</span> <span class="n">pound</span>
+ <span class="s2">"oz"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">0.0283495231</span> <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>    <span class="o">//</span> <span class="n">ounce</span>
+ <span class="s2">"st"</span>  <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">6.35029318</span>   <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>    <span class="o">//</span> <span class="n">Stone</span>
+ <span class="s2">"cwt"</span> <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mf">50.80234544</span>  <span class="p">,</span><span class="n">Units</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>    <span class="o">//</span> <span class="n">hundredweights</span>
+</pre></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span> <a href="Power_users_hub.html" title="Power users hub/cs">Power user documentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>FreeCAD scripting:</b> <a class="new" href="index.php?title=Python_cs&amp;action=edit&amp;redlink=1.html" title="Python/cs (page does not exist)">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/cs">Introduction to Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/cs">Python scripting tutorial</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/cs">FreeCAD Scripting Basics</a></li></ul>
+<hr/>
+<ul><li><b>Modules:</b> <a class="new" href="index.php?title=Builtin_modules_cs&amp;action=edit&amp;redlink=1.html" title="Builtin modules/cs (page does not exist)">Builtin modules</a>, <a href="Units.html" title="Units/cs">Units</a>, <a class="mw-selflink selflink">Quantity</a></li>
+<li><b>Workbenches:</b> <a class="new" href="index.php?title=Workbench_creation_cs&amp;action=edit&amp;redlink=1.html" title="Workbench creation/cs (page does not exist)">Workbench creation</a>, <a href="Gui_Command.html" title="Gui Command/cs">Gui Commands</a>, <a class="new" href="index.php?title=Command_cs&amp;action=edit&amp;redlink=1.html" title="Command/cs (page does not exist)">Commands</a>, <a class="new" href="index.php?title=Installing_more_workbenches_cs&amp;action=edit&amp;redlink=1.html" title="Installing more workbenches/cs (page does not exist)">Installing more workbenches</a></li>
+<li><b>Meshes and Parts:</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/cs">Mesh Scripting</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/cs">Topological data scripting</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/cs">Mesh to Part</a>, <a href="PythonOCC.html" title="PythonOCC/cs">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Parametric objects:</b> <a href="Scripted_objects.html" title="Scripted objects/cs">Scripted objects</a>, <a class="new" href="index.php?title=Viewprovider_cs&amp;action=edit&amp;redlink=1.html" title="Viewprovider/cs (page does not exist)">Viewproviders</a> <small>(<a class="new" href="index.php?title=Custom_icon_in_tree_view_cs&amp;action=edit&amp;redlink=1.html" title="Custom icon in tree view/cs (page does not exist)">Custom icon in tree view</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="Scenegraph.html" title="Scenegraph/cs">Coin (Inventor) scenegraph</a>, <a href="Pivy.html" title="Pivy/cs">Pivy</a></li>
+<li><b>Graphical interface:</b> <a class="new" href="index.php?title=Interface_creation_cs&amp;action=edit&amp;redlink=1.html" title="Interface creation/cs (page does not exist)">Interface creation</a>, <a href="Dialog_creation.html" title="Dialog creation/cs">Interface creation completely in Python</a> <small>(<a class="new" href="index.php?title=Dialog_creation_with_various_widgets_cs&amp;action=edit&amp;redlink=1.html" title="Dialog creation with various widgets/cs (page does not exist)">1</a>, <a class="new" href="index.php?title=Dialog_creation_reading_and_writing_files_cs&amp;action=edit&amp;redlink=1.html" title="Dialog creation reading and writing files/cs (page does not exist)">2</a>, <a class="new" href="index.php?title=Dialog_creation_setting_colors_cs&amp;action=edit&amp;redlink=1.html" title="Dialog creation setting colors/cs (page does not exist)">3</a>, <a class="new" href="index.php?title=Dialog_creation_image_and_animated_GIF_cs&amp;action=edit&amp;redlink=1.html" title="Dialog creation image and animated GIF/cs (page does not exist)">4</a>, <a class="new" href="index.php?title=PySide_usage_snippets_cs&amp;action=edit&amp;redlink=1.html" title="PySide usage snippets/cs (page does not exist)">5</a>)</small>, <a href="PySide.html" title="PySide/cs">PySide</a>, PySide examples <a class="new" href="index.php?title=PySide_Beginner_Examples_cs&amp;action=edit&amp;redlink=1.html" title="PySide Beginner Examples/cs (page does not exist)">beginner</a>, <a class="new" href="index.php?title=PySide_Intermediate_Examples_cs&amp;action=edit&amp;redlink=1.html" title="PySide Intermediate Examples/cs (page does not exist)">intermediate</a>, <a class="new" href="index.php?title=PySide_Advanced_Examples_cs&amp;action=edit&amp;redlink=1.html" title="PySide Advanced Examples/cs (page does not exist)">advanced</a></li>
+<li><b>Macros:</b> <a href="Macros.html" title="Macros/cs">Macros</a>, <a href="How_to_install_macros.html" title="How to install macros/cs">How to install macros</a></li>
+<li><b>Embedding:</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/cs">Embedding FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/cs">Embedding FreeCADGui</a></li></ul>
+<hr/>
+<ul><li><b>Other:</b> <a class="new" href="index.php?title=Expressions_cs&amp;action=edit&amp;redlink=1.html" title="Expressions/cs (page does not exist)">Expressions</a>, <a href="Code_snippets.html" title="Code snippets/cs">Code snippets</a>, <a href="Line_drawing_function.html" title="Line drawing function/cs">Line drawing function</a>, <a href="FreeCAD_vector_math_library.html" title="FreeCAD vector math library/cs">FreeCAD vector math library</a> <small>(deprecated)</small></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub/cs">User hub</a>, <a href="Power_users_hub.html" title="Power users hub/cs">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub/cs">Developer hub</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211637
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.092 seconds
+Real time usage: 0.298 seconds
+Preprocessor visited node count: 206/1000000
+Post‐expand include size: 6474/2097152 bytes
+Template argument size: 9010/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 6/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 41774/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  192.872      1 -total
+ 97.74%  188.514      6 Template:Code
+  1.64%    3.155      1 Template:Powerdocnavi/cs
+  0.87%    1.686      1 Template:Navigation_menu_2
+  0.27%    0.523      1 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:26644-0!canonical and timestamp 20241129211637 and revision id 1463703. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

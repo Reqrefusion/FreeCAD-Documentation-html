@@ -1,0 +1,66 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Dynamic linked object</span></h1><div class="mw-parser-output"><h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p><a class="mw-redirect" href="Std_Link.html" title="Std Link"> Link</a> (internally <a href="App_Link.html" title="App Link">App::Link</a>) is an important new feature introduced in <a href="Release_notes_0.19.html" title="Release notes 0.19">FreeCAD 0.19</a> for creating <a href="Assembly.html" title="Assembly">assemblies</a>.
+</p><p>This article aims to layout one pattern for complex assemblies involving <i>dynamic linked objects</i> which aims to reduce duplication of assembly related logic such as orientation, positioning, or number of instances.
+</p>
+<h2><span class="mw-headline" id="Example">Example</span></h2>
+<p>To illustrate the dynamic linked object concept, consider a table with four legs.
+</p><p>Each leg has two different variants:
+</p>
+<ol><li>Round</li>
+<li>and Square</li></ol>
+<p>The variants can be controlled by a parameter in a <a href="Spreadsheet.html" title="Spreadsheet">spreadsheet</a>.
+</p><p>For our table model, we'll create <b>five</b> separate documents:
+</p>
+<ol><li><code>TableTop.FCStd</code> - containing the top of the table.</li>
+<li><code>RoundTableLeg.FCStd</code> - containing a <i>round</i> table leg.</li>
+<li><code>SquareTableLeg.FCStd</code> - containing a <i>square</i> table leg.</li>
+<li><code>Table.FCStd</code> - containing the assembly of the table top and legs.</li>
+<li><code>Spreadsheet.FCStd</code> - containing a spreadsheet to drive the model.</li></ol>
+<p>Our simple table model will define the following parameters in <code>Spreadsheet.FCStd</code>:
+</p>
+<ol><li><code>TableTopSize</code> - Dimension of the <b>square</b> table top.</li>
+<li><code>TableTopThickness</code> - Thickness of the table top.</li>
+<li><code>TableLegSize</code> - Size of each table leg. For Square leg, this is the dimension. For Round leg, this is the diameter.</li>
+<li><code>TableLegHeight</code> - Height of each table leg.</li>
+<li><code>TableLegVariant</code> - Controls the style of table leg. Possible values include "<code>Square</code>" and "<code>Round</code>".</li></ol>
+<p><code>Table.FCStd</code> is where the dynamic linked object concept is illustrated.
+</p><p>The goal is to <i>not</i> duplicate the following assembly logic for each table leg variant:
+</p>
+<ol><li>Each table leg must appear <b>four</b> times underneath each corner of the table top.</li></ol>
+<p>How this is accomplished:
+</p>
+<ol><li>The <code>TableTop</code> and one of the TableLeg objects (Round or Square) are linked into the <code>Table</code> document.</li>
+<li>The TableLeg link is renamed to `TableLeg` and the "Linked Object" property is changed to the following conditional expression:
+<ol><li><code>&lt;&lt;Spreadsheet&gt;&gt;#Spreadsheet.TableLegVariant == &lt;&lt;Square&gt;&gt; ? &lt;&lt;SquareTableLeg&gt;&gt;#&lt;&lt;SquareTableLeg&gt;&gt;._self : &lt;&lt;RoundTableLeg&gt;&gt;#&lt;&lt;RoundTableLeg&gt;&gt;._self</code></li></ol></li>
+<li>Each table leg must appear <b>four</b> times underneath each corner of the table top so an <a href="Draft_OrthoArray.html" title="Draft OrthoArray">orthogonal array</a> is created using the parametric `TableLeg` link as a base object.</li></ol>
+<p>💡 The full example and all files are available to download as a git repository from GitHub:
+</p><p><a class="external free" href="https://github.com/gbroques/freecad-dynamic-linked-object" rel="nofollow">https://github.com/gbroques/freecad-dynamic-linked-object</a>
+</p><p><b>GIF Recording</b>
+</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="File/Dynamic-table-leg.gif"><img decoding="async" height="537" src="File/Dynamic-table-leg.gif" width="932"/></a></span>
+</p>
+<h2><span class="mw-headline" id="FreeCAD_Forum_Discussion">FreeCAD Forum Discussion</span></h2>
+<ul><li><a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=8&amp;t=57242" rel="nofollow">How to Make Dynamic Linked Object Based on Expression</a></li></ul>
+<!-- 
+NewPP limit report
+Cached time: 20241129212126
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [no‐toc‐conversion]
+CPU time usage: 0.008 seconds
+Real time usage: 0.012 seconds
+Preprocessor visited node count: 15/1000000
+Post‐expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:234874-0!canonical and timestamp 20241129212126 and revision id 1204540. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>

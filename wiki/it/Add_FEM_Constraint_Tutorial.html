@@ -1,0 +1,344 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Add FEM Constraint Tutorial/it</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Add_FEM_Constraint_Tutorial.html" lang="de" title="FEM Beschränkung hinzufügen Tutorium (100% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Add_FEM_Constraint_Tutorial.html" lang="en" title="Add FEM Constraint Tutorial (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Add_FEM_Constraint_Tutorial.html" lang="fr" title="FEM Tutoriel pour ajouter des contraintes FEM (100% translated)">français</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="it">italiano</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Add_FEM_Constraint_Tutorial.html" lang="pl" title="Poradnik: Dodawanie cech analiz do środowiska MES (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Add_FEM_Constraint_Tutorial.html" lang="ro" title="Adăugarea constrângeri MEF (Metoda Elementului Finit) Tutorial (90% translated)">română</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Add_FEM_Constraint_Tutorial.html" lang="ru" title="Руководство по добавлению ограничений в верстак FEM (7% translated)">русский</a></li></ul></div>
+<table class="fcinfobox wikitable ct" style="width: 230px; float: right; margin-left: 1em">
+<tbody><tr>
+<td class="ctTitle" style="font-weight: bold; font-size: 125%;"><span typeof="mw:File"><span><img decoding="async" height="32" src="../File/Freecad.svg" width="32"/></span></span> Tutorial
+</td></tr>
+<tr>
+<th class="ctOdd">Argomento
+</th></tr>
+<tr>
+<td class="ctEven">Aggiungere vincoli FEM
+</td></tr>
+<tr>
+<th class="ctOdd">Livello di difficoltà
+</th></tr>
+<tr>
+<td class="ctEven">
+</td></tr>
+<tr>
+<th class="ctOdd">Tempo di esecuzione
+</th></tr>
+<tr>
+<td class="ctEven">
+</td></tr>
+<tr>
+<th class="ctOdd">Autori
+</th></tr>
+<tr>
+<td class="ctEven"><a class="new" href="index.php?title=User;M42kus&amp;action=edit&amp;redlink=1.html" title="User:M42kus (page does not exist)">M42kus</a>
+</td></tr>
+<tr>
+<th class="ctOdd">Versione di FreeCAD
+</th></tr>
+<tr>
+<td class="ctEven">
+</td></tr>
+<tr>
+<th class="ctOdd">Files di esempio
+</th></tr>
+<tr>
+<td class="ctEven">
+</td></tr>
+<tr>
+<th class="ctOdd">Vedere anche
+</th></tr>
+<tr>
+<td class="ctEven"><i>Nessuno</i>
+</td></tr>
+<tr>
+<td class="ctToc"><br/><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduzione"><span class="tocnumber">1</span> <span class="toctext">Introduzione</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Sommario"><span class="tocnumber">2</span> <span class="toctext">Sommario</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Creare_un_oggetto_documento"><span class="tocnumber">3</span> <span class="toctext">Creare un oggetto documento</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Creare_un_comando_GUI"><span class="tocnumber">4</span> <span class="toctext">Creare un comando GUI</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Creare_un_pannello_delle_attività"><span class="tocnumber">5</span> <span class="toctext">Creare un pannello delle attività</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Estendere_il_writer_di_Elmer"><span class="tocnumber">6</span> <span class="toctext">Estendere il writer di Elmer</span></a></li>
+</ul>
+</div>
+</td></tr></tbody></table>
+<p><span id="Introduction"></span>
+</p>
+<h2><span class="mw-headline" id="Introduzione">Introduzione</span></h2>
+<p>In questo tutorial, aggiungeremo a FreeCAD il vincolo di velocità del flusso e implementeremo il supporto per il risolutore Elmer. Prima di leggere questo tutorial è necessario aver letto e compreso il tutorial <a href="Extend_FEM_Module.html" title="Extend FEM Module/it"> Estendere il modulo FEM</a>.
+</p><p>Questo tutorial riguarda solo come implementare i vincoli in Python. A differenza del solutore e delle equazioni, i vincoli seguono la classica struttura del modulo FEM. Cioè, tutti i moduli di un vincolo hanno il loro posto nel pacchetto <code>femobjects</code> o <code>femviewprovider</code>.
+</p><p><span id="Summary"></span>
+</p>
+<h2><span class="mw-headline" id="Sommario">Sommario</span></h2>
+<ol><li><b>Creare un oggetto documento:</b> L'oggetto documento che risiede all'interno dell'analisi e attraverso il quale il vincolo può essere parametrizzato e collegato ai confini.</li>
+<li><b>Creare un comando GUI:</b> Aggiungere un comando al workbench FEM che aggiunge un vincolo di flusso all'analisi attiva.</li>
+<li><b>Creare un pannello delle attività:</b> Il pannello delle attività è necessario per consentire all'utente di impostare i limiti entro i quali deve stare il vincolo di velocità. Inoltre, l'immissione dei parametri risulta un po' più facile da attuare.</li>
+<li><b>Estendere il writer di Elmer:</b> Aggiungere il supporto per il nuovo vincolo a Elmer estendendo il suo esportatore di file sif.</li></ol>
+<p><span id="Create_document_object"></span>
+</p>
+<h2><span class="mw-headline" id="Creare_un_oggetto_documento">Creare un oggetto documento</span></h2>
+<p>In questo passaggio modificheremo i seguenti file:
+</p>
+<ul><li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/CMakeLists.txt</span></li>
+<li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/App/CMakeLists.txt</span></li>
+<li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/ObjectsFem.py</span></li></ul>
+<p>E aggiungeremo i seguenti file:
+</p>
+<ul><li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/femobjects/constraint_flowvelocity.py</span></li>
+<li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/femviewprovider/view_constraint_flowvelocity.py</span></li></ul>
+<p>Per il nuovo vincolo sono necessari un proxy di documento e un proxy di vista. Questi risiedono in moduli separati. Il proxy del documento in femobjects e il proxy della vista in femviewprovider. Basta copiare i moduli da un vincolo esistente, ad esempio:
+</p>
+<ul><li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">femobjects/constraint_selfweight.py</span></li>
+<li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">femviewprovider/view_constraint_selfweight.py</span></li></ul>
+<p>Adattare la variabile Type e le proprietà alle proprie esigenze. Il documento proxy del vincolo di flusso è simile al seguente:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">Proxy</span><span class="p">(</span><span class="n">FemConstraint</span><span class="o">.</span><span class="n">Proxy</span><span class="p">):</span>
+    <span class="n">Type</span> <span class="o">=</span> <span class="s2">"Fem::ConstraintFlowVelocity"</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Proxy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span>
+            <span class="s2">"App::PropertyFloat"</span><span class="p">,</span> <span class="s2">"VelocityX"</span><span class="p">,</span>
+            <span class="s2">"Parameter"</span><span class="p">,</span> <span class="s2">"Body heat flux"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span>
+            <span class="s2">"App::PropertyBool"</span><span class="p">,</span> <span class="s2">"VelocityXEnabled"</span><span class="p">,</span>
+            <span class="s2">"Parameter"</span><span class="p">,</span> <span class="s2">"Body heat flux"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span>
+            <span class="s2">"App::PropertyFloat"</span><span class="p">,</span> <span class="s2">"VelocityY"</span><span class="p">,</span>
+            <span class="s2">"Parameter"</span><span class="p">,</span> <span class="s2">"Body heat flux"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span>
+            <span class="s2">"App::PropertyBool"</span><span class="p">,</span> <span class="s2">"VelocityYEnabled"</span><span class="p">,</span>
+            <span class="s2">"Parameter"</span><span class="p">,</span> <span class="s2">"Body heat flux"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span>
+            <span class="s2">"App::PropertyFloat"</span><span class="p">,</span> <span class="s2">"VelocityZ"</span><span class="p">,</span>
+            <span class="s2">"Parameter"</span><span class="p">,</span> <span class="s2">"Body heat flux"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span>
+            <span class="s2">"App::PropertyBool"</span><span class="p">,</span> <span class="s2">"VelocityZEnabled"</span><span class="p">,</span>
+            <span class="s2">"Parameter"</span><span class="p">,</span> <span class="s2">"Body heat flux"</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span>
+            <span class="s2">"App::PropertyBool"</span><span class="p">,</span> <span class="s2">"NormalToBoundary"</span><span class="p">,</span>
+            <span class="s2">"Parameter"</span><span class="p">,</span> <span class="s2">"Body heat flux"</span><span class="p">)</span>
+</pre></div>
+<p>Il modulo contenente il proxy di visualizzazione potrebbe sembrare un po' più complicato. Ma per ora impostare semplicemente il path dell'icona. Si tornerà su questo file nei passaggi successivi del tutorial.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">ViewProxy</span><span class="p">(</span><span class="n">FemConstraint</span><span class="o">.</span><span class="n">ViewProxy</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">getIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">":/icons/fem-constraint-flow-velocity.svg"</span>
+</pre></div>
+<p>Aggiungere i due nuovi moduli al sistema di built come descritto in <a href="Extend_FEM_Module.html" title="Extend FEM Module/it"> Estendere il modulo FEM</a>. Individuare l'elenco corretto cercando i moduli dei vincoli.
+</p><p>Come per tutti gli oggetti dell'ambiente FEM, il vincolo di velocità deve essere registrato in <code>ObjectsFem.py</code>. Il seguente metodo aggiunge un vincolo di velocità al documento attivo. Questo metodo verrà utilizzato dal comando GUI per aggiungere il vincolo. Deve essere inserito da qualche parte in <code>ObjectsFem.py</code>.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">makeConstraintFlowVelocity</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"FlowVelocity"</span><span class="p">):</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Fem::ConstraintPython"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">femobjects.constraint_flowvelocity</span>
+    <span class="n">femobjects</span><span class="o">.</span><span class="n">constraint_flowvelocity</span><span class="o">.</span><span class="n">Proxy</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">GuiUp</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">femviewprovider.view_constraint_flowvelocity</span>
+        <span class="n">femviewprovider</span><span class="o">.</span><span class="n">view_constraint_flowvelocity</span><span class="o">.</span><span class="n">ViewProxy</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obj</span>
+</pre></div>
+<p><span id="Create_GUI_command"></span>
+</p>
+<h2><span class="mw-headline" id="Creare_un_comando_GUI">Creare un comando GUI</span></h2>
+<p>In questo passaggio modificheremo i seguenti file:
+</p>
+<ul><li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/CMakeLists.txt</span></li>
+<li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/App/CMakeLists.txt</span></li>
+<li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/Gui/Workbench.cpp</span></li></ul>
+<p>E aggiungeremo il seguente nuovo file:
+</p>
+<ul><li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/femobjects/constraint_flowvelocity.py</span></li></ul>
+<p>Il comando consente all'utente di aggiungere effettivamente il vincolo all'analisi attiva. Basta copiare un comando da un vincolo esistente. I comandi risiedono nel pacchetto <code>femviewprovider</code>. Adattare l'attributo resources e il metodo make chiamato in Activated alle proprie esigenze. Utilizzare anche un ID comando diverso nella chiamata addCommand nella parte inferiore del modulo. La classe seguente è la classe per il comando del vincolo di velocità.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="n">FemCommands</span><span class="o">.</span><span class="n">FemCommands</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Command</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resources</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'Pixmap'</span><span class="p">:</span> <span class="s1">'fem-constraint-flow-velocity'</span><span class="p">,</span>
+            <span class="s1">'MenuText'</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QT_TRANSLATE_NOOP</span><span class="p">(</span>
+                <span class="s2">"FEM_ConstraintFlowVelocity"</span><span class="p">,</span>
+                <span class="s2">"Constraint Velocity"</span><span class="p">),</span>
+            <span class="s1">'ToolTip'</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QT_TRANSLATE_NOOP</span><span class="p">(</span>
+                <span class="s2">"FEM_ConstraintFlowVelocity"</span><span class="p">,</span>
+                <span class="s2">"Creates a FEM constraint body heat flux"</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_active</span> <span class="o">=</span> <span class="s1">'with_analysis'</span>
+
+    <span class="k">def</span> <span class="nf">Activated</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">openTransaction</span><span class="p">(</span>
+            <span class="s2">"Create FemConstraintFlowVelocity"</span><span class="p">)</span>
+        <span class="n">Gui</span><span class="o">.</span><span class="n">addModule</span><span class="p">(</span><span class="s2">"ObjectsFem"</span><span class="p">)</span>
+        <span class="n">Gui</span><span class="o">.</span><span class="n">doCommand</span><span class="p">(</span>
+            <span class="s2">"FemGui.getActiveAnalysis().Member += "</span>
+            <span class="s2">"[ObjectsFem.makeConstraintFlowVelocity()]"</span><span class="p">)</span>
+
+<span class="n">Gui</span><span class="o">.</span><span class="n">addCommand</span><span class="p">(</span><span class="s1">'FEM_AddConstraintFlowVelocity'</span><span class="p">,</span> <span class="n">Command</span><span class="p">())</span>
+</pre></div>
+<p>Aggiungere il nuovo file di comando al sistema di compilazione come descritto in <a href="Extend_FEM_Module.html" title="Extend FEM Module/it"> Estendere il modulo FEM</a>. Individuare l'elenco corretto da cercare per i moduli di comando esistenti.
+</p><p>Inserire il comando in Gui/Workbench.cpp per aggiungerlo alla barra degli strumenti e al menu. Cercare un vincolo esistente della stessa categoria di quello nuovo (ad esempio Flow), copiarlo e incollarlo e modificare l'ID del comando. Questo dovrebbe essere fatto per due volte. Una volta per il menu e un'altra per la barra degli strumenti.
+</p><p><span id="Create_a_task_panel"></span>
+</p>
+<h2><span id="Creare_un_pannello_delle_attivit.C3.A0"></span><span class="mw-headline" id="Creare_un_pannello_delle_attività">Creare un pannello delle attività</span></h2>
+<p>In questo passaggio modificheremo i seguenti file:
+</p>
+<ul><li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/femviewprovider/view_constraint_flowvelocity.py</span></li></ul>
+<p>In FreeCAD, gli oggetti vincolo traggono grandi vantaggi dai pannelli attività. I pannelli attività possono utilizzare widget di input più potenti che espongono l'unità dei valori immessi direttamente all'utente. Il vincolo di velocità richiede anche l'uso di un pannello delle attività poiché un pannello delle attività è l'unico modo per specificare la faccia o le facce su cui deve essere applicato il vincolo.
+</p><p>La posizione del modulo in cui sono implementati i pannelli attività non è definita in modo rigoroso. Per il vincolo di velocità, inseriremo semplicemente il pannello delle attività nello stesso modulo in cui inseriamo il proxy di visualizzazione. Il pannello delle attività è piuttosto complicato. Fa uso di FemSolectionWidgets.BoundarySelector(). Si tratta di un widget qt che consente all'utente di selezionare i confini su cui applicare il vincolo. Oltre a questo widget, ne genera un altro caricando un file UI creato appositamente per il vincolo di velocità. Tramite questo widget è possibile specificare il vettore velocità.
+</p><p>Nella maggior parte dei casi dovrebbe essere sufficiente copiare semplicemente questa classe, utilizzare un file UI adatto (invece di TaskPanelFemFlowVelocity.ui) e regolare _initParamWidget() e _applyWidgetChanges(). Se il nuovo vincolo richiede corpi come riferimenti anziché confini, basta sostituire l'oggetto BoundarySelector con SolidSelector.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">_TaskPanel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_refWidget</span> <span class="o">=</span> <span class="n">FemSelectionWidgets</span><span class="o">.</span><span class="n">BoundarySelector</span><span class="p">()</span>
+        <span class="c1"># self._refWidget = FemSelectionWidgets.SolidSelector()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_refWidget</span><span class="o">.</span><span class="n">setReferences</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">References</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span> <span class="o">=</span> <span class="n">Gui</span><span class="o">.</span><span class="n">PySideUic</span><span class="o">.</span><span class="n">loadUi</span><span class="p">(</span>
+            <span class="n">App</span><span class="o">.</span><span class="n">getHomePath</span><span class="p">()</span> <span class="o">+</span> <span class="s2">"Mod/Fem/femviewprovider/TaskPanelFemFlowVelocity.ui"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initParamWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">form</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_refWidget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="p">]</span>
+        <span class="n">analysis</span> <span class="o">=</span> <span class="n">FemMisc</span><span class="o">.</span><span class="n">findAnalysisOfMember</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span> <span class="o">=</span> <span class="n">FemMisc</span><span class="o">.</span><span class="n">getSingleMember</span><span class="p">(</span><span class="n">analysis</span><span class="p">,</span> <span class="s2">"Fem::FemMeshObject"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_part</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span><span class="o">.</span><span class="n">Part</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_partVisible</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_meshVisible</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_part</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_meshVisible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_partVisible</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_part</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">isVisible</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_part</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_restoreVisibility</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">References</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refWidget</span><span class="o">.</span><span class="n">references</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">References</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_refWidget</span><span class="o">.</span><span class="n">references</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_applyWidgetChanges</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">Document</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_restoreVisibility</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">_restoreVisibility</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_part</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meshVisible</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_mesh</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_partVisible</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_part</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_part</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_initParamWidget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">unit</span> <span class="o">=</span> <span class="s2">"m/s"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">velocityXTxt</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityX</span><span class="p">)</span> <span class="o">+</span> <span class="n">unit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">velocityYTxt</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityY</span><span class="p">)</span> <span class="o">+</span> <span class="n">unit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">velocityZTxt</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityZ</span><span class="p">)</span> <span class="o">+</span> <span class="n">unit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">velocityXBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityXEnabled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">velocityYBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityYEnabled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">velocityZBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityZEnabled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">normalBox</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">NormalToBoundary</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_applyWidgetChanges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">unit</span> <span class="o">=</span> <span class="s2">"m/s"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityXEnabled</span> <span class="o">=</span> \
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">velocityXBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityXEnabled</span><span class="p">:</span>
+            <span class="n">quantity</span> <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">velocityXTxt</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityX</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">quantity</span><span class="o">.</span><span class="n">getValueAs</span><span class="p">(</span><span class="n">unit</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityYEnabled</span> <span class="o">=</span> \
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">velocityYBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityYEnabled</span><span class="p">:</span>
+            <span class="n">quantity</span> <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">velocityYTxt</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityY</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">quantity</span><span class="o">.</span><span class="n">getValueAs</span><span class="p">(</span><span class="n">unit</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityZEnabled</span> <span class="o">=</span> \
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">velocityZBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityZEnabled</span><span class="p">:</span>
+            <span class="n">quantity</span> <span class="o">=</span> <span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">velocityZTxt</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">VelocityZ</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">quantity</span><span class="o">.</span><span class="n">getValueAs</span><span class="p">(</span><span class="n">unit</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">NormalToBoundary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_paramWidget</span><span class="o">.</span><span class="n">normalBox</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+</pre></div>
+<p>Il proxy di visualizzazione deve essere esteso per supportare il pannello delle attività appena implementato. Il seguente proxy di visualizzazione estesa apre il pannello delle attività quando l'utente fa doppio clic sull'oggetto vincolo nella visualizzazione ad albero.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">ViewProxy</span><span class="p">(</span><span class="n">FemConstraint</span><span class="o">.</span><span class="n">ViewProxy</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">getIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">":/icons/fem-constraint-flow-velocity.svg"</span>
+
+    <span class="k">def</span> <span class="nf">setEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vobj</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="n">_TaskPanel</span><span class="p">(</span><span class="n">vobj</span><span class="o">.</span><span class="n">Object</span><span class="p">)</span>
+        <span class="n">Gui</span><span class="o">.</span><span class="n">Control</span><span class="o">.</span><span class="n">showDialog</span><span class="p">(</span><span class="n">task</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">unsetEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vobj</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">Gui</span><span class="o">.</span><span class="n">Control</span><span class="o">.</span><span class="n">closeDialog</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">doubleClicked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vobj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Gui</span><span class="o">.</span><span class="n">Control</span><span class="o">.</span><span class="n">activeDialog</span><span class="p">():</span>
+            <span class="n">Gui</span><span class="o">.</span><span class="n">Control</span><span class="o">.</span><span class="n">closeDialog</span><span class="p">()</span>
+        <span class="n">Gui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">setEdit</span><span class="p">(</span><span class="n">vobj</span><span class="o">.</span><span class="n">Object</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+</pre></div>
+<p><span id="Extend_Elmer's_writer"></span>
+</p>
+<h2><span class="mw-headline" id="Estendere_il_writer_di_Elmer">Estendere il writer di Elmer</span></h2>
+<p>In questo passaggio modificheremo i seguenti file:
+</p>
+<ul><li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/femsolver/elmer/writer.py</span></li></ul>
+<p>Il modulo writer contiene metodi per tutti i tipi di equazioni. A seconda del tipo di vincolo, condizione al contorno, condizione iniziale o forza del corpo è necessario modificare metodi diversi. Per la nostra velocità del flusso dobbiamo impostare <code>_handleFlowBndConditions(...)</code>.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">_handleFlowBndConditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getMember</span><span class="p">(</span><span class="s2">"Fem::ConstraintFlowVelocity"</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">References</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">References</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">VelocityXEnabled</span><span class="p">:</span>
+                    <span class="n">velocity</span> <span class="o">=</span> <span class="n">getFromUi</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">VelocityX</span><span class="p">,</span> <span class="s2">"m/s"</span><span class="p">,</span> <span class="s2">"L/T"</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_boundary</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">"Velocity 1"</span><span class="p">,</span> <span class="n">velocity</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">VelocityYEnabled</span><span class="p">:</span>
+                    <span class="n">velocity</span> <span class="o">=</span> <span class="n">getFromUi</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">VelocityY</span><span class="p">,</span> <span class="s2">"m/s"</span><span class="p">,</span> <span class="s2">"L/T"</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_boundary</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">"Velocity 2"</span><span class="p">,</span> <span class="n">velocity</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">VelocityZEnabled</span><span class="p">:</span>
+                    <span class="n">velocity</span> <span class="o">=</span> <span class="n">getFromUi</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">VelocityZ</span><span class="p">,</span> <span class="s2">"m/s"</span><span class="p">,</span> <span class="s2">"L/T"</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_boundary</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">"Velocity 3"</span><span class="p">,</span> <span class="n">velocity</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">NormalToBoundary</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_boundary</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="s2">"Normal-Tangential Velocity"</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_handled</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+</pre></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211717
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.072 seconds
+Real time usage: 0.105 seconds
+Preprocessor visited node count: 268/1000000
+Post‐expand include size: 3273/2097152 bytes
+Template argument size: 7814/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 7/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 35642/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   10.056      1 -total
+ 40.84%    4.107      1 Template:TutorialInfo/it
+ 28.82%    2.898      7 Template:Code
+  8.81%    0.886      6 Template:Incode
+  8.31%    0.835     13 Template:FileName
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:86805-0!canonical and timestamp 20241129211717 and revision id 1408908. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

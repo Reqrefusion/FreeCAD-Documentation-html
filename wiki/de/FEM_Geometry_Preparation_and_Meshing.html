@@ -1,0 +1,328 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">FEM Geometry Preparation and Meshing/de</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--med" dir="ltr" lang="de">Deutsch</span></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FEM_Geometry_Preparation_and_Meshing.html" lang="en" title="FEM Geometry Preparation and Meshing (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FEM_Geometry_Preparation_and_Meshing.html" lang="fr" title="FEM Préparation de la géométrie et maillage (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FEM_Geometry_Preparation_and_Meshing.html" lang="pl" title="MES: Przygotowanie geometrii i tworzenie siatki (100% translated)">polski</a></li></ul></div>
+<table class="fcinfobox wikitable ct" style="width: 230px; float: right; margin-left: 1em">
+<tbody><tr>
+<td class="ctTitle" style="font-weight: bold; font-size: 125%;"><span typeof="mw:File"><span><img decoding="async" height="32" src="../File/Freecad.svg" width="32"/></span></span> Tutorium
+</td></tr>
+<tr>
+<th class="ctOdd">Thema
+</th></tr>
+<tr>
+<td class="ctEven">Finite Element Analysis
+</td></tr>
+<tr>
+<th class="ctOdd">Niveau
+</th></tr>
+<tr>
+<td class="ctEven">Anfänger
+</td></tr>
+<tr>
+<th class="ctOdd">Zeit zum Abschluss
+</th></tr>
+<tr>
+<td class="ctEven">N/A
+</td></tr>
+<tr>
+<th class="ctOdd">Autoren
+</th></tr>
+<tr>
+<td class="ctEven"><a class="external text" href="http://www.freecadweb.org/wiki/index.php?title=User:NewJoker" rel="nofollow">NewJoker</a>
+</td></tr>
+<tr>
+<th class="ctOdd">FreeCAD-Version
+</th></tr>
+<tr>
+<td class="ctEven">0.21 oder neuer
+</td></tr>
+<tr>
+<th class="ctOdd">Beispieldateien
+</th></tr>
+<tr>
+<td class="ctEven"><i>None</i>
+</td></tr>
+<tr>
+<th class="ctOdd">Siehe auch
+</th></tr>
+<tr>
+<td class="ctEven"><a href="FEM_Workbench.html" title="FEM Workbench/de">Arbeitsbereich FEM</a>
+</td></tr>
+<tr>
+<td class="ctToc"><br/><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Hintergrund"><span class="tocnumber">1</span> <span class="toctext">Hintergrund</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Geometriearten_zur_Verwendung_für_FEM_in_FreeCAD"><span class="tocnumber">2</span> <span class="toctext">Geometriearten zur Verwendung für FEM in FreeCAD</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Auswahl_der_Geometrieart"><span class="tocnumber">3</span> <span class="toctext">Auswahl der Geometrieart</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Geometry_validity"><span class="tocnumber">4</span> <span class="toctext">Geometry validity</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Geometrie_vereinfachen"><span class="tocnumber">5</span> <span class="toctext">Geometrie vereinfachen</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Geometrie_partitionieren"><span class="tocnumber">6</span> <span class="toctext">Geometrie partitionieren</span></a></li>
+<li class="toclevel-1 tocsection-7"><a href="#Assembly_geometries"><span class="tocnumber">7</span> <span class="toctext">Assembly geometries</span></a></li>
+<li class="toclevel-1 tocsection-8"><a href="#Grundlagen_der_Vernetzung"><span class="tocnumber">8</span> <span class="toctext">Grundlagen der Vernetzung</span></a></li>
+<li class="toclevel-1 tocsection-9"><a href="#Negative_Jacobians"><span class="tocnumber">9</span> <span class="toctext">Negative Jacobians</span></a></li>
+<li class="toclevel-1 tocsection-10"><a href="#Mesh_convergence_studies"><span class="tocnumber">10</span> <span class="toctext">Mesh convergence studies</span></a></li>
+</ul>
+</div>
+</td></tr></tbody></table>
+<p><span id="Background"></span>
+</p>
+<h2><span class="mw-headline" id="Hintergrund">Hintergrund</span></h2>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>Geometry preparation and meshing are crucial parts of preprocessing of simulations using Finite Element Method (FEM). While easily accessible simulation software connected with a CAD environment (such as the <a href="FEM_Workbench.html" title="FEM Workbench">FEM Workbench</a> in FreeCAD) makes it tempting to perform analyses on new designs right away, it is very important to remember that FEM is an advanced method and requires properly prepared geometry and mesh to provide reasonable, accurate results. The old <a class="external text" href="https://en.wikipedia.org/wiki/Garbage_in,_garbage_out" rel="nofollow"><i>garbage in, garbage out</i></a> rule is particularly important here. There are also other crucial settings on which FEM accuracy highly depends (such as material properties and boundary conditions) but the first steps and some of the most common sources of issues are geometry preparation and meshing, discussed on this page.
+</p>
+</div>
+<p><span id="Types_of_geometry_used_for_FEM_in_FreeCAD"></span>
+</p>
+<h2><span id="Geometriearten_zur_Verwendung_f.C3.BCr_FEM_in_FreeCAD"></span><span class="mw-headline" id="Geometriearten_zur_Verwendung_für_FEM_in_FreeCAD">Geometriearten zur Verwendung für FEM in FreeCAD</span></h2>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<ul><li>Lines (wires) - used for analyses with beam elements</li>
+<li>Surfaces - used for analyses with shell elements</li>
+<li>Solids - used for analyses with solid elements</li></ul>
+</div>
+<p><span id="Choice_of_the_type_of_geometry"></span>
+</p>
+<h2><span class="mw-headline" id="Auswahl_der_Geometrieart">Auswahl der Geometrieart</span></h2>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>While most designs consist of solids, it's often highly recommended to use wires or surfaces for FEM if the structure allows for that:
+</p>
+<ul><li>if a part is slender (long and thin) and beam-like and has a regular cross-section of one of the currently supported beam section types (rectangular, circular or pipe) then it should be analyzed using beam elements (unless there are some specific forms of loading, response or unavoidable geometry details that invalidate this assumption). Basically, one should draw a centerline (some tips on how to extract it from existing solid geometry can be found in <a class="external text" href="https://forum.freecad.org/viewtopic.php?t=81589" rel="nofollow">this forum thread</a>) and apply proper <a href="FEM_ElementGeometry1D.html" title="FEM ElementGeometry1D">beam section</a> with optional <a href="FEM_ElementRotation1D.html" title="FEM ElementRotation1D">rotation</a>. There's no single rule dictating when beam elements can be used but it's often advised that the cross-section dimensions should be &lt; 1/10 of part's length for the beam assumption to be valid.</li></ul>
+</div>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_beam_model.JPG"><img decoding="async" height="233" src="../File/FEM_beam_model.JPG" srcset="/images/thumb/a/af/FEM_beam_model.JPG/900px-FEM_beam_model.JPG 1.5x, /images/a/af/FEM_beam_model.JPG 2x" width="600"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Schlankes Bauteil, das zur Analyse von Stabelementen geeignet ist - Mittellinie hervorgehoben</p>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<ul><li>if a part is thin-walled (such as sheet metal parts) then it should be analyzed using shell elements (unless accurate contact results are needed or some limitations of shell elements are encountered). This is very important and often overlooked. To obtain proper accuracy of results (especially when bending is involved), one needs a few elements (at least 3-5) in the thickness direction. In the case of thin-walled parts, this usually results in large meshes (especially when tetrahedrons are used since hexahedral elements can't be generated in FreeCAD) and large computational cost - high computer power requirements and long solving time. To obtain the geometry suitable for analysis with shell elements, one should draw a midsurface of the part (some tips on how to extract it from existing solid geometry can be found in <a class="external text" href="https://forum.freecad.org/viewtopic.php?t=67505" rel="nofollow">this forum thread</a>, <a class="external text" href="https://forum.freecad.org/viewtopic.php?t=71821" rel="nofollow">this one</a> and <a class="external text" href="https://forum.freecad.org/viewtopic.php?t=81834" rel="nofollow">this one</a>) and apply proper <a href="FEM_ElementGeometry2D.html" title="FEM ElementGeometry2D">thickness</a>. Again, there's no single rule but it's usually recommended that the thickness should be &lt; 1/10 of a typical global dimension (length/width) for the shell assumption to be valid.</li></ul>
+</div>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_shell_model.JPG"><img decoding="async" height="282" src="../File/FEM_shell_model.JPG" srcset="/images/thumb/a/a7/FEM_shell_model.JPG/900px-FEM_shell_model.JPG 1.5x, /images/thumb/a/a7/FEM_shell_model.JPG/1200px-FEM_shell_model.JPG 2x" width="600"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Dünnwandiges Bauteil, das zur Analyse von Schalenelementen geeignet ist - Mittelfläche hervorgehoben</p>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>One should remember that beam and shell elements used in CalculiX are not true beam/shell elements (they don't use the beam/shell element formulations known from literature and other software) - they are internally expanded to solids. Still, their use is recommended in the aforementioned cases.
+</p>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<h2><span class="mw-headline" id="Geometry_validity">Geometry validity</span></h2>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>The geometry used for FEM has to be valid. Most importantly, there can't be any intersections. It's a common issue often occurring when assemblies are modeled without proper constraints between the parts. The <a href="Part_SectionCut.html" title="Part SectionCut">Part SectionCut</a> tool can help find such interferences between parts. Of course, <a href="Part_Fuse.html" title="Part Fuse">Part Fuse</a> may help resolve them if they are intentional. Other issues with the geometry (such as non-manifold geometries, redundant edges or faces and so on) also have to be fixed before proceeding to meshing. The <a href="Part_CheckGeometry.html" title="Part CheckGeometry">Part CheckGeometry</a> tool can be helpful but visual checks are also important. When preparing a simulation using solid elements and in doubt whether the part is really solid or just a closed shell, the aforementioned tools (Part SectionCut and <i>Shape Content</i> tab of the Part CheckGeometry tool output) may clarify this.
+</p>
+</div>
+<p><span id="Geometry_simplification"></span>
+</p>
+<h2><span class="mw-headline" id="Geometrie_vereinfachen">Geometrie vereinfachen</span></h2>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>Designs prepared in CAD software are typically too detailed to be suitable for FEM simulations. In many cases, it's necessary to simplify them first. This step is often overlooked but it's very important because it can be hard to obtain a good mesh when the part is too detailed and even if such a mesh is obtained eventually, it might be very dense, leading to unreasonable solving times. Thus, one should always look at the design and try to simplify it as much as possible, leaving only those geometric features that may have a significant impact on the results (strength/stiffness) and thus can't be ignored. The following features are typically omitted:
+</p>
+<ul><li>small fillets and chamfers,</li>
+<li>small holes,</li>
+<li>other small details,</li>
+<li>welds,</li>
+<li>bolts, threads,</li>
+<li>decorative elements (logos, engravings).</li></ul>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>The <a href="Part_Defeaturing.html" title="Part Defeaturing">Part Defeaturing</a> tool and add-on <a href="Defeaturing_Workbench.html" title="Defeaturing Workbench">Defeaturing Workbench</a> can be helpful when simplifying parts for simulations.
+</p>
+</div>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_bracket_original.PNG"><img decoding="async" height="471" src="../File/FEM_bracket_original.PNG" srcset="/images/8/8b/FEM_bracket_original.PNG 1.5x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Ursprungsgeometrie eines Halters</p>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_bracket_simplified.PNG"><img decoding="async" height="466" src="../File/FEM_bracket_simplified.PNG" srcset="/images/thumb/e/e6/FEM_bracket_simplified.PNG/600px-FEM_bracket_simplified.PNG 1.5x, /images/e/e6/FEM_bracket_simplified.PNG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Die nur mit dem Werkzeug Part FormelementEntfernen vereinfachte Geometrie des Halters</p>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>In the case of assemblies (more about them in one of the next sections), often some parts can be excluded from simulations and replaced with boundary conditions if they were attached to parts being analyzed. Such approach is valid if the excluded parts are significantly stiffer (in terms of structural stiffness so considering not only elasticity of the material but also geometry of the part) than the analyzed parts to which they were connected. That's because fixed boundary conditions introduce rigidity (as if the analyzed part was attached to an infinitely stiff component) and flexible supports like spring elements are not available in the FEM workbench of FreeCAD when using CalculiX (Elmer has <a href="FEM_ConstraintSpring.html" title="FEM ConstraintSpring">FEM ConstraintSpring</a>).
+</p>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>Geometry simplification for FEM may also mean cutting it in one of the symmetry planes to make use of the planar symmetry assumption in the analysis. This assumption is valid only when all the following aspects of the model exhibit symmetry in a given plane:
+</p>
+<ul><li>geometry,</li>
+<li>loads,</li>
+<li>boundary conditions,</li>
+<li>response (one has to be careful with frequency/buckling analyses utilizing symmetry - antisymmetric mode shapes won't be obtained).</li></ul>
+<p>The use of symmetry (1/2, 1/4 or 1/8 of the model) is recommended whenever possible since it can highly reduce the computational cost of the analysis. Another advantage is that it eliminates some rigid body motions, making it easier to constrain the part. A symmetry boundary condition should be applied to the faces belonging to the plane of the cut:
+</p>
+<ul><li>translation in the direction normal to the symmetry plane should be blocked for solid parts,</li>
+<li>translation in the direction normal to the symmetry plane and rotations other than around the axis normal to the symmetry plane should be blocked for shell and beam parts.</li></ul>
+<p>Applied force should be properly reduced if the symmetry plane cuts the region to which the force is applied (irrelevant when pressure load is used).
+</p>
+</div>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_symmetric_vessel.JPG"><img decoding="async" height="447" src="../File/FEM_symmetric_vessel.JPG" srcset="/images/thumb/c/c6/FEM_symmetric_vessel.JPG/600px-FEM_symmetric_vessel.JPG 1.5x, /images/c/c6/FEM_symmetric_vessel.JPG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Modell von 1/8 eines zylindrischen Druckbehälters mit Randbedingungen Symmetrie und Innendruckbelastung</p>
+<p><span id="Geometry_partitioning"></span>
+</p>
+<h2><span class="mw-headline" id="Geometrie_partitionieren">Geometrie partitionieren</span></h2>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>So-called partitioning is a division of the geometry into smaller segments. In other software, it's commonly used to allow hex meshing but in FreeCAD it can be useful for other reasons too. The main application of partitioning is when a load (or a boundary condition) has to be applied only to a selected region of the part's surface. The easiest way to achieve it is to create a sketch with a proper contour on that face and use the <a href="Part_BooleanFragments.html" title="Part BooleanFragments">Part Boolean Fragments</a> tool to split the face with the sketch. Another reason for partitioning is when multiple materials have to be applied to a single part (without having to use multiple parts connected with each other). Then partitioning can be done using a <a href="PartDesign_Plane.html" title="PartDesign Plane">datum plane</a> and Boolean Fragments tool with the <i>Compsolid</i> mode. Partitioning can be also used to create regions for <a href="FEM_MeshRegion.html" title="FEM MeshRegion">mesh refinement</a>.
+</p>
+</div>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_partition.JPG"><img decoding="async" height="404" src="../File/FEM_partition.JPG" srcset="/images/thumb/a/a6/FEM_partition.JPG/600px-FEM_partition.JPG 1.5x, /images/a/a6/FEM_partition.JPG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Bauteil mit Teilfläche zum Aufbringen einer Last oder Anwenden einer Randbedingung</p>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<h2><span class="mw-headline" id="Assembly_geometries">Assembly geometries</span></h2>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>One of the current major limitations of the FEM workbench is that multiple meshes are not supported. In practice, this means that one cannot mesh each part of the assembly individually and then connect the parts with proper constraints for the analysis. Instead, it's necessary to create a single object containing all the parts of the assembly and mesh it. There are several different options here, all relying on <a href="Part_Workbench.html#Boolean_toolbar" title="Part Workbench">Part boolean tools</a>. The choice depends on the desired effect - whether the individual parts/volumes and their boundaries should be selectable (e.g. for material assignments or definitions of boundary conditions acting on internal faces) or not:
+</p>
+<ul><li><a href="Part_Fuse.html" title="Part Fuse">Part Fuse</a> - merges the parts, making it impossible to select them individually e.g. for material definitions,</li>
+<li><a href="Part_Compound.html" title="Part Compound">Part Compound</a> - creates a compound object, making it possible to select individual parts,</li>
+<li><a href="Part_JoinConnect.html" title="Part JoinConnect">Part JoinConnect</a> - works like Part Fuse, merges the parts, making it impossible to select them individually,</li>
+<li><a href="Part_BooleanFragments.html" title="Part BooleanFragments">Part BooleanFragments</a> - works like Part Compound, making it possible to select individual parts.</li></ul>
+<p>It's important to mention that if the parts are touching, a continuous mesh will be created on the boolean object and no constraints will be needed for the simulation. If there's even a small gap (or an intersection within a Part Compound) between the parts, the mesh won't be continuous and constraints like <a href="FEM_ConstraintTie.html" title="FEM ConstraintTie">tie</a> or <a href="FEM_ConstraintContact.html" title="FEM ConstraintContact">contact</a> will be needed. Running a frequency analysis is a good way to reveal if the mesh is continuous or not - if the parts are not connected, the first mode shapes with deformation visualized using <a href="FEM_PostFilterWarp.html" title="FEM PostFilterWarp">Warp filter</a> will show separation - the parts will "fly away".
+</p>
+</div>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_modal_separation.JPG"><img decoding="async" height="484" src="../File/FEM_modal_separation.JPG" srcset="/images/9/97/FEM_modal_separation.JPG 1.5x" width="400"/></a></span>
+</p>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">The first mode shape of a frequency analysis visualized with the Warp filter - two cubes with a small initial gap were analyzed</p>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>Selection of internal regions (faces/volumes) can be tricky. It might be needed for the application of different materials, body loads or boundary conditions (especially in thermal and electromagnetic analyses). Several ways are possible:
+</p>
+<ul><li>enabling <a href="Std_ToggleClipPlane.html" title="Std ToggleClipPlane">clipping plane</a> for the time of selection and picking internal faces,</li>
+<li>hiding the boolean object, showing only one of the parts it was applied to and selecting it,</li>
+<li>selecting another, external object and editing the <i>References</i> property on the <i>Data</i> tab of a given analysis feature (requires manual specification of the geometric object's number).</li></ul>
+</div>
+<p><span id="Meshing_basics"></span>
+</p>
+<h2><span class="mw-headline" id="Grundlagen_der_Vernetzung">Grundlagen der Vernetzung</span></h2>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>Too coarse mesh is one of the most common sources of inaccuracies and other issues in FEM. It's often a partial fault of automatic mesher settings - they typically generate very coarse, unsuitable meshes when the element size is not manually specified but left with a default value. One should always know the approximate dimensions of the part, especially the size of the smallest relevant feature (<a href="Part_Measure_Linear.html" title="Part Measure Linear">Part Measure Linear</a> tool can help with that) and specify the proper maximum element size based on that. When meshing with Gmsh, there is also a minimum element size setting that can prevent the creation of too tiny elements around small geometric features which may lead to unnecessarily dense meshes (and sometimes even FreeCAD crashing or freezing when trying to generate such meshes). Generally speaking, it's better to start with a coarser mesh (taking less time to generate), see what it looks like (some experience is necessary) and refine it if necessary. It often makes sense to use dense mesh only around the areas of interest (locations with large stress gradients/concentrations - notches) and relatively coarse mesh away from them. This way, the number of elements can be significantly reduced, leading to shorter solving times. Local mesh refinement is defined using <a href="FEM_MeshRegion.html" title="FEM MeshRegion">FEM MeshRegion</a>.
+</p>
+</div>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_default_mesh.PNG"><img decoding="async" height="238" src="../File/FEM_default_mesh.PNG" srcset="/images/thumb/b/ba/FEM_default_mesh.PNG/600px-FEM_default_mesh.PNG 1.5x, /images/thumb/b/ba/FEM_default_mesh.PNG/800px-FEM_default_mesh.PNG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Standardwerte, zu grobes Netz</p>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_globally_refined_mesh.PNG"><img decoding="async" height="239" src="../File/FEM_globally_refined_mesh.PNG" srcset="/images/thumb/1/12/FEM_globally_refined_mesh.PNG/600px-FEM_globally_refined_mesh.PNG 1.5x, /images/thumb/1/12/FEM_globally_refined_mesh.PNG/800px-FEM_globally_refined_mesh.PNG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Global verfeinertes Netz</p>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_locally_refined_mesh.PNG"><img decoding="async" height="239" src="../File/FEM_locally_refined_mesh.PNG" srcset="/images/thumb/3/34/FEM_locally_refined_mesh.PNG/600px-FEM_locally_refined_mesh.PNG 1.5x, /images/thumb/3/34/FEM_locally_refined_mesh.PNG/800px-FEM_locally_refined_mesh.PNG 2x" width="400"/></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Lokal verfeinertes Netz</p>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>The choice of element type is not easy and depends on many factors but the general rule is that hexahedral and quad elements are preferable over tetrahedral and triangular ones. However, complex geometries can't be meshed with hexahedral elements and FreeCAD can't generate them at all (only quad meshes can be generated on surfaces - see <a class="external text" href="https://forum.freecad.org/viewtopic.php?t=20351" rel="nofollow">this forum thread</a>). Hexahedral elements can be imported from external meshers like <a class="external text" href="https://gmsh.info" rel="nofollow">Gmsh</a> and used in the FEM workbench as shown in <a class="external text" href="https://www.youtube.com/watch?v=vylt24G7qj4&amp;t=932s" rel="nofollow">this video</a>.
+</p>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>The choice of element order (first or second) depends on the analysis conditions but in most cases, second-order elements are preferred. This is particularly the case with triangular and tetrahedral elements - their first-order (linear) versions are normally not recommended for regular usage and they should be used only as filler elements in regions of low importance. However, since FreeCAD can't generate hexahedral elements, linear tetrahedrons can be used in some cases, if the meshes are dense enough. Especially when performing analyses with <a href="FEM_ConstraintContact.html" title="FEM ConstraintContact">contact</a>.
+</p>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<h2><span class="mw-headline" id="Negative_Jacobians">Negative Jacobians</span></h2>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>If the above rules are followed (especially regarding geometry validity, defeaturing and element size selection), the mesh should be generated correctly. However, in some cases, the geometry can't be simplified too much, or the modeling procedure is appropriate but leads to small edges and faces anyway. Then meshing with second-order elements may fail due to negative Jacobians. The reason is that meshers have to follow the CAD model and put the mid-side nodes of second-order elements on the geometry. With more complex shapes, it may lead to elements being stretched so much that they become inverted. Jacobian is one of the most common mesh quality measures. It represents the element's deviation from the ideal shape. It becomes negative when the element turns inside out (becomes inverted) either due to large deformation during the analysis (not considered here) or because of the aforementioned meshing issues. Negative Jacobians in FreeCAD FEM might be reported by Gmsh or by CalculiX. Their locations in the mesh are highlighted when CalculiX analyses are submitted using the <a href="FEM_SolverRun.html" title="FEM SolverRun">Run solver calculations</a> button. The following tips can help eliminate them:
+</p>
+<ul><li>set the <i>Second Order Linear</i> property of the <a href="FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape">FEMMeshGmsh</a> object to <i>true</i> - this results in the mid-side nodes of second-order elements being just added in the middle of straight (initially) first-order element edges, without snapping them to the geometry and resolves the issue in most cases,</li>
+<li>use Netgen instead of Gmsh - Netgen is known to be less prone to negative Jacobian issues but also doesn't report them so the user may find out only when submitting the analysis,</li>
+<li>further reduce the element size,</li>
+<li>export the geometry, try meshing it in Gmsh or Netgen (NGSolve) GUI or other standalone mesher (like Salome_Meca) - those tools have additional features that can help get rid of negative Jacobians (for example, Gmsh has so-called "High-order tools"),</li>
+<li>use first-order elements - should be done only as a last resort since first-order tetrahedrons are known for their inaccuracy.</li></ul>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>Regardless of those tips, it's important to emphasize once again that negative Jacobians are usually the fault of messy modeling approaches and lack of geometry preparation for analysis (especially common with STEP models downloaded from various websites). Even if the mesh is eventually generated in such cases, the results are likely to be of poor quality (recall the GIGO rule mentioned in the first paragraph). Thus, geometry clean-up and preparation for FEM should always be the priority.
+</p>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<h2><span class="mw-headline" id="Mesh_convergence_studies">Mesh convergence studies</span></h2>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>Mesh convergence studies are recommended in all serious projects requiring accurate results. The reason is that the results can change a lot, approaching correct values when the mesh is refined. The following approach should be used:
+</p>
+<ol><li>After obtaining the first results and noting them (usually maximum von Mises stress, von Mises stress at a given location and maximum displacement), refine the mesh (globally or better locally - with <a href="FEM_MeshRegion.html" title="FEM MeshRegion">FEM MeshRegion</a>) and rerun the simulation.</li>
+<li>Check the results and note their new values. If they differ significantly from the initial results, refine the mesh further and rerun the analysis.</li>
+<li>Repeat the process if the results still change (usually grow) significantly with mesh refinement.</li></ol>
+<p>It usually helps to create a plot with a given result vs mesh density. This way it's easier to notice when the results start to converge. The acceptable difference in results between two runs is usually around a few percent (e.g. below 5%).
+</p>
+</div>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p>In some cases, it may happen that the maximum stress will be growing indefinitely regardless of how dense the mesh will be. Such a non-physical effect is known as a stress singularity. It may occur due to the following reasons:
+</p>
+<ul><li>concentrated forces applied to solid and shell models,</li>
+<li>boundary conditions applied to points (individual nodes),</li>
+<li>sharp corners,</li>
+<li>contact occurring at a corner.</li></ul>
+<p>Typical ways of dealing with stress singularities are:
+</p>
+<ul><li>applying loads and boundary conditions to small areas instead of points - see the section about partitioning above,</li>
+<li>adding small fillets to sharp corners (an exception to the rule of omitting small fillets when simplifying the geometry for FEM),</li>
+<li>including plasticity in material behavior to enable stress redistribution and limit the stresses to values allowed by the plasticity definition while observing the proper level of yielding (plastic strain),</li>
+<li>ignoring singularities and reading stresses away from them if possible (based on St. Venant’s Principle).</li></ul>
+</div>
+<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_mesh_convergence.PNG"><img decoding="async" height="332" src="../File/FEM_mesh_convergence.PNG" srcset="/images/thumb/1/13/FEM_mesh_convergence.PNG/600px-FEM_mesh_convergence.PNG 1.5x, /images/thumb/1/13/FEM_mesh_convergence.PNG/800px-FEM_mesh_convergence.PNG 2x" width="400"/></a></span>
+</p>
+<div class="mw-content-ltr" dir="ltr" lang="en">
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Typical mesh convergence plots:<br/>
+- displacement (<b>green curve</b>) converges quickly,<br/>
+- maximum stress at a notch like a hole (<b>blue curve</b>) needs more iterations of mesh refinement to converge,<br/>
+- maximum stress at a sharp corner with a fixed boundary condition (<b>red curve</b>) doesn't converge at all. Stress singularity occurs and a small fillet would have to be added and the connection would have to be modeled in more realistic, flexible way to avoid this behavior.<br/></p>
+</div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_FEM.svg"><img decoding="async" height="24" src="../File/Workbench_FEM.svg" width="24"/></a></span> <a href="FEM_Workbench.html" title="FEM Workbench/de">FEM</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><a href="FEM_Analysis.html" title="FEM Analysis/de">FEM Analysis</a></li></ul>
+<ul><li><b>Materials:</b> <a href="FEM_MaterialSolid.html" title="FEM MaterialSolid/de">Solid</a>, <a href="FEM_MaterialFluid.html" title="FEM MaterialFluid/de">Fluid</a>, <a href="FEM_MaterialMechanicalNonlinear.html" title="FEM MaterialMechanicalNonlinear/de">Nonlinear mechanical</a>, <a href="FEM_MaterialReinforced.html" title="FEM MaterialReinforced/de">Reinforced (concrete)</a>; <a href="FEM_MaterialEditor.html" title="FEM MaterialEditor/de">Material editor</a></li></ul>
+<ul><li><b>Element geometry:</b> <a href="FEM_ElementGeometry1D.html" title="FEM ElementGeometry1D/de">Beam (1D)</a>, <a href="FEM_ElementRotation1D.html" title="FEM ElementRotation1D/de">Beam rotation (1D)</a>, <a href="FEM_ElementGeometry2D.html" title="FEM ElementGeometry2D/de">Shell (2D)</a>, <a href="FEM_ElementFluid1D.html" title="FEM ElementFluid1D/de">Fluid flow (1D)</a></li></ul>
+<hr/>
+<p><b>Constraints</b>
+</p>
+<ul><li><b>Electromagnetic:</b> <a href="FEM_ConstraintElectrostaticPotential.html" title="FEM ConstraintElectrostaticPotential/de">Electrostatic potential</a>, <a href="FEM_ConstraintCurrentDensity.html" title="FEM ConstraintCurrentDensity/de">Current density</a>, <a href="FEM_ConstraintMagnetization.html" title="FEM ConstraintMagnetization/de">Magnetization</a></li></ul>
+<ul><li><b>Fluid:</b> <a href="FEM_ConstraintInitialFlowVelocity.html" title="FEM ConstraintInitialFlowVelocity/de">Initial flow velocity</a>, <a href="FEM_ConstraintInitialPressure.html" title="FEM ConstraintInitialPressure/de">Initial pressure</a>, <a href="FEM_ConstraintFlowVelocity.html" title="FEM ConstraintFlowVelocity/de">Flow velocity</a></li></ul>
+<ul><li><b>Geometrical:</b> <a href="FEM_ConstraintPlaneRotation.html" title="FEM ConstraintPlaneRotation/de">Plane rotation</a>, <a href="FEM_ConstraintSectionPrint.html" title="FEM ConstraintSectionPrint/de">Section print</a>, <a href="FEM_ConstraintTransform.html" title="FEM ConstraintTransform/de">Transform</a></li></ul>
+<ul><li><b>Mechanical:</b> <a href="FEM_ConstraintFixed.html" title="FEM ConstraintFixed/de">Fixed</a>, <a href="FEM_ConstraintDisplacement.html" title="FEM ConstraintDisplacement/de">Displacement</a>, <a href="FEM_ConstraintContact.html" title="FEM ConstraintContact/de">Contact</a>, <a href="FEM_ConstraintTie.html" title="FEM ConstraintTie/de">Tie</a>, <a href="FEM_ConstraintSpring.html" title="FEM ConstraintSpring/de">Spring</a>, <a href="FEM_ConstraintForce.html" title="FEM ConstraintForce/de">Force</a>, <a href="FEM_ConstraintPressure.html" title="FEM ConstraintPressure/de">Pressure</a>, <a href="FEM_ConstraintCentrif.html" title="FEM ConstraintCentrif/de">Centrif</a>, <a href="FEM_ConstraintSelfWeight.html" title="FEM ConstraintSelfWeight/de">Self weight</a></li></ul>
+<ul><li><b>Thermal:</b> <a href="FEM_ConstraintInitialTemperature.html" title="FEM ConstraintInitialTemperature/de">Initial temperature</a>, <a href="FEM_ConstraintHeatflux.html" title="FEM ConstraintHeatflux/de">Heat flux</a>, <a href="FEM_ConstraintTemperature.html" title="FEM ConstraintTemperature/de">Temperature</a>, <a href="FEM_ConstraintBodyHeatSource.html" title="FEM ConstraintBodyHeatSource/de">Body heat source</a></li></ul>
+<ul><li><b>Overwrite Constants:</b> <a href="FEM_ConstantVacuumPermittivity.html" title="FEM ConstantVacuumPermittivity/de">Constant vacuum permittivity</a></li></ul>
+<hr/>
+<ul><li><b>Mesh:</b> <a href="FEM_MeshNetgenFromShape.html" title="FEM MeshNetgenFromShape/de">Mesh Netgen</a>, <a href="FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape/de">Mesh GMSH</a>, <a href="FEM_MeshBoundaryLayer.html" title="FEM MeshBoundaryLayer/de">Mesh boundary layer</a>, <a href="FEM_MeshRegion.html" title="FEM MeshRegion/de">Mesh region</a>, <a href="FEM_MeshGroup.html" title="FEM MeshGroup/de">Mesh group</a>, <a href="FEM_CreateNodesSet.html" title="FEM CreateNodesSet/de">Nodes set</a>, <a href="FEM_FemMesh2Mesh.html" title="FEM FemMesh2Mesh/de">Mesh to mesh</a></li></ul>
+<ul><li><b>Solve:</b> <a href="FEM_SolverCalculixCxxtools.html" title="FEM SolverCalculixCxxtools/de">CalculiX Standard</a>, <a href="FEM_SolverElmer.html" title="FEM SolverElmer/de">Elmer</a>, <a href="FEM_SolverMystran.html" title="FEM SolverMystran/de">Mystran</a>, <a href="FEM_SolverZ88.html" title="FEM SolverZ88/de">Z88</a>; <b>Equations:</b> <a href="FEM_EquationDeformation.html" title="FEM EquationDeformation/de">Deformation</a>, <a href="FEM_EquationElasticity.html" title="FEM EquationElasticity/de">Elasticity</a>, <a href="FEM_EquationElectrostatic.html" title="FEM EquationElectrostatic/de">Electrostatic</a>, <a href="FEM_EquationElectricforce.html" title="FEM EquationElectricforce/de">Electricforce</a>, <a href="FEM_EquationMagnetodynamic.html" title="FEM EquationMagnetodynamic/de">Magnetodynamic</a>, <a href="FEM_EquationMagnetodynamic2D.html" title="FEM EquationMagnetodynamic2D/de">Magnetodynamic 2D</a>, <a href="FEM_EquationFlow.html" title="FEM EquationFlow/de">Flow</a>, <a href="FEM_EquationFlux.html" title="FEM EquationFlux/de">Flux</a>, <a href="FEM_EquationHeat.html" title="FEM EquationHeat/de">Heat</a>; <b>Solver:</b> <a href="FEM_SolverControl.html" title="FEM SolverControl/de">Solver control</a>, <a href="FEM_SolverRun.html" title="FEM SolverRun/de">Solver run</a></li></ul>
+<ul><li><b>Results:</b> <a href="FEM_ResultsPurge.html" title="FEM ResultsPurge/de">Purge</a>, <a href="FEM_ResultShow.html" title="FEM ResultShow/de">Show</a>; <b>Postprocessing:</b> <a href="FEM_PostApplyChanges.html" title="FEM PostApplyChanges/de">Apply changes</a>, <a href="FEM_PostPipelineFromResult.html" title="FEM PostPipelineFromResult/de">Pipeline from result</a>, <a href="FEM_PostFilterWarp.html" title="FEM PostFilterWarp/de">Warp filter</a>, <a href="FEM_PostFilterClipScalar.html" title="FEM PostFilterClipScalar/de">Scalar clip filter</a>, <a href="FEM_PostFilterCutFunction.html" title="FEM PostFilterCutFunction/de">Function cut filter</a>, <a href="FEM_PostFilterClipRegion.html" title="FEM PostFilterClipRegion/de">Region clip filter</a>, <a href="FEM_PostFilterContours.html" title="FEM PostFilterContours/de">Contours filter</a>, <a href="FEM_PostFilterDataAlongLine.html" title="FEM PostFilterDataAlongLine/de">Line clip filter</a>, <a href="FEM_PostFilterLinearizedStresses.html" title="FEM PostFilterLinearizedStresses/de">Stress linearization plot</a>, <a href="FEM_PostFilterDataAtPoint.html" title="FEM PostFilterDataAtPoint/de">Data at point clip filter</a>, <a href="FEM_PostCreateFunctionPlane.html" title="FEM PostCreateFunctionPlane/de">Filter function plane</a>, <a href="FEM_PostCreateFunctionSphere.html" title="FEM PostCreateFunctionSphere/de">Filter function sphere</a>, <a href="FEM_PostCreateFunctionCylinder.html" title="FEM PostCreateFunctionCylinder/de">Filter function cylinder</a>, <a href="FEM_PostCreateFunctionBox.html" title="FEM PostCreateFunctionBox/de">Filter function box</a></li></ul>
+<ul><li><b>Utilities:</b> <a href="FEM_ClippingPlaneAdd.html" title="FEM ClippingPlaneAdd/de">Clipping plane</a>, <a href="FEM_ClippingPlaneRemoveAll.html" title="FEM ClippingPlaneRemoveAll/de">Remove clipping planes</a>, <a href="FEM_Examples.html" title="FEM Examples/de">Open FEM examples</a>; <a href="FEM_MeshClear.html" title="FEM MeshClear/de">Mesh clear</a>, <a href="FEM_MeshDisplayInfo.html" title="FEM MeshDisplayInfo/de">Mesh display info</a></li></ul>
+<hr/>
+<ul><li><b>Additional:</b> <a href="FEM_Preferences.html" title="FEM Preferences/de">Preferences</a>; <a href="FEM_Install.html" title="FEM Install/de">FEM Install</a>, <a href="FEM_Mesh.html" title="FEM Mesh/de">FEM Mesh</a>, <a href="FEM_Solver.html" title="FEM Solver/de">FEM Solver</a>, <a href="FEM_CalculiX.html" title="FEM CalculiX/de">FEM CalculiX</a>, <a href="FEM_Concrete.html" title="FEM Concrete/de">FEM Concrete</a>; <a href="FEM_Element_Types.html" title="FEM Element Types/de">FEM Element Types</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/User_hub.png"><img decoding="async" height="24" src="../File/User_hub.png" srcset="/images/thumb/9/94/User_hub.png/36px-User_hub.png 1.5x, /images/thumb/9/94/User_hub.png/48px-User_hub.png 2x" width="24"/></a></span> <a href="User_hub.html" title="User hub/de">Anwenderdokumentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started/de">Erste Schritte</a></b></li>
+<li><b>Installation:</b> <a href="Download.html" title="Download/de">Herunterladen</a>, <a href="Installing_on_Windows.html" title="Installing on Windows/de">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux/de">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac/de">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components/de">Zusätzliche Komponenten</a>, <a href="Compile_on_Docker.html" title="Compile on Docker/de">Docker</a>, <a href="AppImage.html" title="AppImage/de">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap/de">Ubuntu Snap</a></li>
+<li><b>Grundlagen:</b> <a href="About_FreeCAD.html" title="About FreeCAD/de">Über FreeCAD</a>, <a href="Interface.html" title="Interface/de">Graphische Oberfläche</a>, <a href="Mouse_navigation.html" title="Mouse navigation/de">Mausbedienung</a>, <a href="Selection_methods.html" title="Selection methods/de">Auswahlmethoden</a>, <a href="Object_name.html" title="Object name/de">Objektname</a>, <a href="Preferences_Editor.html" title="Preferences Editor/de">Voreinstellungseditor</a>, <a href="Workbenches.html" title="Workbenches/de">Arbeitsbereiche</a>, <a href="Document_structure.html" title="Document structure/de">Dokumentstruktur</a>, <a href="Property.html" title="Property/de">Objekteigenschaften</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD/de">FreeCAD unterstützen</a>, <a href="Donate.html" title="Donate/de">Spenden</a></li></ul>
+<hr/>
+<ul><li><b>Hilfe:</b> <a href="Tutorials.html" title="Tutorials/de">Anleitungen</a>, <a href="Video_tutorials.html" title="Video tutorials/de">Videoanleitungen</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches/de">Arbeitsbereiche</a>:</b> <a href="Std_Base.html" title="Std Base/de">Std Base</a>, <a href="Arch_Workbench.html" title="Arch Workbench/de">Arch</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench/de">Assembly</a>, <a href="BIM_Workbench.html" title="BIM Workbench/de">BIM</a>, <a href="CAM_Workbench.html" title="CAM Workbench/de">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench/de">Draft</a>, <a href="FEM_Workbench.html" title="FEM Workbench/de">FEM</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench/de">Inspection</a>, <a href="Material_Workbench.html" title="Material Workbench/de">Material</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench/de">Mesh</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench/de">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench/de">Part</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench/de">PartDesign</a>, <a href="Points_Workbench.html" title="Points Workbench/de">Points</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/de">Reverse Engineering</a>, <a href="Robot_Workbench.html" title="Robot Workbench/de">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench/de">Sketcher</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench/de">Spreadsheet</a>, <a href="Surface_Workbench.html" title="Surface Workbench/de">Surface</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench/de">TechDraw</a>, <a href="Testing.html" title="Testing/de">Test Framework</a></li></ul>
+<hr/>
+<ul><li><b><a href="Addon.html" title="Addon/de">Addon</a>:</b> <a href="Std_AddonMgr.html" title="Std AddonMgr/de">Addon-Manager</a>, <a href="External_workbenches.html" title="External workbenches/de">Externe Arbeitsbereiche</a>, <a href="Scripting_and_macros.html" title="Scripting and macros/de">Skripten und Makros</a></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub/de">Anwenderzentrum</a>, <a href="Power_users_hub.html" title="Power users hub/de">Hauptanwenderzentrum</a>, <a href="Developer_hub.html" title="Developer hub/de">Entwicklerzentrum</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129210742
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.090 seconds
+Real time usage: 0.152 seconds
+Preprocessor visited node count: 349/1000000
+Post‐expand include size: 20781/2097152 bytes
+Template argument size: 7435/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 922/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   12.699      1 -total
+ 36.77%    4.669      1 Template:FEM_Tools_navi/de
+ 26.81%    3.405      1 Template:TutorialInfo/de
+ 22.60%    2.870     11 Template:Caption
+ 17.57%    2.231      2 Template:Navigation_menu_2
+  7.43%    0.943      1 Template:Userdocnavi/de
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:336311-0!canonical and timestamp 20241129210742 and revision id 1469291. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

@@ -1,0 +1,101 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">PropertyLink: InList and OutList/pl</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="PropertyLink;_InList_and_OutList.html" lang="en" title="PropertyLink: InList and OutList (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="PropertyLink;_InList_and_OutList.html" lang="fr" title="PropertyLink: InList et OutList (100% translated)">français</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="pl">polski</span></li></ul></div>
+<p>Zobacz artykuł <a href="Property.html" title="Property/pl">Właściwości</a> przed tą sekcją.
+</p><p><span id="PropertyLink"></span>
+</p>
+<h1><span class="mw-headline" id="PropertyLink">PropertyLink</span></h1>
+<p>Oprócz skalarnych <a href="Property.html" title="Property/pl">Properties</a> cech, same cechy zawierają wskaźniki do siebie nawzajem.
+Wskaźniki te definiują <a class="external text" href="https://en.wikipedia.org/wiki/Directed_acyclic_graph" rel="nofollow">skierowany graf acykliczny</a>, który określa zbiór i kolejność obiektów, które są ponownie obliczane w odpowiedzi na zmianę w jednym obiekcie. Ponownie obliczane są tylko te funkcje, które zależą od zmienionej funkcji.
+</p><p>Zależności są wyrażane za pomocą specjalnej klasy typów właściwości, a mianowicie PropertyLink:
+</p>
+<ul><li>PropertyLink: umożliwia powiązanie elementu z innym pojedynczym elementem w tym samym dokumencie.</li>
+<li>PropertyLinkList: pozwala elementowi na powiązanie kilku elementów</li>
+<li>PropertyLinkSub: pozwala elementowi łączyć pojedynczy element i dodatkowo odwoływać się do elementów podrzędnych. Przykład: Jeśli chcesz zamodelować kieszeń na potrzeby szkicu, ważne jest, aby wiedzieć, do którego elementu podrzędnego (np. Face6) powiązanego elementu należy ją zmapować.</li>
+<li>PropertyLinkSubList: umożliwia powiązanie elementu z kilkoma elementami podrzędnymi kilku elementów.</li></ul>
+<p>Poniżej znajdują się podobne właściwości do łączenia cech różnych dokumentów. Jest to podstawowa część dla złożeń.
+</p>
+<ul><li>PropertyXLink</li>
+<li>PropertyXLinkSub</li>
+<li>PropertyXLinkSubList</li>
+<li>PropertyXLinkList</li>
+<li>PropertyXLinkContainer</li></ul>
+<p><span id="Example"></span>
+</p>
+<h2><span id="Przyk.C5.82ad"></span><span class="mw-headline" id="Przykład">Przykład</span></h2>
+<p>Rozważmy klasę <code>BoxDimension</code>, która zapewnia podstawowe wymiary dla innej klasy <code>Box</code>. Chcielibyśmy, aby obiekt <code>Box</code> był ponownie obliczany za każdym razem, gdy zmieni się powiązany z nim <code>BoxDimension</code>:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span>
+<span class="kn">import</span> <span class="nn">Part</span>
+
+<span class="k">class</span> <span class="nc">BoxDimension</span><span class="p">:</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Length"</span><span class="p">)</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Width"</span><span class="p">)</span><span class="o">.</span><span class="n">Width</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span> <span class="s2">"Height"</span><span class="p">)</span><span class="o">.</span><span class="n">Height</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+
+<span class="k">class</span> <span class="nc">Box</span><span class="p">:</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLink"</span><span class="p">,</span> <span class="s2">"Dimensions"</span><span class="p">)</span><span class="o">.</span><span class="n">Dimensions</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+  <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">Dimensions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+      <span class="k">return</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Length</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Width</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">Dimensions</span><span class="o">.</span><span class="n">Height</span>
+    <span class="n">obj</span><span class="o">.</span><span class="n">Shape</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">makeBox</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+</pre></div>
+<p>Należy pamiętać, że jest to obiekt <code>Box</code>, który zawiera PropertyLink do obiektu <code>BoxDimension</code>.
+Użycie jest następujące:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>
+<span class="n">dim</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"App::FeaturePython"</span><span class="p">,</span> <span class="s2">"BoxDimension"</span><span class="p">)</span>
+<span class="n">box</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::FeaturePython"</span><span class="p">,</span> <span class="s2">"Box"</span><span class="p">)</span>
+<span class="n">dim_proxy</span> <span class="o">=</span> <span class="n">BoxDimension</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+<span class="n">box_proxy</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
+<span class="n">box</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">box</span><span class="o">.</span><span class="n">Dimensions</span> <span class="o">=</span> <span class="n">dim</span>
+
+<span class="n">dim</span><span class="o">.</span><span class="n">Length</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">dim</span><span class="o">.</span><span class="n">Width</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">dim</span><span class="o">.</span><span class="n">Height</span> <span class="o">=</span> <span class="mi">7</span>
+<span class="n">doc</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+</pre></div>
+<p>Ponieważ nasz <code>box</code> zależy od obiektu <code>dim</code>, zostanie on ponownie obliczony.
+</p><p><span id="InList_and_OutList"></span>
+</p>
+<h1><span id="Lista_wej.C5.9Bciowa_i_lista_wyj.C5.9Bciowa"></span><span class="mw-headline" id="Lista_wejściowa_i_lista_wyjściowa">Lista wejściowa i lista wyjściowa</span></h1>
+<p>Dostęp do obiektów <code>PropertyLink</code> można uzyskać za pomocą właściwości Python przy użyciu nazwy, pod którą są zarejestrowane za pomocą <code>.addObject()</code>. Istnieje jednak inny sposób. Każda funkcja ma parę leniwie generowanych list o nazwach <code>InList</code> i <code>OutList</code>, które opisują odpowiednio wychodzące i przychodzące krawędzie DAG:
+</p>
+<ul><li><code>InList</code> jest listą wszystkich funkcji, które "zależą" od bieżącego obiektu. Tak więc <code>dim.InList</code> będzie listą zawierającą nasz obiekt <code>box</code>.</li>
+<li>Podobnie, <code>OutList</code> jest listą wszystkich funkcji, które "zależą" od bieżącego obiektu. Oznacza to, że <code>box.OutList</code> będzie listą zawierającą nasz obiekt <code>dim</code>.</li></ul>
+<p>Zauważ, że <code>InList</code> i <code>OutList</code> nie mają nic wspólnego z widokiem drzewa modelu dokumentu, który jest prezentowany w GUI. W dowolnym momencie rodzic w tym widoku drzewa może zawierać dzieci, które są częścią <code>InList</code>, <code>OutList</code> lub żadnego z nich.
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20241129212546
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [no‐toc‐conversion]
+CPU time usage: 0.057 seconds
+Real time usage: 0.382 seconds
+Preprocessor visited node count: 148/1000000
+Post‐expand include size: 612/2097152 bytes
+Template argument size: 1061/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 2/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 6682/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  327.921      1 -total
+ 99.05%  324.814      2 Template:Code
+  0.51%    1.667     22 Template:Incode
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:235989-0!canonical and timestamp 20241129212546 and revision id 1317278. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

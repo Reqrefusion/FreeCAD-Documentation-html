@@ -1,0 +1,193 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Extend FEM Module/fr</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Extend_FEM_Module.html" lang="de" title="FEM Modul Erweitern (29% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Extend_FEM_Module.html" lang="en" title="Extend FEM Module (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Extend_FEM_Module.html" lang="es" title="Extend FEM Module (17% translated)">español</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="fr">français</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--med" dir="ltr" href="Extend_FEM_Module.html" lang="it" title="Estendere il modulo FEM (54% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Extend_FEM_Module.html" lang="pl" title="Rozszerzenie modułu MES (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Extend_FEM_Module.html" lang="ro" title="FEM: Modul Suplimentar MEF (33% translated)">română</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="Extend_FEM_Module.html" lang="ru" title="Расширение рабочей среды верстака МКЭ (25% translated)">русский</a></li></ul></div>
+<table class="fcinfobox wikitable ct" style="width: 230px; float: right; margin-left: 1em">
+<tbody><tr>
+<td class="ctTitle" style="font-weight: bold; font-size: 125%;"><span typeof="mw:File"><span><img decoding="async" height="32" src="../File/Freecad.svg" width="32"/></span></span> Tutoriel
+</td></tr>
+<tr>
+<th class="ctOdd">Thème
+</th></tr>
+<tr>
+<td class="ctEven">FEM
+</td></tr>
+<tr>
+<th class="ctOdd">Niveau
+</th></tr>
+<tr>
+<td class="ctEven">Intermédiaire
+</td></tr>
+<tr>
+<th class="ctOdd">Temps d'exécution estimé
+</th></tr>
+<tr>
+<td class="ctEven">1 heure
+</td></tr>
+<tr>
+<th class="ctOdd">Auteurs
+</th></tr>
+<tr>
+<td class="ctEven"><a class="new" href="index.php?title=User;M42kus&amp;action=edit&amp;redlink=1.html" title="User:M42kus (page does not exist)">M42kus</a>
+</td></tr>
+<tr>
+<th class="ctOdd">Version de FreeCAD
+</th></tr>
+<tr>
+<td class="ctEven">0.17
+</td></tr>
+<tr>
+<th class="ctOdd">Fichiers exemples
+</th></tr>
+<tr>
+<td class="ctEven"><i>None</i>
+</td></tr>
+<tr>
+<th class="ctOdd">Voir aussi
+</th></tr>
+<tr>
+<td class="ctEven"><i>None</i>
+</td></tr>
+<tr>
+<td class="ctToc"><br/><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#La_compilation_(cmake)"><span class="tocnumber">1</span> <span class="toctext">La compilation (cmake)</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Organisation_des_sources"><span class="tocnumber">2</span> <span class="toctext">Organisation des sources</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Le_solveur"><span class="tocnumber">3</span> <span class="toctext">Le solveur</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Équations"><span class="tocnumber">4</span> <span class="toctext">Équations</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Contraintes"><span class="tocnumber">5</span> <span class="toctext">Contraintes</span></a></li>
+</ul>
+</div>
+</td></tr></tbody></table>
+<p>L'atelier FEM prend déjà en charge un grand nombre de contraintes différentes et plusieurs solveurs. Malgré cela, les utilisateurs ont souvent besoin de contraintes qui ne sont pas encore prises en charge par FreeCAD. Cette page est le point de départ d'une série de tutoriels et d'autres ressources décrivant comment étendre l'atelier FEM en utilisant le cadre existant. Bien que cette série puisse également être utile aux développeurs de logiciels, l'idée est de permettre aux utilisateurs de FEM ayant un peu d'intérêt pour le codage en Python d'ajouter eux-mêmes les éléments dont ils ont besoin.
+</p><p>Ajouter de nouvelles contraintes, équations ou solveurs est généralement un travail de routine. Le faire pour la première fois n'est pas aussi facile qu'il puisse paraître. Une compréhension des sujets suivants sera utile :
+</p>
+<ul><li>Faire des scripts en Python dans FreeCAD.
+<ul><li><a href="Python_scripting_tutorial.html" title="Python scripting tutorial/fr">Tutoriel sur les scripts Python</a></li>
+<li><a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/fr">Débuter avec les scripts</a></li></ul></li>
+<li>Extension de FreeCAD avec Python.
+<ul><li><a href="Scripted_objects.html" title="Scripted objects/fr">Objets créés par script</a></li></ul></li>
+<li>Une bonne compréhension du solveur auquel il faut ajouter de nouveaux objets (par exemple CalculiX ou Elmer) est importante.</li>
+<li>Un peu de connaissances sur les systèmes de compilation, en particulier cmake (le système de compilation utilisé par FreeCAD)</li></ul>
+<p><span id="Build_System_(cmake)"></span>
+</p>
+<h2><span id="La_compilation_.28cmake.29"></span><span class="mw-headline" id="La_compilation_(cmake)">La compilation (cmake)</span></h2>
+<p>Le système de compilation doit être modifié indépendamment des objets qui seront ajoutés à l'atelier FEM. Chaque module Python (fichier) doit être enregistré. L'atelier FEM exige que chaque nouveau module Python soit enregistré dans <code>Mod/Fem/CMakeLists.txt</code>. Ceci est vrai quel que soit le type de module Python (GUI ou non-GUI). L'endroit exact où le module doit être inséré dépend du rôle du module. Le solveur, les équations et les contraintes utilisent tous des listes différentes. La recherche de fichiers similaires et l'insertion du nouveau fichier dans la même liste fonctionnent la plupart du temps.
+</p><p>À titre <b>d'exemple</b>, ajoutons une nouvelle contrainte appelée <code>pressure</code> qui est liée à <b>l'équation de débit</b>. Ainsi, <b>FlowPressure</b> sera largement utilisé comme &lt;name&gt; pour cette contrainte. Une nouvelle contrainte nécessite au moins les nouveaux modules suivants :
+</p>
+<ul><li><code>constraint_&lt;name&gt;.py</code></li>
+<li><code>view_constraint_&lt;name&gt;.py</code></li>
+<li><code>CommandFemConstraint&lt;name&gt;.py</code> (peut-être pas nécessaire)</li></ul>
+<p>Ces trois fichiers doivent être ajoutés à <code>Mod/Fem/CMakeLists.txt</code> ainsi qu'à <code>Mod/Fem/App/CMakeLists.txt</code>. Toutes les lignes de code insérées sont indiquées par un <b>+</b> au départ.
+</p><p><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Mod/Fem/CMakeLists.txt</span>
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">SET</span><span class="p">(</span><span class="n">FemObjects_SRCS</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">base_fempythonobject</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">constraint_bodyheatsource</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">constraint_electrostaticpotential</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">constraint_flowvelocity</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">constraint_initialflowvelocity</span><span class="o">.</span><span class="n">py</span>
+<span class="o">+</span>   <span class="n">femobjects</span><span class="o">/</span><span class="n">constraint_initialflowpressure</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">constraint_selfweight</span><span class="o">.</span><span class="n">py</span>
+<span class="o">...</span>
+    <span class="n">femobjects</span><span class="o">/</span><span class="n">solver_ccxtools</span><span class="o">.</span><span class="n">py</span>
+<span class="p">)</span>
+<span class="o">...</span>
+<span class="n">SET</span><span class="p">(</span><span class="n">FemGuiViewProvider_SRCS</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="fm">__init__</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_base_femconstraint</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_base_femobject</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_constraint_bodyheatsource</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_constraint_electrostaticpotential</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_constraint_flowvelocity</span><span class="o">.</span><span class="n">py</span>
+<span class="o">+</span>   <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_constraint_flowpressure</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_constraint_initialflowvelocity</span><span class="o">.</span><span class="n">py</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_constraint_selfweight</span><span class="o">.</span><span class="n">py</span>
+<span class="o">...</span>
+    <span class="n">femviewprovider</span><span class="o">/</span><span class="n">view_solver_ccxtools</span><span class="o">.</span><span class="n">py</span>
+<span class="p">)</span>
+</pre></div>
+<p><span id="Source_Organization"></span>
+</p>
+<h2><span class="mw-headline" id="Organisation_des_sources">Organisation des sources</span></h2>
+<p>Pour organiser le code Python, le module FEM utilise l'approche suivante. Le module est divisé en plusieurs paquets : 
+</p>
+<ul><li><code>femobjects</code>, qui contient tous les proxys Pythonnon GUI pour les objets document et</li>
+<li><code>femviewproviders</code> contenant tout ce qui concerne l'interface graphique, comme les proxys Python pour le fournisseur de vue</li>
+<li>Les panneaux de tâches en C ++ sont stockés dans '<code>Gui</code>',</li>
+<li>les icônes se trouvent dans '<code>Gui/Resources/icons/</code>',</li>
+<li>Les fichiers .ui sont stockés dans les commandes '<code>Gui/Resources/ui/</code>'.</li></ul>
+<p>Un paquet ne suit pas ce modèle : <code>femsolver</code>. Il a sa place au même niveau que <code>femobjects</code> et <code>femguiobjects</code> (<code>src/Mod/Fem/femsolver</code>). Le paquet contient des modules relatifs au solveur et aux équations et est organisé de la manière suivante :
+</p>
+<pre>.femsolver
+.femsolver.elmer
+.femsolver.elmer.equations
+.femsolver.calculix
+.femsolver.calculix.equations
+.femsolver.z88
+.femsolver.z88.equations
+</pre>
+<p><span id="Solver"></span>
+</p>
+<h2><span class="mw-headline" id="Le_solveur">Le solveur</span></h2>
+<p>Dans FreeCAD, un solveur peut être divisé en deux parties : 
+</p>
+<ul><li>L'une est l'objet document utilisé par l'utilisateur pour interagir avec le solveur. Grâce à lui, les paramètres du solveur peuvent être définis et il est également utilisé pour contrôler le processus de résolution.</li>
+<li>L'autre est ce que l'on appelle les tâches d'un solveur. Le processus de résolution est divisé en ces tâches, à savoir : <i>vérification, préparation, résolution et résultats</i>. Ces tâches consistent à exporter l'analyse dans un format compris par l'exécutable du solveur, à lancer l'exécutable et à charger les résultats dans FreeCAD.</li></ul>
+<p>La plupart des fichiers liés à un solveur sont dans un sous-paquet du paquet <code>femsolver</code> (par exemple, pour Elmer c'est dans <code>femsolver/elmer</code>). La liste suivante énumère tous les fichiers liés à la mise en œuvre d'un solveur. Ce sont les fichiers qui doivent être copiés et modifiés pour ajouter une prise en charge à un nouveau solveur à FreeCAD. L'exemple donné est tiré de l'implémentation du solveur d'Elmer. 
+</p>
+<ul><li><b>femsolver/elmer/solver.py:</b> objet document visible dans l'arborescence. Il est implémenté en Python via un proxy document et un proxy de visualisation.</li>
+<li><b>femsolver/elmer/tasks.py:</b> module contenant une classe de tâches par tâche requise pour une implémentation du solveur. Ces tâches divisent le processus de résolution d’une analyse en plusieurs étapes: vérification, préparation, résolution, résultats.</li>
+<li><b>femcommands/commands.py:</b> ajoute l'objet document du solveur au document actif. Il est nécessaire pour accéder à l'objet solveur à partir de l'interface graphique.</li></ul>
+<p><span id="Equations"></span>
+</p>
+<h2><span id=".C3.89quations"></span><span class="mw-headline" id="Équations">Équations</span></h2>
+<p>Une équation représente une propriété physique particulière qui doit être prise en compte lors de la résolution de l’analyse (par exemple flux, chaleur). Tous les solveurs de FreeCAD ne supportent pas (toutes) les équations. Les équations sont représentées par des objets enfants du solveur correspondant. Dans l'arborescence, cela ressemble à ceci :
+</p>
+<ul><li>Solveur Elemer
+<ul><li>Elasticité</li>
+<li>Chaleur</li>
+<li>Flux</li>
+<li>Electrostatique</li></ul></li></ul>
+<p>La plupart des options spécifiques au solveur (par ex. le nombre maximal d'itérations, la méthode de résolution, etc.) sont définies via les objets équation. Une conséquence de cela est que chaque solveur doit avoir sa propre implémentation de la "même". équation. CalculiX pourrait avoir un objet Heat différent de celui d'Elmer. Pour éviter d'avoir plusieurs boutons pour la même propriété physique dans l'interface graphique, chaque objet du solveur ajoute ses équations.
+</p><p>L'implémentation réelle peut être divisée en une partie générique et une partie spécifique au solveur. La partie générique se trouve dans le module <code>femsolver.equationbase</code>. La partie spécifique du solveur réside dans des sous paquets d'équations des paquets du solveur (par exemple <code>femsolver/elmer/equations</code>).
+</p><p>L'ajout d'une nouvelle équation à Elmer devrait être très facile. Pour les nouveaux venus, il existe un tutoriel qui explique comment ajouter une nouvelle équation à Elmer en ajoutant le solveur d'élasticité existant à FreeCAD : <a href="Add_FEM_Equation_Tutorial.html" title="Add FEM Equation Tutorial/fr">Tutoriel pour ajouter des équations FEM</a>.
+</p><p><span id="Constraints"></span>
+</p>
+<h2><span class="mw-headline" id="Contraintes">Contraintes</span></h2>
+<p>Les contraintes définissent les conditions aux limites du problème à résoudre. Dans FreeCAD, les contraintes ne sont pas spécifiques à un solveur particulier. Une configuration de problème peut être résolue par tous les résolveurs prenant en charge toutes les conditions de l'analyse.
+</p><p>L'ajout de nouvelles contraintes est assez simple. Pour les nouveaux arrivants, il existe un tutoriel : <a href="Add_FEM_Constraint_Tutorial.html" title="Add FEM Constraint Tutorial/fr">FEM Tutoriel pour ajouter des contraintes</a>.
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20241129211953
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.050 seconds
+Real time usage: 0.055 seconds
+Preprocessor visited node count: 196/1000000
+Post‐expand include size: 1579/2097152 bytes
+Template argument size: 1348/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 1/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 5242/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    4.802      1 -total
+ 23.70%    1.138      1 Template:Code
+ 22.78%    1.094      1 Template:TutorialInfo/fr
+ 20.43%    0.981     20 Template:Incode
+ 11.45%    0.550      1 Template:FileName
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:122559-0!canonical and timestamp 20241129211953 and revision id 1485196. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

@@ -1,0 +1,132 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">FreeCAD vector math library/pl</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FreeCAD_vector_math_library.html" lang="de" title="FreeCAD Vektor Mathematische Bibliothek (100% translated)">Deutsch</a></li>
+<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FreeCAD_vector_math_library.html" lang="en" title="FreeCAD vector math library (100% translated)">English</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="FreeCAD_vector_math_library.html" lang="tr" title="FreeCAD vector math library/tr (14% translated)">Türkçe</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--low" dir="ltr" href="FreeCAD_vector_math_library.html" lang="es" title="FreeCAD vector math library (29% translated)">español</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FreeCAD_vector_math_library.html" lang="fr" title="Bibliothèque mathématique vectorielle de FreeCAD (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="FreeCAD_vector_math_library.html" lang="it" title="Libreria di matematica vettoriale di FreeCAD (100% translated)">italiano</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="pl">polski</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="FreeCAD_vector_math_library.html" lang="ro" title="FreeCAD vector math library/ro (14% translated)">română</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="FreeCAD_vector_math_library.html" lang="sv" title="FreeCAD vector math library (14% translated)">svenska</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="FreeCAD_vector_math_library.html" lang="cs" title="FreeCAD vector math library (14% translated)">čeština</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="FreeCAD_vector_math_library.html" lang="ru" title="Библиотека векторной математики FreeCAD (14% translated)">русский</a></li></ul></div>
+<h2><span class="mw-headline" id="Wprowadzenie">Wprowadzenie</span></h2>
+<p>Jest to moduł <a href="Python.html" title="Python/pl">Python</a> zawierający kilka użytecznych funkcji do manipulowania wektorami. Biblioteka ta jest zawarta w środowisku pracy <a href="Draft_Workbench.html" title="Draft Workbench/pl">Rysunek Roboczy</a> i może być dostępna w ten sposób z interpretera Python:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">DraftVecUtils</span>
+</pre></div>
+<p>Proszę zauważyć, że ten moduł został stworzony dawno temu, kiedy klasa <code>Vector</code> nie miała wielu swoich metod. Teraz te operacje mogą być wykonywane przez samą klasę Vector.
+</p><p>Chociaż moduł <code>DraftVecUtils</code> nadal istnieje i nadal jest używany w Środowisku pracy <a href="Draft_Workbench.html" title="Draft Workbench/pl">Rysunek Roboczy</a>, prawdopodobnie bezpośrednio do nowych rozwiązań lepiej jest używać metod <code>Vector</code>.
+</p>
+<h2><span class="mw-headline" id="Funkcje">Funkcje</span></h2>
+<p>Wektory są cegłami budowlanymi niemal wszystkich operacji geometrycznych 3D, dlatego warto wiedzieć o nich trochę więcej, aby zrozumieć, jak te funkcje mogą być dla Ciebie użyteczne. Poniżej kilka dobrych stron, aby poznać podstawy matematyki wektorowej:
+</p>
+<ul><li><a class="external free" href="http://en.wikipedia.org/wiki/Vector_space" rel="nofollow">http://en.wikipedia.org/wiki/Vector_space</a></li>
+<li><a class="external free" href="http://maths-wiki.wikispaces.com/Vectors" rel="nofollow">http://maths-wiki.wikispaces.com/Vectors</a></li>
+<li><a class="external free" href="http://darksleep.com/player/opengl_coordinate_system_and_matrix_math.html" rel="nofollow">http://darksleep.com/player/opengl_coordinate_system_and_matrix_math.html</a></li></ul>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="sd">"""Vector math library for FreeCAD"""</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span>
+ 
+<span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">"""add(Vector,Vector) - adds two vectors"""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">first</span><span class="o">.</span><span class="n">x</span><span class="o">+</span><span class="n">other</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">first</span><span class="o">.</span><span class="n">y</span><span class="o">+</span><span class="n">other</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">first</span><span class="o">.</span><span class="n">z</span><span class="o">+</span><span class="n">other</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+ 
+<span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span> 
+    <span class="sd">"""sub(Vector,Vector) - subtracts second vector from first one"""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">first</span><span class="o">.</span><span class="n">x</span><span class="o">-</span><span class="n">other</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">first</span><span class="o">.</span><span class="n">y</span><span class="o">-</span><span class="n">other</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">first</span><span class="o">.</span><span class="n">z</span><span class="o">-</span><span class="n">other</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+ 
+<span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">scalar</span><span class="p">):</span>
+    <span class="sd">"""scale(Vector,Float) - scales (multiplies) a vector by a factor"""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">first</span><span class="o">.</span><span class="n">x</span><span class="o">*</span><span class="n">scalar</span><span class="p">,</span> <span class="n">first</span><span class="o">.</span><span class="n">y</span><span class="o">*</span><span class="n">scalar</span><span class="p">,</span> <span class="n">first</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="n">scalar</span><span class="p">)</span>
+ 
+<span class="k">def</span> <span class="nf">length</span><span class="p">(</span><span class="n">first</span><span class="p">):</span>
+    <span class="sd">"""lengh(Vector) - gives vector length"""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">first</span><span class="o">.</span><span class="n">x</span><span class="o">*</span><span class="n">first</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">first</span><span class="o">.</span><span class="n">y</span><span class="o">*</span><span class="n">first</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">first</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="n">first</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+ 
+<span class="k">def</span> <span class="nf">dist</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">"""dist(Vector,Vector) - returns the distance between both points/vectors"""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">length</span><span class="p">(</span><span class="n">sub</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">other</span><span class="p">))</span>
+ 
+<span class="k">def</span> <span class="nf">normalized</span><span class="p">(</span><span class="n">first</span><span class="p">):</span>
+    <span class="sd">"""normalized(Vector) - returns a unit vector"""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">):</span>
+        <span class="n">l</span><span class="o">=</span><span class="n">length</span><span class="p">(</span><span class="n">first</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">first</span><span class="o">.</span><span class="n">x</span><span class="o">/</span><span class="n">l</span><span class="p">,</span> <span class="n">first</span><span class="o">.</span><span class="n">y</span><span class="o">/</span><span class="n">l</span><span class="p">,</span> <span class="n">first</span><span class="o">.</span><span class="n">z</span><span class="o">/</span><span class="n">l</span><span class="p">)</span>
+ 
+<span class="k">def</span> <span class="nf">dotproduct</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">"""dotproduct(Vector,Vector) - returns the dot product of both vectors"""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">first</span><span class="o">.</span><span class="n">x</span><span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">first</span><span class="o">.</span><span class="n">y</span><span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">first</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+ 
+<span class="k">def</span> <span class="nf">crossproduct</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)):</span>
+    <span class="sd">"""crossproduct(Vector,Vector) - returns the cross product of both vectors. </span>
+<span class="sd">    If only one is specified, cross product is made with vertical axis, thus returning its perpendicular in XY plane"""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">first</span><span class="o">.</span><span class="n">y</span><span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">first</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">first</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">first</span><span class="o">.</span><span class="n">x</span><span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">first</span><span class="o">.</span><span class="n">x</span><span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">first</span><span class="o">.</span><span class="n">y</span><span class="o">*</span><span class="n">other</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+ 
+<span class="k">def</span> <span class="nf">angle</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)):</span>
+    <span class="sd">"""angle(Vector,Vector) - returns the angle in radians between the two vectors. </span>
+<span class="sd">    If only one is given, angle is between the vector and the horizontal East direction"""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">dotproduct</span><span class="p">(</span><span class="n">normalized</span><span class="p">(</span><span class="n">first</span><span class="p">),</span><span class="n">normalized</span><span class="p">(</span><span class="n">other</span><span class="p">)))</span>
+ 
+<span class="k">def</span> <span class="nf">project</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="sd">"""project(Vector,Vector): projects the first vector onto the second one"""</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">scale</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">dotproduct</span><span class="p">(</span><span class="n">first</span><span class="p">,</span><span class="n">other</span><span class="p">)</span><span class="o">/</span><span class="n">dotproduct</span><span class="p">(</span><span class="n">other</span><span class="p">,</span><span class="n">other</span><span class="p">))</span>
+</pre></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><a href="Power_users_hub.html" title="Power users hub/pl">Centrum Power użytkowników</a> <span typeof="mw:File"><a class="mw-file-description" href="../File/Power_user_hub.png"><img decoding="async" height="24" src="../File/Power_user_hub.png" srcset="/images/thumb/8/8f/Power_user_hub.png/36px-Power_user_hub.png 1.5x, /images/thumb/8/8f/Power_user_hub.png/48px-Power_user_hub.png 2x" width="24"/></a></span>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Tworzenie skryptów FreeCAD:</b> <a href="Python.html" title="Python/pl">Python</a>, <a href="Introduction_to_Python.html" title="Introduction to Python/pl">Wprowadzenie do środowiska Python</a>, <a href="Python_scripting_tutorial.html" title="Python scripting tutorial/pl">Poradnik: Tworzenie skryptów Python</a>, <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/pl">Podstawy tworzenia skryptów FreeCAD</a></li></ul>
+<hr/>
+<ul><li><b>Moduły:</b> <a href="Builtin_modules.html" title="Builtin modules/pl">Moduły wbudowane</a>, <a href="Units.html" title="Units/pl">Jednostki miar</a>, <a href="Quantity.html" title="Quantity">Ilość</a></li>
+<li><b>Środowiska pracy:</b> <a href="Workbench_creation.html" title="Workbench creation/pl">Tworzenie Środowiska pracy</a>, <a href="Gui_Command.html" title="Gui Command/pl">Polecenia Gui</a>, <a href="Command.html" title="Command">Polecenia</a>, <a href="Installing_more_workbenches.html" title="Installing more workbenches/pl">Instalacja większej liczby Środowisk pracy</a></li>
+<li><b>Siatki i elementy:</b> <a href="Mesh_Scripting.html" title="Mesh Scripting/pl">Skrytpy w Środowisku Siatek</a>, <a href="Topological_data_scripting.html" title="Topological data scripting/pl">v</a>, <a href="Mesh_to_Part.html" title="Mesh to Part/pl">Konwerska Mesh na Part</a>, <a href="PythonOCC.html" title="PythonOCC/pl">PythonOCC</a></li></ul>
+<hr/>
+<ul><li><b>Obiekty parametryczne:</b> <a href="Scripted_objects.html" title="Scripted objects/pl">Obiekty tworzone skryptami</a>, <a href="Viewprovider.html" title="Viewprovider">Obsługa obrazu</a> <small>(<a href="Custom_icon_in_tree_view.html" title="Custom icon in tree view">Ikonka niestandardowa w widoku drzewa</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="Scenegraph.html" title="Scenegraph/pl">Coin (Inventor) scenegraph</a>, <a href="Pivy.html" title="Pivy/pl">Pivy</a></li>
+<li><b>Interfejs graficzny:</b> <a href="Interface_creation.html" title="Interface creation">Stworzenie interfejsu</a>, <a href="Dialog_creation.html" title="Dialog creation/pl">Kompletne stworzenie interfejsu w środowisku Python</a> <small>(<a href="Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets">1</a>, <a href="Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files">2</a>, <a href="Dialog_creation_setting_colors.html" title="Dialog creation setting colors">3</a>, <a href="Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF">4</a>, <a href="PySide_usage_snippets.html" title="PySide usage snippets">5</a>)</small>, <a href="PySide.html" title="PySide/pl">PySide</a>, PySide examples <a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples">początkujący</a>, <a href="PySide_Intermediate_Examples.html" title="PySide Intermediate Examples">średniozaawansowany</a>, <a href="PySide_Advanced_Examples.html" title="PySide Advanced Examples">zaawansowany</a></li>
+<li><b>Makrodefinicje:</b> <a href="Macros.html" title="Macros/pl">Makrodefinicje</a>, <a href="How_to_install_macros.html" title="How to install macros/pl">Instalacja makrodefinicji</a></li>
+<li><b>Osadzanie programu:</b> <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD/pl">Osadzanie programu FreeCAD</a>, <a href="Embedding_FreeCADGui.html" title="Embedding FreeCADGui/pl">Osadzanie GUI FreeCAD</a></li></ul>
+<hr/>
+<ul><li><b>Pozostałe:</b> <a href="Expressions.html" title="Expressions/pl">Wyrażenia</a>, <a href="Code_snippets.html" title="Code snippets/pl">Wycinki kodu</a>, <a href="Line_drawing_function.html" title="Line drawing function/pl">Funkcja kreślenia linii</a>, <a class="mw-selflink selflink">Biblioteka matematyczna FreeCAD dla wektorów</a> <small>(deprecated)</small></li></ul>
+<hr/>
+<ul><li><b>Węzły użytkowników:</b> <a href="User_hub.html" title="User hub/pl">Centrum użytkownika</a>, <a href="Power_users_hub.html" title="Power users hub/pl">Centrum Power użytkowników</a>, <a href="Developer_hub.html" title="Developer hub/pl">Centrum programisty</a></li></ul></div>
+</div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129212841
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [no‐toc‐conversion]
+CPU time usage: 0.097 seconds
+Real time usage: 0.328 seconds
+Preprocessor visited node count: 74/1000000
+Post‐expand include size: 6519/2097152 bytes
+Template argument size: 5184/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 2/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 17617/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  179.891      1 -total
+ 96.42%  173.454      2 Template:Code
+  1.91%    3.437      1 Template:Powerdocnavi/pl
+  1.15%    2.064      1 Template:Navigation_menu_2
+  0.68%    1.224      3 Template:Incode
+  0.55%    0.981      1 Template:Clear
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:163826-0!canonical and timestamp 20241129212841 and revision id 986195. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="../script.js"></script>

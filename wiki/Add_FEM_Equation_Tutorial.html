@@ -1,0 +1,212 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Add FEM Equation Tutorial</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Add_FEM_Equation_Tutorial.html" lang="de" title="Tutorium FEM Gleichung hinzufügen (100% translated)">Deutsch</a></li>
+<li><span class="mw-pt-languages-ui mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="en">English</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Add_FEM_Equation_Tutorial.html" lang="fr" title="FEM Tutoriel pour ajouter des équations FEM (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Add_FEM_Equation_Tutorial.html" lang="it" title="Tutorial Aggiungere equazione FEM (100% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Add_FEM_Equation_Tutorial.html" lang="pl" title="Poradnik: Dodawanie równań w środowisku MES (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--med" dir="ltr" href="Add_FEM_Equation_Tutorial.html" lang="ro" title="Adaugă Ecuația Analiza Elementului Finit Tutorial (54% translated)">română</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Add_FEM_Equation_Tutorial.html" lang="ru" title="Руководство по добавлению уравнений в верстак FEM (3% translated)">русский</a></li></ul></div>
+<table class="fcinfobox wikitable ct" style="width: 230px; float: right; margin-left: 1em">
+<tbody><tr>
+<td class="ctTitle" style="font-weight: bold; font-size: 125%;"><span typeof="mw:File"><span><img decoding="async" height="32" src="File/Freecad.svg" width="32"/></span></span> Tutorial
+</td></tr>
+<tr>
+<th class="ctOdd">Topic
+</th></tr>
+<tr>
+<td class="ctEven">Add FEM Equation
+</td></tr>
+<tr>
+<th class="ctOdd">Level
+</th></tr>
+<tr>
+<td class="ctEven">Advanced
+</td></tr>
+<tr>
+<th class="ctOdd">Time to complete
+</th></tr>
+<tr>
+<td class="ctEven">1 day
+</td></tr>
+<tr>
+<th class="ctOdd">Authors
+</th></tr>
+<tr>
+<td class="ctEven"><a class="new" href="index.php?title=User;JohnWang&amp;action=edit&amp;redlink=1.html" title="User:JohnWang (page does not exist)">JohnWang</a>
+</td></tr>
+<tr>
+<th class="ctOdd">FreeCAD version
+</th></tr>
+<tr>
+<td class="ctEven">0.19
+</td></tr>
+<tr>
+<th class="ctOdd">Example files
+</th></tr>
+<tr>
+<td class="ctEven"><i>None</i>
+</td></tr>
+<tr>
+<th class="ctOdd">See also
+</th></tr>
+<tr>
+<td class="ctEven"><i>None</i>
+</td></tr>
+<tr>
+<td class="ctToc"><br/><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#New_equation_type"><span class="tocnumber">2</span> <span class="toctext">New equation type</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#New_Elmer's_equation_object"><span class="tocnumber">3</span> <span class="toctext">New Elmer's equation object</span></a>
+<ul>
+<li class="toclevel-2 tocsection-4"><a href="#Keywords"><span class="tocnumber">3.1</span> <span class="toctext">Keywords</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#Editing_files"><span class="tocnumber">3.2</span> <span class="toctext">Editing files</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-6"><a href="#Extend_Solver_Object"><span class="tocnumber">4</span> <span class="toctext">Extend Solver Object</span></a></li>
+<li class="toclevel-1 tocsection-7"><a href="#Extend_writer_object"><span class="tocnumber">5</span> <span class="toctext">Extend writer object</span></a></li>
+<li class="toclevel-1 tocsection-8"><a href="#Gui_tool_to_create_an_equation"><span class="tocnumber">6</span> <span class="toctext">Gui tool to create an equation</span></a></li>
+</ul>
+</div>
+</td></tr></tbody></table>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>In this tutorial, we are going to add the <b>Flow</b> equation to FreeCAD and implement support for the Elmer solver. Please make sure you have read and understood <a href="Extend_FEM_Module.html" title="Extend FEM Module">Extend FEM Module</a> before reading this tutorial.
+</p><p>The task can be split into five parts:
+</p>
+<ul><li><b>New equation type</b>. This step must only be done if the equation doesn't exist in FreeCAD yet (as opposed to an equation that is already in FreeCAD but not supported by the target solver).</li>
+<li><b>New equation object</b>. Adding a concrete document object representing the Elmer-specific equation.</li>
+<li><b>Extend solver object</b>. Adding support for the new equation to the solver object of Elmer.</li>
+<li><b>Extend writer object</b>. Extending the analysis export of Elmer to support the new equation type.</li>
+<li><b>Gui tool to create an equation</b>. Access the new equation function through workbench Gui.</li></ul>
+<h2><span class="mw-headline" id="New_equation_type">New equation type</span></h2>
+<p>In this step we are going to modify the following file:
+</p>
+<ul><li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/femsolver/equationbase.py</span></li></ul>
+<p>The equation type is shared among all equation objects of the different solvers. Each type has a string specifier (e.g. "Heat") and a dedicated command that adds the equation to the selected solver. This allows for a simpler GUI where we have only one button for the heat equation which is used for all supported solver.
+</p><p>First, add the new equation to the <code>equationbase.py</code> module. Each equation requires two classes. A document proxy and a view proxy. Those two classes will later be used as base classes for the Elmer-specific equation classes. Just copy-paste them from an existing equation type and adjust the icon path inside <code>getIcon(self)</code> of the view proxy.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">FlowProxy</span><span class="p">(</span><span class="n">BaseProxy</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span> <span class="nc">FlowViewProxy</span><span class="p">(</span><span class="n">BaseViewProxy</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">getIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">":/icons/FEM_EquationFlow.svg"</span>
+</pre></div>
+<h2><span id="New_Elmer.27s_equation_object"></span><span class="mw-headline" id="New_Elmer's_equation_object">New Elmer's equation object</span></h2>
+<p>In this step, we are going to implement the document object. We need to add a new <code>flow.py</code> file at:
+</p>
+<ul><li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/femsolver/elmer/equations/flow.py</span></li></ul>
+<p>and modify the following files:
+</p>
+<ul><li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/ObjectsFem.py</span></li>
+<li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/CMakeLists.txt</span></li></ul>
+<p>Let's start with adding the new <code>flow.py</code> file. This file can be copied from an existing equation.
+</p>
+<h3><span class="mw-headline" id="Keywords">Keywords</span></h3>
+<ul><li>If the new equation only supports keywords for <b>linear</b> systems copy the <code>femsolver/elmer/equations/elasticity.py</code> module.</li>
+<li>If the new equation supports keywords for both <b>linear</b> and <b>non-linear</b> systems, copy <code>femsolver/elmer/equations/heat.py</code>.</li></ul>
+<p>The flow equation in Elmer is a potentially non-linear equation. This means that we are going to base our work on <code>heat.py</code>.
+</p>
+<h3><span class="mw-headline" id="Editing_files">Editing files</span></h3>
+<p>After copying <code>heat.py</code> to <code>flow.py</code>, adjust <code>flow.py</code> in these locations:
+</p>
+<ul><li>the name argument of the <code>create</code> module function,</li>
+<li>the base classes of the <code>Proxy</code> class,</li>
+<li>the <code>Type</code> attribute of the <code>Proxy</code> class,</li>
+<li>the <code>ViewProxy</code> classes.</li></ul>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"'''Flow'''"</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">femutils</span><span class="o">.</span><span class="n">createObject</span><span class="p">(</span>
+        <span class="n">doc</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">Proxy</span><span class="p">,</span> <span class="n">ViewProxy</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">Proxy</span><span class="p">(</span><span class="n">nonlinear</span><span class="o">.</span><span class="n">Proxy</span><span class="p">,</span> <span class="n">equationbase</span><span class="o">.</span><span class="s1">'''Flow'''</span><span class="n">Proxy</span><span class="p">):</span>
+
+    <span class="n">Type</span> <span class="o">=</span> <span class="s2">"Fem::EquationElmer'''Flow'''"</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Proxy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Priority</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="k">class</span> <span class="nc">ViewProxy</span><span class="p">(</span><span class="n">nonlinear</span><span class="o">.</span><span class="n">ViewProxy</span><span class="p">,</span> <span class="n">equationbase</span><span class="o">.</span><span class="s1">'''Flow'''</span><span class="n">ViewProxy</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
+<p>Then you need to change the properties added via the <code>obj.addProperty(..)</code> function to those needed by the equation.
+</p><p>At the moment of writing this tutorial Elmer flow equation doesn't have any special properties. See the Elmer elasticity equation for an example with properties.
+</p><p>Finally one has to register a <b>makeEquationFlow</b> definition in <code>src/Mod/Fem/ObjectsFem.py</code> by duplicating an available entry.
+</p><p>FreeCAD uses <b>make</b> to build the program. So we need to register the new module file (<code>flow.py</code>) in <code>src/Mod/Fem/CMakeLists.txt</code> the way described in <a class="external text" href="https://www.freecadweb.org/wiki/Extend_FEM_Module" rel="nofollow">Extend FEM Module</a>. The suitable lists can be easily found by searching for existing equation module files of Elmer.
+</p>
+<h2><span class="mw-headline" id="Extend_Solver_Object">Extend Solver Object</span></h2>
+<p>In this step we are going to modify the following file:
+</p>
+<ul><li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/femsolver/elmer/solver.py</span></li></ul>
+<p>Right now we made FreeCAD aware that there is a new type of equation and even added a command that adds this equation to the selected solver object. We also implemented a concrete equation object for Elmer. What's left to do now is to make the connection between Elmer and the flow equation. This must be done directly in the Elmer solver object.
+</p><p>Register the module in which we just implemented our new equation object (<code>flow.py</code>) with the equation specifier from step 1 ("Flow") in the <code>_EQUATIONS</code> list in <code>elmer/solver.py</code>.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">.equations</span> <span class="kn">import</span> <span class="n">electrostatic</span>
+<span class="o">+</span><span class="kn">from</span> <span class="nn">.equations</span> <span class="kn">import</span> <span class="n">flow</span>
+
+<span class="o">...</span>
+
+<span class="n">_EQUATIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"Heat"</span><span class="p">:</span> <span class="n">heat</span><span class="p">,</span>
+    <span class="s2">"Elasticity"</span><span class="p">:</span> <span class="n">elasticity</span><span class="p">,</span>
+<span class="o">+</span>    <span class="s2">"Flow"</span><span class="p">:</span> <span class="n">flow</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+<h2><span class="mw-headline" id="Extend_writer_object">Extend writer object</span></h2>
+<p>In this step we are going to modify the following file:
+</p>
+<ul><li><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Mod/Fem/femsolver/elmer/writer.py</span></li></ul>
+<p>This file contains the <code>Writer</code> class which exports the analysis into Elmer SIF format.
+</p><p>For every supported equation, there are two main methods handling the export of the respective equation. Just copy all of them from an existing equation and adjust them to your needs.
+</p>
+<ul><li><code>_getFlowSolver</code></li>
+<li><code>_handleFlow</code></li></ul>
+<p>You need to register the <code>_handleFlow</code> method inside the <code>Writer</code> class:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">Writer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="o">...</span>
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="o">...</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handleFlow</span><span class="p">()</span>
+
+<span class="o">...</span>
+</pre></div>
+<p><code>_handleFlow</code> can control a series of other detailed methods. Our flow equation uses the following detailed methods:
+</p>
+<ul><li><code>_handleFlowConstants</code></li>
+<li><code>_handleFlowMaterial</code></li>
+<li><code>_handleFlowInitialVelocity</code></li>
+<li><code>_handleFlowBndConditions</code></li>
+<li><code>_handleFlowEquation</code></li></ul>
+<p>We now finished the function part of the new equation. Next, we'll connect the new equation through the GUI.
+</p>
+<h2><span class="mw-headline" id="Gui_tool_to_create_an_equation">Gui tool to create an equation</span></h2>
+<p>We have just created a new equation class. To access it from the FEM GUI, we need to create a button and link it to the new equation class. Here is a tutorial: <a href="Add_Button_to_FEM_Toolbar_Tutorial.html" title="Add Button to FEM Toolbar Tutorial">Add Button to FEM Toolbar Tutorial</a>.
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20241129212622
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.070 seconds
+Real time usage: 0.562 seconds
+Preprocessor visited node count: 392/1000000
+Post‐expand include size: 2745/2097152 bytes
+Template argument size: 1481/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 4/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 6211/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  484.258      1 -total
+ 98.91%  478.997      4 Template:Code
+  0.27%    1.297     33 Template:Incode
+  0.25%    1.216      1 Template:TutorialInfo
+  0.13%    0.609      6 Template:FileName
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:81915-0!canonical and timestamp 20241129212622 and revision id 1354456. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>

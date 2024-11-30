@@ -1,0 +1,70 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">C++ code testing</span></h1><div class="mw-parser-output"><p>NOTE: This article is a stub -- please help by filling in the missing details!
+</p><p>Beginning in late 2022 the developers of FreeCAD incorporated the <a class="external text" href="https://google.github.io/googletest/" rel="nofollow">Google Test</a> (gtest) testing framework into FreeCAD builds. This enables direct testing of the C++ code itself, without having to go through the Python wrappers (as was the case previously). This wiki page is intended as a simple, practical introduction to testing C++ code using Google Test. As  a developer gains experience with the framework, they will likely be interested in more advanced techniques: see Further Reading, below.
+</p>
+<div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Overview_of_Testing_with_Google_Test"><span class="tocnumber">1</span> <span class="toctext">Overview of Testing with Google Test</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Test_Basics"><span class="tocnumber">2</span> <span class="toctext">Test Basics</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Compiling_the_tests"><span class="tocnumber">3</span> <span class="toctext">Compiling the tests</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Further_Reading"><span class="tocnumber">4</span> <span class="toctext">Further Reading</span></a></li>
+</ul>
+</div>
+<h2><span class="mw-headline" id="Overview_of_Testing_with_Google_Test">Overview of Testing with Google Test</span></h2>
+<p>The basic premise of Google Test is that each individual test is wholly standalone. Test must be designed to be independent of one another: the order tests are run should never be relied on (in fact, many IDEs support running individual tests by clicking a "run" button next to the test function, so it is often the case that only a single test is run). A test writer uses a set of macros defined within Google Test to construct the individual tests: those macros ultimately expand into entire classes that are responsible for setup, teardown, and running of the test.
+</p>
+<h2><span class="mw-headline" id="Test_Basics">Test Basics</span></h2>
+<p>At its most simple, a test suite for a class "MyClass" in module "MyMod" consists of a file in <code>tests/src/Mod/MyMod/MyClass.cpp</code> containing the gtest include, the class header file include, and one or more individual tests, instantiated via the TEST macro. For example:
+</p>
+<pre>#include "gtest/gtest.h"
+
+#include "App/License.h"
+
+TEST(License, AllRightsReserved)
+{
+    auto lic = App::License{App::License::Type::AllRightsReserved};
+    ASSERT_EQ(lic.getType(), App::License::Type::AllRightsReserved);
+    ASSERT_EQ(lic.getLicense(), "All rights reserved");
+    ASSERT_EQ(lic.getUrl(), "https://en.wikipedia.org/wiki/All_rights_reserved");
+}
+</pre>
+<p>This file is referenced in the CMakeLists.txt file in the <code>tests/src/Mod/MyMod/</code> directory:
+</p>
+<pre>target_sources(
+    Tests_run
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/MyClass.cpp
+)
+</pre>
+<h2><span class="mw-headline" id="Compiling_the_tests">Compiling the tests</span></h2>
+<p>The FreeCAD cMake scripts use the variable <code>BUILD_TEST</code> to determine whether to compile the tests during a build. If that variable is <code>ON</code>, the test executables are compiled when compiling FreeCAD.
+</p>
+<h2><span class="mw-headline" id="Further_Reading">Further Reading</span></h2>
+<ul><li>Google Test: Advanced Topics: <a class="external free" href="https://google.github.io/googletest/advanced.html" rel="nofollow">https://google.github.io/googletest/advanced.html</a></li>
+<li>Feathers, Michael. Working Effectively with Legacy Code. ISBN: 978-0131177055</li>
+<li>Beck, Kent. Test-Driven Development. ISBN: 978-0321146533</li>
+<li>Langr, Jeff. Modern C++ Programming with Test-Driven Development. 978-1937785482</li></ul>
+<!-- 
+NewPP limit report
+Cached time: 20241129211342
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.005 seconds
+Real time usage: 0.005 seconds
+Preprocessor visited node count: 46/1000000
+Post‐expand include size: 115/2097152 bytes
+Template argument size: 63/2097152 bytes
+Highest expansion depth: 3/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 488/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    1.513      1 -total
+ 82.34%    1.246      4 Template:Incode
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:306848-0!canonical and timestamp 20241129211342 and revision id 1235003. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>

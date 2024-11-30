@@ -1,0 +1,811 @@
+<link href="site.css" rel="stylesheet" type="text/css"/>
+<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">Tutorial FreeCAD POV ray</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Tutorial_FreeCAD_POV_ray.html" lang="de" title="Tutorium FreeCAD POV ray (100% translated)">Deutsch</a></li>
+<li><span class="mw-pt-languages-ui mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" dir="ltr" lang="en">English</span></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Tutorial_FreeCAD_POV_ray.html" lang="fr" title="FreeCAD POV ray Tutoriel (100% translated)">français</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Tutorial_FreeCAD_POV_ray.html" lang="it" title="Tutorial FreeCAD POV ray (6% translated)">italiano</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="Tutorial_FreeCAD_POV_ray.html" lang="pl" title="Poradnik: FreeCAD POV ray (100% translated)">polski</a></li>
+<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="Tutorial_FreeCAD_POV_ray.html" lang="ru" title="Учебник FreeCAD и POV ray (2% translated)">русский</a></li></ul></div>
+<div id="itsfree" style="text-align:center;color:black;background:#FDE0A8;margin:1em 7em;padding:0.5em 2em;border:2px solid #FF5706;">The <a href="Raytracing_Workbench.html" title="Raytracing Workbench">Raytracing workbench</a> is being superseded by the new <a class="external text" href="https://github.com/FreeCAD/FreeCAD-render" rel="nofollow">Render Workbench</a>, which is intended as its replacement. The Render Workbench can be installed through the <a href="Std_AddonMgr.html" title="Std AddonMgr">Addon Manager</a>. The information here is provided because by default FreeCAD is still shipped (as of 0.19-24276) with the Raytracing Workbench, and because the new workbench should basically work in the same way</div>
+<table class="fcinfobox wikitable ct" style="width: 230px; float: right; margin-left: 1em">
+<tbody><tr>
+<td class="ctTitle" style="font-weight: bold; font-size: 125%;"><span typeof="mw:File"><span><img decoding="async" height="32" src="File/Freecad.svg" width="32"/></span></span> Tutorial
+</td></tr>
+<tr>
+<th class="ctOdd">Topic
+</th></tr>
+<tr>
+<td class="ctEven">Rendering
+</td></tr>
+<tr>
+<th class="ctOdd">Level
+</th></tr>
+<tr>
+<td class="ctEven">Intermediate
+</td></tr>
+<tr>
+<th class="ctOdd">Time to complete
+</th></tr>
+<tr>
+<td class="ctEven">120 minutes
+</td></tr>
+<tr>
+<th class="ctOdd">Authors
+</th></tr>
+<tr>
+<td class="ctEven"><a class="external text" href="https://forum.freecadweb.org/memberlist.php?mode=viewprofile&amp;u=21943" rel="nofollow">vocx</a>
+</td></tr>
+<tr>
+<th class="ctOdd">FreeCAD version
+</th></tr>
+<tr>
+<td class="ctEven">0.18 or greater
+</td></tr>
+<tr>
+<th class="ctOdd">Example files
+</th></tr>
+<tr>
+<td class="ctEven">none
+</td></tr>
+<tr>
+<th class="ctOdd">See also
+</th></tr>
+<tr>
+<td class="ctEven"><i>None</i>
+</td></tr>
+<tr>
+<td class="ctToc"><br/><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Introduction"><span class="tocnumber">1</span> <span class="toctext">Introduction</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Basic_setup"><span class="tocnumber">2</span> <span class="toctext">Basic setup</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Setup_the_.pov_file"><span class="tocnumber">3</span> <span class="toctext">Setup the .pov file</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Editing_the_.pov_file"><span class="tocnumber">4</span> <span class="toctext">Editing the .pov file</span></a>
+<ul>
+<li class="toclevel-2 tocsection-5"><a href="#Basic_re-organization"><span class="tocnumber">4.1</span> <span class="toctext">Basic re-organization</span></a></li>
+<li class="toclevel-2 tocsection-6"><a href="#Prepare_lights"><span class="tocnumber">4.2</span> <span class="toctext">Prepare lights</span></a></li>
+<li class="toclevel-2 tocsection-7"><a href="#Prepare_the_body_textures"><span class="tocnumber">4.3</span> <span class="toctext">Prepare the body textures</span></a>
+<ul>
+<li class="toclevel-3 tocsection-8"><a href="#Material_libraries"><span class="tocnumber">4.3.1</span> <span class="toctext">Material libraries</span></a></li>
+<li class="toclevel-3 tocsection-9"><a href="#New_textures"><span class="tocnumber">4.3.2</span> <span class="toctext">New textures</span></a></li>
+</ul>
+</li>
+<li class="toclevel-2 tocsection-10"><a href="#Prepare_planes"><span class="tocnumber">4.4</span> <span class="toctext">Prepare planes</span></a></li>
+<li class="toclevel-2 tocsection-11"><a href="#Prepare_the_global_settings,_radiosity"><span class="tocnumber">4.5</span> <span class="toctext">Prepare the global settings, radiosity</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-12"><a href="#Final_render"><span class="tocnumber">5</span> <span class="toctext">Final render</span></a></li>
+<li class="toclevel-1 tocsection-13"><a href="#Final_notes"><span class="tocnumber">6</span> <span class="toctext">Final notes</span></a></li>
+</ul>
+</div>
+</td></tr></tbody></table>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>This tutorial shows how to produce a rendered image in FreeCAD, using the POV-Ray renderer. It assumes that the user already created a part or assembly in FreeCAD, or has imported one into it. It uses the <a href="Raytracing_Workbench.html" title="Raytracing Workbench">Raytracing Workbench</a> to produce the file for rendering.
+</p><p>This tutorial is based on the forum post by schupin <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=36&amp;t=32745" rel="nofollow">FreeCAD / pov ray tutorial</a>, which also includes one <code>.pov</code> file required to produce a rendering.
+</p>
+<figure class="mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/Povray_before_after.png"><img decoding="async" height="300" src="File/Povray_before_after.png" srcset="/images/0/0f/Povray_before_after.png 1.5x" width="600"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">Example by schupin of a 3D model and high quality render produced with FreeCAD and POV-Ray.</p>
+<p>The files used in this tutorial are in post #8 <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=36&amp;t=32745#p305169" rel="nofollow">in the same thread</a>.
+</p>
+<h2><span class="mw-headline" id="Basic_setup">Basic setup</span></h2>
+<p>Follow the basic workflow outlined in the <a href="Raytracing_Workbench.html" title="Raytracing Workbench">Raytracing Workbench</a> documentation.
+</p><p>For direct rendering to work, the <code>povray</code> executable must be set in <b>Edit → Preferences → Raytracing → Render → POV-Ray executable</b>; set it to its location in your system, for example, <code>/usr/bin/povray</code>. Other options used by the renderer can be defined here as well, including the width <code>+W</code> and height <code>+H</code> of the image, and the use of antialiasing <code>+A</code>.
+</p>
+<h2><span class="mw-headline" id="Setup_the_.pov_file">Setup the .pov file</span></h2>
+<p>1. Create an assembly using bodies from the <a href="Part_Workbench.html" title="Part Workbench">Part</a> or <a href="PartDesign_Workbench.html" title="PartDesign Workbench">PartDesign Workbenches</a>, or any other workbench that produces solid objects, for example, the <a href="Arch_Workbench.html" title="Arch Workbench">Arch Workbench</a>. Assign colors or materials to the individual bodies that make the assembly, approximately matching the color that you want in your render. 
+</p>
+<figure class="mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/01_T04_FreeCAD_POVray_model.png"><img decoding="async" height="444" src="File/01_T04_FreeCAD_POVray_model.png" srcset="/images/1/1b/01_T04_FreeCAD_POVray_model.png 1.5x" width="600"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">Assembly of three bodies created in FreeCAD, and with colors or materials assigned.</p>
+<p>2. If your model is very detailed, make sure the <span style="font-size:60%; padding-right:0.8em;">View</span><b>Deviation</b> of the body is set to a low value, between <code>0.1</code> and <code>0.01</code>, or even smaller. The lower this value is, the more detailed the exported mesh will be, and thus the better the quality of the render will be.
+</p>
+<figure class="mw-default-size mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/02_T04_FreeCAD_POVray_deviation.png"><img decoding="async" height="595" src="File/02_T04_FreeCAD_POVray_deviation.png" width="540"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">Deviation property of the bodies created in FreeCAD; the deviation needs to be small in order to export the parts with good resolution.</p>
+<p>3. Create a POV-Ray project by clicking <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="File/Raytrace_New.svg"><img decoding="async" height="16" src="File/Raytrace_New.svg" width="16"/></a></span> <a href="Raytracing_New.html" title="Raytracing New">New</a></span>. If the viewport is set as <a href="Std_OrthographicCamera.html" title="Std OrthographicCamera">orthographic</a>, change it to <a href="Std_PerspectiveCamera.html" title="Std PerspectiveCamera">perspective</a>, as the renderer will normally work with a camera with perspective view. Using perspective view will allow you to see better the type of scene that will be rendered.
+</p><p>4. Select all objects that you want to add to your scene, then select the created <code>PovProject</code> object, and click on <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="File/Raytrace_NewPartSegment.svg"><img decoding="async" height="16" src="File/Raytrace_NewPartSegment.svg" width="16"/></a></span> <a href="Raytracing_InsertPart.html" title="Raytracing InsertPart">InsertPart</a></span>.
+</p><p><i>Note:</i> beware of those objects that are not currently visible in the 3D viewport. If they are invisible but are included in the scene, they will still be rendered. On the other hand, if you really want to omit a body from being rendered, don't select it for inclusion into the POV-Ray project.
+</p><p><i>Note 2:</i> all objects in the POV-Ray project will have a name based on their internal FreeCAD name. It's important to note which is the POV-Ray name, as further options, for example, the material textures, will be assigned to these POV-Ray names.
+</p><p>5. In the 3D viewport, zoom, pan and rotate the view to setup the scene as you want. Make sure the objects are centered in the viewport, then select the created <code>PovProject</code> object, and press <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="File/Raytrace_ResetCamera.svg"><img decoding="async" height="16" src="File/Raytrace_ResetCamera.svg" width="16"/></a></span> <a href="Raytracing_ResetCamera.html" title="Raytracing ResetCamera">ResetCamera</a></span>.
+</p><p>6. The POV-Ray file is now ready; it contains the selected objects and the camera information. Select the created <code>PovProject</code> object, and then press <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="File/Raytrace_ExportProject.svg"><img decoding="async" height="16" src="File/Raytrace_ExportProject.svg" width="16"/></a></span> <a href="Raytracing_ExportProject.html" title="Raytracing ExportProject">ExportProject</a></span> to save the <code>.pov</code> file.
+</p><p>7. The created <code>.pov</code> file can now be rendered directly from FreeCAD. Select the created <code>PovProject</code> object, then press <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="File/Raytrace_Render.svg"><img decoding="async" height="16" src="File/Raytrace_Render.svg" width="16"/></a></span> <a href="Raytracing_Render.html" title="Raytracing Render">Render</a></span>. When the popup image appears on screen, click on it so that it is sent to FreeCAD in its own window tab.
+</p>
+<figure class="mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/03_T04_FreeCAD_POVray_first_render.png"><img decoding="async" height="450" src="File/03_T04_FreeCAD_POVray_first_render.png" srcset="/images/d/d8/03_T04_FreeCAD_POVray_first_render.png 1.5x" width="600"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">First render of the assembly produced with POV-Ray, with the standard template written by the Raytracing Workbench.</p>
+<p>7.1. With the <code>.pov</code> file already created, it is also possible to run <code>povray</code> from the command line.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">povray</span> <span class="n">assembly</span><span class="o">.</span><span class="n">pov</span> <span class="o">+</span><span class="n">W800</span> <span class="o">+</span><span class="n">H600</span> <span class="o">+</span><span class="n">AM2</span> <span class="o">+</span><span class="n">A</span>
+</pre></div>
+<p>The options <code>+WX +HY</code> set the horizontal and vertical pixel sizes of the final image.
+</p><p>The options <code>+AM2</code> (type 2, recursive super-sampling) and <code>+A</code> trigger antialiasing to produce a smoother image.
+</p><p>8. By double clicking the <code>PovProject</code> object it's possible to see that it is using the <code>ProjectStd.pov</code> template; this template creates a basic <code>.pov</code> file which will produce a simple and dark image.
+</p><p>To improve the appearance of the image, use a better template. Double click the <code>PovProject</code> object and choose the <code>RadiosityNormal.pov</code> template. Then export a new <code>.pov</code> file, and run again the renderer. The image should look brighter and generally better.
+</p>
+<figure class="mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/04_T04_FreeCAD_POVray_first_render_radiosity.png"><img decoding="async" height="450" src="File/04_T04_FreeCAD_POVray_first_render_radiosity.png" srcset="/images/9/9b/04_T04_FreeCAD_POVray_first_render_radiosity.png 1.5x" width="600"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">Render of the assembly produced with POV-Ray, with the RadiosityNormal template written by the Raytracing Workbench.</p>
+<p>Once again double click the <code>PovProject</code> object and now choose the <code>RadiosityOutdoorHQ.pov</code> template. Then export a new <code>.pov</code> file, and run again the renderer. The image should take longer to produce, but the result should have better quality.
+</p>
+<figure class="mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/05_T04_FreeCAD_POVray_first_render_radiosity_outdoor.png"><img decoding="async" height="450" src="File/05_T04_FreeCAD_POVray_first_render_radiosity_outdoor.png" srcset="/images/9/9d/05_T04_FreeCAD_POVray_first_render_radiosity_outdoor.png 1.5x" width="600"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">Render of the assembly produced with POV-Ray, with the RadiosityOutdoorHQ template written by the Raytracing Workbench.</p>
+<p>If the rendered image is good enough, then it can be saved, and there is nothing more to do. However, in order to control precisely the appearance of the materials and produce even better results, the <code>.pov</code> file needs to be edited manually.
+</p><p>In the following sections, we edit the basic <code>.pov</code> file produced with the <code>ProjectStd</code> template.
+</p>
+<h2><span class="mw-headline" id="Editing_the_.pov_file">Editing the .pov file</span></h2>
+<p>9. The <code>.pov</code> file generated by FreeCAD is a simple text file that can be opened with any editor. It loosely resembles a C++ source code file: directives start with a hash <code>#</code> and are terminated by a semi-colon <code>;</code>. Curly braces <code>{ }</code> are used to limit section blocks, and indentation is arbitrary white space. Comments are indicated with a double slash <code>//</code>; block comments can be defined with a pair of <code>/*  */</code>, like in C.
+</p><p>The file may look complicated at first but 90% of its content is just mesh data that doesn't require many changes, as these meshes represent the geometry of the bodies that we want to render.
+</p><p>The file is structured as follows:
+</p>
+<ul><li>Includes</li>
+<li>Global settings</li>
+<li>Sky sphere</li>
+<li>Planes</li>
+<li>Finishes and textures</li>
+<li>Camera</li>
+<li>Mesh and body information</li>
+<li>Light source</li></ul>
+<p>The camera information will not be touched, neither most information in the meshes. The main modifications will be made on the other sections.
+</p><p>As the meshes won't be heavily modified, the file can be re-organized so this information is at the end of the file.
+</p>
+<div class="toccolours mw-collapsible mw-collapsed">
+<p>This is the complete content of the <code>.pov</code> file, only without the meshes.
+</p>
+<div class="mw-collapsible-content">
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">//</span> <span class="n">Persistence</span> <span class="n">of</span> <span class="n">Vision</span> <span class="n">Ray</span> <span class="n">Tracer</span> <span class="n">Scene</span> <span class="n">Description</span> <span class="n">File</span>
+<span class="o">//</span> <span class="k">for</span> <span class="n">FreeCAD</span> <span class="p">(</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">freecadweb</span><span class="o">.</span><span class="n">org</span><span class="p">)</span>
+
+<span class="c1">#version 3.6;</span>
+
+<span class="c1">#include "colors.inc"</span>
+<span class="c1">#include "metals.inc"</span>
+
+<span class="o">//</span> <span class="o">----------------------------------------</span>
+
+<span class="n">global_settings</span> <span class="p">{</span>
+    <span class="n">assumed_gamma</span> <span class="mf">1.0</span>
+    <span class="n">ambient_light</span> <span class="n">color</span> <span class="n">rgb</span> <span class="o">&lt;</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="o">&gt;</span>
+    <span class="n">max_trace_level</span> <span class="mi">20</span>
+<span class="p">}</span>  
+
+<span class="o">//</span> <span class="o">----------------------------------------</span>
+
+
+<span class="n">sky_sphere</span> <span class="p">{</span>
+  <span class="n">pigment</span> <span class="p">{</span>
+    <span class="n">gradient</span> <span class="n">y</span>
+    <span class="n">color_map</span> <span class="p">{</span>
+      <span class="p">[</span><span class="mf">0.0</span> <span class="n">rgb</span> <span class="o">&lt;</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">1.0</span><span class="o">&gt;</span><span class="p">]</span>
+      <span class="p">[</span><span class="mf">0.7</span> <span class="n">rgb</span> <span class="o">&lt;</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.8</span><span class="o">&gt;</span><span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="o">//</span> <span class="o">----------------------------------------</span>
+
+<span class="n">plane</span> <span class="p">{</span>
+  <span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="n">texture</span> <span class="p">{</span> <span class="n">pigment</span> <span class="p">{</span><span class="n">rgb</span> <span class="o">&lt;</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="o">&gt;</span><span class="p">}</span> <span class="n">finish</span> <span class="p">{</span><span class="n">ambient</span> <span class="mf">0.0</span> <span class="n">reflection</span> <span class="mf">0.05</span> <span class="n">specular</span> <span class="mf">0.0</span><span class="p">}</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">//</span> <span class="n">Standard</span> <span class="n">finish</span>
+<span class="o">//</span><span class="c1">#declare StdFinish = F_MetalA;</span>
+<span class="o">//</span><span class="c1">#declare StdFinish = finish { diffuse 0.7 };</span>
+<span class="o">//</span><span class="c1">#declare StdFinish = finish { phong 0.5 };</span>
+<span class="o">//</span><span class="c1">#declare StdFinish = finish { ambient rgb &lt;0.5,0.5,0.5&gt; };</span>
+<span class="o">//</span><span class="c1">#declare StdFinish = finish { crand 0.5 phong 0.9};</span>
+<span class="c1">#declare StdFinish = finish { ambient 0.01 diffuse 0.9 phong 1.0 phong_size 70 metallic brilliance 1.5} ;</span>
+
+<span class="o">//</span> <span class="n">declares</span> <span class="n">position</span> <span class="ow">and</span> <span class="n">view</span> <span class="n">direction</span>
+
+<span class="o">//</span> <span class="n">Generated</span> <span class="n">by</span> <span class="n">FreeCAD</span> <span class="p">(</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">freecadweb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="p">)</span>
+<span class="c1">#declare cam_location =  &lt;-171.753,1229.11,-2667.08&gt;;</span>
+<span class="c1">#declare cam_look_at  = &lt;636.959,359.955,160.296&gt;;</span>
+<span class="c1">#declare cam_sky      = &lt;0.068217,0.958943,0.275273&gt;;</span>
+<span class="c1">#declare cam_angle    = 45; </span>
+<span class="n">camera</span> <span class="p">{</span>
+  <span class="n">location</span>  <span class="n">cam_location</span>
+  <span class="n">look_at</span>   <span class="n">cam_look_at</span>
+  <span class="n">sky</span>       <span class="n">cam_sky</span>
+  <span class="n">angle</span>     <span class="n">cam_angle</span> 
+  <span class="n">right</span> <span class="n">x</span><span class="o">*</span><span class="mi">800</span><span class="o">/</span><span class="mi">600</span>
+<span class="p">}</span>
+<span class="o">//</span> <span class="n">Written</span> <span class="n">by</span> <span class="n">FreeCAD</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">freecadweb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span>
+<span class="o">//</span> <span class="n">face</span> <span class="n">number1</span> <span class="o">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+<span class="o">//</span> <span class="o">...</span> <span class="n">meshes</span> <span class="n">should</span> <span class="n">be</span> <span class="n">defined</span> <span class="n">here</span> <span class="n">until</span> <span class="n">the</span> <span class="n">end</span> <span class="n">of</span> <span class="n">the</span> <span class="n">file</span> <span class="o">...</span>
+
+
+
+
+<span class="o">//</span><span class="n">default</span> <span class="n">light</span>
+<span class="n">light_source</span> <span class="p">{</span>
+  <span class="n">cam_location</span> <span class="o">+</span> <span class="n">cam_angle</span> <span class="o">*</span> <span class="mi">100</span>
+  <span class="n">color</span> <span class="n">rgb</span> <span class="o">&lt;</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<h3><span class="mw-headline" id="Basic_re-organization">Basic re-organization</span></h3>
+<p>10. Open the <code>.pov</code> file with a text editor, go to the end of the file, select and cut the <code>light_source</code> section, and paste it before the first <code>//face number1</code> line.
+</p><p>The resulting file should have the <code>camera</code> and <code>light_source</code> sections next to each other, for example
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">//</span> <span class="n">Generated</span> <span class="n">by</span> <span class="n">FreeCAD</span> <span class="p">(</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">freecadweb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="p">)</span>
+<span class="c1">#declare cam_location =  &lt;-171.753,1229.11,-2667.08&gt;;</span>
+<span class="c1">#declare cam_look_at  = &lt;636.959,359.955,160.296&gt;;</span>
+<span class="c1">#declare cam_sky      = &lt;0.068217,0.958943,0.275273&gt;;</span>
+<span class="c1">#declare cam_angle    = 45; </span>
+<span class="n">camera</span> <span class="p">{</span>
+  <span class="n">location</span>  <span class="n">cam_location</span>
+  <span class="n">look_at</span>   <span class="n">cam_look_at</span>
+  <span class="n">sky</span>       <span class="n">cam_sky</span>
+  <span class="n">angle</span>     <span class="n">cam_angle</span> 
+  <span class="n">right</span> <span class="n">x</span><span class="o">*</span><span class="mi">800</span><span class="o">/</span><span class="mi">600</span>
+<span class="p">}</span>
+
+<span class="o">//</span><span class="n">default</span> <span class="n">light</span>
+<span class="n">light_source</span> <span class="p">{</span>
+  <span class="n">cam_location</span> <span class="o">+</span> <span class="n">cam_angle</span> <span class="o">*</span> <span class="mi">100</span>
+  <span class="n">color</span> <span class="n">rgb</span> <span class="o">&lt;</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="o">&gt;</span>
+<span class="p">}</span>
+<span class="o">//</span> <span class="n">Written</span> <span class="n">by</span> <span class="n">FreeCAD</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">freecadweb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span>
+<span class="o">//</span> <span class="n">face</span> <span class="n">number1</span> <span class="o">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+<span class="o">.</span>
+<span class="o">.</span>
+<span class="o">.</span>
+</pre></div>
+<h3><span class="mw-headline" id="Prepare_lights">Prepare lights</span></h3>
+<p>11. By default, the project file defines one light with a position and color.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">light_source</span> <span class="p">{</span>
+  <span class="n">cam_location</span> <span class="o">+</span> <span class="n">cam_angle</span> <span class="o">*</span> <span class="mi">100</span>
+  <span class="n">color</span> <span class="n">rgb</span> <span class="o">&lt;</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="o">&gt;</span>
+<span class="p">}</span>
+</pre></div>
+<p>The position of the light is defined by a vector <code>&lt;x, y, z&gt;</code>. The <code>color</code> can be established like an <code>&lt;r, g, b&gt;</code> vector or it could also be a named color such as <code>White</code>. If the RGB values are given, they should be in the range <code>0.0</code> to <code>1.0</code> for the light to have normal brightness.
+</p><p>Like other objects, the light can be modified with many options. The <code>area_light</code> option creates a rectangular source, which is more realistic as it results in diffuse illumination that creates soft shadows. The <code>adaptive</code> keyword helps reduce the computation time of the light paths; the larger the value the more accurate the result will be; to avoid long rendering times you should use the smallest integer that gives an acceptable result (<code>1</code> or <code>2</code> is usually enough); to obtain the best result remove the keyword completely (long rendering time). The <code>jitter</code> keyword helps improve the shadows by randomly shifting the position of the lights. The keywords <code>circular</code> and <code>orient</code> turn the area light into a spherical source, which will produce better shadows when there are rounded objects in the scene. Including <code>fade_distance</code> and <code>fade_power</code> is helpful to attenuate the value of the light with distance, just like it happens with a real light source.
+</p><p>Set up the light coming from the right and above.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">light_source</span> <span class="p">{</span>
+    <span class="o">&lt;</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="o">-</span><span class="mi">1300</span><span class="o">&gt;</span>
+    <span class="n">color</span> <span class="n">White</span>
+    <span class="n">area_light</span> <span class="o">&lt;</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span>
+    <span class="n">adaptive</span> <span class="mi">1</span>
+    <span class="n">jitter</span>
+    <span class="n">circular</span> <span class="n">orient</span>
+    <span class="n">fade_distance</span> <span class="mi">1000</span> <span class="n">fade_power</span> <span class="mi">2</span>
+<span class="p">}</span>
+</pre></div>
+<p>If the light source is supposed to be in the scene, it may be useful to see a reference on the screen where this source should be. To this effect, create a sphere of a small radius and assume this sphere represents the light source; position the sphere where you want, then move the light very close to these coordinates, and test the lighting of the scene; when you are satisfied with the position of the light, simply delete the sphere.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">sphere</span> <span class="p">{</span>
+    <span class="o">&lt;</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="o">-</span><span class="mi">1200</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">10</span>
+    <span class="n">pigment</span> <span class="p">{</span> <span class="n">color</span> <span class="n">White</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>12. The <code>sky_sphere</code> section is used to create a realistic sky background. It is commonly defined as a <code>gradient</code> and a <code>color_map</code> of at least two colors in order to produce a smooth transition from the color of the horizon to the color of the zenith of the scene.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">sky_sphere</span> <span class="p">{</span>
+    <span class="n">pigment</span> <span class="p">{</span>
+        <span class="n">gradient</span> <span class="n">y</span>
+        <span class="n">color_map</span> <span class="p">{</span>
+            <span class="p">[</span><span class="mf">0.0</span> <span class="n">color</span> <span class="n">Gray50</span><span class="p">]</span>
+            <span class="p">[</span><span class="mf">0.7</span> <span class="n">color</span> <span class="n">White</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<figure class="mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/06_T04_FreeCAD_POVray_render_lights.png"><img decoding="async" height="450" src="File/06_T04_FreeCAD_POVray_render_lights.png" srcset="/images/e/ec/06_T04_FreeCAD_POVray_render_lights.png 1.5x" width="600"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">Starting from the standard template, render of the scene with POV-Ray, with the light source and sky sphere set up.</p>
+<h3><span class="mw-headline" id="Prepare_the_body_textures">Prepare the body textures</span></h3>
+<p>13. The textures of each body need to be adjusted. This is the most time-consuming job of this process.
+</p><p>In the <code>.pov</code> file each body is described in this way
+</p>
+<ul><li>Face1, Face2, Face3, Face4, ...</li>
+<li>Body (union of faces)</li>
+<li>Object</li></ul>
+<p>A body mesh is defined by faces, and each face is defined by a series of triangular elements that themselves are defined by <code>vertex_vectors</code>, <code>normal_vectors</code>, and <code>face_indices</code>. This information doesn't need to be modified at all. Then, each body is defined as the union of the specified faces. Again, this information doesn't need modification.
+</p><p>Finally, each <code>object</code> to be rendered is defined as one of the specified bodies, with a particular <code>texture</code>, which itself is defined by properties like <code>pigment</code> and <code>finish</code>.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">//</span> <span class="n">instance</span> <span class="n">to</span> <span class="n">render</span>
+<span class="nb">object</span> <span class="p">{</span><span class="n">Pov_Body</span>
+ <span class="n">texture</span> <span class="p">{</span>
+      <span class="n">pigment</span> <span class="p">{</span><span class="n">color</span> <span class="n">rgb</span> <span class="o">&lt;</span><span class="mf">0.827451</span><span class="p">,</span><span class="mf">0.827451</span><span class="p">,</span><span class="mf">0.431373</span><span class="o">&gt;</span><span class="p">}</span>
+      <span class="n">finish</span> <span class="p">{</span><span class="n">StdFinish</span> <span class="p">}</span> <span class="o">//</span><span class="n">definition</span> <span class="n">on</span> <span class="n">top</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>By searching the <code>.pov</code> file for the keyword <code>object</code>, it's possible to go directly to the desired part in the file, and modify its <code>texture</code> appropriately.
+</p><p>As indicated in the comment, the definition of <code>StdFinish</code> is at the top of the file, in this case before the camera information. This value can be declared in many ways, as a combination of different properties, as shown in the commented and uncommented lines.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">//</span> <span class="n">Standard</span> <span class="n">finish</span>
+<span class="o">//</span><span class="c1">#declare StdFinish = F_MetalA;</span>
+<span class="o">//</span><span class="c1">#declare StdFinish = finish { diffuse 0.7 };</span>
+<span class="o">//</span><span class="c1">#declare StdFinish = finish { phong 0.5 };</span>
+<span class="o">//</span><span class="c1">#declare StdFinish = finish { ambient rgb &lt;0.5,0.5,0.5&gt; };</span>
+<span class="o">//</span><span class="c1">#declare StdFinish = finish { crand 0.5 phong 0.9};</span>
+<span class="c1">#declare StdFinish = finish { ambient 0.01 diffuse 0.9 phong 1.0 phong_size 70 metallic brilliance 1.5} ;</span>
+</pre></div>
+<p>In general, a <code>texture</code> is a container that describes a material; it includes information like the <code>pigment</code> (color or graphic), <code>normal</code> (how the color changes with the curvature of the surface), <code>finish</code> (interaction of the surface with the light), <code>pattern</code> (agate, brick, dents, leopard, radial, ripples, tiling, waves, wood, etc.), and other properties. There are many options that can be combined together to produce a texture. This mixing is not trivial, but there are many examples online to obtain the desired appearance of the material.
+</p>
+<h4><span class="mw-headline" id="Material_libraries">Material libraries</span></h4>
+<p>14. POV-Ray comes with an extensive library of materials that can be used by name. By default, the project template makes available some materials by using <code>#include</code> statements at the beginning of the file. These materials can be further modified as desired.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#include "colors.inc"</span>
+<span class="c1">#include "metals.inc"</span>
+</pre></div>
+<p>The library <code>colors.inc</code> defines basic colors by name, <code>Red</code>, <code>Green</code>, <code>Blue</code>, <code>Yellow</code>, <code>Cyan</code>, <code>Magenta</code>, <code>Clear</code>, <code>White</code>, and <code>Black</code>. It also defines several other shades as well as functions to transform colors. The library <code>metals.inc</code> contains copper, silver, chrome, and brass textures, and <code>golds.inc</code> contains the gold textures.
+</p><p>The standard libraries are located in the installation directory of POV-ray, for example
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">povray</span><span class="o">-</span><span class="mf">3.7</span><span class="o">/</span><span class="n">include</span><span class="o">/</span>
+</pre></div>
+<h4><span class="mw-headline" id="New_textures">New textures</span></h4>
+<p>15. For example, to create a mirror texture, the <code>finish</code> is given a high value of <code>reflection</code>.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#declare T_mirror = texture {</span>
+    <span class="n">finish</span> <span class="p">{</span> <span class="n">reflection</span> <span class="p">{</span><span class="mf">0.9</span><span class="p">}</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>Alternatively, for metals, a predefined finish can be used.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#include "metals.inc"</span>
+<span class="c1">#declare T_mirror = texture {</span>
+    <span class="n">finish</span> <span class="p">{</span> <span class="n">F_MetalE</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>Then it can be assigned to the specific object.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">object</span> <span class="p">{</span><span class="n">Pov_Body002</span>
+    <span class="n">texture</span> <span class="p">{</span> <span class="n">T_mirror</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>The <code>woods.inc</code> library defines the <code>T_Wood7</code> texture (yellow pine, ragged grain). It can be used as the basis of a more complex texture, with some additional scaling and translation.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#include "woods.inc"</span>
+<span class="c1">#declare T_wood = texture {</span>
+    <span class="n">T_Wood7</span>
+    <span class="n">scale</span> <span class="mf">50.0</span>
+    <span class="n">translate</span> <span class="n">x</span><span class="o">*</span><span class="mi">1</span>
+    <span class="n">translate</span> <span class="n">y</span><span class="o">*</span><span class="mi">10</span>
+<span class="p">}</span>
+</pre></div>
+<p>Then it is assigned to the specific object.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">object</span> <span class="p">{</span><span class="n">Pov_Body</span>
+    <span class="n">texture</span> <span class="p">{</span> <span class="n">T_wood</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>The <code>glass.inc</code> library defines <code>F_Glass2</code> as a finish for transparent acrylic; it also defines <code>I_Glass</code> as an interior material which, together with the <code>caustics</code> option, is used to calculate as close as possible the effects of light passing through a transparent material. In this case, the <code>material</code> section is used, containing external (<code>texture</code>) and internal (<code>interior</code>) information of the material.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#declare M_vase = material {</span>
+    <span class="n">texture</span> <span class="p">{</span>
+        <span class="n">pigment</span> <span class="p">{</span> <span class="n">color</span> <span class="n">rgbf</span> <span class="o">&lt;</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.73333</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.75</span><span class="o">&gt;</span> <span class="p">}</span>
+        <span class="n">finish</span> <span class="p">{</span> <span class="n">F_Glass2</span> <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">interior</span> <span class="p">{</span> <span class="n">I_Glass</span> <span class="n">caustics</span> <span class="mf">1.0</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>Then it is assigned to the specific object.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">object</span> <span class="p">{</span><span class="n">Pov_Body001</span>
+    <span class="n">material</span> <span class="p">{</span> <span class="n">M_vase</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<figure class="mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/07_T04_FreeCAD_POVray_render_materials.png"><img decoding="async" height="450" src="File/07_T04_FreeCAD_POVray_render_materials.png" srcset="/images/9/95/07_T04_FreeCAD_POVray_render_materials.png 1.5x" width="600"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">Starting from the standard template, render of the scene with POV-Ray, with the light source and sky sphere set up, and materials assigned.</p>
+<h3><span class="mw-headline" id="Prepare_planes">Prepare planes</span></h3>
+<p>16. If not provided by the original 3D model, planes can be added to simulate a floor or table top on which the objects are standing. More planes can be defined to serve as walls or other types of boundaries.
+</p><p>By default, a single plane is created. It is placed 1 millimeter below the model, so that it appears as a floor. The plane is assigned a basic texture that is black and slightly reflective.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">plane</span> <span class="p">{</span>
+  <span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="n">texture</span> <span class="p">{</span> <span class="n">pigment</span> <span class="p">{</span><span class="n">rgb</span> <span class="o">&lt;</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="o">&gt;</span><span class="p">}</span> <span class="n">finish</span> <span class="p">{</span><span class="n">ambient</span> <span class="mf">0.0</span> <span class="n">reflection</span> <span class="mf">0.05</span> <span class="n">specular</span> <span class="mf">0.0</span><span class="p">}</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>Notice that in POV-Ray the X axis is defined as horizontal (left-right), the Y axis is defined as vertical (up-down), and the Z axis is defined as depth (front-rear).
+</p><p>For a simple gray floor, that is barely reflective use
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">plane</span> <span class="p">{</span>
+  <span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="n">texture</span> <span class="p">{</span> <span class="n">pigment</span> <span class="p">{</span><span class="n">rgb</span> <span class="o">&lt;</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="o">&gt;</span><span class="p">}</span> <span class="n">finish</span> <span class="p">{</span><span class="n">ambient</span> <span class="mf">0.0</span> <span class="n">reflection</span> <span class="mf">0.01</span> <span class="n">specular</span> <span class="mf">0.0</span><span class="p">}</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<figure class="mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/08_T04_FreeCAD_POVray_render_floor_gray.png"><img decoding="async" height="450" src="File/08_T04_FreeCAD_POVray_render_floor_gray.png" srcset="/images/8/81/08_T04_FreeCAD_POVray_render_floor_gray.png 1.5x" width="600"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">Starting from the standard template, render of the scene with POV-Ray, with the light source and sky sphere set up, materials assigned, and a floor plane with a basic gray texture.</p>
+<p>17. The plane can be given a more complex appearance with the help of normals and material libraries.
+</p><p>Define a normal map that will be used to give the plane the appearance of a parquet floor.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#declare Parquet_normal = normal {</span>
+    <span class="n">gradient</span> <span class="n">z</span> <span class="mi">2</span> <span class="n">slope_map</span> <span class="p">{</span> <span class="p">[</span><span class="mi">0</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">][</span><span class="mf">0.05</span> <span class="o">&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">][</span><span class="mf">0.95</span> <span class="o">&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">][</span><span class="mi">1</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">}</span>
+    <span class="n">scale</span> <span class="mi">80</span>
+<span class="p">}</span> <span class="p">;</span>
+</pre></div>
+<p>Then define the plane. As <code>pigment</code> use a wood <code>color_map</code> defined in <code>woods.inc</code>, and modify it with <code>turbulence</code> and <code>scale</code> so that the wood grain looks random. Then add the created normal, together with another normal; this will result in the texture of the parquet with slight imperfections. Then as <code>finish</code>, make it a little bit reflective and glossy.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#include "woods.inc"</span>
+<span class="n">plane</span> <span class="p">{</span>
+    <span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">pigment</span> <span class="p">{</span>
+        <span class="n">wood</span> <span class="n">color_map</span> <span class="p">{</span> <span class="n">M_Wood8A</span> <span class="p">}</span>
+        <span class="n">turbulence</span> <span class="mf">0.5</span> <span class="n">scale</span> <span class="o">&lt;</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;*</span><span class="mi">20</span>
+    <span class="p">}</span>
+    <span class="n">normal</span> <span class="p">{</span>
+        <span class="n">average</span> <span class="n">normal_map</span> <span class="p">{</span>
+          <span class="p">[</span><span class="mi">1</span> <span class="n">Parquet_normal</span><span class="p">]</span>
+          <span class="p">[</span><span class="mi">1</span> <span class="n">wood</span> <span class="mf">0.5</span> <span class="n">slope_map</span> <span class="p">{</span> <span class="p">[</span><span class="mi">0</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">][</span><span class="mf">0.5</span> <span class="o">&lt;</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">][</span><span class="mi">1</span> <span class="o">&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">}</span>
+              <span class="n">turbulence</span> <span class="mf">0.5</span> <span class="n">scale</span> <span class="o">&lt;</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;*</span><span class="mi">20</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">finish</span> <span class="p">{</span> <span class="n">ambient</span> <span class="mf">0.0</span> <span class="n">reflection</span> <span class="mf">0.1</span> <span class="n">specular</span> <span class="mf">0.2</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<figure class="mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/09_T04_FreeCAD_POVray_render_floor_wood.png"><img decoding="async" height="450" src="File/09_T04_FreeCAD_POVray_render_floor_wood.png" srcset="/images/0/08/09_T04_FreeCAD_POVray_render_floor_wood.png 1.5x" width="600"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">Starting from the standard template, render of the scene with POV-Ray, with the light source and sky sphere set up, materials assigned, and a floor plane with a parquet texture.</p>
+<p>18. Add a second plane, this time perpendicular to the Z direction, to serve as a backwall. Displace it just a little bit behind the model to avoid covering the mirror. Include the <code>stones.inc</code> library, add a generic granite texture, and scale it a bit. This will result in the appearance off a simple dry wall.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#include "stones.inc"</span>
+<span class="n">plane</span> <span class="p">{</span>
+    <span class="n">z</span><span class="p">,</span> <span class="mi">10</span>
+    <span class="n">texture</span> <span class="p">{</span>
+        <span class="n">T_Grnt1</span>   
+        <span class="n">scale</span> <span class="mf">0.02</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>A third plane can be added behind the position of the camera so that the mirror reflects a limited area between the two walls.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#include "stones.inc"</span>
+<span class="n">plane</span> <span class="p">{</span>
+    <span class="n">z</span><span class="p">,</span> <span class="o">-</span><span class="mi">3700</span>
+    <span class="n">texture</span> <span class="p">{</span>
+        <span class="n">T_Grnt1</span>   
+        <span class="n">scale</span> <span class="mf">0.02</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<figure class="mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/10_T04_FreeCAD_POVray_render_floor_wood_walls.png"><img decoding="async" height="450" src="File/10_T04_FreeCAD_POVray_render_floor_wood_walls.png" srcset="/images/f/fe/10_T04_FreeCAD_POVray_render_floor_wood_walls.png 1.5x" width="600"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">Starting from the standard template, render of the scene with POV-Ray, with the light source and sky sphere set up, materials assigned, a floor plane with a parquet texture, and back walls with drywall textures.</p>
+<h3><span id="Prepare_the_global_settings.2C_radiosity"></span><span class="mw-headline" id="Prepare_the_global_settings,_radiosity">Prepare the global settings, radiosity</span></h3>
+<p>19. The global settings define ambient light.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">global_settings</span> <span class="p">{</span>
+    <span class="n">assumed_gamma</span> <span class="mf">1.0</span>
+    <span class="n">ambient_light</span> <span class="n">color</span> <span class="n">rgb</span> <span class="o">&lt;</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="o">&gt;</span>
+    <span class="n">max_trace_level</span> <span class="mi">20</span>
+<span class="p">}</span>
+</pre></div>
+<p>The <code>radiosity</code> property inside the <code>global_settings</code> controls the way POV-Ray computes diffuse light interactions between different objects. It's essential to adjust this property to obtain good rendering results.
+</p><p>Because it can be time consuming to test different <code>radiosity</code> settings you can use a variable <code>Rad_Quality</code> and a <code>#switch</code> statement to quickly set low, medium or high quality render settings. The higher the quality settings the more time is required to render an image.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#declare Rad_Quality = 1;</span>
+
+<span class="n">global_settings</span> <span class="p">{</span>
+    <span class="n">assumed_gamma</span> <span class="mf">1.0</span>
+    <span class="n">ambient_light</span> <span class="n">color</span> <span class="n">rgb</span> <span class="o">&lt;</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="o">&gt;</span>
+    <span class="n">max_trace_level</span> <span class="mi">20</span>
+
+<span class="c1">#switch (Rad_Quality)</span>
+ <span class="c1">#case (1)</span>
+    <span class="n">radiosity</span> <span class="p">{</span> <span class="o">//</span> <span class="n">Settings</span> <span class="mi">1</span> <span class="p">(</span><span class="n">fast</span><span class="p">)</span>
+        <span class="n">pretrace_start</span> <span class="mf">0.08</span>
+        <span class="n">pretrace_end</span>   <span class="mf">0.02</span>
+        <span class="n">count</span> <span class="mi">50</span>
+        <span class="n">error_bound</span> <span class="mf">0.5</span>
+        <span class="n">recursion_limit</span> <span class="mi">1</span>
+    <span class="p">}</span>
+    <span class="c1">#break</span>
+ <span class="c1">#case (2)</span>
+    <span class="n">radiosity</span> <span class="p">{</span> <span class="o">//</span> <span class="n">Settings</span> <span class="mi">2</span> <span class="p">(</span><span class="n">medium</span> <span class="n">quality</span><span class="p">)</span>
+        <span class="n">pretrace_start</span> <span class="mf">0.08</span>
+        <span class="n">pretrace_end</span>   <span class="mf">0.01</span>
+        <span class="n">count</span> <span class="mi">120</span>
+        <span class="n">error_bound</span> <span class="mf">0.25</span>
+        <span class="n">recursion_limit</span> <span class="mi">1</span>
+    <span class="p">}</span>
+    <span class="c1">#break</span>
+ <span class="c1">#case (3)</span>
+    <span class="n">radiosity</span> <span class="p">{</span> <span class="o">//</span> <span class="n">Settings</span> <span class="mi">3</span> <span class="p">(</span><span class="n">high</span> <span class="n">quality</span><span class="p">)</span>
+        <span class="n">pretrace_start</span> <span class="mf">0.08</span>
+        <span class="n">pretrace_end</span>   <span class="mf">0.005</span>
+        <span class="n">count</span> <span class="mi">400</span>
+        <span class="n">error_bound</span> <span class="mf">0.1</span>
+        <span class="n">recursion_limit</span> <span class="mi">2</span>
+    <span class="p">}</span>
+    <span class="c1">#break</span>
+<span class="c1">#end</span>
+<span class="p">}</span>
+</pre></div>
+<figure class="mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/11_T04_FreeCAD_POVray_render_floor_wood_walls_radiosity_1.png"><img decoding="async" height="450" src="File/11_T04_FreeCAD_POVray_render_floor_wood_walls_radiosity_1.png" srcset="/images/e/e2/11_T04_FreeCAD_POVray_render_floor_wood_walls_radiosity_1.png 1.5x" width="600"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">Starting from the standard template, render of the scene with POV-Ray, with the light source and sky sphere set up, materials assigned, a floor plane with a parquet texture, and back walls with drywall textures. Radiosity settings for fast rendering.</p>
+<p>20. The <code>rad_def.inc</code> library defines a macro to quickly set up the <code>radiosity</code> to a predefined configuration.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#include "rad_def.inc"</span>
+<span class="n">global_settings</span> <span class="p">{</span>
+    <span class="n">radiosity</span> <span class="p">{</span>
+        <span class="n">Rad_Settings</span><span class="p">(</span><span class="n">Setting</span><span class="p">,</span> <span class="n">Normal</span><span class="p">,</span> <span class="n">Media</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+<p>The <code>Setting</code> value can be one of the predefined constants:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">Radiosity_Default</span>
+<span class="n">Radiosity_Debug</span>
+<span class="n">Radiosity_Fast</span>
+<span class="n">Radiosity_Normal</span>
+<span class="n">Radiosity_2Bounce</span>
+<span class="n">Radiosity_Final</span>
+<span class="n">Radiosity_OutdoorLQ</span>
+<span class="n">Radiosity_OutdoorHQ</span>
+<span class="n">Radiosity_OutdoorLight</span>
+<span class="n">Radiosity_IndoorLQ</span>
+<span class="n">Radiosity_IndoorHQ</span>
+</pre></div>
+<p>The <code>Normal</code> and <code>Media</code> values are either <code>off</code> or <code>on</code>.
+</p><p>Therefore, to test different settings, the <code>#switch</code> statement could also be written like in the following.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1">#declare Rad_Quality = 3;</span>
+
+<span class="n">global_settings</span> <span class="p">{</span>
+    <span class="n">assumed_gamma</span> <span class="mf">1.0</span>
+    <span class="n">ambient_light</span> <span class="n">color</span> <span class="n">rgb</span> <span class="o">&lt;</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="o">&gt;</span>
+    <span class="n">max_trace_level</span> <span class="mi">20</span>
+
+<span class="c1">#switch (Rad_Quality)</span>
+ <span class="c1">#case (1)</span>
+    <span class="n">radiosity</span> <span class="p">{</span> <span class="o">//</span> <span class="n">Settings</span> <span class="mi">1</span> <span class="p">(</span><span class="n">fast</span><span class="p">)</span>
+        <span class="n">Rad_Settings</span><span class="p">(</span><span class="n">Radiosity_Fast</span><span class="p">,</span> <span class="n">off</span><span class="p">,</span> <span class="n">off</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="c1">#break</span>
+ <span class="c1">#case (2)</span>
+    <span class="n">radiosity</span> <span class="p">{</span> <span class="o">//</span> <span class="n">Settings</span> <span class="mi">2</span> <span class="p">(</span><span class="n">medium</span> <span class="n">quality</span><span class="p">)</span>
+        <span class="n">Rad_Settings</span><span class="p">(</span><span class="n">Radiosity_2Bounce</span><span class="p">,</span> <span class="n">on</span><span class="p">,</span> <span class="n">on</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="c1">#break</span>
+ <span class="c1">#case (3)</span>
+    <span class="n">radiosity</span><span class="p">{</span> <span class="o">//</span> <span class="n">Settings</span> <span class="mi">3</span> <span class="p">(</span><span class="n">high</span> <span class="n">quality</span><span class="p">)</span>
+        <span class="n">Rad_Settings</span><span class="p">(</span><span class="n">Radiosity_Final</span><span class="p">,</span> <span class="n">on</span><span class="p">,</span> <span class="n">on</span><span class="p">)</span>
+        <span class="n">recursion_limit</span> <span class="mi">2</span>
+    <span class="p">}</span>
+    <span class="c1">#break</span>
+<span class="c1">#end</span>
+<span class="p">}</span>
+</pre></div>
+<p>The exact values used by these presets can be found in the <code>rad_def.inc</code> file which is found in the installation directory of POV-Ray, for example:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">povray</span><span class="o">-</span><span class="mf">3.7</span><span class="o">/</span><span class="n">include</span><span class="o">/</span>
+</pre></div>
+<p>The <a href="Raytracing_Workbench.html" title="Raytracing Workbench">Raytracing Workbench</a> has three default templates:
+</p>
+<ul><li><code>ProjectStd.pov</code>, it doesn't use <code>radiosity</code> at all.</li>
+<li><code>RadiosityNormal.pov</code>, it uses the preset <code>Radiosity_Normal</code>.</li>
+<li><code>RadiosityOutdoorHQ.pov</code>, it uses the preset <code>Radiosity_OutdoorHQ</code>.</li></ul>
+<h2><span class="mw-headline" id="Final_render">Final render</span></h2>
+<p>21. The edited <code>.pov</code> file can be saved when all adjustments have been done.
+</p><p>The final structure is as follows:
+</p>
+<ul><li>Includes, with additional libraries</li>
+<li>Global settings, with radiosity parameters</li>
+<li>Sky sphere, with lighter color</li>
+<li>Planes, positioned and with textures</li>
+<li>Finishes and textures, with custom definitions</li>
+<li>Camera, not changed</li>
+<li>Light source, with additional properties</li>
+<li>Mesh and body information, using the textures defined previously</li></ul>
+<p><i>Note:</i> the sections of the <code>.pov</code> file can be in any order, although it is probably easier to work with the file if the mesh information is at the end.
+</p><p>The final rendering can be done by clicking <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="File/Raytrace_Render.svg"><img decoding="async" height="16" src="File/Raytrace_Render.svg" width="16"/></a></span> <a href="Raytracing_Render.html" title="Raytracing Render">Render</a></span> or by running the executable from the command line.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">povray</span> <span class="n">assembly</span><span class="o">.</span><span class="n">pov</span> <span class="o">+</span><span class="n">W800</span> <span class="o">+</span><span class="n">H600</span> <span class="o">+</span><span class="n">AM2</span> <span class="o">+</span><span class="n">A</span>
+</pre></div>
+<figure class="mw-halign-center" typeof="mw:File"><a class="mw-file-description" href="File/12_T04_FreeCAD_POVray_render_floor_wood_walls_radiosity_final.png"><img decoding="async" height="450" src="File/12_T04_FreeCAD_POVray_render_floor_wood_walls_radiosity_final.png" srcset="/images/b/b8/12_T04_FreeCAD_POVray_render_floor_wood_walls_radiosity_final.png 1.5x" width="600"/></a><figcaption></figcaption></figure>
+<p style="text-align:center; font-style:italic; width:800px; margin-left:auto; margin-right:auto;">Starting from the standard template, render of the scene with POV-Ray, with the light source and sky sphere set up, materials assigned, a floor plane with a parquet texture, and back walls with drywall textures. Radiosity settings for high quality result: <code>Radiosity_Final</code> and <code>recursion_limit 2</code>.</p>
+<div class="toccolours mw-collapsible mw-collapsed">
+<p>This is the complete content of the <code>.pov</code> file, only without the last section, that is, without the meshes.
+</p>
+<div class="mw-collapsible-content">
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">//</span> <span class="n">Persistence</span> <span class="n">of</span> <span class="n">Vision</span> <span class="n">Ray</span> <span class="n">Tracer</span> <span class="n">Scene</span> <span class="n">Description</span> <span class="n">File</span>
+<span class="o">//</span> <span class="k">for</span> <span class="n">FreeCAD</span> <span class="p">(</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">freecadweb</span><span class="o">.</span><span class="n">org</span><span class="p">)</span>
+
+<span class="c1">#version 3.6;</span>
+
+<span class="c1">#include "colors.inc"</span>
+<span class="c1">#include "metals.inc"</span>
+<span class="c1">#include "woods.inc"</span>
+<span class="c1">#include "glass.inc"</span>
+<span class="c1">#include "stones.inc"</span>
+<span class="c1">#include "rad_def.inc"</span>
+
+<span class="o">//</span> <span class="o">----------------------------------------</span>
+<span class="c1">#declare Rad_Quality = 3;</span>
+
+<span class="n">global_settings</span> <span class="p">{</span>
+    <span class="n">assumed_gamma</span> <span class="mf">1.0</span>
+    <span class="n">ambient_light</span> <span class="n">color</span> <span class="n">rgb</span> <span class="o">&lt;</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="o">&gt;</span>
+    <span class="n">max_trace_level</span> <span class="mi">20</span>
+
+<span class="c1">#switch (Rad_Quality)</span>
+ <span class="c1">#case (1)</span>
+    <span class="n">radiosity</span> <span class="p">{</span> <span class="o">//</span> <span class="n">Settings</span> <span class="mi">1</span> <span class="p">(</span><span class="n">fast</span><span class="p">)</span>
+        <span class="n">Rad_Settings</span><span class="p">(</span><span class="n">Radiosity_Fast</span><span class="p">,</span> <span class="n">off</span><span class="p">,</span> <span class="n">off</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="c1">#break</span>
+ <span class="c1">#case (2)</span>
+    <span class="n">radiosity</span> <span class="p">{</span> <span class="o">//</span> <span class="n">Settings</span> <span class="mi">2</span> <span class="p">(</span><span class="n">medium</span> <span class="n">quality</span><span class="p">)</span>
+        <span class="n">Rad_Settings</span><span class="p">(</span><span class="n">Radiosity_2Bounce</span><span class="p">,</span> <span class="n">on</span><span class="p">,</span> <span class="n">on</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="c1">#break</span>
+ <span class="c1">#case (3)</span>
+    <span class="n">radiosity</span><span class="p">{</span> <span class="o">//</span> <span class="n">Settings</span> <span class="mi">3</span> <span class="p">(</span><span class="n">high</span> <span class="n">quality</span><span class="p">)</span>
+        <span class="n">Rad_Settings</span><span class="p">(</span><span class="n">Radiosity_Final</span><span class="p">,</span> <span class="n">on</span><span class="p">,</span> <span class="n">on</span><span class="p">)</span>
+        <span class="n">recursion_limit</span> <span class="mi">2</span>
+    <span class="p">}</span>
+    <span class="c1">#break</span>
+<span class="c1">#end</span>
+<span class="p">}</span>
+
+<span class="o">//</span> <span class="o">----------------------------------------</span>
+
+
+<span class="n">sky_sphere</span> <span class="p">{</span>
+    <span class="n">pigment</span> <span class="p">{</span>
+        <span class="n">gradient</span> <span class="n">y</span>
+        <span class="n">color_map</span> <span class="p">{</span>
+            <span class="p">[</span><span class="mf">0.0</span> <span class="n">color</span> <span class="n">Gray50</span><span class="p">]</span>
+            <span class="p">[</span><span class="mf">0.7</span> <span class="n">color</span> <span class="n">White</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="o">//</span> <span class="o">----------------------------------------</span>
+
+<span class="c1">#declare Parquet_normal = normal {</span>
+    <span class="n">gradient</span> <span class="n">z</span> <span class="mi">2</span> <span class="n">slope_map</span> <span class="p">{</span> <span class="p">[</span><span class="mi">0</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">][</span><span class="mf">0.05</span> <span class="o">&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">][</span><span class="mf">0.95</span> <span class="o">&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">][</span><span class="mi">1</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">}</span>
+    <span class="n">scale</span> <span class="mi">80</span>
+<span class="p">}</span> <span class="p">;</span>
+
+<span class="o">//</span> <span class="n">Floor</span>
+<span class="n">plane</span> <span class="p">{</span>
+    <span class="n">y</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">pigment</span> <span class="p">{</span>
+        <span class="n">wood</span> <span class="n">color_map</span> <span class="p">{</span> <span class="n">M_Wood8A</span> <span class="p">}</span>
+        <span class="n">turbulence</span> <span class="mf">0.5</span> <span class="n">scale</span> <span class="o">&lt;</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;*</span><span class="mi">20</span>
+    <span class="p">}</span>
+    <span class="n">normal</span> <span class="p">{</span>
+        <span class="n">average</span> <span class="n">normal_map</span> <span class="p">{</span>
+          <span class="p">[</span><span class="mi">1</span> <span class="n">Parquet_normal</span><span class="p">]</span>
+          <span class="p">[</span><span class="mi">1</span> <span class="n">wood</span> <span class="mf">0.5</span> <span class="n">slope_map</span> <span class="p">{</span> <span class="p">[</span><span class="mi">0</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">][</span><span class="mf">0.5</span> <span class="o">&lt;</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">][</span><span class="mi">1</span> <span class="o">&lt;</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">]</span> <span class="p">}</span>
+              <span class="n">turbulence</span> <span class="mf">0.5</span> <span class="n">scale</span> <span class="o">&lt;</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="o">&gt;*</span><span class="mi">20</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">finish</span> <span class="p">{</span> <span class="n">ambient</span> <span class="mf">0.0</span> <span class="n">reflection</span> <span class="mf">0.1</span> <span class="n">specular</span> <span class="mf">0.2</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">//</span> <span class="n">Back</span> <span class="n">wall</span>
+<span class="n">plane</span> <span class="p">{</span>
+    <span class="n">z</span><span class="p">,</span> <span class="mi">10</span>
+    <span class="n">texture</span> <span class="p">{</span>
+        <span class="n">T_Grnt1</span>   
+        <span class="n">scale</span> <span class="mf">0.02</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="o">//</span> <span class="n">Behind</span> <span class="n">camera</span> <span class="n">wall</span>
+<span class="n">plane</span> <span class="p">{</span>
+    <span class="n">z</span><span class="p">,</span> <span class="o">-</span><span class="mi">3700</span>
+    <span class="n">texture</span> <span class="p">{</span>
+        <span class="n">T_Grnt1</span>   
+        <span class="n">scale</span> <span class="mf">0.02</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">#declare T_mirror = texture {</span>
+    <span class="n">finish</span> <span class="p">{</span> <span class="n">reflection</span> <span class="p">{</span><span class="mf">0.9</span><span class="p">}</span> <span class="p">}</span>
+<span class="o">//</span>    <span class="n">finish</span> <span class="p">{</span> <span class="n">F_MetalE</span> <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">#declare T_wood = texture {</span>
+    <span class="n">T_Wood7</span>
+    <span class="n">scale</span> <span class="mf">50.0</span>
+    <span class="n">translate</span> <span class="n">x</span><span class="o">*</span><span class="mi">1</span>
+    <span class="n">translate</span> <span class="n">y</span><span class="o">*</span><span class="mi">10</span>
+<span class="p">}</span>
+
+<span class="c1">#declare M_vase = material {</span>
+    <span class="n">texture</span> <span class="p">{</span>
+        <span class="n">pigment</span> <span class="p">{</span> <span class="n">color</span> <span class="n">rgbf</span> <span class="o">&lt;</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.73333</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.75</span><span class="o">&gt;</span> <span class="p">}</span>
+        <span class="n">finish</span> <span class="p">{</span> <span class="n">F_Glass2</span> <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">interior</span> <span class="p">{</span> <span class="n">I_Glass</span> <span class="n">caustics</span> <span class="mf">1.0</span> <span class="p">}</span>
+<span class="p">}</span>
+<span class="o">//</span> <span class="n">declares</span> <span class="n">position</span> <span class="ow">and</span> <span class="n">view</span> <span class="n">direction</span>
+
+<span class="o">//</span> <span class="n">Generated</span> <span class="n">by</span> <span class="n">FreeCAD</span> <span class="p">(</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">freecadweb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="p">)</span>
+<span class="c1">#declare cam_location =  &lt;-171.753,1229.11,-2667.08&gt;;</span>
+<span class="c1">#declare cam_look_at  = &lt;636.959,359.955,160.296&gt;;</span>
+<span class="c1">#declare cam_sky      = &lt;0.068217,0.958943,0.275273&gt;;</span>
+<span class="c1">#declare cam_angle    = 45; </span>
+<span class="n">camera</span> <span class="p">{</span>
+  <span class="n">location</span>  <span class="n">cam_location</span>
+  <span class="n">look_at</span>   <span class="n">cam_look_at</span>
+  <span class="n">sky</span>       <span class="n">cam_sky</span>
+  <span class="n">angle</span>     <span class="n">cam_angle</span> 
+  <span class="n">right</span> <span class="n">x</span><span class="o">*</span><span class="mi">800</span><span class="o">/</span><span class="mi">600</span>
+<span class="p">}</span>
+<span class="o">//</span><span class="n">default</span> <span class="n">light</span>
+<span class="n">light_source</span> <span class="p">{</span>
+    <span class="o">&lt;</span><span class="mi">1200</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="o">-</span><span class="mi">1300</span><span class="o">&gt;</span>
+    <span class="n">color</span> <span class="n">White</span>
+    <span class="n">area_light</span> <span class="o">&lt;</span><span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span>
+    <span class="n">adaptive</span> <span class="mi">1</span>
+    <span class="n">jitter</span>
+    <span class="n">circular</span> <span class="n">orient</span>
+    <span class="n">fade_distance</span> <span class="mi">1000</span> <span class="n">fade_power</span> <span class="mi">2</span>
+<span class="p">}</span>
+<span class="o">//</span> <span class="n">Written</span> <span class="n">by</span> <span class="n">FreeCAD</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">freecadweb</span><span class="o">.</span><span class="n">org</span><span class="o">/</span>
+<span class="o">//</span> <span class="n">face</span> <span class="n">number1</span> <span class="o">+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+<span class="o">//</span> <span class="o">...</span> <span class="n">meshes</span> <span class="n">should</span> <span class="n">be</span> <span class="n">defined</span> <span class="n">here</span> <span class="n">until</span> <span class="n">the</span> <span class="n">end</span> <span class="n">of</span> <span class="n">the</span> <span class="n">file</span> <span class="o">...</span>
+</pre></div>
+</div>
+</div>
+<h2><span class="mw-headline" id="Final_notes">Final notes</span></h2>
+<p>POV-Ray is a relatively old piece of software, first released in the early 1990s. Its main advantages over more modern software are
+</p>
+<ul><li>it is a tested solution that has existed for many years</li>
+<li>runs in many operating systems</li>
+<li>the scene can be set with only one text file</li>
+<li>requires simple computational resources to produce a high quality image, so it works even in relatively old hardware</li></ul>
+<p>The user is advised to read the POV-Ray documentation and more tutorials or examples in order to get the right settings for his or her needs.
+</p>
+<ul><li><a class="external text" href="http://www.povray.org/documentation/3.7.0/index.html" rel="nofollow">POV-Ray for Unix version 3.7</a></li>
+<li><a class="external text" href="http://www.povray.org/documentation/3.7.0/t2_0.html" rel="nofollow">POV-Ray Tutorial</a></li>
+<li><a class="external text" href="http://www.povray.org/documentation/3.7.0/r3_0.html" rel="nofollow">POV-Ray Reference</a></li></ul>
+<p><br/>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="File/Workbench_Raytracing.svg"><img decoding="async" height="24" src="File/Workbench_Raytracing.svg" width="24"/></a></span> <a href="Raytracing_Workbench.html" title="Raytracing Workbench">Raytracing</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>Tools:</b> <a href="Raytracing_New.html" title="Raytracing New">New PovRay project</a>, <a href="Raytracing_Lux.html" title="Raytracing Lux">New LuxRender project</a>, <a href="Raytracing_InsertPart.html" title="Raytracing InsertPart">Insert part</a>, <a href="Raytracing_ResetCamera.html" title="Raytracing ResetCamera">Reset camera</a>, <a href="Raytracing_ExportProject.html" title="Raytracing ExportProject">Export project</a>, <a href="Raytracing_Render.html" title="Raytracing Render">Render</a></li></ul>
+<ul><li><b>Utilities:</b> <a href="Raytracing_WriteView.html" title="Raytracing WriteView">Export view to povray</a>, <a href="Raytracing_WriteCamera.html" title="Raytracing WriteCamera">Export camera to povray</a>, <a href="Raytracing_WritePart.html" title="Raytracing WritePart">Export part to povray</a></li></ul>
+<hr/>
+<ul><li><b>Additional:</b> <a href="Raytracing_Preferences.html" title="Raytracing Preferences">Preferences</a></li></ul></div>
+</div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="File/User_hub.png"><img decoding="async" height="24" src="File/User_hub.png" srcset="/images/thumb/9/94/User_hub.png/36px-User_hub.png 1.5x, /images/thumb/9/94/User_hub.png/48px-User_hub.png 2x" width="24"/></a></span> <a href="User_hub.html" title="User hub">User documentation</a>
+<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started">Getting started</a></b></li>
+<li><b>Installation:</b> <a href="Download.html" title="Download">Download</a>, <a href="Installing_on_Windows.html" title="Installing on Windows">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components">Additional components</a>, <a href="Compile_on_Docker.html" title="Compile on Docker">Docker</a>, <a href="AppImage.html" title="AppImage">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap">Ubuntu Snap</a></li>
+<li><b>Basics:</b> <a href="About_FreeCAD.html" title="About FreeCAD">About FreeCAD</a>, <a href="Interface.html" title="Interface">Interface</a>, <a href="Mouse_navigation.html" title="Mouse navigation">Mouse navigation</a>, <a href="Selection_methods.html" title="Selection methods">Selection methods</a>, <a href="Object_name.html" title="Object name">Object name</a>, <a href="Preferences_Editor.html" title="Preferences Editor">Preferences</a>, <a href="Workbenches.html" title="Workbenches">Workbenches</a>, <a href="Document_structure.html" title="Document structure">Document structure</a>, <a href="Property.html" title="Property">Properties</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD">Help FreeCAD</a>, <a href="Donate.html" title="Donate">Donate</a></li></ul>
+<hr/>
+<ul><li><b>Help:</b> <a href="Tutorials.html" title="Tutorials">Tutorials</a>, <a href="Video_tutorials.html" title="Video tutorials">Video tutorials</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches">Workbenches</a>:</b> <a href="Std_Base.html" title="Std Base">Std Base</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench">Assembly</a>, <a href="BIM_Workbench.html" title="BIM Workbench">BIM</a>, <a href="CAM_Workbench.html" title="CAM Workbench">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench">Draft</a>, <a href="FEM_Workbench.html" title="FEM Workbench">FEM</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench">Inspection</a>, <a href="Material_Workbench.html" title="Material Workbench">Material</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench">Mesh</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench">Part</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench">PartDesign</a>, <a href="Points_Workbench.html" title="Points Workbench">Points</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench">Reverse Engineering</a>, <a href="Robot_Workbench.html" title="Robot Workbench">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench">Sketcher</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench">Spreadsheet</a>, <a href="Surface_Workbench.html" title="Surface Workbench">Surface</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench">TechDraw</a>, <a href="Testing.html" title="Testing">Test Framework</a></li></ul>
+<hr/>
+<ul><li><b><a href="Addon.html" title="Addon">Addons</a>:</b> <a href="Std_AddonMgr.html" title="Std AddonMgr">Addon Manager</a>, <a href="External_workbenches.html" title="External workbenches">External workbenches</a>, <a href="Scripting_and_macros.html" title="Scripting and macros">Scripting and macros</a></li></ul>
+<hr/>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub">User hub</a>, <a href="Power_users_hub.html" title="Power users hub">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub">Developer hub</a></li></ul></div>
+</div></div>
+<!-- 
+NewPP limit report
+Cached time: 20241129211148
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show‐toc, no‐toc‐conversion]
+CPU time usage: 0.180 seconds
+Real time usage: 1.772 seconds
+Preprocessor visited node count: 1857/1000000
+Post‐expand include size: 23741/2097152 bytes
+Template argument size: 16310/2097152 bytes
+Highest expansion depth: 7/100
+Expensive parser function count: 32/100
+Unstrip recursion depth: 0/20
+Unstrip post‐expand size: 50405/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 1613.250      1 -total
+ 98.57% 1590.195     32 Template:Code
+  0.22%    3.572    133 Template:Incode
+  0.11%    1.833      1 Template:Raytracing_Tools_navi
+  0.10%    1.685      1 Template:PropertyView
+  0.10%    1.587      2 Template:Navigation_menu_2
+  0.09%    1.526     13 Template:Caption
+  0.09%    1.506      1 Template:Userdocnavi
+  0.06%    1.026      1 Template:Variable
+  0.06%    1.020      1 Template:VeryImportantMessage
+-->
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:146996-0!canonical and timestamp 20241129211146 and revision id 1251784. Rendering was triggered because: api-parse
+ -->
+</div></div><script src="script.js"></script>
