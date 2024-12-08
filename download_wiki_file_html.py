@@ -119,6 +119,10 @@ def adjust_links(html_content, page_title):
             print(f"Warning: Unexpected image src format: {src}")
             continue  # Skip unexpected src formats
 
+        # Remove srcset attribute if present
+        if 'srcset' in img_tag.attrs:
+            del img_tag['srcset']
+
     return str(soup)
 
 

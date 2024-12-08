@@ -197,15 +197,15 @@ function sanitize_name($name) {
 
 function adjust_links($htmlContent, $pageTitle) {
     if (!is_string($pageTitle)) {
-        $pageTitle = '';
+        $pageTitle = ''; 
     }
 
-    $numSlashesArray = explode('/', $pageTitle); 
+    $numSlashesArray = explode('/', $pageTitle);
     $numSlashesArray = array_filter($numSlashesArray, function($value) {
-        return trim($value) !== ''; 
+        return trim($value) !== '';
     });
-    $numSlashes = count($numSlashesArray)-1;	
-	
+    $numSlashes = count($numSlashesArray)-1;
+
     if ($numSlashes < 0) {
         $numSlashes = 0;
     }
@@ -251,6 +251,11 @@ function adjust_links($htmlContent, $pageTitle) {
         } else {
             echo "Warning: Unexpected image src format: $src<br>";
         }
+
+        // Remove srcset attribute if present
+        if ($imgTag->hasAttribute('srcset')) {
+            $imgTag->removeAttribute('srcset');
+        }
     }
 
     // Add CSS and JS files
@@ -264,6 +269,7 @@ function adjust_links($htmlContent, $pageTitle) {
 
     return $updatedHtml;
 }
+
 
 
 // Helper function to get the last segment of a path
