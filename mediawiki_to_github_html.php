@@ -195,14 +195,20 @@ function sanitize_name($name) {
     return str_replace(array(' ', ':'), array('_', ';'), $name);  // Replace invalid characters
 }
 
+function removeEmptyElements($array){
+    return array_filter($array, function ($value) {
+        return trim($value) !== '';
+    });
+}
+
 function adjust_links($htmlContent, $pageTitle) {
     if (!is_string($pageTitle)) {
-        $pageTitle = ''; 
+        $pageTitle = '';
     }
 
     $numSlashesArray = explode('/', $pageTitle);
     $numSlashesArray = array_filter($numSlashesArray, function($value) {
-        return trim($value) !== '';
+        return trim($value) !== ''; 
     });
     $numSlashes = count($numSlashesArray)-1;
 
@@ -230,7 +236,9 @@ function adjust_links($htmlContent, $pageTitle) {
             $aTag->setAttribute('href', $filePath);
         } elseif (strpos($href, '/') === 0) {
             $parts = explode('#', $href);
-            $newHref = get_last_segment(createFilePath($parts[0]), '\\');
+            $partsSlashes = removeEmptyElements(explode('/', createFilePath($parts[0])));
+            array_shift($partsSlashes);
+            $newHref = str_repeat('../', $numSlashes) . implode('/', $partsSlashes);
             if (count($parts) > 1) {
                 $newHref .= '#' . end($parts);
             }
@@ -269,15 +277,6 @@ function adjust_links($htmlContent, $pageTitle) {
 
     return $updatedHtml;
 }
-
-
-
-// Helper function to get the last segment of a path
-function get_last_segment($path, $separator) {
-    $parts = explode($separator, $path);
-    return end($parts);
-}
-
 
 // Check for recent changes made in the last 20 minutes
 $currentTime = new DateTime(); // Get the current time
@@ -320,6 +319,15 @@ if (isset($recentChanges['query']['recentchanges'])) {
             echo "INFO: '$filePath' is already up-to-date.<br>";
             continue;  // If the GitHub file is up-to-date, skip
         }
+		
+		/*
+        // Check if the first 7 characters of the commit ID and the comment match
+        if (isset($existingFileData['lastCommitSha']) && substr($existingFileData['lastCommitSha'], 0, 7) === substr($comment, 0, 7)) {
+            echo "INFO: Skipping '$filePath' as the commit ID matches the Wiki comment.<br>";
+            continue; // Skip this iteration
+        }			
+			*/		
+		
         if (strpos($pageTitle, 'File:') === 0 || strpos($pageTitle, 'Images:') === 0) {
             echo "Processing file or image: $pageTitle (Modified by: $user, Comment: '$comment')<br>";
 

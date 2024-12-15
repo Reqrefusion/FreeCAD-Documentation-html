@@ -32,9 +32,9 @@ def sanitize_name(name):
     """Cleans file names."""
     return name.replace(' ', '_').replace(':', ';').strip()
 
-def get_last_segment(text, delimiter):
+def remove_first_segment(text, delimiter):
     parts = text.split(delimiter)
-    return parts[-1]
+    return delimiter.join(parts[1:]) 
 
 def create_file_path(title):
     """Creates the correct file path based on the page title and language."""
@@ -104,7 +104,7 @@ def adjust_links(html_content, page_title):
         elif href.startswith('/'):
             parts = href.split('#')
 
-            a_tag['href'] = get_last_segment(create_file_path(parts[0]), '\\') # Correct links starting from the root
+            a_tag['href'] = a_tag['href'] = ('../' * num_slashes) + remove_first_segment(create_file_path(parts[0]), '\\')  # Correct links starting from the root
             if len(parts) > 1:
                 a_tag['href'] += '#' + parts[-1]
 
@@ -168,7 +168,7 @@ def process_page(page):
 
     # Add CSS and JS files to the HTML
     css_link = f'<link rel="stylesheet" type="text/css" href="{("../" * num_slashes)}site.css">\n'
-    js_script = f'<script src="{("../" * num_slashes)}script.js"></script>\n'
+    js_script = f'<script src="{("../" * num_slashes)}site.js"></script>\n'
     beforehtml_content = '<div class="mw-page-container">'
     afterhtml_content = '</div>'
     body_header = f'<h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">{page_title}</span></h1>'
