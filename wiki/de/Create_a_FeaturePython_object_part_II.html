@@ -1,4 +1,4 @@
-<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Create a FeaturePython object part II/de</span></h1><?xml encoding="UTF-8"><div class="mw-parser-output"><div class="mw-pt-languages noprint" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--high" lang="de" dir="ltr">Deutsch</span></li>
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Create a FeaturePython object part II/de</span></h1><?xml encoding="UTF-8"><div class="mw-parser-output"><div class="mw-pt-languages noprint" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="de" dir="ltr">Deutsch</span></li>
 <li><a href="../Create_a_FeaturePython_object_part_II.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="Create a FeaturePython object part II (100% translated)" lang="en" dir="ltr">English</a></li>
 <li><a href="../fr/Create_a_FeaturePython_object_part_II.html" class="mw-pt-progress mw-pt-progress--complete" title="Cr&eacute;er un objet FeaturePython partie II (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
 <li><a href="../it/Create_a_FeaturePython_object_part_II.html" class="mw-pt-progress mw-pt-progress--stub" title="Creare un Box FeaturePython, Parte II (8% translated)" lang="it" dir="ltr">italiano</a></li>
@@ -14,7 +14,7 @@
 <li class="toclevel-1 tocsection-1"><a href="#Einf%C3%BChrung"><span class="tocnumber">1</span> <span class="toctext">Einf&uuml;hrung</span></a></li>
 <li class="toclevel-1 tocsection-2"><a href="#Hinzuf%C3%BCgen_eines_Kastens"><span class="tocnumber">2</span> <span class="toctext">Hinzuf&uuml;gen eines Kastens</span></a></li>
 <li class="toclevel-1 tocsection-3"><a href="#Festlegen_des_Codes"><span class="tocnumber">3</span> <span class="toctext">Festlegen des Codes</span></a></li>
-<li class="toclevel-1 tocsection-4"><a href="#Writing_a_ViewProvider"><span class="tocnumber">4</span> <span class="toctext">Writing a ViewProvider</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Einen_ViewProvider_schreiben"><span class="tocnumber">4</span> <span class="toctext">Einen ViewProvider schreiben</span></a></li>
 <li class="toclevel-1 tocsection-5"><a href="#Ereignisfallen"><span class="tocnumber">5</span> <span class="toctext">Ereignisfallen</span></a></li>
 <li class="toclevel-1 tocsection-6"><a href="#Vollst%C3%A4ndiger_Code"><span class="tocnumber">6</span> <span class="toctext">Vollst&auml;ndiger Code</span></a></li>
 </ul>
@@ -65,14 +65,15 @@
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">obj</span><span class="o">.</span><span class="n">Shape</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">makeBox</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Length</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">Width</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">Height</span><span class="p">)</span>
 </pre></div>
 <figure class="mw-default-size mw-halign-right" typeof="mw:File"><a href="../File/Part_featurepython_no_vp.png" class="mw-file-description"><img src="../File/Part_featurepython_no_vp.png" decoding="async" width="201" height="156"></a><figcaption></figcaption></figure>
-<p>Save your changes, switch back to FreeCAD, delete any existing objects, reload the box module, and create a new box object. The new result is somewhat disappointing. There no longer is an extra object in the Tree view, and the icon in the Tree view has changed, but our box in the 3D view is also gone (which is why the icon is gray). What happened? Although we've properly created our box shape and assigned it to a <code>Part::FeaturePython</code> object, to make it actually show up in the 3D view we need to assign a <a href="../Viewprovider.html" title="Viewprovider">ViewProvider</a>.
+<p>Speichere deine &Auml;nderungen, wechsle zur&uuml;ck zu FreeCAD, l&ouml;sche alle vorhandenen Objekte, lade das Boxmodul neu und erstelle ein neues Boxobjekt. Das neue Ergebnis ist etwas entt&auml;uschend. Es gibt kein zus&auml;tzliches Objekt mehr in der Baumansicht und das Symbol in der Baumansicht hat sich ge&auml;ndert, aber unsere Box in der 3D-Ansicht ist auch verschwunden (weshalb das Symbol grau ist). Was ist passiert? Obwohl wir unsere Boxform ordnungsgem&auml;&szlig; erstellt und einem <code>Part::FeaturePython</code>-Objekt zugewiesen haben, m&uuml;ssen wir einen <a href="../Viewprovider.html" title="Viewprovider">ViewProvider</a> zuweisen, damit sie tats&auml;chlich in der 3D-Ansicht angezeigt wird.
 </p>
 <div style="clear:both"></div>
 <p><a href="#top">Anfang</a>
+</p><p><span id="Writing_a_ViewProvider"></span>
 </p>
-<h2><span class="mw-headline" id="Writing_a_ViewProvider">Writing a ViewProvider</span></h2>
-<p>A View Provider is the component of an object which allows it to have a visual representation in the 3D view. FreeCAD uses an application structure which is designed to separate the data (the "model") from it's visual representation (the "view"). If you've spent any time working with FreeCAD in Python, you are likely already aware of this through the use of the two core Python modules: <code>FreeCAD</code> and <code>FreeCADGui</code> (often aliased as <code>App</code> and <code>Gui</code> repectively).
-</p><p>Our FeaturePython object also requires these elements. Thus far we've focused purely on the "model" portion of the code, now it's time to write the "view" portion. Fortunately most ViewProviders are simple and require little effort to write, at least to get started. Here's an example ViewProvider borrowed and slightly modified from <a rel="nofollow" class="external autonumber" href="https://github.com/FreeCAD/FreeCAD/blob/master/src/Mod/TemplatePyMod/FeaturePython.py">[1]</a>:
+<h2><span class="mw-headline" id="Einen_ViewProvider_schreiben">Einen ViewProvider schreiben</span></h2>
+<p>Ein Viewprovider ist die Komponente eines Objekts, die eine visuelle Darstellung in der 3D-Ansicht erm&ouml;glicht. FreeCAD verwendet eine Anwendungsstruktur, die die Daten (das &bdquo;Modell&ldquo;) von ihrer visuellen Darstellung (der &bdquo;Ansicht&ldquo;) trennt. Wenn du schon einmal mit FreeCAD in Python gearbeitet hast, bist du dir dessen wahrscheinlich bereits durch die Verwendung der beiden Python-Kernmodule <code>FreeCAD</code> und <code>FreeCADGui</code> (oft als <code>App</code> bzw. <code>Gui</code> bezeichnet) bewusst.
+</p><p>Unser FeaturePython-Objekt erfordert auch diese Elemente. Bisher haben wir uns ausschlie&szlig;lich auf den &bdquo;Modell&ldquo;-Teil des Codes konzentriert, jetzt ist es an der Zeit, den &bdquo;Ansicht&ldquo;-Teil zu schreiben. Gl&uuml;cklicherweise sind die meisten ViewProvider einfach und erfordern wenig Schreibaufwand, zumindest f&uuml;r den Anfang. Hier ist ein Beispiel-ViewProvider, der von <a rel="nofollow" class="external autonumber" href="https://github.com/FreeCAD/FreeCAD/blob/master/src/Mod/TemplatePyMod/FeaturePython.py">[1]</a> &uuml;bernommen und leicht modifiziert wurde:
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">class</span> <span class="nc">ViewProviderBox</span><span class="p">:</span>
 
@@ -167,75 +168,75 @@
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="kc">None</span>
 </pre></div>
-<p>In the code above, we define an XMP icon for this object. Icon design is beyond the scope of this tutorial, but basic design can be managed using open source tools like <a rel="nofollow" class="external text" href="https://www.gimp.org">GIMP</a>, <a rel="nofollow" class="external text" href="https://krita.org/en/">Krita</a>, and <a rel="nofollow" class="external text" href="https://inkscape.org/">Inkscape</a>. The <code>getIcon()</code> method is optional, FreeCAD will use a default icon if this method is not provided.
-</p><p>Add the ViewProvider code at the end of <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">box.py</span> and in the <code>create()</code> method insert the following line above the <code>recompute()</code> statement:
+<p>Im obigen Code definieren wir ein XMP-Symbol f&uuml;r dieses Objekt. Die Symbolgestaltung geht &uuml;ber den Rahmen dieses Tutorials hinaus, aber die grundlegende Gestaltung kann mit Open-Source-Tools wie <a rel="nofollow" class="external text" href="https://www.gimp.org">GIMP</a>, <a rel="nofollow" class="external text" href="https://krita.org/en/">Krita</a> und <a rel="nofollow" class="external text" href="https://inkscape.org/">Inkscape</a> verwaltet werden. Die Methode <code>getIcon()</code> ist optional. FreeCAD verwendet ein Standardsymbol, wenn diese Methode nicht bereitgestellt wird.
+</p><p>F&uuml;gen Sie den ViewProvider-Code am Ende von <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">box.py</span> hinzu und f&uuml;gen Sie in der Methode <code>create()</code> die folgende Zeile &uuml;ber der Anweisung <code>recompute()</code> ein:
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">ViewProviderBox</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
 </pre></div>
-<p>This instances the custom ViewProvider class and passes the FeaturePython's built-in ViewObject to it. When the ViewProvider class initializes, it saves a reference to itself in the FeaturePython's <code>ViewObject.Proxy</code> attribute. This way, when FreeCAD needs to render our box visually, it can find the ViewProvider class to do that.
-</p><p>Now, save the changes and return to FreeCAD. Import or reload the box module and call <code>box.create()</code>. You should now see two things:
+<p>Dies instanziiert die benutzerdefinierte ViewProvider-Klasse und &uuml;bergibt ihr das integrierte ViewObject von FeaturePython. Wenn die ViewProvider-Klasse initialisiert wird, speichert sie einen Verweis auf sich selbst im Attribut <code>ViewObject.Proxy</code> von FeaturePython. Auf diese Weise kann FreeCAD, wenn es unsere Box visuell darstellen muss, die ViewProvider-Klasse finden, um dies zu tun.
+</p><p>Speichere nun die &Auml;nderungen und kehre zu FreeCAD zur&uuml;ck. Importiere oder lade das Box-Modul neu und rufe  <code>box.create()</code> auf. Du solltest jetzt zwei Dinge sehen:
 </p>
-<ul><li>The icon for the box object has changed.</li>
-<li>And, more importantly, there is a box in the 3D view. If you do not see it press the <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a href="../File/Std_ViewFitAll.svg" class="mw-file-description"><img src="../File/Std_ViewFitAll.svg" decoding="async" width="16" height="16"></a></span> <a href="../Std_ViewFitAll.html" title="Std ViewFitAll">Std ViewFitAll</a></span> button. You can even alter the dimensions of the box by changing the values in the <a href="../Property_editor.html" title="Property editor">Property editor</a>. Give it a try!</li></ul>
+<ul><li>Das Symbol f&uuml;r das Box-Objekt hat sich ge&auml;ndert.</li>
+<li>Und, was noch wichtiger ist, es gibt eine Box in der 3D-Ansicht. Wenn du sie nicht sehen kannst, dr&uuml;cke die Schaltfl&auml;che <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a href="../File/Std_ViewFitAll.svg" class="mw-file-description"><img src="../File/Std_ViewFitAll.svg" decoding="async" width="16" height="16"></a></span> <a href="../Std_ViewFitAll.html" title="Std ViewFitAll">Std ViewFitAll</a></span>. Du kannst sogar die Abmessungen der Box &auml;ndern, indem du die Werte im <a href="../de/Property_editor.html" title="Property editor/de">Eigenschafteneditor</a> &auml;nderst. Probiere es aus!</li></ul>
 <p><a href="#top">Anfang</a>
 </p><p><span id="Trapping_events"></span>
 </p>
 <h2><span class="mw-headline" id="Ereignisfallen">Ereignisfallen</span></h2>
-<p>We have already discussed event trapping. Nearly every method of a FeaturePython class serves as a callback accessible to the FeaturePython object (which gets access to our class instance through the <code>Proxy</code> attribute).
-</p><p>Below is a list of the callbacks that may be implemented in the basic FeaturePython object:
+<p>Wir haben bereits das Event Trapping besprochen. Fast jede Methode einer FeaturePython-Klasse dient als Callback, auf den das FeaturePython-Objekt zugreifen kann (das &uuml;ber das <code>Proxy</code>-Attribut Zugriff auf unsere Klasseninstanz erh&auml;lt).
+</p><p>Unten finden Sie eine Liste der R&uuml;ckrufe, die im grundlegenden FeaturePython-Objekt implementiert werden k&ouml;nnen:
 </p>
 <table class="wikitable" cellpadding="5px" width="100%">
-<caption>FeaturePython basic callbacks
+<caption>FeaturePython-Basisr&uuml;ckrufe
 </caption>
 <tbody><tr>
 <td style="width:25%"><code>execute(self, obj)</code>
 </td>
-<td style="width:25%">Called during document recomputes
+<td style="width:25%">Wird w&auml;hrend der Neuberechnung von Dokumenten aufgerufen
 </td>
-<td style="width:50%">Do not call <code>recompute()</code> from this method (or any method called from <code>execute()</code>) as this causes a nested recompute.
+<td style="width:50%">Rufe <code>recompute()</code> nicht von dieser Methode aus auf (oder von einer Methode, die von <code>execute()</code> aufgerufen wird), da dies eine verschachtelte Neuberechnung verursacht.
 </td></tr>
 <tr>
 <td><code>onBeforeChange(self, obj, prop)</code>
 </td>
-<td>Called before a property value is changed
+<td>Wird aufgerufen, bevor ein Eigenschaftswert ge&auml;ndert wird
 </td>
-<td><code>prop</code> is the name of the property to be changed, not the property object itself. Property changes cannot be cancelled.  Previous / next property values are not simultaneously available for comparison.
+<td><code>prop</code> ist der Name der zu &auml;ndernden Eigenschaft, nicht das Eigenschaftsobjekt selbst. Eigenschafts&auml;nderungen k&ouml;nnen nicht abgebrochen werden. Vorherige/n&auml;chste Eigenschaftswerte stehen nicht gleichzeitig zum Vergleich zur Verf&uuml;gung.
 </td></tr>
 <tr>
 <td><code>onChanged(self, obj, prop)</code>
 </td>
-<td>Called after a property is changed
+<td>Wird aufgerufen, nachdem eine Eigenschaft ge&auml;ndert wurde
 </td>
-<td><code>prop</code> is the name of the property to be changed, not the property object itself.
+<td><code>prop</code> ist der Name der zu &auml;ndernden Eigenschaft, nicht das Eigenschaftsobjekt selbst.
 </td></tr>
 <tr>
 <td><code>onDocumentRestored(self, obj)</code>
 </td>
-<td>Called after a document is restored or a FeaturePython object is copied.
+<td>Wird aufgerufen, nachdem ein Dokument wiederhergestellt oder ein FeaturePython-Objekt kopiert wurde.
 </td>
-<td>Occasionally, references to the FeaturePython object from the class, or the class from the FeaturePython object may be broken, as the class <code>__init__()</code> method is not called when the object is reconstructed. Adding <code>self.Object = obj</code> or <code>obj.Proxy = self</code> often solves these issues.
+<td>Gelegentlich k&ouml;nnen Verweise auf das FeaturePython-Objekt aus der Klasse oder die Klasse aus dem FeaturePython-Objekt besch&auml;digt sein, da die Klassenmethode <code>__init__()</code> nicht aufgerufen wird, wenn das Objekt rekonstruiert wird. Das Hinzuf&uuml;gen von <code>self.Object = obj</code> oder <code>obj.Proxy = self</code> l&ouml;st diese Probleme h&auml;ufig.
 </td></tr></tbody></table>
-<p>For a complete reference of FeaturePython methods available, see <a href="../FeaturePython_methods.html" title="FeaturePython methods">FeaturePython methods</a>.
-</p><p>In addition, there are two callbacks in the ViewProvider class that may occasionally prove useful:
+<p>Eine vollst&auml;ndige Referenz der verf&uuml;gbaren FeaturePython-Methoden findest du unter <a href="../de/FeaturePython_methods.html" title="FeaturePython methods/de">FeaturePython-Methoden</a>.
+</p><p>Dar&uuml;ber hinaus gibt es in der ViewProvider-Klasse zwei Callbacks, die sich gelegentlich als n&uuml;tzlich erweisen k&ouml;nnen:
 </p>
 <table class="wikitable" cellpadding="5px" width="100%">
-<caption>ViewProvider basic callbacks
+<caption>Grundlegende ViewProvider-R&uuml;ckrufe
 </caption>
 <tbody><tr>
 <td style="width:25%"><code>updateData(self, obj, prop)</code>
 </td>
-<td style="width:25%">Called after a data (model) property is changed
+<td style="width:25%">Wird aufgerufen, nachdem eine Dateneigenschaft (Modelleigenschaft) ge&auml;ndert wurde
 </td>
-<td style="width:50%"><code>obj</code> is a reference to the FeaturePython class instance, not the ViewProvider instance.  <code>prop</code> is the name of the property to be changed, not the property object itself.
+<td style="width:50%"><code>obj</code> ist ein Verweis auf die FeaturePython-Klasseninstanz, nicht auf die ViewProvider-Instanz. <code>prop</code> ist der Name der zu &auml;ndernden Eigenschaft, nicht das Eigenschaftsobjekt selbst.
 </td></tr>
 <tr>
 <td><code>onChanged(self, vobj, prop)</code>
 </td>
-<td>Called after a view property is changed
+<td>Wird aufgerufen, nachdem eine Ansichtseigenschaft ge&auml;ndert wurde
 </td>
-<td><code>vobj</code> is a reference to the ViewProvider instance.  <code>prop</code> is the name of the view property which was changed.
+<td><code>vobj</code> ist ein Verweis auf die ViewProvider-Instanz. <code>prop</code> ist der Name der Ansichtseigenschaft, die ge&auml;ndert wurde.
 </td></tr></tbody></table>
-<p>It is not uncommon to encounter a situation where the Python callbacks are not being triggered as they should. Beginners in this area can rest assured that the FeaturePython callback system is not fragile or broken. Invariably when callbacks fail to run it is because a reference is lost or undefined in the underlying code. If, however, callbacks appear to be breaking with no explanation, providing object/proxy references in the <code>onDocumentRestored()</code> callback (as noted in the first table above) may alleviate these problems. Until you are comfortable with the callback system, it may be useful to add print statements in each callback to print messages to the console during development.
+<p>Es kommt nicht selten vor, dass die Python-R&uuml;ckrufe nicht wie vorgesehen ausgel&ouml;st werden. Anf&auml;nger auf diesem Gebiet k&ouml;nnen sicher sein, dass das FeaturePython-R&uuml;ckrufsystem nicht fehleranf&auml;llig oder defekt ist. Wenn R&uuml;ckrufe nicht ausgef&uuml;hrt werden, liegt dies immer daran, dass eine Referenz im zugrunde liegenden Code verloren gegangen oder nicht definiert ist. Wenn R&uuml;ckrufe jedoch scheinbar ohne Erkl&auml;rung abgebrochen werden, kann das Bereitstellen von Objekt-/Proxy-Referenzen im <code>onDocumentRestored()</code>-R&uuml;ckruf (wie in der ersten Tabelle oben angegeben) diese Probleme lindern. Bis Sie mit dem R&uuml;ckrufsystem vertraut sind, kann es sinnvoll sein, in jeden R&uuml;ckruf Druckanweisungen einzuf&uuml;gen, um w&auml;hrend der Entwicklung Nachrichten auf der Konsole auszugeben.
 </p><p><a href="#top">Anfang</a>
 </p><p><span id="Complete_code"></span>
 </p>
@@ -403,35 +404,35 @@
 <div style="clear:both"></div>
 <!-- 
 NewPP limit report
-Cached time: 20241225161931
+Cached time: 20241225170513
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc, no&#8208;toc&#8208;conversion]
-CPU time usage: 0.071 seconds
-Real time usage: 0.094 seconds
-Preprocessor visited node count: 595/1000000
+CPU time usage: 0.105 seconds
+Real time usage: 0.437 seconds
+Preprocessor visited node count: 596/1000000
 Post&#8208;expand include size: 10514/2097152 bytes
 Template argument size: 9523/2097152 bytes
 Highest expansion depth: 5/100
 Expensive parser function count: 9/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 24110/5000000 bytes
+Unstrip post&#8208;expand size: 24114/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   19.791      1 -total
- 21.17%    4.190      2 Template:Docnav/de
- 17.61%    3.486      9 Template:Code
- 12.81%    2.535      1 Template:Powerdocnavi/de
- 11.77%    2.330     48 Template:Incode
-  6.50%    1.286      1 Template:Navigation_menu_2
-  5.82%    1.152      1 Template:TOCright
-  5.02%    0.993      2 Template:FileName
-  3.43%    0.679      1 Template:Button
-  3.07%    0.607      3 Template:Clear
+100.00%  329.285      1 -total
+ 96.18%  316.696      9 Template:Code
+  0.83%    2.722      1 Template:Powerdocnavi/de
+  0.56%    1.860     48 Template:Incode
+  0.49%    1.622      2 Template:Docnav/de
+  0.37%    1.212      1 Template:Navigation_menu_2
+  0.25%    0.816      1 Template:Button
+  0.23%    0.750      3 Template:Clear
+  0.22%    0.718      1 Template:TOCright
+  0.19%    0.621      2 Template:FileName
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:210163-0!canonical and timestamp 20241225161931 and revision id 1523611. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:210163-0!canonical and timestamp 20241225170512 and revision id 1523643. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="../site.js"></script>
