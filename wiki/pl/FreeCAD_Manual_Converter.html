@@ -1,4 +1,5 @@
 <link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">FreeCAD Manual Converter/pl</span></h1><?xml encoding="UTF-8"><div class="mw-parser-output"><div class="mw-pt-languages noprint" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../FreeCAD_Manual_Converter.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="FreeCAD Manual Converter (100% translated)" lang="en" dir="ltr">English</a></li>
+<li><a href="../fr/FreeCAD_Manual_Converter.html" class="mw-pt-progress mw-pt-progress--complete" title="FreeCAD Manual Converter (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
 <li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="pl" dir="ltr">polski</span></li></ul></div>
 <table class="fcinfobox wikitable ct" width="100%" style="float: right; width: 230px; margin-left: 10px;">
 <tbody><tr>
@@ -307,32 +308,315 @@ class FreeCADManualConverter:
         if not main_content:
             return None
 
-        safe_title = re.sub(r'[&lt;&gt;:"/\\</pre>
+ 
+        output_file = os.path.join(output_dir, f"{chapter_id}.pdf")
+
+        self.toc_entries.append((chapter_number, chapter_title, chapter_id, subchapters))
+
+        styled_content = f"""
+        &lt;html&gt;
+        &lt;head&gt;
+        &lt;style&gt;
+        body {{
+            margin: 20px;
+            font-family: Arial, sans-serif;
+        }}
+        h1 {{
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }}
+        h2 {{
+            font-size: 18px;
+            margin-top: 10px;
+        }}
+        img {{
+            max-width: 100%;
+            height: auto;
+        }}
+        code, pre {{
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 14px;
+            background-color: #f4f4f4;
+            padding: 10px;
+            display: block;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }}
+        .mw-highlight {{
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }}
+        .wikitable {{
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            text-align: left;
+            page-break-inside: avoid;
+        }}
+        .wikitable th, .wikitable td [[:Template:Border: 1px solid]]
+        .wikitable tr [[:Template:Page-break-inside: avoid;]]
+        .wikitable tr:nth-child(even) [[:Template:Background-color:]]
+        .wikitable tr:hover [[:Template:Background-color:]]
+        .wikitable th [[:Template:Background-color:]]
+        &lt;/style&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+        {main_content}
+        &lt;/body&gt;
+        &lt;/html&gt;
+        """
+
+        try:
+            HTML(string=styled_content).write_pdf(output_file)
+            print(f"Created {output_file}")
+            return output_file
+        except Exception as e:
+            print(f"Error creating PDF for {url}: {e}")
+            return None
+
+
+    def generate_toc(self, output_file='pdfs/Table_of_Contents.pdf'):
+        """Generate a Table of Contents PDF with indented subchapters."""
+        print("Generating Table of Contents...")
+        toc_html = """
+        &lt;html&gt;
+        &lt;head&gt;
+        &lt;style&gt;
+        body {{
+            margin: 20px;
+            font-family: Arial, sans-serif;
+        }}
+        h1 {{
+            text-align: center;
+            font-size: 28px;
+        }}
+        ul {{
+            list-style: none;
+            padding: 0;
+        }}
+        li [[:Template:Margin: 5px 0;]]
+        .chapter {{
+            font-weight: bold;
+            font-size: 16px;
+        }}
+        .subchapter {{
+            font-size: 14px;
+            margin-left: 20px;
+        }}
+        a {{
+            color: blue;
+            text-decoration: none;
+        }}
+        &lt;/style&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+        &lt;h1&gt;Table of Contents&lt;/h1&gt;
+        &lt;ul&gt;
+        """
+        for chapter_number, title, chapter_id, subchapters in self.toc_entries:
+            toc_html += f'&lt;li class="chapter"&gt;{chapter_number}. &lt;a href="#{chapter_id}"&gt;{title}&lt;/a&gt;&lt;/li&gt;'
+            for i, sub in enumerate(subchapters, start=1):
+                toc_html += f'&lt;li class="subchapter"&gt;{chapter_number}.{i} &lt;a href="#{chapter_id}_{sub}"&gt;{sub.replace("_", " ").capitalize()}&lt;/a&gt;&lt;/li&gt;'
+
+        toc_html += "&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;"
+
+        try:
+            HTML(string=toc_html).write_pdf(output_file)
+            print(f"Created {output_file}")
+        except Exception as e:
+            print(f"Error creating Table of Contents PDF: {e}")
+
+
+    def merge_pdfs(self, pdf_files, output_file):
+        print(f"Merging PDFs into {output_file}...")
+        merger = PdfMerger()
+        for pdf in pdf_files:
+            merger.append(pdf)
+        merger.write(output_file)
+        merger.close()
+        print(f"Successfully created {output_file}")
+
+    def create_epub(self, output_file='FreeCAD_User_Manual.epub'):
+        """Create an EPUB version of the manual."""
+        print(f"Creating EPUB: {output_file}")
+
+        # Initialize EPUB book
+        book = epub.EpubBook()
+
+        # Set metadata
+        book.set_identifier(str(uuid.uuid4()))
+        book.set_title('FreeCAD User Manual')
+        book.set_language('en')
+        book.add_author('FreeCAD Community')
+        book.set_cover("cover.jpg", self.generate_cover())
+
+        # Add CSS
+        style = '''
+            body { margin: 20px; font-family: Arial, sans-serif; }
+            h1 { text-align: center; font-size: 2em; margin-bottom: 1em; }
+            h2 { font-size: 1.5em; margin-top: 1em; }
+            img { max-width: 100%; height: auto; }
+            code, pre {
+                font-family: monospace;
+                background-color: #f4f4f4;
+                padding: 0.5em;
+                display: block;
+                white-space: pre-wrap;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 1em 0;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 0.5em;
+            }
+        '''
+        nav_css = epub.EpubItem(
+            uid="style_nav",
+            file_name="style/nav.css",
+            media_type="text/css",
+            content=style
+        )
+        book.add_item(nav_css)
+
+        # Create chapters
+        chapters = []
+        for chapter_data in self.chapters_html:
+            # Create chapter
+            chapter = epub.EpubHtml(
+                title=chapter_data['title'],
+                file_name=f'chapter_{chapter_data["number"]}.xhtml',
+                lang='en'
+            )
+
+            # Process content for EPUB
+            content = chapter_data['content']
+
+            # Handle images
+            for img in content.find_all('img'):
+                if 'epub_data' in img.attrs and 'epub_src' in img.attrs:
+                    # Generate a content hash for the image data
+                    import hashlib
+                    img_hash = hashlib.md5(img['epub_data']).hexdigest()
+
+                    # Check if we've seen this image before
+                    if img_hash not in self.image_cache:
+                        # This is a new image
+                        image_filename = f'{img_hash}_{img["epub_src"]}'
+                        self.image_cache[img_hash] = image_filename
+
+                        # Add image to EPUB
+                        image_item = epub.EpubItem(
+                            uid=f'image_{img_hash}',
+                            file_name=f'images/{image_filename}',
+                            media_type='image/png',
+                            content=img['epub_data']
+                        )
+                        book.add_item(image_item)
+
+                    # Update image source to use cached filename
+                    img['src'] = f'images/{self.image_cache[img_hash]}'
+                    # Remove EPUB-specific attributes
+                    del img['epub_data']
+                    del img['epub_src']
+
+            # Set chapter content
+            chapter.content = str(content)
+            chapter.add_item(nav_css)
+
+            # Add chapter
+            book.add_item(chapter)
+            chapters.append(chapter)
+
+        # Create table of contents
+        book.toc = [(epub.Section('Table of Contents'), chapters)]
+
+        # Add navigation files
+        book.add_item(epub.EpubNcx())
+        book.add_item(epub.EpubNav())
+
+        # Define reading order
+        book.spine = ['nav'] + chapters
+
+        # Write EPUB file
+        epub.write_epub(output_file, book, {})
+        print(f"Successfully created {output_file}")
+
+    def generate_cover(self):
+        """Generate a simple cover image for the EPUB."""
+        from PIL import Image, ImageDraw, ImageFont
+
+        # Create a new image with a white background
+        cover = Image.new('RGB', (1600, 2400), 'white')
+        draw = ImageDraw.Draw(cover)
+
+        # Add title text
+        try:
+            font = ImageFont.truetype("Arial", 120)
+        except:
+            font = ImageFont.load_default()
+
+        title = "FreeCAD\nUser Manual"
+        draw.text((800, 1000), title, font=font, fill='black', anchor="mm", align="center")
+
+        # Add date
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        draw.text((800, 1300), date_str, font=font, fill='gray', anchor="mm")
+
+        # Convert to bytes
+        img_byte_arr = BytesIO()
+        cover.save(img_byte_arr, format='JPEG')
+        img_byte_arr.seek(0)
+
+        return img_byte_arr.getvalue()
+
+    def batch_convert(self, links, output_dir='pdfs', merged_pdf='FreeCAD_User_Manual.pdf', create_epub=True):
+        """Convert manual to both PDF and EPUB formats."""
+        # First create PDF as before
+        pdf_files = []
+        for chapter_number, (chapter_url, subchapters) in enumerate(links.items(), start=1):
+            chapter_id = re.sub(r'[&lt;&gt;:"/\\</pre>
 <!-- 
 NewPP limit report
-Cached time: 20241217104827
+Cached time: 20241230230530
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc, no&#8208;toc&#8208;conversion]
-CPU time usage: 0.040 seconds
-Real time usage: 0.042 seconds
-Preprocessor visited node count: 139/1000000
-Post&#8208;expand include size: 2528/2097152 bytes
-Template argument size: 7941/2097152 bytes
+CPU time usage: 0.049 seconds
+Real time usage: 0.088 seconds
+Preprocessor visited node count: 157/1000000
+Post&#8208;expand include size: 2719/2097152 bytes
+Template argument size: 17038/2097152 bytes
 Highest expansion depth: 7/100
 Expensive parser function count: 4/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 9886/5000000 bytes
+Unstrip post&#8208;expand size: 19332/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%    4.634      1 -total
- 44.63%    2.068      1 Template:Macro/pl
- 25.77%    1.194      2 Template:MacroCode
- 24.02%    1.113      2 Template:Code
+100.00%   20.414      1 -total
+ 63.59%   12.982      1 Template:Macro/pl
+ 28.04%    5.723      2 Template:MacroCode
+  6.72%    1.373      2 Template:Code
+  1.99%    0.407      1 Template:Page-break-inside:_avoid;
+  1.87%    0.382      1 Template:Border:_1px_solid
+  1.75%    0.358      1 Template:Margin:_5px_0;
+  1.64%    0.335      3 Template:Background-color:
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:366594-0!canonical and timestamp 20241217104827 and revision id 1520117. Rendering was triggered because: diff-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:366594-0!canonical and timestamp 20241230230530 and revision id 1526892. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="../site.js"></script>
