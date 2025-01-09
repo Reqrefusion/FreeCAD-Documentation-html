@@ -25,7 +25,7 @@
 <ul><li>In <span typeof="mw:File"><a href="File/Workbench_PartDesign.svg" class="mw-file-description"><img src="File/Workbench_PartDesign.svg" decoding="async" width="24" height="24"></a></span> <a href="PartDesign_Workbench.html" title="PartDesign Workbench">PartDesign</a>, if a feature is supported on a face (or edge or vertex), the feature may break if the underlying solid changes size or orientation, as the original face (or edge or vertex) may be internally renamed.</li>
 <li>In <span typeof="mw:File"><a href="File/Workbench_TechDraw.svg" class="mw-file-description"><img src="File/Workbench_TechDraw.svg" decoding="async" width="24" height="24"></a></span> <a href="TechDraw_Workbench.html" title="TechDraw Workbench">TechDraw</a>, if a dimension is measuring the length of a projected edge, the dimension may break if the 3D model is changed, as the vertices may be renamed thus changing the measured edge.</li></ul>
 <p>The topological naming issue is a complex problem in CAD modelling that stems from the way the internal FreeCAD routines handle updates of the geometrical shapes created with the <a href="OpenCASCADE.html" title="OpenCASCADE">OCCT kernel</a>. This problem is not unique to FreeCAD. It is generally present in CAD software, but most other CAD software has heuristics to reduce the impact of the problem on users.
-</p><p>Starting with FreeCAD 0.19 there are ongoing development efforts to improve the core handling of shapes by adding heuristics that reduce the impact of these issues. The naming algorithm described in forum thread <a rel="nofollow" class="external text" href="https://forum.freecadweb.org/viewtopic.php?t=27278">Topological Naming, My Take</a> is designed to reduce manual effort, sometimes by automatically fixing up problems, and other times presenting a likely solution, and otherwise at least clearly showing what caused the problem. The first stable release of FreeCAD to feature this new naming algorithm was 1.0. Over time, this algorithm will be applied to more parts of FreeCAD, and more automatic and assisted repair will be added in later versions.
+</p><p>Starting with FreeCAD 0.19 there are ongoing development efforts to improve the core handling of shapes by adding heuristics that reduce the impact of these issues. The <a href="#Topological_naming_algorithm">naming algorithm</a> is designed to reduce manual effort, sometimes by automatically fixing up problems, and other times presenting a likely solution, and otherwise at least clearly showing what caused the problem. The first stable release of FreeCAD to feature this new naming algorithm was 1.0. Over time, this algorithm will be applied to more parts of FreeCAD, and more automatic and assisted repair will be added in later versions.
 </p><p>The topological naming problem most often affects and confuses new users of FreeCAD. In PartDesign, the user is advised to follow the best practices discussed in the <a href="Feature_editing.html" title="Feature editing">feature editing</a> page. Use of supporting datum objects like <a href="PartDesign_Plane.html" title="PartDesign Plane">planes</a> and <a href="PartDesign_CoordinateSystem.html" title="PartDesign CoordinateSystem">local coordinate systems</a> is strongly recommended to produce models that aren't easily subject to such topological errors. In TechDraw, the user is advised to add dimensions only when the 3D model is complete and won't be modified further.
 </p>
 <h2><span class="mw-headline" id="Example">Example</span></h2>
@@ -103,12 +103,12 @@
 </p><p>Datum objects, <a href="PartDesign_Point.html" title="PartDesign Point">points</a>, <a href="PartDesign_Line.html" title="PartDesign Line">lines</a>, <a href="PartDesign_Plane.html" title="PartDesign Plane">planes</a>, and <a href="PartDesign_CoordinateSystem.html" title="PartDesign CoordinateSystem">coordinate systems</a>, may also be useful as reference geometry, that is, as visual aids to show the important features in the model, even if no sketch is directly attached to them.
 </p>
 <h2><span class="mw-headline" id="Topological_naming_algorithm">Topological naming algorithm</span></h2>
-<p>Realthunder's topological naming algorithm selected to reduce the impact of this problem has been widely described as "fixing the topological naming problem," which has unintentionally misled many users into thinking that it will no longer be helpful to use techniques like datums, explicit sketch placement, and <a href="Feature_editing.html#Advice_for_creating_stable_models" title="Feature editing">Feature editing</a> to make models more stable. The algorithm is not intended to fix every failure introduced by topological naming ambiguity. Rather, it has three purposes.
+<p>Realthunder's topological naming algorithm, described in forum thread <a rel="nofollow" class="external text" href="https://forum.freecadweb.org/viewtopic.php?t=27278">Topological Naming, My Take</a>, which was selected to reduce the impact of this problem, has been widely described as "fixing the topological naming problem." This has unintentionally misled many users into thinking that it will no longer be helpful to use techniques like datums, explicit sketch placement, and <a href="Feature_editing.html#Advice_for_creating_stable_models" title="Feature editing">Feature editing</a> to make models more stable. The algorithm is not intended to fix every failure introduced by topological naming ambiguity. Rather, it has three purposes.
 </p>
 <ol><li>The first and most important purpose is, whenever possible, to <b>identify</b> broken references from topological changes and display an error to the user. Instead of having to work through a series of operations to find the first operation that diverges from the design intent, the operation that changes the names will normally be flagged with an error, making it much easier to manually fix model problems introduced by changes to operations or parameters.</li>
 <li>Sometimes, FreeCAD will be able to identify a <b>likely</b> fix for a broken reference, so that when the user is manually fixing up the flagged broken reference, a candidate will be presented for them to accept or change. A common example of this is dress-up operations like fillets and chamfers, where user might have to to edit the operation and either accept the proposed replacement feature selection or change it to correct it.</li>
 <li>In some cases, FreeCAD will be able to <b>automatically</b> resolve the broken reference, because enough information about the reference is stored to have high confidence that the replacement is correct. For example, when sketching directly on a face, the algorithm will frequently (but not always) correctly repair the reference to the face when the underlying geometry is changed parametrically. (When changing the structure, such as by adding or deleting operations in the middle of a Part Design Body, this kind of automatic repair will be less likely.) However, FreeCAD will do this only with high confidence in the correctness of the repair, because an incorrect automatic repair may re-introduce the problem of having to hunt for where a problem was introduced in order to repair a model after a modification. <i>First, do no harm.</i></li></ol>
-<p>The goal for FreeCAD 1.0 is that the implementation of this algorithm in the official FreeCAD release has reached feature parity with Realthunder's "Linkstage 3" fork, where he originally developed the algorithm, as of the time the integration work started. There are new FreeCAD features that could use the algorithm but do not yet, and there will always be more opportunities to add candidate fixes and automatic repair. The initial work has provided a <i>framework</i> to use for these additional improvements over time, both in core FreeCAD and in Addons.
+<p>In FreeCAD 1.0, the implementation of this algorithm in the official FreeCAD release reached feature parity with Realthunder's "Linkstage 3" fork, where he originally developed the algorithm, as of the time the integration work started. There are new FreeCAD features that could use the algorithm but do not yet, and there will always be more opportunities to add candidate fixes and automatic repair. The initial work has provided a <i>framework</i> to use for these additional improvements over time, both in core FreeCAD and in Addons.
 </p>
 <h2><span class="mw-headline" id="Links">Links</span></h2>
 <ul><li><a href="PartDesign_Fillet.html#Topological_naming" title="PartDesign Fillet">PartDesign Fillet - Topological naming</a></li>
@@ -192,13 +192,13 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20250109132129
+Cached time: 20250109140555
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc, no&#8208;toc&#8208;conversion]
-CPU time usage: 0.154 seconds
-Real time usage: 0.176 seconds
-Preprocessor visited node count: 622/1000000
+CPU time usage: 0.136 seconds
+Real time usage: 0.149 seconds
+Preprocessor visited node count: 623/1000000
 Post&#8208;expand include size: 33821/2097152 bytes
 Template argument size: 13736/2097152 bytes
 Highest expansion depth: 7/100
@@ -208,19 +208,19 @@ Unstrip post&#8208;expand size: 1881/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   20.502      1 -total
- 36.48%    7.479      4 Template:Navigation_menu_2
- 26.24%    5.379      1 Template:TechDraw_Tools_navi
- 15.72%    3.223      1 Template:Userdocnavi
- 12.98%    2.661      1 Template:PartDesign_Tools_navi
- 11.61%    2.380      2 Template:PropertyData
- 11.57%    2.372      1 Template:Part_Tools_navi
-  8.68%    1.779      1 Template:TOCright
-  6.04%    1.239      2 Template:Variable
-  5.87%    1.204      3 Template:Incode
+100.00%   13.832      1 -total
+ 36.85%    5.097      4 Template:Navigation_menu_2
+ 20.61%    2.851      1 Template:TechDraw_Tools_navi
+ 16.24%    2.246      1 Template:Userdocnavi
+ 14.95%    2.068      2 Template:PropertyData
+ 13.19%    1.825      1 Template:PartDesign_Tools_navi
+ 11.55%    1.597      1 Template:Part_Tools_navi
+  9.01%    1.246      2 Template:Variable
+  7.99%    1.105      1 Template:TOCright
+  5.64%    0.780      3 Template:Incode
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:147525-0!canonical and timestamp 20250109132128 and revision id 1529446. Rendering was triggered because: api-parse
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:147525-0!canonical and timestamp 20250109140555 and revision id 1529448. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="site.js"></script>
