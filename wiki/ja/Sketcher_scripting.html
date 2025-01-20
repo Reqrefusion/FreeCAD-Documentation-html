@@ -1,0 +1,297 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Sketcher scripting/ja</span></h1><?xml encoding="UTF-8"><div class="mw-parser-output"><div class="mw-pt-languages noprint" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../de/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--complete" title="Sketcher Skripterstellung (100% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="../Sketcher_scripting.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="Sketcher scripting (100% translated)" lang="en" dir="ltr">English</a></li>
+<li><a href="../es/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--stub" title="Croquizador Gui&oacute;n (15% translated)" lang="es" dir="ltr">espa&ntilde;ol</a></li>
+<li><a href="../fr/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--complete" title="Sketcher Scripts (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../it/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--stub" title="Sketcher: scripting (3% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="../pl/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--complete" title="Skrypty Szkicownika (100% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../pt-br/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--stub" title="Sketcher scripting (3% translated)" lang="pt-BR" dir="ltr">portugu&ecirc;s do Brasil</a></li>
+<li><a href="../ru/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--stub" title="&#1055;&#1088;&#1086;&#1075;&#1088;&#1072;&#1084;&#1084;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077; &#1074; Sketcher (12% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--stub" lang="ja" dir="ltr">&#26085;&#26412;&#35486;</span></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none"><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Creating_a_SketchObject_using_Python"><span class="tocnumber">1</span> <span class="toctext">Creating a SketchObject using Python</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Creating_a_constraint_using_Python"><span class="tocnumber">2</span> <span class="toctext">Creating a constraint using Python</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Constraint_types"><span class="tocnumber">3</span> <span class="toctext">Constraint types</span></a></li>
+<li class="toclevel-1 tocsection-4"><a href="#Identifying_the_numbering_of_a_line"><span class="tocnumber">4</span> <span class="toctext">Identifying the numbering of a line</span></a></li>
+<li class="toclevel-1 tocsection-5"><a href="#Identifying_the_numbering_of_the_sub-parts_of_a_line"><span class="tocnumber">5</span> <span class="toctext">Identifying the numbering of the sub-parts of a line</span></a></li>
+<li class="toclevel-1 tocsection-6"><a href="#Example"><span class="tocnumber">6</span> <span class="toctext">Example</span></a></li>
+</ul>
+</div>
+</div>
+<h2><span class="mw-headline" id="Creating_a_SketchObject_using_Python">Creating a SketchObject using Python</span></h2>
+<p>We create a SketchObject like this:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">Part</span>
+<span class="kn">import</span> <span class="nn">Sketcher</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>  
+
+<span class="n">sketch</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Sketcher::SketchObject"</span><span class="p">,</span> <span class="s2">"Sketch"</span><span class="p">)</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">addGeometry</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                                    <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">5.2</span><span class="p">,</span> <span class="mf">5.3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">addGeometry</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">6.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                                    <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">10.2</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">addGeometry</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">12.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                                    <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">15.4</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="kc">False</span><span class="p">)</span>
+
+<span class="n">doc</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+</pre></div>
+<p>It also adds three <a href="../Topological_data_scripting.html#Line" title="Topological data scripting">lines</a> in the newly created Sketch.
+</p>
+<h2><span class="mw-headline" id="Creating_a_constraint_using_Python">Creating a constraint using Python</span></h2>
+<p>A geometric constraint <span typeof="mw:File"><a href="../File/Sketcher_ConstrainCoincident.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainCoincident.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainPointOnObject.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainPointOnObject.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainVertical.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainVertical.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainHorizontal.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainHorizontal.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainParallel.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainParallel.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainPerpendicular.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainPerpendicular.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainTangent.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainTangent.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainEqual.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainEqual.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainSymmetric.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainSymmetric.svg" decoding="async" width="24" height="24"></a></span> and <span typeof="mw:File"><a href="../File/Sketcher_ConstrainBlock.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainBlock.svg" decoding="async" width="24" height="24"></a></span> can be created from macros and from the Python console by using the following command:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">sketch</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">Sketcher</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">ConstraintType</span><span class="p">,</span> <span class="n">EdgeOrPartOfEdge</span><span class="err">&hellip;</span><span class="p">))</span>
+</pre></div>
+<p>A dimensional constraint <span typeof="mw:File"><a href="../File/Sketcher_ConstrainLock.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainLock.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainDistanceX.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainDistanceX.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainDistanceY.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainDistanceY.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainDistance.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainDistance.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainRadius.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainRadius.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainDiameter.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainDiameter.svg" decoding="async" width="24" height="24"></a></span> <span typeof="mw:File"><a href="../File/Sketcher_ConstrainAngle.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainAngle.svg" decoding="async" width="24" height="24"></a></span> and the special constraint <span typeof="mw:File"><a href="../File/Sketcher_ConstrainSnellsLaw.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainSnellsLaw.svg" decoding="async" width="24" height="24"></a></span> <a href="../Sketcher_ConstrainSnellsLaw.html" title="Sketcher ConstrainSnellsLaw">Snell's law</a> can be created from macros and from the Python console by using the following command:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">sketch</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">Sketcher</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">DimensionalConstraintType</span><span class="p">,</span> <span class="n">EdgeOrPartOfEdge</span><span class="err">&hellip;</span><span class="p">,</span> <span class="n">App</span><span class="o">.</span><span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s2">"float_value unit"</span><span class="p">)))</span>
+</pre></div>
+<p>e.g.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">sketch</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">Sketcher</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="n">DimensionalConstraintType</span><span class="p">,</span> <span class="n">EdgeOrPartOfEdge</span><span class="err">&hellip;</span><span class="p">,</span> <span class="n">App</span><span class="o">.</span><span class="n">Units</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="s2">"123.0 mm"</span><span class="p">)))</span>
+</pre></div>
+<p>The first argument <code>ConstraintType</code> is described below in <a href="#Constraint_types">Constraint types</a>.
+</p><p>A constraint can take up to six arguments which are edges or indicate which sub-part of an edge is used by the constraint. See the documentation of individual constraints for details on what combinations of edges and sub-parts of edges can be passed as arguments.
+The main issue with this function is to identify correctly the line number and the vertex number of the lines you want to process.
+The sections below describe how to <a href="#Identifying_the_numbering_of_a_line">identify the numbering of a line</a>, and how to <a href="#Identifying_the_numbering_of_the_sub-parts_of_a_line">Identify the numbering of the sub-parts of a line</a>.
+</p>
+<h2><span class="mw-headline" id="Constraint_types">Constraint types</span></h2>
+<p>For geometric constraints, the first argument is one of the following. See the corresponding feature page for the possible combinations of arguments allowed for each constraint.
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th>Code</th>
+<th>Icon</th>
+<th>Feature
+</th></tr>
+<tr>
+<td><code>"Coincident"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainCoincident.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainCoincident.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainCoincident.html" title="Sketcher ConstrainCoincident">Coincident</a>
+</td></tr>
+<tr>
+<td><code>"PointOnObject"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainPointOnObject.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainPointOnObject.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainPointOnObject.html" title="Sketcher ConstrainPointOnObject">Point On Object</a>
+</td></tr>
+<tr>
+<td><code>"Vertical"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainVertical.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainVertical.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainVertical.html" title="Sketcher ConstrainVertical">Vertical</a>
+</td></tr>
+<tr>
+<td><code>"Horizontal"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainHorizontal.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainHorizontal.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainHorizontal.html" title="Sketcher ConstrainHorizontal">Horizontal</a>
+</td></tr>
+<tr>
+<td><code>"Parallel"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainParallel.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainParallel.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainParallel.html" title="Sketcher ConstrainParallel">Parallel</a>
+</td></tr>
+<tr>
+<td><code>"Perpendicular"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainPerpendicular.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainPerpendicular.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainPerpendicular.html" title="Sketcher ConstrainPerpendicular">Perpendicular</a>
+</td></tr>
+<tr>
+<td><code>"Tangent"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainTangent.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainTangent.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainTangent.html" title="Sketcher ConstrainTangent">Tangent</a>
+</td></tr>
+<tr>
+<td><code>"Equal"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainEqual.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainEqual.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainEqual.html" title="Sketcher ConstrainEqual">Equal</a>
+</td></tr>
+<tr>
+<td><code>"Symmetric"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainSymmetric.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainSymmetric.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainSymmetric.html" title="Sketcher ConstrainSymmetric">Symmetric</a>
+</td></tr>
+<tr>
+<td><code>"Block"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainBlock.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainBlock.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainBlock.html" title="Sketcher ConstrainBlock">Block</a>
+</td></tr></tbody></table>
+<p>For dimensional constraints, the first argument is one of the following. See the corresponding feature page for the possible combinations of arguments allowed for each constraint.
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th>Code</th>
+<th>Icon</th>
+<th>Feature
+</th></tr>
+<tr>
+<td><code>"DistanceX"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainDistanceX.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainDistanceX.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainDistanceX.html" title="Sketcher ConstrainDistanceX">Horizontal distance</a>
+</td></tr>
+<tr>
+<td><code>"DistanceY"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainDistanceY.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainDistanceY.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainDistanceY.html" title="Sketcher ConstrainDistanceY">Vertical distance</a>
+</td></tr>
+<tr>
+<td><code>"Distance"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainDistance.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainDistance.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainDistance.html" title="Sketcher ConstrainDistance">Distance</a>
+</td></tr>
+<tr>
+<td><code>"Radius"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainRadius.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainRadius.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainRadius.html" title="Sketcher ConstrainRadius">Radius</a>
+</td></tr>
+<tr>
+<td><code>"Diameter"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainDiameter.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainDiameter.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainDiameter.html" title="Sketcher ConstrainDiameter">Diameter</a>
+</td></tr>
+<tr>
+<td><code>"Angle"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainAngle.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainAngle.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainAngle.html" title="Sketcher ConstrainAngle">Angle</a>
+</td></tr>
+<tr>
+<td><code>"AngleViaPoint"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainAngle.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainAngle.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainAngle.html" title="Sketcher ConstrainAngle">Angle</a>
+</td></tr></tbody></table>
+<p>The <span typeof="mw:File"><a href="../File/Sketcher_ConstrainSnellsLaw.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainSnellsLaw.svg" decoding="async" width="24" height="24"></a></span> <a href="../Sketcher_ConstrainSnellsLaw.html" title="Sketcher ConstrainSnellsLaw">Snell's law</a> constraints behave like dimensional contraints for the purposes of scripting. Again, see the corresponding feature page for the possible combinations of arguments allowed for each constraint.
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<th>Code</th>
+<th>Icon</th>
+<th>Feature
+</th></tr>
+<tr>
+<td><code>"SnellsLaw"</code></td>
+<td><span typeof="mw:File"><a href="../File/Sketcher_ConstrainSnellsLaw.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainSnellsLaw.svg" decoding="async" width="24" height="24"></a></span></td>
+<td><a href="../Sketcher_ConstrainSnellsLaw.html" title="Sketcher ConstrainSnellsLaw">Snell's law</a>
+</td></tr></tbody></table>
+<p>The <span typeof="mw:File"><a href="../File/Sketcher_ConstrainLock.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainLock.svg" decoding="async" width="24" height="24"></a></span> <a href="../Sketcher_ConstrainLock.html" title="Sketcher ConstrainLock">Lock</a> constraint is a GUI command which creates a <span typeof="mw:File"><a href="../File/Sketcher_ConstrainDistanceX.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainDistanceX.svg" decoding="async" width="24" height="24"></a></span> <a href="../Sketcher_ConstrainDistanceX.html" title="Sketcher ConstrainDistanceX">Horizontal distance</a> and a <span typeof="mw:File"><a href="../File/Sketcher_ConstrainDistanceY.svg" class="mw-file-description"><img src="../File/Sketcher_ConstrainDistanceY.svg" decoding="async" width="24" height="24"></a></span> <a href="../Sketcher_ConstrainDistanceY.html" title="Sketcher ConstrainDistanceY">Vertical distance</a> constraint, it is not a constraint of its own.
+</p>
+<h2><span class="mw-headline" id="Identifying_the_numbering_of_a_line">Identifying the numbering of a line</span></h2>
+<p>I have drawn three lines as shown in the following figure.
+</p><p><span typeof="mw:File"><a href="../File/PartDesignConstraintPointOnPointScriptingFigure1.jpg" class="mw-file-description"><img src="../File/PartDesignConstraintPointOnPointScriptingFigure1.jpg" decoding="async" width="600" height="239"></a></span>
+</p><p>By moving the cursor of the mouse above the line you can see the line number at the bottom left of the FreeCAD windows, see next figure.
+</p><p><span typeof="mw:File"><a href="../File/PartDesignConstraintPointOnPointScriptingFigure2.jpg" class="mw-file-description"><img src="../File/PartDesignConstraintPointOnPointScriptingFigure2.jpg" decoding="async" width="600" height="342"></a></span>
+</p><p>Unfortunately the numbering displayed on the FreeCAD windows start from 1 whereas the numbering of the line used to script start from 0: this means that you have to subtract one each time you want to refer to a line.
+</p><p>Positive numbers indicate sketch edges (straight lines, circles, conics, B-splines,  and so on). The following values can be used to denote elements that are not sketch edges:
+</p>
+<ul><li><code>-1</code> denotes the horizontal x axis</li>
+<li><code>-2</code> denotes the vertical y axis</li>
+<li><code>-n</code> denotes the external geometry element number <code>n-3</code> (e.g. the external geometry element with index 0 in the flattened list <code>sketch.ExternalGeometry</code> would be denoted by -3, the following element in the flattened list would be -4 and so on).</li></ul>
+<h2><span class="mw-headline" id="Identifying_the_numbering_of_the_sub-parts_of_a_line">Identifying the numbering of the sub-parts of a line</span></h2>
+<p>When qualifying which part of a line is affected by a constraint, the following values can be used:
+</p>
+<ul><li><code>0</code> to indicate that the constraint affects the entire edge.</li>
+<li><code>1</code> to indicate that the constraint affects the start point of the edge (a full circle has no starting point).</li>
+<li><code>2</code> to indicate that the constraint affects the endpoint of the edge.</li>
+<li><code>3</code> to indicate that the constraint affects the center point of the edge. Can only be used for circles, circular arcs, ellipses and elliptical arcs.</li>
+<li><code>n</code> to indicate that the constraint affects the n-th pole of a B-spline.</li></ul>
+<p>The vertices indicated by 1 and 2 are numbered according to their order of creation. To find out the order of their creation (If you have a lot of lines, you cannot remember which vertex you have created first), you just have to move the cursor of your mouse above the two vertices of one line, see following figure.
+</p><p><span typeof="mw:File"><a href="../File/PartDesignConstraintPointOnPointScriptingFigure3.jpg" class="mw-file-description"><img src="../File/PartDesignConstraintPointOnPointScriptingFigure3.jpg" decoding="async" width="600" height="342"></a></span>
+</p><p>If you read e.g. 4 and 5, it means that the vertex with the lower number (4 in this example) will be referenced by using the number 1 (first in the script command and the vertex with the higher number (5 in this example) will be referenced by using the number 2 in the script command.
+</p>
+<h2><span class="mw-headline" id="Example">Example</span></h2>
+<p>Let us take the previous example of the three lines. The subsequent figure indicates the numbering of each line and their vertices according to the convention for scripting.
+</p><p><span typeof="mw:File"><a href="../File/PartDesignConstraintPointOnPointScriptingFigure3Bis.jpg" class="mw-file-description"><img src="../File/PartDesignConstraintPointOnPointScriptingFigure3Bis.jpg" decoding="async" width="600" height="264"></a></span>
+</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;"><b>blue text:</b> numbering of line, <b>black text:</b> numbering of vertices</p>
+<p>The command <code>sketch.addConstraint(Sketcher.Constraint("Coincident", 1, 2, 2, 1))</code> yields following result:
+</p><p><span typeof="mw:File"><a href="../File/PartDesignConstraintPointOnPointScriptingFigure4.jpg" class="mw-file-description"><img src="../File/PartDesignConstraintPointOnPointScriptingFigure4.jpg" decoding="async" width="600" height="291"></a></span>
+</p><p>The full code to draw the three lines and add a Coincident constraint on two points from two lines is like this:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">Part</span>
+<span class="kn">import</span> <span class="nn">Sketcher</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>  
+
+<span class="n">sketch</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Sketcher::SketchObject"</span><span class="p">,</span> <span class="s2">"Sketch"</span><span class="p">)</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">addGeometry</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                                    <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">5.2</span><span class="p">,</span> <span class="mf">5.3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">addGeometry</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">6.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                                    <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">10.2</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">addGeometry</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">12.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                                    <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">15.4</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">Sketcher</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="s2">"Coincident"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="n">doc</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+</pre></div>  
+<p><br>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a href="../File/Workbench_Sketcher.svg" class="mw-file-description"><img src="../File/Workbench_Sketcher.svg" decoding="async" width="24" height="24"></a></span> <a href="../ja/Sketcher_Workbench.html" title="Sketcher Workbench/ja">Sketcher</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b>General:</b> <a href="../ja/Sketcher_NewSketch.html" title="Sketcher NewSketch/ja">Create sketch</a>, <a href="../ja/Sketcher_EditSketch.html" title="Sketcher EditSketch/ja">Edit sketch</a>, <a href="../ja/Sketcher_MapSketch.html" title="Sketcher MapSketch/ja">Attach sketch</a>, <a href="../ja/Sketcher_ReorientSketch.html" title="Sketcher ReorientSketch/ja">Reorient sketch</a>, <a href="../ja/Sketcher_ValidateSketch.html" title="Sketcher ValidateSketch/ja">Validate sketch</a>, <a href="../ja/Sketcher_MergeSketches.html" title="Sketcher MergeSketches/ja">Merge sketches</a>, <a href="../ja/Sketcher_MirrorSketch.html" title="Sketcher MirrorSketch/ja">Mirror sketch</a>, <a href="../ja/Sketcher_LeaveSketch.html" title="Sketcher LeaveSketch/ja">Leave sketch</a>, <a href="../ja/Sketcher_ViewSketch.html" title="Sketcher ViewSketch/ja">View sketch</a>, <a href="../ja/Sketcher_ViewSection.html" title="Sketcher ViewSection/ja">View section</a>, <a href="../ja/Sketcher_Grid.html" title="Sketcher Grid/ja">Toggle grid</a>, <a href="../ja/Sketcher_Snap.html" title="Sketcher Snap/ja">Toggle snap</a>, <a href="../ja/Sketcher_RenderingOrder.html" title="Sketcher RenderingOrder/ja">Configure rendering order</a>, <a href="../ja/Sketcher_StopOperation.html" title="Sketcher StopOperation/ja">Stop operation</a></li></ul>
+<hr>
+<ul><li><b>Sketcher geometries:</b> <a href="../ja/Sketcher_CreatePoint.html" title="Sketcher CreatePoint/ja">Point</a>, <a href="../ja/Sketcher_CreatePolyline.html" title="Sketcher CreatePolyline/ja">Polyline</a>, <a href="../ja/Sketcher_CreateLine.html" title="Sketcher CreateLine/ja">Line</a>, <a href="../ja/Sketcher_CreateArc.html" title="Sketcher CreateArc/ja">Arc</a>, <a href="../ja/Sketcher_Create3PointArc.html" title="Sketcher Create3PointArc/ja">Arc by 3 points</a>, <a href="../ja/Sketcher_CreateArcOfEllipse.html" title="Sketcher CreateArcOfEllipse/ja">Arc of ellipse</a>, <a href="../ja/Sketcher_CreateArcOfHyperbola.html" title="Sketcher CreateArcOfHyperbola/ja">Arc of hyperbola</a>, <a href="../ja/Sketcher_CreateArcOfParabola.html" title="Sketcher CreateArcOfParabola/ja">Arc of parabola</a>, <a href="../ja/Sketcher_CreateCircle.html" title="Sketcher CreateCircle/ja">Circle</a>, <a href="../ja/Sketcher_Create3PointCircle.html" title="Sketcher Create3PointCircle/ja">Circle by 3 points</a>, <a href="../ja/Sketcher_CreateEllipseByCenter.html" title="Sketcher CreateEllipseByCenter/ja">Ellipse</a>, <a href="../ja/Sketcher_CreateEllipseBy3Points.html" title="Sketcher CreateEllipseBy3Points/ja">Ellipse by 3 points</a>, <a href="../ja/Sketcher_CreateRectangle.html" title="Sketcher CreateRectangle/ja">Rectangle</a>, <a href="../ja/Sketcher_CreateRectangle_Center.html" title="Sketcher CreateRectangle Center/ja">Centered rectangle</a>, <a href="../ja/Sketcher_CreateOblong.html" title="Sketcher CreateOblong/ja">Rounded rectangle</a>, <a href="../ja/Sketcher_CreateTriangle.html" title="Sketcher CreateTriangle/ja">Triangle</a>, <a href="../ja/Sketcher_CreateSquare.html" title="Sketcher CreateSquare/ja">Square</a>, <a href="../ja/Sketcher_CreatePentagon.html" title="Sketcher CreatePentagon/ja">Pentagon</a>, <a href="../ja/Sketcher_CreateHexagon.html" title="Sketcher CreateHexagon/ja">Hexagon</a>, <a href="../ja/Sketcher_CreateHeptagon.html" title="Sketcher CreateHeptagon/ja">Heptagon</a>, <a href="../ja/Sketcher_CreateOctagon.html" title="Sketcher CreateOctagon/ja">Octagon</a>, <a href="../ja/Sketcher_CreateRegularPolygon.html" title="Sketcher CreateRegularPolygon/ja">Regular polygon</a>, <a href="../ja/Sketcher_CreateSlot.html" title="Sketcher CreateSlot/ja">Slot</a>, <a href="../ja/Sketcher_CreateArcSlot.html" title="Sketcher CreateArcSlot/ja">Arc slot</a>, <a href="../ja/Sketcher_CreateBSpline.html" title="Sketcher CreateBSpline/ja">B-spline by control points</a>, <a href="../ja/Sketcher_CreatePeriodicBSpline.html" title="Sketcher CreatePeriodicBSpline/ja">Periodic B-spline by control points</a>, <a href="../ja/Sketcher_CreateBSplineByInterpolation.html" title="Sketcher CreateBSplineByInterpolation/ja">B-spline by knots</a>, <a href="../ja/Sketcher_CreatePeriodicBSplineByInterpolation.html" title="Sketcher CreatePeriodicBSplineByInterpolation/ja">Periodic B-spline by knots</a>, <a href="../ja/Sketcher_ToggleConstruction.html" title="Sketcher ToggleConstruction/ja">Toggle construction geometry</a></li></ul>
+<hr>
+<ul><li><b>Sketcher constraints:</b>
+<ul><li><b>Dimensional constraints:</b> <a href="../ja/Sketcher_Dimension.html" title="Sketcher Dimension/ja">Dimension</a>, <a href="../ja/Sketcher_ConstrainDistanceX.html" title="Sketcher ConstrainDistanceX/ja">Horizontal distance</a>, <a href="../ja/Sketcher_ConstrainDistanceY.html" title="Sketcher ConstrainDistanceY/ja">Vertical distance</a>, <a href="../ja/Sketcher_ConstrainDistance.html" title="Sketcher ConstrainDistance/ja">Distance</a>, <a href="../ja/Sketcher_ConstrainRadiam.html" title="Sketcher ConstrainRadiam/ja">Auto radius/diameter</a>, <a href="../ja/Sketcher_ConstrainRadius.html" title="Sketcher ConstrainRadius/ja">Radius</a>, <a href="../ja/Sketcher_ConstrainDiameter.html" title="Sketcher ConstrainDiameter/ja">Diameter</a>, <a href="../ja/Sketcher_ConstrainAngle.html" title="Sketcher ConstrainAngle/ja">Angle</a>, <a href="../ja/Sketcher_ConstrainLock.html" title="Sketcher ConstrainLock/ja">Lock</a></li>
+<li><b>Geometric constraints:</b> <a href="../ja/Sketcher_ConstrainCoincidentUnified.html" title="Sketcher ConstrainCoincidentUnified/ja">Coincident (unified)</a>, <a href="../ja/Sketcher_ConstrainCoincident.html" title="Sketcher ConstrainCoincident/ja">Coincident</a>, <a href="../ja/Sketcher_ConstrainPointOnObject.html" title="Sketcher ConstrainPointOnObject/ja">Point on object</a>, <a href="../index.php?title=Sketcher_ConstrainHorVer/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher ConstrainHorVer/ja (page does not exist)">Horizontal/vertical</a>, <a href="../ja/Sketcher_ConstrainHorizontal.html" title="Sketcher ConstrainHorizontal/ja">Horizontal</a>, <a href="../ja/Sketcher_ConstrainVertical.html" title="Sketcher ConstrainVertical/ja">Vertical</a>, <a href="../index.php?title=Sketcher_ConstrainParallel/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher ConstrainParallel/ja (page does not exist)">Parallel</a>, <a href="../index.php?title=Sketcher_ConstrainPerpendicular/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher ConstrainPerpendicular/ja (page does not exist)">Perpendicular</a>, <a href="../ja/Sketcher_ConstrainTangent.html" title="Sketcher ConstrainTangent/ja">Tangent or collinear</a>, <a href="../ja/Sketcher_ConstrainEqual.html" title="Sketcher ConstrainEqual/ja">Equal</a>, <a href="../ja/Sketcher_ConstrainSymmetric.html" title="Sketcher ConstrainSymmetric/ja">Symmetric</a>, <a href="../index.php?title=Sketcher_ConstrainBlock/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher ConstrainBlock/ja (page does not exist)">Block</a></li>
+<li><b>Other constraints:</b> <a href="../index.php?title=Sketcher_ConstrainSnellsLaw/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher ConstrainSnellsLaw/ja (page does not exist)">Refraction (Snell's law)</a></li>
+<li><b>Constraint tools:</b> <a href="../ja/Sketcher_ToggleDrivingConstraint.html" title="Sketcher ToggleDrivingConstraint/ja">Toggle driving/reference constraint</a>, <a href="../index.php?title=Sketcher_ToggleActiveConstraint/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher ToggleActiveConstraint/ja (page does not exist)">Activate/deactivate constraint</a></li></ul></li></ul>
+<hr>
+<ul><li><b>Sketcher tools:</b> <a href="../ja/Sketcher_CreateFillet.html" title="Sketcher CreateFillet/ja">Fillet</a>, <a href="../index.php?title=Sketcher_CreateChamfer/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher CreateChamfer/ja (page does not exist)">Chamfer</a>, <a href="../index.php?title=Sketcher_Trimming/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher Trimming/ja (page does not exist)">Trim</a>, <a href="../index.php?title=Sketcher_Split/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher Split/ja (page does not exist)">Split</a>, <a href="../index.php?title=Sketcher_Extend/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher Extend/ja (page does not exist)">Extend</a>, <a href="../index.php?title=Sketcher_External/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher External/ja (page does not exist)">External geometry</a>, <a href="../index.php?title=Sketcher_CarbonCopy/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher CarbonCopy/ja (page does not exist)">Carbon copy</a>, <a href="../index.php?title=Sketcher_SelectOrigin/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher SelectOrigin/ja (page does not exist)">Select origin</a>, <a href="../index.php?title=Sketcher_SelectHorizontalAxis/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher SelectHorizontalAxis/ja (page does not exist)">Select horizontal axis</a>, <a href="../index.php?title=Sketcher_SelectVerticalAxis/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher SelectVerticalAxis/ja (page does not exist)">Select vertical axis</a>, <a href="../index.php?title=Sketcher_Translate/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher Translate/ja (page does not exist)">Array transform</a>, <a href="../index.php?title=Sketcher_Rotate/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher Rotate/ja (page does not exist)">Polar transform</a>, <a href="../index.php?title=Sketcher_Scale/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher Scale/ja (page does not exist)">Scale transform</a>, <a href="../index.php?title=Sketcher_Offset/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher Offset/ja (page does not exist)">Offset geometry</a>, <a href="../index.php?title=Sketcher_Symmetry/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher Symmetry/ja (page does not exist)">Symmetry</a>, <a href="../index.php?title=Sketcher_RemoveAxesAlignment/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher RemoveAxesAlignment/ja (page does not exist)">Remove axes alignment</a>, <a href="../index.php?title=Sketcher_DeleteAllGeometry/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher DeleteAllGeometry/ja (page does not exist)">Delete all geometry</a>, <a href="../index.php?title=Sketcher_DeleteAllConstraints/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher DeleteAllConstraints/ja (page does not exist)">Delete all constraints</a></li></ul>
+<hr>
+<ul><li><b>Sketcher B-spline tools:</b> <a href="../index.php?title=Sketcher_BSplineConvertToNURBS/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineConvertToNURBS/ja (page does not exist)">Convert geometry to B-spline</a>, <a href="../index.php?title=Sketcher_BSplineIncreaseDegree/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineIncreaseDegree/ja (page does not exist)">Increase B-spline degree</a>, <a href="../index.php?title=Sketcher_BSplineDecreaseDegree/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineDecreaseDegree/ja (page does not exist)">Decrease B-spline degree</a>, <a href="../index.php?title=Sketcher_BSplineIncreaseKnotMultiplicity/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineIncreaseKnotMultiplicity/ja (page does not exist)">Increase knot multiplicity</a>, <a href="../index.php?title=Sketcher_BSplineDecreaseKnotMultiplicity/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineDecreaseKnotMultiplicity/ja (page does not exist)">Decrease knot multiplicity</a>, <a href="../index.php?title=Sketcher_BSplineInsertKnot/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineInsertKnot/ja (page does not exist)">Insert knot</a>, <a href="../index.php?title=Sketcher_JoinCurves/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher JoinCurves/ja (page does not exist)">Join curves</a></li></ul>
+<hr>
+<ul><li><b>Sketcher visual:</b> <a href="../index.php?title=Sketcher_SelectElementsWithDoFs/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher SelectElementsWithDoFs/ja (page does not exist)">Select unconstrained DoF</a>, <a href="../index.php?title=Sketcher_SelectConstraints/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher SelectConstraints/ja (page does not exist)">Select associated constraints</a>, <a href="../index.php?title=Sketcher_SelectElementsAssociatedWithConstraints/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher SelectElementsAssociatedWithConstraints/ja (page does not exist)">Select associated geometry</a>, <a href="../index.php?title=Sketcher_SelectRedundantConstraints/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher SelectRedundantConstraints/ja (page does not exist)">Select redundant constraints</a>, <a href="../index.php?title=Sketcher_SelectConflictingConstraints/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher SelectConflictingConstraints/ja (page does not exist)">Select conflicting constraints</a>, <a href="../index.php?title=Sketcher_ArcOverlay/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher ArcOverlay/ja (page does not exist)">Show/hide circular helper for arcs</a>, <a href="../index.php?title=Sketcher_BSplineDegree/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineDegree/ja (page does not exist)">Show/hide B-spline degree</a>, <a href="../index.php?title=Sketcher_BSplinePolygon/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplinePolygon/ja (page does not exist)">Show/hide B-spline control polygon</a>, <a href="../index.php?title=Sketcher_BSplineComb/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineComb/ja (page does not exist)">Show/hide B-spline curvature comb</a>, <a href="../index.php?title=Sketcher_BSplineKnotMultiplicity/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineKnotMultiplicity/ja (page does not exist)">Show/hide B-spline knot multiplicity</a>, <a href="../index.php?title=Sketcher_BSplinePoleWeight/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplinePoleWeight/ja (page does not exist)">Show/hide B-spline control point weight</a>, <a href="../index.php?title=Sketcher_RestoreInternalAlignmentGeometry/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher RestoreInternalAlignmentGeometry/ja (page does not exist)">Show/hide internal geometry</a>, <a href="../index.php?title=Sketcher_SwitchVirtualSpace/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher SwitchVirtualSpace/ja (page does not exist)">Switch virtual space</a></li></ul>
+<hr>
+<ul><li><b>Additional:</b> <a href="../ja/Sketcher_Dialog.html" title="Sketcher Dialog/ja">Sketcher Dialog</a>, <a href="../ja/Sketcher_Preferences.html" title="Sketcher Preferences/ja">Preferences</a>, <a class="mw-selflink selflink">Sketcher scripting</a></li></ul></div>
+    </div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a href="../File/User_hub.png" class="mw-file-description"><img src="../File/User_hub.png" decoding="async" width="24" height="24"></a></span> <a href="../ja/User_hub.html" title="User hub/ja">User documentation</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="../ja/Getting_started.html" title="Getting started/ja">Getting started</a></b></li>
+<li><b>Installation:</b> <a href="../index.php?title=Download/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Download/ja (page does not exist)">Download</a>, <a href="../ja/Installing_on_Windows.html" title="Installing on Windows/ja">Windows</a>, <a href="../ja/Installing_on_Linux.html" title="Installing on Linux/ja">Linux</a>, <a href="../ja/Installing_on_Mac.html" title="Installing on Mac/ja">Mac</a>, <a href="../ja/Installing_additional_components.html" title="Installing additional components/ja">Additional components</a>, <a href="../ja/Compile_on_Docker.html" title="Compile on Docker/ja">Docker</a>, <a href="../index.php?title=AppImage/ja&amp;action=edit&amp;redlink=1.html" class="new" title="AppImage/ja (page does not exist)">AppImage</a>, <a href="../index.php?title=Ubuntu_Snap/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Ubuntu Snap/ja (page does not exist)">Ubuntu Snap</a></li>
+<li><b>Basics:</b> <a href="../ja/About_FreeCAD.html" title="About FreeCAD/ja">About FreeCAD</a>, <a href="../ja/Interface.html" title="Interface/ja">Interface</a>, <a href="../ja/Mouse_navigation.html" title="Mouse navigation/ja">Mouse navigation</a>, <a href="../ja/Selection_methods.html" title="Selection methods/ja">Selection methods</a>, <a href="../ja/Object_name.html" title="Object name/ja">Object name</a>, <a href="../ja/Preferences_Editor.html" title="Preferences Editor/ja">Preferences</a>, <a href="../ja/Workbenches.html" title="Workbenches/ja">Workbenches</a>, <a href="../ja/Document_structure.html" title="Document structure/ja">Document structure</a>, <a href="../ja/Property.html" title="Property/ja">Properties</a>, <a href="../ja/Help_FreeCAD.html" title="Help FreeCAD/ja">Help FreeCAD</a>, <a href="../ja/Donate.html" title="Donate/ja">Donate</a></li></ul>
+<hr>
+<ul><li><b>Help:</b> <a href="../ja/Tutorials.html" title="Tutorials/ja">Tutorials</a>, <a href="../index.php?title=Video_tutorials/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Video tutorials/ja (page does not exist)">Video tutorials</a></li>
+<li><b><a href="../ja/Workbenches.html" title="Workbenches/ja">Workbenches</a>:</b> <a href="../ja/Std_Base.html" title="Std Base/ja">Std Base</a>, <a href="../ja/Assembly_Workbench.html" title="Assembly Workbench/ja">Assembly</a>, <a href="../ja/BIM_Workbench.html" title="BIM Workbench/ja">BIM</a>, <a href="../ja/CAM_Workbench.html" title="CAM Workbench/ja">CAM</a>, <a href="../ja/Draft_Workbench.html" title="Draft Workbench/ja">Draft</a>, <a href="../ja/FEM_Workbench.html" title="FEM Workbench/ja">FEM</a>, <a href="../ja/Inspection_Workbench.html" title="Inspection Workbench/ja">Inspection</a>, <a href="../ja/Material_Workbench.html" title="Material Workbench/ja">Material</a>, <a href="../ja/Mesh_Workbench.html" title="Mesh Workbench/ja">Mesh</a>, <a href="../ja/OpenSCAD_Workbench.html" title="OpenSCAD Workbench/ja">OpenSCAD</a>, <a href="../ja/Part_Workbench.html" title="Part Workbench/ja">Part</a>, <a href="../ja/PartDesign_Workbench.html" title="PartDesign Workbench/ja">PartDesign</a>, <a href="../ja/Points_Workbench.html" title="Points Workbench/ja">Points</a>, <a href="../ja/Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/ja">Reverse Engineering</a>, <a href="../ja/Robot_Workbench.html" title="Robot Workbench/ja">Robot</a>, <a href="../ja/Sketcher_Workbench.html" title="Sketcher Workbench/ja">Sketcher</a>, <a href="../ja/Spreadsheet_Workbench.html" title="Spreadsheet Workbench/ja">Spreadsheet</a>, <a href="../ja/Surface_Workbench.html" title="Surface Workbench/ja">Surface</a>, <a href="../ja/TechDraw_Workbench.html" title="TechDraw Workbench/ja">TechDraw</a>, <a href="../ja/Testing.html" title="Testing/ja">Test Framework</a></li></ul>
+<hr>
+<ul><li><b><a href="../index.php?title=Addon/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Addon/ja (page does not exist)">Addons</a>:</b> <a href="../index.php?title=Std_AddonMgr/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Std AddonMgr/ja (page does not exist)">Addon Manager</a>, <a href="../ja/External_workbenches.html" title="External workbenches/ja">External workbenches</a>, <a href="../index.php?title=Scripting_and_macros/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Scripting and macros/ja (page does not exist)">Scripting and macros</a></li></ul>
+<hr>
+<ul><li><b>Hubs:</b> <a href="../ja/User_hub.html" title="User hub/ja">User hub</a>, <a href="../index.php?title=Power_users_hub/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Power users hub/ja (page does not exist)">Power users hub</a>, <a href="../index.php?title=Developer_hub/ja&amp;action=edit&amp;redlink=1.html" class="new" title="Developer hub/ja (page does not exist)">Developer hub</a></li></ul></div>
+    </div></div>
+<!-- 
+NewPP limit report
+Cached time: 20250120142317
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show&#8208;toc, no&#8208;toc&#8208;conversion]
+CPU time usage: 0.213 seconds
+Real time usage: 1.243 seconds
+Preprocessor visited node count: 536/1000000
+Post&#8208;expand include size: 20559/2097152 bytes
+Template argument size: 9640/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 5/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 11183/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 1025.218      1 -total
+ 98.25% 1007.313      5 Template:Code
+  0.68%    6.969      1 Template:Sketcher_Tools_navi/ja
+  0.51%    5.239      2 Template:Navigation_menu_2
+  0.35%    3.608      1 Template:Userdocnavi/ja
+  0.18%    1.815     30 Template:Incode
+  0.12%    1.213      1 Template:TOCright
+  0.10%    0.976      1 Template:Caption
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:369785-0!canonical and timestamp 20250120142316 and revision id 1534232. Rendering was triggered because: api-parse
+ -->
+</div>
+</div><script src="../site.js"></script>
