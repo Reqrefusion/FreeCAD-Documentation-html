@@ -1,0 +1,136 @@
+<link href="site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Crowdin Scripts</span></h1><?xml encoding="UTF-8"><div class="mw-parser-output"><div class="mw-pt-languages noprint" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="de/Crowdin_Scripts.html" class="mw-pt-progress mw-pt-progress--complete" title="Crowdin Skripte (100% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><span class="mw-pt-languages-ui mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="en" dir="ltr">English</span></li>
+<li><a href="es/Crowdin_Scripts.html" class="mw-pt-progress mw-pt-progress--high" title="Scripts de Crowdin (61% translated)" lang="es" dir="ltr">espa&ntilde;ol</a></li>
+<li><a href="fr/Crowdin_Scripts.html" class="mw-pt-progress mw-pt-progress--complete" title="Scripts pour Crowdin (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="it/Crowdin_Scripts.html" class="mw-pt-progress mw-pt-progress--complete" title="Crowdin Scripts (100% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="pl/Crowdin_Scripts.html" class="mw-pt-progress mw-pt-progress--complete" title="Skrypty Crowdin (100% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="ru/Crowdin_Scripts.html" class="mw-pt-progress mw-pt-progress--low" title="Crowdin &#1057;&#1082;&#1088;&#1080;&#1087;&#1090;&#1099; (26% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none"><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="#Managing_Translations_for_FreeCAD"><span class="tocnumber">1</span> <span class="toctext">Managing Translations for FreeCAD</span></a>
+<ul>
+<li class="toclevel-2 tocsection-2"><a href="#Notes"><span class="tocnumber">1.1</span> <span class="toctext">Notes</span></a></li>
+<li class="toclevel-2 tocsection-3"><a href="#updatets.py"><span class="tocnumber">1.2</span> <span class="toctext">updatets.py</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="#updatecrowdin.py"><span class="tocnumber">1.3</span> <span class="toctext">updatecrowdin.py</span></a></li>
+<li class="toclevel-2 tocsection-5"><a href="#updatefromcrowdin.py"><span class="tocnumber">1.4</span> <span class="toctext">updatefromcrowdin.py</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1 tocsection-6"><a href="#To_send_latest_strings_to_crowdin"><span class="tocnumber">2</span> <span class="toctext">To send latest strings to crowdin</span></a></li>
+<li class="toclevel-1 tocsection-7"><a href="#To_merge_latest_translations_from_crowdin"><span class="tocnumber">3</span> <span class="toctext">To merge latest translations from crowdin</span></a></li>
+<li class="toclevel-1 tocsection-8"><a href="#To_generate_a_translation_file_from_the_website"><span class="tocnumber">4</span> <span class="toctext">To generate a translation file from the website</span></a></li>
+<li class="toclevel-1 tocsection-9"><a href="#To_update_the_translations_of_the_website"><span class="tocnumber">5</span> <span class="toctext">To update the translations of the website</span></a></li>
+<li class="toclevel-1 tocsection-10"><a href="#Related"><span class="tocnumber">6</span> <span class="toctext">Related</span></a></li>
+</ul>
+</div>
+</div>
+<h2><span class="mw-headline" id="Managing_Translations_for_FreeCAD">Managing Translations for FreeCAD</span></h2>
+<p>FreeCAD uses a 3rd party translation service called <a rel="nofollow" class="external text" href="https://crowdin.com/project/freecad">Crowdin</a> to manage translations. 
+</p><p>There are 3 scripts in <code>FreeCAD/src/Tools</code> that are used to manage translation files:
+</p>
+<ol><li><code>updatets.py</code> <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/blob/master/src/Tools/updatets.py">(github source)</a></li>
+<li><code>updatecrowdin.py</code> <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/blob/master/src/Tools/updatecrowdin.py">(github source)</a></li>
+<li><code>updatefromcrowdin.py</code> <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/blob/master/src/Tools/updatefromcrowdin.py">(github source)</a></li></ol>
+<h3><span class="mw-headline" id="Notes">Notes</span></h3>
+<ul><li>These scripts are run from the root of the <code>FreeCAD/</code> directory.</li>
+<li>In order for these scripts to work one needs to have the valid FreeCAD Crowdin API key placed in their <code>~/.crowdin-freecad</code> file. (For security reasons, only available to people with admin rights on the crowdin FreeCAD project)</li>
+<li>Currently these tools are Python2 compatible.</li></ul>
+<h3><span class="mw-headline" id="updatets.py">updatets.py</span></h3>
+<p>The <code>updatets.py</code> script will create the .ts files in your local <code>FreeCAD/</code> directory. It generates .ts files (Qt Translation Source File). 
+</p><p>It is invoked with:
+<code>python2 updatets.py</code>
+</p>
+<h3><span class="mw-headline" id="updatecrowdin.py">updatecrowdin.py</span></h3>
+<p>The <code>updatecrowdin.py</code> script pushes changes to Crowdin (3rd party translation crowdsource translation service) from your local <code>FreeCAD/</code> directory. The script currently supports 4 arguments:
+</p>
+<ul><li><code>updatecrowdin.py status</code> prints a status of the translations</li>
+<li><code>updatecrowdin.py update</code> updates crowdin the current version of .ts files found in the source code</li>
+<li><code>updatecrowdin.py build</code> builds a new downloadable package on crowdin with all translated strings</li>
+<li><code>updatecrowdin.py download</code> downloads the latest build</li></ul>
+<h3><span class="mw-headline" id="updatefromcrowdin.py">updatefromcrowdin.py</span></h3>
+<p>The <code>updatefromcrowdin.py</code> script pulls changes from crowdin to your local <code>FreeCAD/</code> directory.
+</p>
+<h2><span class="mw-headline" id="To_send_latest_strings_to_crowdin">To send latest strings to crowdin</span></h2>
+<ul><li>Only tested on linux</li>
+<li>You need a .credentials file in your /home/YourUser directory. That file is a simple text file containing only one line, which is the API key that you get on <a rel="nofollow" class="external free" href="https://crowdin.com/project/freecad/settings#api">https://crowdin.com/project/freecad/settings#api</a> (only for admins)</li>
+<li>Make sure your repository is clean (git pull, git stash if needed)</li>
+<li>cd /path/to/freecad-source-code/src/Tools</li>
+<li>python updatets.py (will fill all the .ts files found in the source with the lastest strings)</li>
+<li>python updatecrowdin.py update (will send the ts files to crowdin. Crowdin will only update strings that are new)</li>
+<li>cd ../.. (go back to the source code root folder)</li>
+<li>git checkout . (undo all the changes to the .ts files, no reason to commit them right now as they are still untranslated)</li></ul>
+<h2><span class="mw-headline" id="To_merge_latest_translations_from_crowdin">To merge latest translations from crowdin</span></h2>
+<ul><li>Only tested on linux</li>
+<li>You need a .credentials file in your /home/YourUser directory. That file is a simple text file containing only one line, which is the API key that you get on <a rel="nofollow" class="external free" href="https://crowdin.com/project/freecad/settings#api">https://crowdin.com/project/freecad/settings#api</a> (only for admins)</li>
+<li>Make sure your repository is clean (git pull, git stash if needed)</li>
+<li>cd /path/to/freecad-source-code/src/Tools</li>
+<li>python updatecrowdin.py build (will create a zip on crowdin side with all the files, can take a while.. This step can also be done on the crowdin website)</li>
+<li>python updatecrowdin.py download (will download a freecad.zip file in this directory)</li>
+<li>mv freecad.zip ~ move the zip file to your home dir, to avoid accidentally committing it later)</li>
+<li>(optional) edit updatefromcrowdin.py script and check that the default_languages contain all the ones you want (basically all that are at more than 50%)</li>
+<li>python updatefromcrowdin.py -z /home/YourUser/freecad.zip</li>
+<li>cd ../.. (go back to the source code root folder)</li>
+<li>if something went wrong  or you are unsure, clean everything with git checkout .</li>
+<li>if everything looks ok (git status), commit with git add . &amp;&amp; git commit</li>
+<li>Create a PR on FreeCAD</li></ul>
+<h2><span class="mw-headline" id="To_generate_a_translation_file_from_the_website">To generate a translation file from the website</span></h2>
+<ul><li>Clone the homepage repository</li>
+<li>cd /path/to/FreeCAD-homepage</li>
+<li>xgettext --from-code=UTF-8 -o lang/homepage.pot *.php</li>
+<li>Update the "homepage.po" on crowdin website manually, using the lang/homepage.pot file</li></ul>
+<h2><span class="mw-headline" id="To_update_the_translations_of_the_website">To update the translations of the website</span></h2>
+<ul><li>Get the freecad.zip file either by downloading it from the crowdin website or following instructions above (python updatecrowdin.py download)</li>
+<li>cd /path/to/FreeCAD-homepage</li>
+<li>Make sure your repository is clean (git pull, git stash if needed)</li>
+<li>python updatefromcrowdin.py -z /path/to/freecad.zip</li>
+<li>if something went wrong  or you are unsure, clean everything with git checkout .</li>
+<li>if everything looks ok (git status), commit with git add . &amp;&amp; git commit</li>
+<li>Create a PR on FreeCAD-Homepage</li>
+<li>After the PR is merged, one of the admins will ftp push to the webhost</li></ul>
+<h2><span class="mw-headline" id="Related">Related</span></h2>
+<ul><li><a href="Localisation.html" title="Localisation">Localisation</a></li>
+<li><a href="Crowdin_Administration.html" title="Crowdin Administration">Crowdin Administration</a></li>
+<li><a href="Release_process.html" title="Release process">Release process</a></li></ul>
+<p><br>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a href="File/User_hub.png" class="mw-file-description"><img src="File/User_hub.png" decoding="async" width="24" height="24"></a></span> <a href="User_hub.html" title="User hub">User documentation</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
+<ul><li><b><a href="Getting_started.html" title="Getting started">Getting started</a></b></li>
+<li><b>Installation:</b> <a href="Download.html" title="Download">Download</a>, <a href="Installing_on_Windows.html" title="Installing on Windows">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components">Additional components</a>, <a href="Compile_on_Docker.html" title="Compile on Docker">Docker</a>, <a href="AppImage.html" title="AppImage">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap">Ubuntu Snap</a></li>
+<li><b>Basics:</b> <a href="About_FreeCAD.html" title="About FreeCAD">About FreeCAD</a>, <a href="Interface.html" title="Interface">Interface</a>, <a href="Mouse_navigation.html" title="Mouse navigation">Mouse navigation</a>, <a href="Selection_methods.html" title="Selection methods">Selection methods</a>, <a href="Object_name.html" title="Object name">Object name</a>, <a href="Preferences_Editor.html" title="Preferences Editor">Preferences</a>, <a href="Workbenches.html" title="Workbenches">Workbenches</a>, <a href="Document_structure.html" title="Document structure">Document structure</a>, <a href="Property.html" title="Property">Properties</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD">Help FreeCAD</a>, <a href="Donate.html" title="Donate">Donate</a></li></ul>
+<hr>
+<ul><li><b>Help:</b> <a href="Tutorials.html" title="Tutorials">Tutorials</a>, <a href="Video_tutorials.html" title="Video tutorials">Video tutorials</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches">Workbenches</a>:</b> <a href="Std_Base.html" title="Std Base">Std Base</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench">Assembly</a>, <a href="BIM_Workbench.html" title="BIM Workbench">BIM</a>, <a href="CAM_Workbench.html" title="CAM Workbench">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench">Draft</a>, <a href="FEM_Workbench.html" title="FEM Workbench">FEM</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench">Inspection</a>, <a href="Material_Workbench.html" title="Material Workbench">Material</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench">Mesh</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench">Part</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench">PartDesign</a>, <a href="Points_Workbench.html" title="Points Workbench">Points</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench">Reverse Engineering</a>, <a href="Robot_Workbench.html" title="Robot Workbench">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench">Sketcher</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench">Spreadsheet</a>, <a href="Surface_Workbench.html" title="Surface Workbench">Surface</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench">TechDraw</a>, <a href="Testing.html" title="Testing">Test Framework</a></li></ul>
+<hr>
+<ul><li><b><a href="Addon.html" title="Addon">Addons</a>:</b> <a href="Std_AddonMgr.html" title="Std AddonMgr">Addon Manager</a>, <a href="External_workbenches.html" title="External workbenches">External workbenches</a>, <a href="Scripting_and_macros.html" title="Scripting and macros">Scripting and macros</a></li></ul>
+<hr>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub">User hub</a>, <a href="Power_users_hub.html" title="Power users hub">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub">Developer hub</a></li></ul></div>
+    </div></div>
+<!-- 
+NewPP limit report
+Cached time: 20250123010440
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show&#8208;toc, no&#8208;toc&#8208;conversion]
+CPU time usage: 0.056 seconds
+Real time usage: 0.071 seconds
+Preprocessor visited node count: 106/1000000
+Post&#8208;expand include size: 5093/2097152 bytes
+Template argument size: 1752/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 1279/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    3.589      1 -total
+ 62.89%    2.257      1 Template:Userdocnavi
+ 41.07%    1.474      1 Template:Navigation_menu_2
+ 29.75%    1.068      1 Template:TOCright
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:98220-0!canonical and timestamp 20250123010440 and revision id 1535836. Rendering was triggered because: edit-page
+ -->
+</div>
+</div><script src="site.js"></script>
