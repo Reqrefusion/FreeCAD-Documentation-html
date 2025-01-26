@@ -55,8 +55,8 @@
 <td class="ctToc"><br><div id="toc" class="toc" role="navigation" aria-labelledby="mw-toc-heading"><input type="checkbox" role="button" id="toctogglecheckbox" class="toctogglecheckbox" style="display:none"><div class="toctitle" lang="en" dir="ltr"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
 <ul>
 <li class="toclevel-1 tocsection-1"><a href="#Introduzione"><span class="tocnumber">1</span> <span class="toctext">Introduzione</span></a></li>
-<li class="toclevel-1 tocsection-2"><a href="#Model_geometry,_loads_and_supports"><span class="tocnumber">2</span> <span class="toctext">Model geometry, loads and supports</span></a></li>
-<li class="toclevel-1 tocsection-3"><a href="#Material_Parameters"><span class="tocnumber">3</span> <span class="toctext">Material Parameters</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="#Geometria_del_modello,_carichi_e_supporti"><span class="tocnumber">2</span> <span class="toctext">Geometria del modello, carichi e supporti</span></a></li>
+<li class="toclevel-1 tocsection-3"><a href="#Parametri_del_materiale"><span class="tocnumber">3</span> <span class="toctext">Parametri del materiale</span></a></li>
 <li class="toclevel-1 tocsection-4"><a href="#Application"><span class="tocnumber">4</span> <span class="toctext">Application</span></a>
 <ul>
 <li class="toclevel-2 tocsection-5"><a href="#Simply_supported_beam_with_uniform_load"><span class="tocnumber">4.1</span> <span class="toctext">Simply supported beam with uniform load</span></a></li>
@@ -78,12 +78,14 @@
 </p><p>Questo &egrave; ottenuto con il metodo descritto in <a rel="nofollow" class="external text" href="http://heronjournal.nl/53-4/3.pdf">"Computation of reinforcement for solid concrete", P.C.J. Hoogenboom and A. de Boer, HERON Vol. 53 (2008) No. 4</a>. In sostanza, si tratta di una routine di post-elaborazione per CalculiX, che calcola le principali sollecitazioni di trazione nel cemento da un'analisi elastica e le utilizza per determinare il minimo rinforzo nelle tre direzioni coordinate necessarie per evitare fratture. Nell'analisi, si presume che il materiale di cemento non possa portare tensioni di trazione, mentre l'acciaio viene utilizzato alla sua capacit&agrave; massima (cio&egrave; massima resa).
 </p><p>Il rinforzo richiesto &egrave; espresso in termini di un coefficiente di rinforzo. Questo &egrave; il rapporto tra acciaio e superficie di cemento. Ad esempio, un coefficiente di rinforzo di 0,01 nella direzione x (rx=0.01) significa che l'area totale trasversale delle barre di rinforzo in esecuzione nella direzione x dovrebbe essere l'1% dell'area trasversale di cemento che stanno attraversando. Un'ipotetica sezione trasversale di 1mx1m dovrebbe contenere in tal caso l'acciaio di 0,01 m2, che potrebbe essere raggiunto utilizzando 90 barre di rinforzo di 12mm di diametro ciascuna (area dell'acciaio = 90*PI*(0.012)2/4=0.0102 m^2). Se il coefficiente di rinforzo richiesto su questa sezione trasversale di cemento &egrave; uniforme allora le barre potrebbero essere posizionate in una griglia equidistanza 9x10 con una distanza centro-centro di circa 10cm. Questo &egrave; comunque un valore pratico per cui viene lasciato spazio sufficiente di passaggio tra le barre e il cemento e garantire una copertura di alta qualit&agrave;. I valori molto pi&ugrave; elevati porterebbero ad una griglia di rinforzo molto densa con potenziali problemi di qualit&agrave;, mentre i valori molto pi&ugrave; bassi potrebbero portare a grandi crepe di tensione nella sezione trasversale tra le barre. Un range tipico della pratica &egrave; da 0.002 a 0,02 (= 0.2% a 2%). Ulteriori indicazioni possono essere trovate nei manuali di progettazione.
 </p><p>Se il coefficiente di rinforzo richiesto non &egrave; uniforme lungo tutta la sezione trasversale allora la sezione trasversale pu&ograve; essere divisa in sottosezioni pragmatiche con rapporto pi&ugrave; o meno uniforme e con un rinforzo applicato a quelle sezioni trasversali. In seguito verr&agrave; mostrato un esempio.
-</p><p>As a word of caution, it takes much more to design a safe and durable concrete structure than what the FEM Workbench can currently provide. For example, the method does not calculate crack width (important for durability and functionality), accurate deformations (FEM results for concrete are simply linear-elastic) or take account of reinforcement anchoring requirements (causing an increase of required reinforcement ratios in anchoring zones). It also doesn&rsquo;t predict concrete crushing (although an indication of that can be obtained by plotting the Mohr-Coulomb stress - see further), which could mean that the concrete fails before the reinforcement yields, causing brittle failure of the overall structure. These and other limitations mean that the FEM concrete functionality can only be used to assess conceptual designs, whereas detailed design decisions critical to safety and performance should be left to qualified professionals.
+</p><p>Come informazione di precauzione, ci vuole molto di pi&ugrave; per progettare una struttura di cemento sicura e durevole di quello che il banco da lavoro FEM pu&ograve; attualmente fornire. Ad esempio, il metodo non calcola la larghezza di crepa (importante per la durata e la funzionalit&agrave;), le deformazioni accurate (i risultati di FEM per il calcestruzzo sono semplicemente lineari-elastici) e non tiene conto dei requisiti di ancoraggio del rinforzo (causando un aumento dei rapporti di rinforzo richiesti nelle zone di ancoraggio). Non prevede anche la frantumazione del calcestruzzo (anche se un'indicazione di ci&ograve; pu&ograve; essere ottenuta tracciando il diagramma degli sforzi Mohr-Coulomb - si veda pi&ugrave; avanti), che potrebbe significare che il cemento cede prima dei rinforzi, causando un piccolo cedimento della struttura generale. Queste e altre limitazioni significano che la funzionalit&agrave; FEM per il cemento armato pu&ograve; essere utilizzata solo per valutare i progetti concettuali, mentre le decisioni di progettazione dettagliate e critiche per la sicurezza e per le prestazioni devono essere lasciate a professionisti qualificati.
+</p><p><span id="Model_geometry,_loads_and_supports"></span>
 </p>
-<h2><span id="Model_geometry.2C_loads_and_supports"></span><span class="mw-headline" id="Model_geometry,_loads_and_supports">Model geometry, loads and supports</span></h2>
-<p>Although the FEM concrete routine does not have any additional requirements for geometry, loads and supports, it should be borne in mind that sharp corners and supports on edges or vertices can introduce stress concentrations that will lead to extremely high and unrealistic reinforcement ratios at or near those locations.
+<h2><span id="Geometria_del_modello.2C_carichi_e_supporti"></span><span class="mw-headline" id="Geometria_del_modello,_carichi_e_supporti">Geometria del modello, carichi e supporti</span></h2>
+<p>Anche se la procedura FEM per il cemento armato non chiede requisiti aggiuntivi per la geometria, i carichi e i supporti, deve essere tenuto presente che angoli taglienti e supporti su bordi o vertici possono introdurre concentrazioni di stress, che portano, vicino a quelle posizioni, a rapporti di rinforzo estremamente elevati e non realistici.
+</p><p><span id="Material_Parameters"></span>
 </p>
-<h2><span class="mw-headline" id="Material_Parameters">Material Parameters</span></h2>
+<h2><span class="mw-headline" id="Parametri_del_materiale">Parametri del materiale</span></h2>
 <p>FEM Workbench has a special material object for reinforced materials, which combines a matrix material (e.g. concrete) and a reinforcement material (e.g. steel). For the analysis of reinforced concrete with FEM, the following parameters need to be specified, as a minimum:
 </p><p>for concrete:
 </p>
@@ -226,13 +228,13 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20250126141850
+Cached time: 20250126150644
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc, no&#8208;toc&#8208;conversion]
-CPU time usage: 0.069 seconds
-Real time usage: 0.087 seconds
-Preprocessor visited node count: 232/1000000
+CPU time usage: 0.116 seconds
+Real time usage: 0.159 seconds
+Preprocessor visited node count: 234/1000000
 Post&#8208;expand include size: 16213/2097152 bytes
 Template argument size: 6161/2097152 bytes
 Highest expansion depth: 5/100
@@ -242,14 +244,14 @@ Unstrip post&#8208;expand size: 1592/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%    8.817      1 -total
- 50.12%    4.419      1 Template:FEM_Tools_navi/it
- 43.19%    3.808      2 Template:Navigation_menu_2
- 31.00%    2.733      1 Template:Userdocnavi/it
- 14.68%    1.294      1 Template:TutorialInfo/it
+100.00%   11.662      1 -total
+ 61.82%    7.209      1 Template:FEM_Tools_navi/it
+ 33.42%    3.897      2 Template:Navigation_menu_2
+ 22.04%    2.570      1 Template:Userdocnavi/it
+ 14.05%    1.638      1 Template:TutorialInfo/it
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:158809-0!canonical and timestamp 20250126141850 and revision id 1537616. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:158809-0!canonical and timestamp 20250126150644 and revision id 1537624. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="../site.js"></script>
