@@ -32,8 +32,8 @@
 </ul>
 </li>
 <li class="toclevel-2 tocsection-13"><a href="#Notes_on_Profiles"><span class="tocnumber">3.4</span> <span class="toctext">Notes on Profiles</span></a></li>
-<li class="toclevel-2 tocsection-14"><a href="#Extrusion_objects"><span class="tocnumber">3.5</span> <span class="toctext">Extrusion objects</span></a></li>
-<li class="toclevel-2 tocsection-15"><a href="#Distributing_profiles"><span class="tocnumber">3.6</span> <span class="toctext">Distributing profiles</span></a></li>
+<li class="toclevel-2 tocsection-14"><a href="#Extruded_items"><span class="tocnumber">3.5</span> <span class="toctext">Extruded items</span></a></li>
+<li class="toclevel-2 tocsection-15"><a href="#Tracing_profiles"><span class="tocnumber">3.6</span> <span class="toctext">Tracing profiles</span></a></li>
 <li class="toclevel-2 tocsection-16"><a href="#Notes_on_spines"><span class="tocnumber">3.7</span> <span class="toctext">Notes on spines</span></a></li>
 <li class="toclevel-2 tocsection-17"><a href="#Why_could_a_sweep_operation_fail?"><span class="tocnumber">3.8</span> <span class="toctext">Why could a sweep operation fail?</span></a></li>
 <li class="toclevel-2 tocsection-18"><a href="#Loft_shapes"><span class="tocnumber">3.9</span> <span class="toctext">Loft shapes</span></a>
@@ -61,31 +61,22 @@
 <p>Let' switch to the Discussion tab.
 </p>
 <h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
-<p><s>Apart from a few primitives, modern CAD applications offer two principal ways of creating shapes:
-</s></p><s></s><ul><s><li><b>Surface based design</b>: to design thin walled objects like deep-drawn sheet metal parts where you usually only model the stamp side. The thickness is added in the end when all face elements are in place and connected to create a single surface.</li>
-</s><li><s><b>Profile based design</b>: to design thin walled and solid objects having an fixed cross-section, or thin walled and solid transition objects connecting two or more different profiles.</s></li></ul>
-<p>This page focuses on profile based design, which is one of the principle ways CAD programs use to create 3D shapes. It tries to name and describe several types of shapes, and link to the FreeCAD tools that can be used to create them.
-</p><p>On this page the term <b>profile</b> without a suffix is used for an open or closed <b>2D contour</b> (line, arc, circle, or polyline).
+<p><b>Profile based design</b> builds on the principle of tracing the movement of a profile through 3D space to create 3D shapes, either along a 3D curve, or via several supporting 2D curves. This page tries to name and describe several types of shapes properly, and links to the FreeCAD tools that can be used for their creation. (please improve poorly chosen terms if found)
+</p><p>Several tools distinguish between <b>profile</b> and <b>section</b> for an open or closed <b>2D contour</b> (line, arc, circle, or polyline), if more than one contours are used. The first one is always called profile, optional or required additional ones are called sections. Wiki pages often use <b>cross-section</b> for the latter to avoid confusion with section meaning section view, and so does this page.
 </p>
 <h2><span class="mw-headline" id="Profile_based_design">Profile based design</span></h2>
-<p>Profiles are usually made of 2D geometry and require additional elements to create 3D shapes.
+<p>Generally there are two principle ways to create 3D shapes from 2D contours: <b>Tracing</b> a profile along a spine and <b>distributing</b> a face between two or more supporting 2D contours (3D curves may be accepted by some tools but using 2D curves are tried and trusted since the days of manual drafting). 
 </p>
-<ol><li>Another profile (cross-section). The resulting shape will connect the related elements of both profiles. In most cases a copy of the base profile is used and the result has an fixed cross-section.
-<dl><dd>Some tools accept additional profiles to scale the cross-section or to create a transition between a base profile and different additional profiles.</dd>
-<dd>At some places within FreeCAD (GUI and wiki) section or cross-section is used to distinguish the additional profiles from the base profile.</dd>
-<dd>See <a href="#Loft_shapes">Loft shapes</a> for shapes made of a profile and several cross-sections only.</dd></dl></li>
-<li>A control element to position the copy of the base profile in a certain relation to the profile such as:
-<ul><li>A vector derived from a 3D line element (axis, edge.) in combination with a length. <a href="Part_Extrude.html" title="Part Extrude">Part Extrude</a> and <a href="PartDesign_Pad.html" title="PartDesign Pad">PartDesign Pad</a> create such vector controlled shapes. See <a href="#Prismatic_shapes">Prismatic shapes</a>.</li></ul>
-<dl><dd>These shapes allow to add a draft to the lateral faces, either through an internal tool option, or an external tool.</dd></dl>
-<ul><li>An axis to turn the profile around in connection with an angle. <a href="Part_Revolve.html" title="Part Revolve">Part Revolve</a> and <a href="PartDesign_Revolution.html" title="PartDesign Revolution">PartDesign Revolution</a> create such rotation controlled shapes. See <a href="#Rotated_shapes">Rotated shapes</a>.</li>
-<li>A backbone curve (spine) to sweep the profile along <a href="Part_Sweep.html" title="Part Sweep">Part Sweep</a> and <a href="PartDesign_AdditivePipe.html" title="PartDesign AdditivePipe">PartDesign Additive Pipe</a> create such spine controlled shapes. See <a href="#Sweep_shapes">Sweep shapes</a>.</li></ul></li></ol>
+<ul><li><b>Tracing</b> an <b>invariable</b> contour from the first profile along a spine to the last cross-section is the original way of designing <a href="#Sweep_shapes">sweep shapes</a>. Modern CAD applications including FreeCAD also allow to vary its contour by using different cross-sections along the spine with their sweep tools, resulting shapes are rather transition shapes than sweep shapes.</li></ul>
+<ul><li><b>Distributing</b> a face from profile to cross-section via one or more optional supporting cross-sections (usually open contours) but without a spine is the original way to create <a href="#Loft_shapes">loft shapes</a>. Modern CAD applications including FreeCAD also allow closed contours with their loft tools but don't remind users to use identical numbers of contour segments and to align start points correctly, that's why creating loft shapes from open contours is quite self explaining in contrast to creating loft shapes from closed contours.</li></ul>
 <p>Filled base profile and end cross-section give a closed shell, sometimes called a volume. Part tools will not create volumes, but will automatically create solid shapes instead.
 </p><p>Open profiles usually result in surface shapes and so they currently cannot be used to create PartDesign features.
 </p><p><br>
 </p>
 <h3><span class="mw-headline" id="Prismatic_shapes">Prismatic shapes</span></h3>
-<p>Prismatic shapes have fixed cross-sections. The profile is distributed along a straight line/vector and we have to decide if we need a surface shape or a solid shape
+<p>Prismatic shapes have invariable cross-sections traced along a straight line/vector, and we have to decide if we need a surface shape or a solid shape.
 </p>
+<dl><dd>Tracing along a straight line/vector is called extrusion (Part) or padding (PartDesign) in FreeCAD.</dd></dl>
 <h4><span class="mw-headline" id="Prismatic_surface_shapes">Prismatic surface shapes</span></h4>
 <p>Prismatic surface shapes can be created with <span typeof="mw:File"><a href="File/Part_Extrude.svg" class="mw-file-description"><img src="File/Part_Extrude.svg" decoding="async" width="16" height="16"></a></span> <a href="Part_Extrude.html" title="Part Extrude">Part Extrude</a>. The elements of the profile have an influence on the resulting shape:
 </p>
@@ -109,10 +100,11 @@
 </p>
 <p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Right: Closed profiles (nested included) result in blanks having a thickness / Left open profiles result in profile objects having a thickness and a length</p>
 <h3><span class="mw-headline" id="Rotated_shapes">Rotated shapes</span></h3>
-<p>Rotated shapes have fixed cross-sections. The profile is distributed around an axis (which is the same as along a circular line) and we have again to decide if we need a surface shape or a solid shape.
+<p>Rotated shapes have invariable cross-sections traced around an axis (which is the same as along a circular line) and we have again to decide if we need a surface shape or a solid shape.
 </p>
+<dl><dd>Tracing around an axis is called revolving in FreeCAD.</dd></dl>
 <h4><span class="mw-headline" id="Rotatated_surface_shapes">Rotatated surface shapes</span></h4>
-<p>Rotatated surface shapes can be created with <span typeof="mw:File"><a href="File/Part_Revolve.svg" class="mw-file-description"><img src="File/Part_Revolve.svg" decoding="async" width="16" height="16"></a></span> <a href="Part_Revolve.html" title="Part Revolve">Part Revolve</a>. The elements of the profile have an influence on the resulting shape:
+<p>Rotated surface shapes can be created with <span typeof="mw:File"><a href="File/Part_Revolve.svg" class="mw-file-description"><img src="File/Part_Revolve.svg" decoding="async" width="16" height="16"></a></span> <a href="Part_Revolve.html" title="Part Revolve">Part Revolve</a>. The elements of the profile have an influence on the resulting shape:
 </p>
 <ul><li>A single straight results in a cylindric, a conical, or a planar  face.</li>
 <li>A circle or an arc results in a closed or open section of a torus surface.</li>
@@ -128,7 +120,7 @@
 <p>See <a href="PartDesign_Examples.html#Circular_Sweep_Objects" title="PartDesign Examples">PartDesign Examples</a> for rotated solids. (They show profiles distributed along a circular spine, but the resulting shapes are the same as if the profiles were rotated)
 </p>
 <h3><span class="mw-headline" id="Sweep_shapes">Sweep shapes</span></h3>
-<p>Sweep shapes have fixed cross-sections. The profile is distributed along a spine (a 2D or 3D backbone curve that controlls the location and normal direction of cross-sections) and we have in this case as well to decide if we need a surface shape or a solid shape.
+<p>Sweep shapes have invariable cross-sections distributed and traced along a spine. (the spine is a 2D or 3D backbone curve that controlls the location and normal direction of cross-sections) We have in this case as well to decide if we need a surface shape or a solid shape.
 </p>
 <h4><span class="mw-headline" id="Sweep_surface_shapes">Sweep surface shapes</span></h4>
 <p>Sweep surface shapes can be created with <span typeof="mw:File"><a href="File/Part_Sweep.svg" class="mw-file-description"><img src="File/Part_Sweep.svg" decoding="async" width="16" height="16"></a></span> <a href="Part_Sweep.html" title="Part Sweep">Part Sweep</a>. 
@@ -141,25 +133,27 @@
 </p>
 <p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Closed profiles from above and resulting Part shapes with option Create solid enabled</p>
 <h3><span class="mw-headline" id="Notes_on_Profiles">Notes on Profiles</span></h3>
-<ul><li>Part tools accept several outline objects to be extruded in one operation, but each object is restricted to contain only one contour. Editor's note: this only applies to swept shapes.</li>
+<ul><li>Part tools accept several outline objects to be traced in one operation, but each object is restricted to contain only one contour. Editor's note: this only applies to swept shapes.</li>
 <li>PartDesign tools accept outline objects containing several nested contours as long as the result is a single solid.</li></ul>
-<h3><span class="mw-headline" id="Extrusion_objects">Extrusion objects</span></h3>
-<p>Real world extrusion objects are produced by <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Extrusion">extrusion</a> i.e. pushing material through a die. The manufacturing condition of such objects is usually modeled using prismatic shapes while sweep shapes are used for their assembled condition. This applies to <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Rolling_(metalworking)">rolled</a>  objects as well.
+<h3><span class="mw-headline" id="Extruded_items">Extruded items</span></h3>
+<p>Real world extruded items are produced by <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Extrusion">extrusion</a> i.e. pushing material through a die. The manufacturing condition of such items is usually modeled using prismatic shapes while sweep shapes are used for their assembled condition. This applies to <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Rolling_(metalworking)">rolled</a> items as well.
 </p><p>In relation with CAD to extrude usually means to distribute a profile along a straight line or vector. Even open profiles with no thickness can be extruded, which is impossible in the real world.
 </p><p><span typeof="mw:File"><a href="File/ProfileBased_Example10.png" class="mw-file-description"><img src="File/ProfileBased_Example10.png" decoding="async" width="300" height="225"></a></span>
 </p>
-<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">An L-shaped rolled and bent frame modelled with <span typeof="mw:File"><a href="File/Part_Sweep.svg" class="mw-file-description"><img src="File/Part_Sweep.svg" decoding="async" width="16" height="16"></a></span> <a href="Part_Sweep.html" title="Part Sweep">Part Sweep</a>, with a mounted sealing profile (a sweep object with a nested contour) made with <span typeof="mw:File"><a href="File/PartDesign_AdditivePipe.svg" class="mw-file-description"><img src="File/PartDesign_AdditivePipe.svg" decoding="async" width="16" height="16"></a></span> <a href="PartDesign_AdditivePipe.html" title="PartDesign AdditivePipe">PartDesign AdditivePipe</a>, both based on the same spline</p>
-<p>Prismatic and rotated shapes can be created with the sweep tools as well if lines and arcs or circles are used as spines. See <a href="PartDesign_Examples.html#Circular_Sweep_Objects" title="PartDesign Examples">PartDesign Examples</a>.
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">An L-shaped rolled and bent frame modelled with <span typeof="mw:File"><a href="File/Part_Sweep.svg" class="mw-file-description"><img src="File/Part_Sweep.svg" decoding="async" width="16" height="16"></a></span> <a href="Part_Sweep.html" title="Part Sweep">Part Sweep</a>, with a mounted sealing profile (a sweep object with a nested contour) made with <span typeof="mw:File"><a href="File/PartDesign_AdditivePipe.svg" class="mw-file-description"><img src="File/PartDesign_AdditivePipe.svg" decoding="async" width="16" height="16"></a></span> <a href="PartDesign_AdditivePipe.html" title="PartDesign AdditivePipe">PartDesign AdditivePipe</a>, both based on the same spine</p>
+<p>Prismatic and rotated shapes can be created with the sweep tools as well if lines, and arcs or circles are used as spines. See <a href="PartDesign_Examples.html#Circular_Sweep_Objects" title="PartDesign Examples">PartDesign Examples</a>.
 </p>
-<h3><span class="mw-headline" id="Distributing_profiles">Distributing profiles</span></h3>
-<p>What does a CAD application in the background? As stated above, we supply the profile and some kind of spine and the extrusion tools do the uncomfortable work:
+<h3><span class="mw-headline" id="Tracing_profiles">Tracing profiles</span></h3>
+<p>What does a CAD application in the background? As stated above, we supply the profile and some kind of spine and the sweep tools do the uncomfortable work:
 </p>
-<ul><li>Creating working planes normal to the spine in each start/end point of spine segments.</li>
-<li>Copying profiles, i.e. redrawing the profile on a working plane</li>
-<li>Connecting the related points of profile and cross-section(s) with curves that run parallel to the spine.</li>
+<ol><li>Distributing the profile:
+<ul><li>Creating working planes normal to the spine in each knot (start/end point) of spine segments.</li>
+<li>Copying profiles, i.e. redrawing the profile on a working plane.</li></ul></li>
+<li>The actual tracing:
+<ul><li>Connecting the related points of profile and cross-section(s) with curves that run parallel to the spine.</li>
 <li>Filling the faces between a profile segment, a cross-section segment, and two connection lines/curves.</li>
-<li>Filling faces inside the profile and the last cross-section to close volumes and create solids.</li></ul>
-<p>To visualize the steps we use a profile similar to the "Hamburger Zipfel" that has taught generations of automotive students how to distribute sealing profiles manually.
+<li>Filling faces inside the profile and the last cross-section to close volumes and create solids.</li></ul></li></ol>
+<p>To visualize the steps we use a profile similar to the "Hamburger Zipfel" that has taught generations of automotive students how to distribute and sealing profiles manually.
 </p><p><span typeof="mw:File"><a href="File/ProfileBased_Example11.gif" class="mw-file-description"><img src="File/ProfileBased_Example11.gif" decoding="async" width="300" height="200"></a></span>
 </p>
 <p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Profile (green), spine (yellow), normal planes on start/end points of segments (light blue), cross-sections (light green), connecting curves (grey), and faces (blue) in order of appearance</p>
@@ -186,7 +180,8 @@
 </p>
 <p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">View from a different angle and bottom view. If the spine's radius is further decreased so that the yellow face would completely lie inside the shape, the sweep tools can no longer render or update the shape</p>
 <h3><span class="mw-headline" id="Loft_shapes">Loft shapes</span></h3>
-<p>Loft shapes connect two or more profiles without a spine so that they in general have varying cross-sections. They are rather used to create a transition shape between profiles. FreeCAD's loft tools <span typeof="mw:File"><a href="File/Part_Loft.svg" class="mw-file-description"><img src="File/Part_Loft.svg" decoding="async" width="16" height="16"></a></span> <a href="Part_Loft.html" title="Part Loft">Part Loft</a> and <span typeof="mw:File"><a href="File/PartDesign_AdditiveLoft.svg" class="mw-file-description"><img src="File/PartDesign_AdditiveLoft.svg" decoding="async" width="16" height="16"></a></span> <a href="PartDesign_AdditiveLoft.html" title="PartDesign AdditiveLoft">PartDesign AdditiveLoft</a> use straight lines as connecting curves for two profiles exactly or 3D splines for more than two profiles. To use straight lines with a loft based on more than two profiles we can activate the <b>Ruled Surface</b> option.
+<p>Loft shapes usually connect a profile with a cross-section different shape without a spine so that they in general have varying cross-sections. They are rather used to create a transition shape between profile and cross-Section. FreeCAD's loft tools <span typeof="mw:File"><a href="File/Part_Loft.svg" class="mw-file-description"><img src="File/Part_Loft.svg" decoding="async" width="16" height="16"></a></span> <a href="Part_Loft.html" title="Part Loft">Part Loft</a> and <span typeof="mw:File"><a href="File/PartDesign_AdditiveLoft.svg" class="mw-file-description"><img src="File/PartDesign_AdditiveLoft.svg" decoding="async" width="16" height="16"></a></span> <a href="PartDesign_AdditiveLoft.html" title="PartDesign AdditiveLoft">PartDesign AdditiveLoft</a> use straight lines as connecting curves for a profile and a single cross-section, or 3D splines in case of several cross-sections. The latter can be switched to straight lines, too by activating the <b>Ruled Surface</b> option.
+</p><p>All cross-sections have to be placed in 3D space manually.
 </p>
 <h4><span class="mw-headline" id="Loft_surface_shapes">Loft surface shapes</span></h4>
 <p>Loft surface shapes can be created with <span typeof="mw:File"><a href="File/Part_Loft.svg" class="mw-file-description"><img src="File/Part_Loft.svg" decoding="async" width="16" height="16"></a></span> <a href="Part_Loft.html" title="Part Loft">Part Loft</a> 
@@ -198,20 +193,20 @@
 <p>Loft shapes from identical profiles usually don't make much sense, but they are included here for a rough comparison with sweep shapes. 
 </p><p><span typeof="mw:File"><a href="File/ProfileBased_Example18.png" class="mw-file-description"><img src="File/ProfileBased_Example18.png" decoding="async" width="300" height="225"></a></span> <span typeof="mw:File"><a href="File/ProfileBased_Example19.png" class="mw-file-description"><img src="File/ProfileBased_Example19.png" decoding="async" width="300" height="225"></a></span>
 </p>
-<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Profile and cross-sections of the sweep distribution example used as loft profiles (dashed lines erpresent the sweep shape). Right: default settings. Left: Ruled surface option activated</p>
+<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Profile and cross-sections of the sweep distribution example used as loft profiles (dashed lines represent the sweep shape). Right: default settings. Left: Ruled surface option activated</p>
 <h3><span class="mw-headline" id="Scaled_shapes">Scaled shapes</span></h3>
 <h3><span class="mw-headline" id="Transition_shapes">Transition shapes</span></h3>
 <!-- 
 NewPP limit report
-Cached time: 20250228150825
+Cached time: 20250301130823
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc, no&#8208;toc&#8208;conversion]
-CPU time usage: 0.063 seconds
-Real time usage: 0.120 seconds
-Preprocessor visited node count: 337/1000000
-Post&#8208;expand include size: 7858/2097152 bytes
-Template argument size: 2011/2097152 bytes
+CPU time usage: 0.079 seconds
+Real time usage: 0.100 seconds
+Preprocessor visited node count: 329/1000000
+Post&#8208;expand include size: 7856/2097152 bytes
+Template argument size: 2010/2097152 bytes
 Highest expansion depth: 4/100
 Expensive parser function count: 0/100
 Unstrip recursion depth: 0/20
@@ -219,15 +214,15 @@ Unstrip post&#8208;expand size: 0/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%    9.869      1 -total
- 16.92%    1.670     14 Template:Caption
- 16.60%    1.638      1 Template:TOCright
- 11.03%    1.088      1 Template:Page_in_progress
- 10.33%    1.020      6 Template:MenuCommand
- 10.03%    0.990      1 Template:UnfinishedDocu
+100.00%   10.137      1 -total
+ 47.06%    4.771      1 Template:Page_in_progress
+ 14.61%    1.481     14 Template:Caption
+  8.20%    0.831      1 Template:UnfinishedDocu
+  7.10%    0.720      1 Template:TOCright
+  6.56%    0.665      6 Template:MenuCommand
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:325690-0!canonical and timestamp 20250228150824 and revision id 1552830. Rendering was triggered because: api-parse
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:325690-0!canonical and timestamp 20250301130823 and revision id 1553788. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="site.js"></script>
