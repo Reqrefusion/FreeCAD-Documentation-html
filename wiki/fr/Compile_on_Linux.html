@@ -3,7 +3,7 @@
 <li><a href="../es/Compile_on_Linux.html" class="mw-pt-progress mw-pt-progress--high" title="Compilar en Linux (71% translated)" lang="es" dir="ltr">espa&ntilde;ol</a></li>
 <li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="fr" dir="ltr">fran&ccedil;ais</span></li>
 <li><a href="../it/Compile_on_Linux.html" class="mw-pt-progress mw-pt-progress--complete" title="Compilazione in Linux (96% translated)" lang="it" dir="ltr">italiano</a></li>
-<li><a href="../pl/Compile_on_Linux.html" class="mw-pt-progress mw-pt-progress--complete" title="Kompilacja w systemie Linux (96% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../pl/Compile_on_Linux.html" class="mw-pt-progress mw-pt-progress--complete" title="Kompilacja w systemie Linux (100% translated)" lang="pl" dir="ltr">polski</a></li>
 <li><a href="../pt/Compile_on_Linux.html" class="mw-pt-progress mw-pt-progress--stub" title="Compile on Linux/pt (0% translated)" lang="pt" dir="ltr">portugu&ecirc;s</a></li>
 <li><a href="../pt-br/Compile_on_Linux.html" class="mw-pt-progress mw-pt-progress--high" title="Compilar no Linux (78% translated)" lang="pt-BR" dir="ltr">portugu&ecirc;s do Brasil</a></li>
 <li><a href="../ro/Compile_on_Linux.html" class="mw-pt-progress mw-pt-progress--stub" title="Compile on Linux/ro (0% translated)" lang="ro" dir="ltr">rom&acirc;n&#259;</a></li>
@@ -329,15 +329,9 @@ make -j2
 <div class="mw-collapsible mw-collapsed toccolours">
 <h3><span class="mw-headline" id="Fedora">Fedora</span></h3>
 <div class="mw-collapsible-content">
-<div class="mw-translate-fuzzy">
-<p>Il y a un bogue dans cmake distribu&eacute; par Fedora 34/35 qui fait que cmake ne trouve pas les biblioth&egrave;ques d'opencascade. Ceci peut &ecirc;tre facilement corrig&eacute; en faisant un changement mineur au fichier cmake de niveau sup&eacute;rieur d'opencascade install&eacute; sur Fedora. Plus de d&eacute;tails ici&nbsp;: <a rel="nofollow" class="external free" href="https://bugzilla.redhat.com/show_bug.cgi?id=2083568">https://bugzilla.redhat.com/show_bug.cgi?id=2083568</a>.
-</p>
-</div>
-<div class="mw-translate-fuzzy">
-<p>Vers le haut du fichier <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">OpenCASCADEConfig.cmake</span>, changez la ligne suivante pour utiliser <code>REAL_PATH()</code>. Ceci corrige un bogue introduit par l'utilisation d'un lien symbolique de <code>/lib</code> &agrave; <code>/usr/lib</code> de Fedora, qui fait &eacute;chouer cmake.
-</p>
-</div> 
-<p>Ce fichier est g&eacute;n&eacute;ralement install&eacute; dans <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">/usr/lib64/cmake/opencascade/OpenCASCADEConfig.cmake</span>.
+<p>Il y a un bogue dans les fichiers cmake d'opencascade qui fait que cmake ne trouve pas les biblioth&egrave;ques d'opencascade sur Fedora. Ceci peut &ecirc;tre facilement corrig&eacute; en faisant un changement mineur dans le fichier cmake de premier niveau d'opencascade install&eacute; sur Fedora. D&eacute;tails ici&nbsp;: <a rel="nofollow" class="external free" href="https://bugzilla.redhat.com/show_bug.cgi?id=2083568">https://bugzilla.redhat.com/show_bug.cgi?id=2083568</a>.
+</p><p>Au d&eacute;but du fichier OpenCASCADEConfig.cmake, modifiez la ligne suivante pour utiliser <code>REAL_PATH()</code>. Ceci corrige un bogue d&eacute;clench&eacute; par l'utilisation d'un lien symbolique de <code>/lib</code> vers <code>/usr/lib</code> de Fedora, que le script cmake ne parvient pas &agrave; g&eacute;rer correctement. Ceci est d&ucirc; &agrave; des suppositions &eacute;troites sur l'endroit o&ugrave; les fichiers include se trouvent habituellement sous Linux et au fait que l'on ne teste pas pour obtenir un r&eacute;sultat valide. 
+</p><p>Ce fichier est g&eacute;n&eacute;ralement install&eacute; dans <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">/usr/lib64/cmake/opencascade/OpenCASCADEConfig.cmake</span>.
 </p>
 <div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>get_filename_component <span class="o">(</span>OpenCASCADE_INSTALL_PREFIX <span class="s2">"</span><span class="si">${</span><span class="nv">OpenCASCADE_INSTALL_PREFIX</span><span class="si">}</span><span class="s2">"</span> PATH<span class="o">)</span>
 </pre></div>
@@ -348,24 +342,24 @@ make -j2
 <p>Ce changement trivial doit &ecirc;tre fait dans le r&eacute;pertoire de compilation une fois que cmake a &eacute;t&eacute; lanc&eacute; et a &eacute;chou&eacute;. Une nouvelle ex&eacute;cution de cmake d&eacute;tectera alors correctement les biblioth&egrave;ques OCCT de la mani&egrave;re habituelle. 
 </p>
 <h4><span class="mw-headline" id="Fedora40">Fedora40</span></h4>
-<p>Fedora allows concurrent installation of Qt5 and Qt6 libraries. Adding the Qt6 libraries relevent to FreeCAD can be done using dnf:
+<p>Fedora permet l'installation simultan&eacute;e des biblioth&egrave;ques Qt5 et Qt6. L'ajout des biblioth&egrave;ques Qt6 n&eacute;cessaires &agrave; FreeCAD peut se faire en utilisant dnf&nbsp;:
 </p>
 <div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>dnf install python3-shiboken6 python3-shiboken6-devel python3-pyside6 python3-pyside6-devel<span class="se">\</span>
  pyside6-tools qt6-qtsvg qt6-qtsvg-devel qt6-qttools-devel python3-pyqt6-devel
 </pre></div>
-<p><b>BEWARE:</b> A new feature, PCL, was introduced in March 2025. This requires two additional packages: pcl and pcl-devel. However, it fails to build on Fedora when using Qt6 libraries. Add the following to the cmake command line to disable this code.
+<p><b>ATTENTION&nbsp;:</b> une nouvelle fonctionnalit&eacute;, PCL, a &eacute;t&eacute; introduite en mars 2025. Elle n&eacute;cessite deux paquets suppl&eacute;mentaires&nbsp;: pcl et pcl-devel. Cependant, la compilation ne se fait pas sur Fedora en pr&eacute;sence des biblioth&egrave;ques de Qt6. Ajoutez ce qui suit &agrave; la ligne de commande cmake pour d&eacute;sactiver ce code.
 </p>
 <div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>-DFREECAD_USE_PCL<span class="o">=</span>Off
 </pre></div>
-<p>Some remote Google code for automatic testing of coding practice is now included by default. If you do not want to include this external code, which is subject to change without notice, use the cmake option:
+<p>Certains codes Google distants destin&eacute;s &agrave; tester automatiquement les pratiques de codage sont d&eacute;sormais inclus par d&eacute;faut. Si vous ne souhaitez pas inclure ce code externe, qui peut &ecirc;tre modifi&eacute; sans pr&eacute;avis, utilisez l'option cmake&nbsp;:
 </p>
 <div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>-DENABLE_DEVELOPER_TESTS<span class="o">=</span>Off
 </pre></div>
-<p>The following cmake command should be suitable for Fedora 40 with Qt6:
+<p>La commande cmake suivante devrait convenir &agrave; Fedora 40 avec Qt6&nbsp;:
 </p>
 <div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>cmake -DCMAKE_BUILD_TYPE<span class="o">=</span>Release -DFREECAD_QT_VERSION<span class="o">=</span><span class="m">6</span> -Wno-dev -DENABLE_DEVELOPER_TESTS<span class="o">=</span>Off -DFREECAD_USE_PCL<span class="o">=</span>Off  ../FreeCAD
 </pre></div>
-<p>Adjust the final directory to point to the FreeCAD source code directory.
+<p>Ajustez le r&eacute;pertoire final pour qu'il pointe vers le r&eacute;pertoire du code source de FreeCAD.
 </p>
 <h4><span id="Fedora38.2F39"></span><span class="mw-headline" id="Fedora38/39">Fedora38/39</span></h4>
 <p>Installez maintenant Python 3.11. Cette version inclut un changement notable dans la fa&ccedil;on dont Python s'initialise lors de l'ex&eacute;cution d'un programme. En cons&eacute;quence, FreeCAD ne parvient pas &agrave; trouver OpenCamLib, ce qui signifie que <a href="../fr/CAM_Surface.html" title="CAM Surface/fr">Surfa&ccedil;age 3D</a> et <a href="../fr/CAM_Waterline.html" title="CAM Waterline/fr">Lignes de niveau</a> ne sont pas disponibles dans l'<a href="../fr/CAM_Workbench.html" title="CAM Workbench/fr">atelier CAM</a>. Ceci a &eacute;t&eacute; corrig&eacute; dans la branche master le 20 mars 2024 (<a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/pull/13059">Pull request #13059</a>).
@@ -994,35 +988,35 @@ make -j<span class="k">$(</span>nproc<span class="k">)</span>
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20250402160612
+Cached time: 20250405101522
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc, no&#8208;toc&#8208;conversion]
-CPU time usage: 0.181 seconds
-Real time usage: 0.209 seconds
-Preprocessor visited node count: 2864/1000000
-Post&#8208;expand include size: 22572/2097152 bytes
-Template argument size: 16882/2097152 bytes
+CPU time usage: 0.273 seconds
+Real time usage: 1.032 seconds
+Preprocessor visited node count: 2855/1000000
+Post&#8208;expand include size: 22455/2097152 bytes
+Template argument size: 16859/2097152 bytes
 Highest expansion depth: 5/100
 Expensive parser function count: 53/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 33568/5000000 bytes
+Unstrip post&#8208;expand size: 33569/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   51.208      1 -total
- 27.97%   14.324     53 Template:Code
- 16.18%    8.287    282 Template:Incode
-  3.70%    1.895      1 Template:Userdocnavi/fr
-  3.26%    1.667      2 Template:Docnav/fr
-  2.55%    1.304      4 Template:FileName
-  2.14%    1.094      6 Template:MenuCommand
-  1.79%    0.917      1 Template:Caption
-  1.73%    0.886      5 Template:Button
-  1.45%    0.745      2 Template:VeryImportantMessage
+100.00%  810.206      1 -total
+ 94.80%  768.044     53 Template:Code
+  1.05%    8.537    282 Template:Incode
+  0.45%    3.609      1 Template:Userdocnavi/fr
+  0.34%    2.751      2 Template:Docnav/fr
+  0.17%    1.381      1 Template:Caption
+  0.17%    1.358      6 Template:MenuCommand
+  0.16%    1.325      2 Template:VeryImportantMessage
+  0.16%    1.270      1 Template:Navigation_menu_2
+  0.12%    1.009      1 Template:TOCright
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:166372-0!canonical and timestamp 20250402160611 and revision id 1571077. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:166372-0!canonical and timestamp 20250405101521 and revision id 1572857. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="../site.js"></script>
