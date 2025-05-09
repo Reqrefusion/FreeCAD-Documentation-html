@@ -91,11 +91,11 @@
 <p><a href="#top">Anfang</a></p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">getpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_cb</span><span class="p">):</span>
 </pre></div>
-<p>Nun definieren wir die Funktion <code>getpoint()</code>, die beim Dr&uuml;cken einer Maustaste in einer 3D-Ansicht ausgef&uuml;hrt wird. Diese Funktion erh&auml;lt ein Argument, das wir <code>event_cb</code> nennen. Von dieser Ereignisr&uuml;ckmeldung aus k&ouml;nnen wir auf das Ereignisobjekt zugreifen, das verschiedene Informationen enth&auml;lt (weitere Informationen <a href="../de/Code_snippets.html#Mausereignisse_in_der_3D-Ansicht_beobachten_mit_Python" title="Code snippets/de">Hier</a>).
+<p>Nun definieren wir die Funktion <code>getpoint()</code>, die ausgef&uuml;hrt wird, wenn eine Maustaste in einer 3D-Ansicht gedr&uuml;ckt wird. Diese Funktion empf&auml;ngt ein Argument, das wir <code>event_cb</code> nennen. Von diesem Ereignisr&uuml;ckruf (event callback) aus k&ouml;nnen wir auf das Ereignisobjekt zugreifen, das verschiedene Informationen enth&auml;lt (weitere Infos findet man <a href="../de/Code_snippets.html#Mausereignisse_in_der_3D-Ansicht_beobachten_mit_Python" title="Code snippets/de">hier</a>).
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">getState</span><span class="p">()</span> <span class="o">==</span> <span class="n">SoMouseButtonEvent</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
 </pre></div>
-<p>Die <code>getpoint()</code> Funktion wird aufgerufen, wenn eine Maustaste gedr&uuml;ckt oder losgelassen wird. Aber wir wollen einen 3D Punkt nur dann aufnehmen, wenn er gedr&uuml;ckt ist, sonst w&uuml;rden wir zwei 3D Punkte sehr nahe aneinander bekommen. Das m&uuml;ssen wir also hier &uuml;berpr&uuml;fen.
+<p>Die <code>getpoint()</code> Funktion wird aufgerufen, wenn eine Maustaste gedr&uuml;ckt oder losgelassen wird. Aber wir wollen einen 3D-Punkt nur dann ausw&auml;hlen, wenn eine Maustaste gedr&uuml;ckt wird, andernfalls w&uuml;rden wir zwei 3D-Punkte sehr nahe beieinander erhalten. Daher m&uuml;ssen wir das an dieser Stelle &uuml;berpr&uuml;fen.
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">pos</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">getPosition</span><span class="p">()</span>
 </pre></div>
@@ -103,7 +103,7 @@
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">point</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">getPoint</span><span class="p">(</span><span class="n">pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pos</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
-<p>Diese Funktion gibt uns einen FreeCAD Vektor (x,y,z), der den 3D Punkt enth&auml;lt, der auf der Brennpunktebene direkt unter unserem Mauszeiger liegt. Wenn Du Dich in der Kameraansicht befindest, stelle dir einen Strahl vor, der von der Kamera kommt, durch den Mauszeiger hindurchgeht und auf die Brennpunktebene trifft. Das ist die Position ist unseres 3D Punktes. Wenn wir uns in der orthogonalen Ansicht befinden, ist der Strahl parallel zur Blickrichtung.
+<p>Diese Funktion liefert uns einen FreeCAD-Vektor (x,y,z), der den 3D-Punkt enth&auml;lt, der auf der fokussierten Ebene direkt unter unserem Mauszeiger liegt. Befindet man sich in der Kameraansicht befindest, kann man sich einen Strahl vorstellen, der von der Kamera kommt, durch den Mauszeiger hindurchgeht und auf die fokussierte Ebene trifft. Das ist die Position unseres 3D-Punktes. Wenn wir uns in der orthogonalen Ansicht befinden, ist der Strahl parallel zur Blickrichtung.
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
 </pre></div>
@@ -111,29 +111,29 @@
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
 </pre></div>
-<p>Haben wir schon genug Punkte? Wenn ja, dann zeichnen wir die Linie!
+<p>Haben wir schon genug Punkte? Wenn ja, dann zeichnen wir jetzt die Linie!
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">l</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">stack</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 </pre></div>
-<p>Hier verwenden wir die <code>LineSegment()</code>-Funktion aus dem Part-Arbeitsbereich, die eine Linie aus zwei FreeCAD-Vektoren erzeugt. Die Linie ist nicht an irgendein Objekt unseres aktiven Dokuments gebunden, so dass nichts auf dem Bildschirm erscheint.
+<p>Hier verwenden wir die Funktion <code>LineSegment()</code> aus dem Modul Part, die eine Linie aus zwei FreeCAD-Vektoren erstellt. Die Linie ist nicht an irgendein Objekt unseres aktiven Dokuments gebunden, so dass nichts auf dem Bildschirm erscheint.
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">shape</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">toShape</span><span class="p">()</span>
 </pre></div>
-<p>Das FreeCAD Dokument kann nur Formen aus dem Part Modul &uuml;bernehmen. Formen sind der grundlegendste Typ des Part Moduls. Daher m&uuml;ssen wir unsere Linie in eine Form konvertieren, bevor wir sie dem Dokument hinzuf&uuml;gen.
+<p>Das FreeCAD-Dokument kann nur Formen (Shapes) aus dem Modul Part &uuml;bernehmen. Formen sind der grundlegendste Typ des Moduls Part. Daher m&uuml;ssen wir unsere Linie in eine Form konvertieren, bevor wir sie dem Dokument hinzuf&uuml;gen.
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">Part</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
 </pre></div>
-<p>Das Part Modul hat eine sehr n&uuml;tzliche <code>show()</code> Funktion, die ein neues Objekt im Dokument erzeugt und eine Form daran bindet. Wir h&auml;tten auch zuerst ein neues Objekt im Dokument erstellen k&ouml;nnen, und dann die Form manuell an dieses Objekt binden k&ouml;nnen.
+<p>Das Modul Part hat eine sehr n&uuml;tzliche Funktion <code>show()</code>, die ein neues Objekt im Dokument erzeugt und eine Form daran bindet. Wir h&auml;tten auch zuerst ein neues Objekt im Dokument erstellen k&ouml;nnen und dann die Form manuell an dieses Objekt binden.
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">removeEventCallbackPivy</span><span class="p">(</span><span class="n">SoMouseButtonEvent</span><span class="o">.</span><span class="n">getClassTypeId</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">)</span>
 </pre></div>
-<p>Da wir mit unserer Linie fertig sind, entfernen wir den R&uuml;ckrufmechanismus hier.
+<p>Da wir mit unserer Linie fertig sind, entfernen wir den R&uuml;ckrufmechanismus an dieser Stelle.
 </p>
 <p><a href="#top">Anfang</a></p>
 <p><span id="Testing_the_script"></span>
 </p>
 <h2><span class="mw-headline" id="Testen_des_Skripts">Testen des Skripts</span></h2>
-<p>Nun speichern wir unser Skript an einem Ort, an dem der FreeCAD Python Interpreter es finden kann. Beim Import von Modulen wird der Interpreter an folgenden Stellen suchen: die Python Installationspfade, das FreeCAD bin Verzeichnis und alle FreeCAD Modulverzeichnisse. Die beste L&ouml;sung ist also, ein neues Verzeichnis in einem der FreeCAD <a href="../de/Installing_more_workbenches.html" title="Installing more workbenches/de">Mod Verzeichnisse</a> anzulegen und unser Skript darin zu speichern. Erstellen wir zum Beispiel ein Verzeichnis "MyScripts" und speichern unser Skript als "exercise.py".
+<p>Nun speichern wir unser Skript an einem Ort, an dem FreeCADs Python-Interpreter es finden kann. Beim Import von Modulen wird der Interpreter an folgenden Stellen suchen: die Python-Installationspfade, FreeCADs <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">bin</span>-Verzeichnis und alle FreeCAD <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Mod</span>-Verzeichnisse (Modulverzeichnisse). Die beste L&ouml;sung ist also, ein neues Verzeichnis in einem von FreeCADs <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Mod</span>-Verzeichnissen anzulegen. Erstellen wir also ein Verzeichnis <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">MyScripts</span> und sichern darin unser Skript unter dem Namen <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">exercise.py</span>.
 </p><p>Nun, alles ist bereit. Lass uns FreeCAD starten, ein neues Dokument erstellen und im Python Interpreter eingeben:
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">exercise</span>
@@ -241,15 +241,15 @@ Dann f&uuml;gen wir die <code>line()</code> Klasse als offiziellen FreeCAD Befeh
 <div style="clear:both"></div>
 <!-- 
 NewPP limit report
-Cached time: 20250509091032
+Cached time: 20250509095730
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc, no&#8208;toc&#8208;conversion]
-CPU time usage: 0.069 seconds
-Real time usage: 0.113 seconds
-Preprocessor visited node count: 631/1000000
-Post&#8208;expand include size: 9337/2097152 bytes
-Template argument size: 5440/2097152 bytes
+CPU time usage: 0.082 seconds
+Real time usage: 0.109 seconds
+Preprocessor visited node count: 665/1000000
+Post&#8208;expand include size: 9836/2097152 bytes
+Template argument size: 5469/2097152 bytes
 Highest expansion depth: 5/100
 Expensive parser function count: 24/100
 Unstrip recursion depth: 0/20
@@ -257,18 +257,18 @@ Unstrip post&#8208;expand size: 21615/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   16.922      1 -total
- 33.32%    5.639     24 Template:Code
- 17.31%    2.930      1 Template:Powerdocnavi/de
- 10.43%    1.765     28 Template:Incode
-  9.03%    1.528      1 Template:Navigation_menu_2
-  6.50%    1.100      6 Template:Top
-  5.09%    0.861      4 Template:FileName
-  4.19%    0.709      1 Template:TOCright
-  3.33%    0.563      1 Template:Clear
+100.00%   15.507      1 -total
+ 34.08%    5.284     24 Template:Code
+ 17.62%    2.732      1 Template:Powerdocnavi/de
+  9.22%    1.430      1 Template:Navigation_menu_2
+  8.02%    1.244     28 Template:Incode
+  5.59%    0.867      6 Template:Top
+  4.66%    0.722      9 Template:FileName
+  4.06%    0.629      1 Template:TOCright
+  3.88%    0.602      1 Template:Clear
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:56385-0!canonical and timestamp 20250509091032 and revision id 1582430. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:56385-0!canonical and timestamp 20250509095730 and revision id 1582456. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="../site.js"></script>
