@@ -91,7 +91,7 @@
 <tr>
 <td>Leaders
 </td>
-<td style="text-align:center; color:green;"><b>&#10003;</b>
+<td style="text-align:center; color:red;"><b>&#10007;</b>
 </td>
 <td style="text-align:center; color:green;"><b>&#10003;</b>
 </td></tr>
@@ -107,28 +107,28 @@
 </td>
 <td style="text-align:center; color:green;"><b>&#10003;</b>
 </td>
-<td style="text-align:center; color:red;"><b>&#10007;</b>
+<td style="text-align:center; color:green;"><b>&#10003;</b>
 </td></tr>
 <tr>
 <td>Dimensions
 </td>
 <td style="text-align:center; color:green;"><b>&#10003;</b>
 </td>
-<td style="text-align:center; color:red;"><b>&#10007;</b>
+<td style="text-align:center; color:green;"><b>&#10003;</b>
 </td></tr>
 <tr>
 <td>Blocks
 </td>
 <td style="text-align:center; color:green;"><b>&#10003;</b> <br><small>(Geometry only; texts, dimensions, and attributes inside blocks are skipped)</small>
 </td>
-<td style="text-align:center; color:red;"><b>&#10007;</b>
+<td style="text-align:center; color:green;"><b>&#10003;</b>
 </td></tr>
 <tr>
 <td>Paper space objects
 </td>
 <td style="text-align:center; color:green;"><b>&#10003;</b>
 </td>
-<td style="text-align:center; color:red;"><b>&#10007;</b>
+<td style="text-align:center; color:green;"><b>&#10003;</b>
 </td></tr>
 <tr>
 <td>3D Faces
@@ -140,23 +140,65 @@
 <h2><span class="mw-headline" id="Exporting">Exporting</span></h2>
 <p>There are also two exporters. The legacy exporter exports to the R12 DXF format, the C++ exporter to the R14 DXF format. Both formats can be handled by many applications.
 </p>
-<h3><span id="C.2B.2B_exporter"></span><span class="mw-headline" id="C++_exporter">C++ exporter</span></h3>
-<p>Some of the features and limitations of this exporter are:
-</p>
-<ul><li>All FreeCAD 2D geometry is exported, except <a href="Draft_CubicBezCurve.html" title="Draft CubicBezCurve">Draft CubicBezCurves</a>, <a href="Draft_BezCurve.html" title="Draft BezCurve">Draft BezCurves</a> and <a href="Draft_Point.html" title="Draft Point">Draft Points</a>.</li>
-<li>Straight edges from faces of 3D objects are exported, but curved edges only if they are on a plane parallel to the XY plane of the global coordinate system. Note that a DXF created from 3D objects will contain duplicate lines.</li>
-<li>Texts and dimensions are not exported.</li>
-<li>Colors are ignored.</li>
-<li>Layers are mapped from object names.</li></ul>
-<h3><span class="mw-headline" id="Legacy_exporter">Legacy exporter</span></h3>
-<p>Some of the features and limitations of this exporter are:
-</p>
-<ul><li>All FreeCAD 2D geometry is exported, except <a href="Draft_Point.html" title="Draft Point">Draft Points</a>. But ellipses, B-splines and B&eacute;zier curves are not exported properly.</li>
-<li>3D objects are exported as flattened 2D views.</li>
-<li>Compound objects are exported as blocks.</li>
-<li>Texts and dimensions are exported.</li>
-<li>The colors in the DXF are based on the line color of objects. Black is mapped to "ByBlock", other colors are mapped using AutoCAD Color Index (ACI) colors.</li>
-<li>Layers are mapped from layer and group names. When groups are nested, the deepest group gives the layer name.</li></ul>
+<table class="wikitable" style="text-align:left;">
+<caption>DXF exporter entity support comparison
+</caption>
+<tbody><tr>
+<th>Feature
+</th>
+<th>C++ exporter (R14)
+</th>
+<th>Legacy exporter (R12)
+</th></tr>
+<tr>
+<td>Supported 2D Geometry
+</td>
+<td>All except Bezier curves. Ellipses and Splines are exported natively.
+</td>
+<td>All except Points. Ellipses and B-splines may be inaccurate or exported as polylines.
+</td></tr>
+<tr>
+<td>Points
+</td>
+<td style="text-align:center; color:green;"><b>&#10003;</b> <br><small>(If the "Export points" preference is enabled)</small>
+</td>
+<td style="text-align:center; color:red;"><b>&#10007;</b>
+</td></tr>
+<tr>
+<td>3D Objects
+</td>
+<td>Edges from faces are exported. Curved edges only if on XY plane. May create duplicate lines.
+</td>
+<td>Exported as flattened 2D views.
+</td></tr>
+<tr>
+<td>Texts and Dimensions
+</td>
+<td style="text-align:center; color:red;"><b>&#10007;</b>
+</td>
+<td style="text-align:center; color:green;"><b>&#10003;</b>
+</td></tr>
+<tr>
+<td>Colors
+</td>
+<td style="text-align:center; color:red;"><b>&#10007;</b>
+</td>
+<td style="text-align:center; color:green;"><b>&#10003;</b> <br><small>(Based on object line color)</small>
+</td></tr>
+<tr>
+<td>Layers
+</td>
+<td style="text-align:center; color:green;"><b>&#10003;</b> <br><small>(Mapped from object names)</small>
+</td>
+<td style="text-align:center; color:green;"><b>&#10003;</b> <br><small>(Mapped from layers and nested groups)</small>
+</td></tr>
+<tr>
+<td>Compounds
+</td>
+<td style="text-align:center; color:red;"><b>&#10007;</b>
+</td>
+<td style="text-align:center; color:green;"><b>&#10003;</b> <br><small>(Exported as blocks)</small>
+</td></tr></tbody></table>
 <h2><span class="mw-headline" id="Installing">Installing</span></h2>
 <p>For licensing reasons, the required <a href="DXF.html" title="DXF">DXF</a> import/export libraries needed by the legacy version of the importer are not part of the FreeCAD source code.
 For more information see: <a href="FreeCAD_and_DXF_Import.html" title="FreeCAD and DXF Import">FreeCAD and DXF Import</a>.
@@ -241,13 +283,13 @@ For more information see: <a href="FreeCAD_and_DXF_Import.html" title="FreeCAD a
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20250616073441
+Cached time: 20250616103842
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc, no&#8208;toc&#8208;conversion]
-CPU time usage: 0.154 seconds
-Real time usage: 0.165 seconds
-Preprocessor visited node count: 385/1000000
+CPU time usage: 0.134 seconds
+Real time usage: 0.142 seconds
+Preprocessor visited node count: 371/1000000
 Post&#8208;expand include size: 16451/2097152 bytes
 Template argument size: 6353/2097152 bytes
 Highest expansion depth: 5/100
@@ -257,19 +299,19 @@ Unstrip post&#8208;expand size: 4323/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   19.353      1 -total
- 23.42%    4.533      1 Template:Draft_Tools_navi
- 19.37%    3.748      2 Template:Navigation_menu_2
- 14.02%    2.713      1 Template:Userdocnavi
- 13.70%    2.651      2 Template:Docnav
- 12.23%    2.366      2 Template:Code
-  7.85%    1.519      2 Template:Incode
-  6.58%    1.273      1 Template:Caption
-  6.44%    1.246      1 Template:FileName
-  4.89%    0.946      1 Template:MenuCommand
+100.00%   14.043      1 -total
+ 26.33%    3.698      1 Template:Draft_Tools_navi
+ 18.75%    2.633      2 Template:Navigation_menu_2
+ 13.50%    1.896      2 Template:Docnav
+ 12.71%    1.785      1 Template:Userdocnavi
+ 10.85%    1.524      2 Template:Code
+  6.50%    0.912      2 Template:Incode
+  6.26%    0.879      1 Template:Caption
+  5.89%    0.827      1 Template:FileName
+  5.85%    0.822      1 Template:MenuCommand
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:31-0!canonical and timestamp 20250616073512 and revision id 1592816. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:31-0!canonical and timestamp 20250616103845 and revision id 1592896. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
