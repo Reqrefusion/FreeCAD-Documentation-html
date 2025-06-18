@@ -1,12 +1,12 @@
-<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">DXF/en</span></h1><?xml encoding="UTF-8"><div class="mw-parser-output"><div class="mw-pt-languages noprint" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../de/DXF.html" class="mw-pt-progress mw-pt-progress--med" title="DXF (54% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">DXF/en</span></h1><?xml encoding="UTF-8"><div class="mw-parser-output"><div class="mw-pt-languages noprint" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../de/DXF.html" class="mw-pt-progress mw-pt-progress--med" title="DXF (47% translated)" lang="de" dir="ltr">Deutsch</a></li>
 <li><a href="../DXF.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="DXF (100% translated)" lang="en" dir="ltr">English</a></li>
-<li><a href="../es/DXF.html" class="mw-pt-progress mw-pt-progress--stub" title="DXF (8% translated)" lang="es" dir="ltr">espa&ntilde;ol</a></li>
-<li><a href="../fr/DXF.html" class="mw-pt-progress mw-pt-progress--med" title="DXF (54% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
-<li><a href="../it/DXF.html" class="mw-pt-progress mw-pt-progress--med" title="DXF (54% translated)" lang="it" dir="ltr">italiano</a></li>
-<li><a href="../pl/DXF.html" class="mw-pt-progress mw-pt-progress--med" title="DXF (54% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../es/DXF.html" class="mw-pt-progress mw-pt-progress--stub" title="DXF (7% translated)" lang="es" dir="ltr">espa&ntilde;ol</a></li>
+<li><a href="../fr/DXF.html" class="mw-pt-progress mw-pt-progress--med" title="DXF (47% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../it/DXF.html" class="mw-pt-progress mw-pt-progress--med" title="DXF (47% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="../pl/DXF.html" class="mw-pt-progress mw-pt-progress--complete" title="DXF (86% translated)" lang="pl" dir="ltr">polski</a></li>
 <li><a href="../pt-br/DXF.html" class="mw-pt-progress mw-pt-progress--stub" title="DXF (5% translated)" lang="pt-BR" dir="ltr">portugu&ecirc;s do Brasil</a></li>
-<li><a href="../ru/DXF.html" class="mw-pt-progress mw-pt-progress--stub" title="DXF (19% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li>
-<li><a href="../ko/DXF.html" class="mw-pt-progress mw-pt-progress--stub" title="DXF (19% translated)" lang="ko" dir="ltr">&#54620;&#44397;&#50612;</a></li></ul></div>
+<li><a href="../ru/DXF.html" class="mw-pt-progress mw-pt-progress--stub" title="DXF (16% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li>
+<li><a href="../ko/DXF.html" class="mw-pt-progress mw-pt-progress--stub" title="DXF (16% translated)" lang="ko" dir="ltr">&#54620;&#44397;&#50612;</a></li></ul></div>
 <div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
 <h2><span class="mw-headline" id="Background_history">Background history</span></h2>
 <p>The Drawing Exchange Format (DXF) is a proprietary CAD data format developed by Autodesk to enable file exchange between their flagship AutoCAD product and other software. There are a number of good software libraries for reading/writing the DXF format.
@@ -68,10 +68,20 @@
 <li><b>Has transformations:</b> each instance can be transformed independently without affecting the original block definition. These transformations include:
 <ul><li><b>Scale:</b> the instance can be scaled differently in the X, Y, and Z directions.</li>
 <li><b>Rotation:</b> the instance can be rotated around its insertion point.</li></ul></li></ul>
-<p><br>
+<h4><span class="mw-headline" id="BLOCK_placement_strategies">BLOCK placement strategies</span></h4>
+<p>A DXF file separates the <b>definition</b> of a component from its <b>placement</b>.
+</p>
+<ul><li>A <code>BLOCK</code> is the template or blueprint. It contains the geometry that makes up a component, like a chair or a window. These definitions are stored in the <code>BLOCKS</code> section of the file and are not directly visible in the final drawing.</li>
+<li>An <code>INSERT</code> is the instruction to place a <code>BLOCK</code> into the drawing at a specific position, orientation, and scale. These are the visible instances of the block and are found in the <code>ENTITIES</code> section.</li></ul>
+<p>There are two primary workflows for using blocks and inserts:
+</p>
+<ol><li><b>Template and instance workflow:</b> A single <code>BLOCK</code> definition is created, and multiple <code>INSERT</code> entities are used to place instances of it throughout the drawing. This is an efficient method for handling repetitive elements. For instance, the geometry for a chair is defined once in a <code>BLOCK</code> and then referenced many times by <code>INSERT</code> entities.</li>
+<li><b>Compound object workflow:</b> A <code>BLOCK</code> is created from existing geometry simply to group those objects together as a single, selectable unit. In this case, the <code>BLOCK</code> definition is used by a single <code>INSERT</code> entity only.</li></ol>
+<p>The DXF importer must be able to distinguish between these two use cases to correctly represent the original drawing's intent, either by creating many linked instances to a single base object (template model) or by creating a single, visible object (grouped object model).
+</p><p><br>
 </p>
 <div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
-    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a href="../File/User_hub.png" class="mw-file-description"><img src="../File/User_hub.png" decoding="async" width="24" height="24"></a></span> <a href="../en/User_hub.html" title="User hub/en">User documentation</a>
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a href="../index.php?title=User_hub.png&amp;filetimestamp=20190221145008&amp;.html" class="mw-file-description"><img src="../File/User_hub.png" decoding="async" width="24" height="24"></a></span> <a href="../en/User_hub.html" title="User hub/en">User documentation</a>
         <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
 <ul><li><b><a href="../en/Getting_started.html" title="Getting started/en">Getting started</a></b></li>
 <li><b>Installation:</b> <a href="../en/Download.html" title="Download/en">Download</a>, <a href="../en/Installing_on_Windows.html" title="Installing on Windows/en">Windows</a>, <a href="../en/Installing_on_Linux.html" title="Installing on Linux/en">Linux</a>, <a href="../en/Installing_on_Mac.html" title="Installing on Mac/en">Mac</a>, <a href="../en/Installing_additional_components.html" title="Installing additional components/en">Additional components</a>, <a href="../en/Compile_on_Docker.html" title="Compile on Docker/en">Docker</a>, <a href="../en/AppImage.html" title="AppImage/en">AppImage</a>, <a href="../en/Ubuntu_Snap.html" title="Ubuntu Snap/en">Ubuntu Snap</a></li>
@@ -86,30 +96,30 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20250616144915
+Cached time: 20250618095936
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc, no&#8208;toc&#8208;conversion]
-CPU time usage: 0.045 seconds
-Real time usage: 0.063 seconds
-Preprocessor visited node count: 231/1000000
-Post&#8208;expand include size: 5962/2097152 bytes
-Template argument size: 2034/2097152 bytes
+CPU time usage: 0.072 seconds
+Real time usage: 0.098 seconds
+Preprocessor visited node count: 292/1000000
+Post&#8208;expand include size: 6186/2097152 bytes
+Template argument size: 2102/2097152 bytes
 Highest expansion depth: 5/100
 Expensive parser function count: 0/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 1391/5000000 bytes
+Unstrip post&#8208;expand size: 1396/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%    8.043      1 -total
- 51.51%    4.143      1 Template:Userdocnavi/en
- 19.05%    1.532      1 Template:Navigation_menu_2
- 17.96%    1.445     20 Template:Incode
- 16.15%    1.299      1 Template:TOCright
+100.00%   16.247      1 -total
+ 56.53%    9.185      1 Template:Userdocnavi/en
+ 16.94%    2.753      1 Template:TOCright
+ 16.12%    2.619     32 Template:Incode
+ 13.64%    2.216      1 Template:Navigation_menu_2
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:128517-0!canonical and timestamp 20250616144915 and revision id 1593119. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:128517-0!canonical and timestamp 20250618095936 and revision id 1593979. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="../site.js"></script>
