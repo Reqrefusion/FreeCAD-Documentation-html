@@ -85,8 +85,7 @@ FreeCAD Manual Converter
 <ol><li>Install Python 3.x.</li>
 <li>Install GTK3 runtime</li>
 <li>Open Command Prompt and install Python packages:</li></ol>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span> <span class="n">pip</span> <span class="n">install</span> <span class="n">requests</span> <span class="n">weasyprint</span> <span class="n">beautifulsoup4</span> <span class="n">PyPDF2</span> <span class="n">Pillow</span> <span class="n">cairosvg</span> <span class="n">ebooklib</span>
-</pre></div>
+<pre>pip install requests weasyprint beautifulsoup4 PyPDF2 Pillow cairosvg ebooklib</pre>
 <h3><span id="Linux_.28Ubuntu.2FDebian.29"></span><span class="mw-headline" id="Linux_(Ubuntu/Debian)">Linux (Ubuntu/Debian)</span></h3>
 <p>Install all necessary dependencies as:
 </p>
@@ -104,527 +103,526 @@ FreeCAD Manual Converter
 <ul><li><b>FreeCAD_User_Manual.pdf</b>: Complete PDF version of the manual</li>
 <li><b>FreeCAD_User_Manual.epub</b>: EPUB version suitable for e-readers</li></ul>
 <h2><span class="mw-headline" id="Script">Script</span></h2>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span> <span class="kn">import</span> <span class="nn">requests</span>
-<span class="kn">from</span> <span class="nn">weasyprint</span> <span class="kn">import</span> <span class="n">HTML</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">bs4</span> <span class="kn">import</span> <span class="n">BeautifulSoup</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">from</span> <span class="nn">PyPDF2</span> <span class="kn">import</span> <span class="n">PdfMerger</span>
-<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
-<span class="kn">import</span> <span class="nn">base64</span>
-<span class="kn">import</span> <span class="nn">cairosvg</span>
-<span class="kn">import</span> <span class="nn">ebooklib</span>
-<span class="kn">from</span> <span class="nn">ebooklib</span> <span class="kn">import</span> <span class="n">epub</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<pre>import requests
+from weasyprint import HTML
+import os
+from bs4 import BeautifulSoup
+import re
+from PyPDF2 import PdfMerger
+from PIL import Image
+from io import BytesIO
+import base64
+import cairosvg
+import ebooklib
+from ebooklib import epub
+import uuid
+from datetime import datetime
 
 
-<span class="k">class</span> <span class="nc">FreeCADManualConverter</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-            <span class="s1">'User-Agent'</span><span class="p">:</span> <span class="s1">'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'</span>
-        <span class="p">})</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">toc_entries</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Store chapter titles, subchapters, and hierarchy</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chapters_html</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Store HTML content for EPUB creation</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">image_cache</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Cache for deduplicating images</span>
+class FreeCADManualConverter:
+    def __init__(self):
+        self.session = requests.Session()
+        self.session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        })
+        self.toc_entries = []  # Store chapter titles, subchapters, and hierarchy
+        self.chapters_html = []  # Store HTML content for EPUB creation
+        self.image_cache = {}  # Cache for deduplicating images
 
-    <span class="k">def</span> <span class="nf">optimize_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_url</span><span class="p">,</span> <span class="n">max_width</span><span class="o">=</span><span class="mi">800</span><span class="p">):</span>
-        <span class="sd">"""Download and optimize a raster image."""</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">img_url</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-            <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">))</span>
-            <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">width</span> <span class="o">&gt;</span> <span class="n">max_width</span><span class="p">:</span>
-                <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="n">max_width</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">height</span> <span class="o">*</span> <span class="n">max_width</span> <span class="o">/</span> <span class="n">img</span><span class="o">.</span><span class="n">width</span><span class="p">)),</span> <span class="n">Image</span><span class="o">.</span><span class="n">Resampling</span><span class="o">.</span><span class="n">LANCZOS</span><span class="p">)</span>
-            <span class="n">buffer</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
-            <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">"PNG"</span><span class="p">,</span> <span class="n">optimize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">buffer</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error optimizing image </span><span class="si">{</span><span class="n">img_url</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
+    def optimize_image(self, img_url, max_width=800):
+        """Download and optimize a raster image."""
+        try:
+            response = self.session.get(img_url, stream=True)
+            response.raise_for_status()
+            img = Image.open(BytesIO(response.content))
+            if img.width &gt; max_width:
+                img = img.resize((max_width, int(img.height * max_width / img.width)), Image.Resampling.LANCZOS)
+            buffer = BytesIO()
+            img.save(buffer, format="PNG", optimize=True)
+            buffer.seek(0)
+            return buffer.read()
+        except Exception as e:
+            print(f"Error optimizing image {img_url}: {e}")
+            return None
 
-    <span class="k">def</span> <span class="nf">svg_to_png</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">svg_url</span><span class="p">):</span>
-        <span class="sd">"""Convert SVG to PNG."""</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">svg_url</span><span class="p">)</span>
-            <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
-            <span class="k">return</span> <span class="n">cairosvg</span><span class="o">.</span><span class="n">svg2png</span><span class="p">(</span><span class="n">bytestring</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">,</span> <span class="n">output_width</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">output_height</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error converting SVG </span><span class="si">{</span><span class="n">svg_url</span><span class="si">}</span><span class="s2"> to PNG: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">session</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
-            <span class="s1">'User-Agent'</span><span class="p">:</span> <span class="s1">'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'</span>
-        <span class="p">})</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">toc_entries</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Store chapter titles, subchapters, and hierarchy</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chapters_html</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># Store HTML content for EPUB creation</span>
+    def svg_to_png(self, svg_url):
+        """Convert SVG to PNG."""
+        try:
+            response = self.session.get(svg_url)
+            response.raise_for_status()
+            return cairosvg.svg2png(bytestring=response.content, output_width=16, output_height=16)
+        except Exception as e:
+            print(f"Error converting SVG {svg_url} to PNG: {e}")
+            return None
+        self.session = requests.Session()
+        self.session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        })
+        self.toc_entries = []  # Store chapter titles, subchapters, and hierarchy
+        self.chapters_html = []  # Store HTML content for EPUB creation
 
-    <span class="k">def</span> <span class="nf">extract_manual_links</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">"https://wiki.freecad.org/Manual"</span><span class="p">):</span>
-        <span class="sd">"""Extract all manual links and subchapters from the main Manual page."""</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Fetching manual links from </span><span class="si">{</span><span class="n">base_url</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
-        <span class="n">html_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_page</span><span class="p">(</span><span class="n">base_url</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">html_content</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[]</span>
+    def extract_manual_links(self, base_url="https://wiki.freecad.org/Manual"):
+        """Extract all manual links and subchapters from the main Manual page."""
+        print(f"Fetching manual links from {base_url}...")
+        html_content = self.fetch_page(base_url)
+        if not html_content:
+            return []
 
-        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html_content</span><span class="p">,</span> <span class="s1">'html.parser'</span><span class="p">)</span>
-        <span class="n">links</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        soup = BeautifulSoup(html_content, 'html.parser')
+        links = {}
+        seen = set()
 
-        <span class="c1"># Define unwanted languages</span>
-        <span class="n">excluded_languages</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'fr'</span><span class="p">,</span> <span class="s1">'de'</span><span class="p">,</span> <span class="s1">'es'</span><span class="p">,</span> <span class="s1">'hr'</span><span class="p">,</span> <span class="s1">'it'</span><span class="p">,</span> <span class="s1">'ko'</span><span class="p">,</span> <span class="s1">'pl'</span><span class="p">,</span> <span class="s1">'pt'</span><span class="p">,</span> <span class="s1">'ro'</span><span class="p">,</span> <span class="s1">'ru'</span><span class="p">,</span> <span class="s1">'zh'</span><span class="p">]</span>
+        # Define unwanted languages
+        excluded_languages = ['fr', 'de', 'es', 'hr', 'it', 'ko', 'pl', 'pt', 'ro', 'ru', 'zh']
 
-        <span class="k">for</span> <span class="n">a_tag</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">'a'</span><span class="p">,</span> <span class="n">href</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-            <span class="n">href</span> <span class="o">=</span> <span class="n">a_tag</span><span class="p">[</span><span class="s1">'href'</span><span class="p">]</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="sa">f</span><span class="s2">"/</span><span class="si">{</span><span class="n">lang</span><span class="si">}</span><span class="s2">"</span> <span class="ow">in</span> <span class="n">href</span> <span class="k">for</span> <span class="n">lang</span> <span class="ow">in</span> <span class="n">excluded_languages</span><span class="p">):</span>
-                <span class="k">continue</span>
+        for a_tag in soup.find_all('a', href=True):
+            href = a_tag['href']
+            if any(f"/{lang}" in href for lang in excluded_languages):
+                continue
 
-            <span class="k">if</span> <span class="n">href</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'/Manual:'</span><span class="p">):</span>
-                <span class="n">full_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"https://wiki.freecad.org</span><span class="si">{</span><span class="n">href</span><span class="si">}</span><span class="s2">"</span>
-                <span class="n">base_chapter</span> <span class="o">=</span> <span class="n">full_url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'#'</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">subchapter</span> <span class="o">=</span> <span class="n">full_url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'#'</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="s1">'#'</span> <span class="ow">in</span> <span class="n">full_url</span> <span class="k">else</span> <span class="kc">None</span>
+            if href.startswith('/Manual:'):
+                full_url = f"https://wiki.freecad.org{href}"
+                base_chapter = full_url.split('#')[0]
+                subchapter = full_url.split('#')[1] if '#' in full_url else None
 
-                <span class="k">if</span> <span class="n">base_chapter</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
-                    <span class="n">links</span><span class="p">[</span><span class="n">base_chapter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-                    <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">base_chapter</span><span class="p">)</span>
+                if base_chapter not in seen:
+                    links[base_chapter] = []
+                    seen.add(base_chapter)
 
-                <span class="k">if</span> <span class="n">subchapter</span><span class="p">:</span>
-                    <span class="n">links</span><span class="p">[</span><span class="n">base_chapter</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subchapter</span><span class="p">)</span>
+                if subchapter:
+                    links[base_chapter].append(subchapter)
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">links</span><span class="p">)</span><span class="si">}</span><span class="s2"> unique manual links with subchapters."</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">links</span>
+        print(f"Found {len(links)} unique manual links with subchapters.")
+        return links
 
-    <span class="k">def</span> <span class="nf">fetch_page</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
-        <span class="sd">"""Fetch the HTML content of a given URL."""</span>
-        <span class="k">if</span> <span class="n">url</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'/'</span><span class="p">):</span>
-            <span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"https://wiki.freecad.org</span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">"</span>
+    def fetch_page(self, url):
+        """Fetch the HTML content of a given URL."""
+        if url.startswith('/'):
+            url = f"https://wiki.freecad.org{url}"
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">200</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to fetch </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">. HTTP status code: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-                <span class="k">return</span> <span class="kc">None</span>
-            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error fetching </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
+        try:
+            response = self.session.get(url)
+            if response.status_code&nbsp;!= 200:
+                print(f"Failed to fetch {url}. HTTP status code: {response.status_code}")
+                return None
+            return response.text
+        except Exception as e:
+            print(f"Error fetching {url}: {e}")
+            return None
 
-    <span class="k">def</span> <span class="nf">extract_main_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">html_content</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">chapter_title</span><span class="p">,</span> <span class="n">chapter_id</span><span class="p">,</span> <span class="n">subchapters</span><span class="p">):</span>
-        <span class="sd">"""Extract content within the 'mw-parser-output' div, fix links, and process image paths."""</span>
-        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html_content</span><span class="p">,</span> <span class="s1">'html.parser'</span><span class="p">)</span>
+    def extract_main_content(self, html_content, base_url, chapter_title, chapter_id, subchapters):
+        """Extract content within the 'mw-parser-output' div, fix links, and process image paths."""
+        soup = BeautifulSoup(html_content, 'html.parser')
 
-        <span class="c1"># Remove unwanted elements</span>
-        <span class="k">for</span> <span class="n">class_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'mw-pt-languages noprint'</span><span class="p">,</span> <span class="s1">'docnav'</span><span class="p">,</span> <span class="s1">'NavFrame'</span><span class="p">,</span> <span class="s1">'manualtoc'</span><span class="p">]:</span>
-            <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="n">class_</span><span class="o">=</span><span class="n">class_name</span><span class="p">):</span>
-                <span class="n">element</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
+        # Remove unwanted elements
+        for class_name in ['mw-pt-languages noprint', 'docnav', 'NavFrame', 'manualtoc']:
+            for element in soup.find_all(class_=class_name):
+                element.decompose()
 
-        <span class="n">main_content</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">'div'</span><span class="p">,</span> <span class="n">class_</span><span class="o">=</span><span class="s1">'mw-parser-output'</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">main_content</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">"Main content ('mw-parser-output') not found."</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
+        main_content = soup.find('div', class_='mw-parser-output')
+        if not main_content:
+            print("Main content ('mw-parser-output') not found.")
+            return None
 
-        <span class="c1"># Add chapter title as heading at the top if not present</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">main_content</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">'h1'</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">chapter_id</span><span class="p">):</span>
-            <span class="n">heading_tag</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">new_tag</span><span class="p">(</span><span class="s1">'h1'</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">chapter_id</span><span class="p">)</span>
-            <span class="n">heading_tag</span><span class="o">.</span><span class="n">string</span> <span class="o">=</span> <span class="n">chapter_title</span>
-            <span class="n">main_content</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">heading_tag</span><span class="p">)</span>
+        # Add chapter title as heading at the top if not present
+        if not main_content.find('h1', id=chapter_id):
+            heading_tag = soup.new_tag('h1', id=chapter_id)
+            heading_tag.string = chapter_title
+            main_content.insert(0, heading_tag)
 
-        <span class="c1"># Process images and store them for EPUB</span>
-        <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">main_content</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">'img'</span><span class="p">):</span>
-            <span class="n">src</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'src'</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">src</span> <span class="ow">and</span> <span class="n">src</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'/'</span><span class="p">):</span>
-                <span class="n">img_url</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">base_url</span><span class="si">}{</span><span class="n">src</span><span class="si">}</span><span class="s2">"</span>
-                <span class="n">img_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+        # Process images and store them for EPUB
+        for img in main_content.find_all('img'):
+            src = img.get('src')
+            if src and src.startswith('/'):
+                img_url = f"{base_url}{src}"
+                img_filename = os.path.basename(src)
 
-                <span class="k">if</span> <span class="n">src</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">'.svg'</span><span class="p">):</span>
-                    <span class="c1"># Convert SVG to PNG</span>
-                    <span class="n">png_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">svg_to_png</span><span class="p">(</span><span class="n">img_url</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="n">png_data</span><span class="p">:</span>
-                        <span class="n">img_data</span> <span class="o">=</span> <span class="n">png_data</span>
-                        <span class="n">img_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">img_filename</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s2">.png"</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># Optimize raster image</span>
-                    <span class="n">img_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimize_image</span><span class="p">(</span><span class="n">img_url</span><span class="p">)</span>
+                if src.endswith('.svg'):
+                    # Convert SVG to PNG
+                    png_data = self.svg_to_png(img_url)
+                    if png_data:
+                        img_data = png_data
+                        img_filename = f"{img_filename[:-4]}.png"
+                else:
+                    # Optimize raster image
+                    img_data = self.optimize_image(img_url)
 
-                <span class="k">if</span> <span class="n">img_data</span><span class="p">:</span>
-                    <span class="c1"># For PDF</span>
-                    <span class="n">img</span><span class="p">[</span><span class="s1">'src'</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"data:image/png;base64,</span><span class="si">{</span><span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">img_data</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span>
-                    <span class="c1"># For EPUB - store reference</span>
-                    <span class="n">img</span><span class="p">[</span><span class="s1">'epub_src'</span><span class="p">]</span> <span class="o">=</span> <span class="n">img_filename</span>
-                    <span class="n">img</span><span class="p">[</span><span class="s1">'epub_data'</span><span class="p">]</span> <span class="o">=</span> <span class="n">img_data</span>
+                if img_data:
+                    # For PDF
+                    img['src'] = f"data:image/png;base64,{base64.b64encode(img_data).decode('utf-8')}"
+                    # For EPUB - store reference
+                    img['epub_src'] = img_filename
+                    img['epub_data'] = img_data
 
-        <span class="c1"># Fix links</span>
-        <span class="k">for</span> <span class="n">link</span> <span class="ow">in</span> <span class="n">main_content</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">'a'</span><span class="p">):</span>
-            <span class="n">href</span> <span class="o">=</span> <span class="n">link</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'href'</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">href</span> <span class="ow">and</span> <span class="n">href</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">'/'</span><span class="p">):</span>
-                <span class="n">link</span><span class="p">[</span><span class="s1">'href'</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">base_url</span><span class="si">}{</span><span class="n">href</span><span class="si">}</span><span class="s2">"</span>
+        # Fix links
+        for link in main_content.find_all('a'):
+            href = link.get('href')
+            if href and href.startswith('/'):
+                link['href'] = f"{base_url}{href}"
 
-        <span class="c1"># Store the HTML content for EPUB creation</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chapters_html</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-            <span class="s1">'title'</span><span class="p">:</span> <span class="n">chapter_title</span><span class="p">,</span>
-            <span class="s1">'id'</span><span class="p">:</span> <span class="n">chapter_id</span><span class="p">,</span>
-            <span class="s1">'content'</span><span class="p">:</span> <span class="n">main_content</span><span class="p">,</span>
-            <span class="s1">'number'</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chapters_html</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="p">})</span>
+        # Store the HTML content for EPUB creation
+        self.chapters_html.append({
+            'title': chapter_title,
+            'id': chapter_id,
+            'content': main_content,
+            'number': len(self.chapters_html) + 1
+        })
 
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">main_content</span><span class="p">)</span>
+        return str(main_content)
 
-    <span class="k">def</span> <span class="nf">convert_to_pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">chapter_number</span><span class="p">,</span> <span class="n">chapter_id</span><span class="p">,</span> <span class="n">subchapters</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s1">'pdfs'</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Processing </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    def convert_to_pdf(self, url, chapter_number, chapter_id, subchapters, output_dir='pdfs'):
+        print(f"Processing {url}...")
+        os.makedirs(output_dir, exist_ok=True)
 
-        <span class="n">html_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_page</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">html_content</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+        html_content = self.fetch_page(url)
+        if not html_content:
+            return None
 
-        <span class="n">soup</span> <span class="o">=</span> <span class="n">BeautifulSoup</span><span class="p">(</span><span class="n">html_content</span><span class="p">,</span> <span class="s1">'html.parser'</span><span class="p">)</span>
-        <span class="n">chapter_title</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">" - "</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">soup</span><span class="o">.</span><span class="n">title</span> <span class="k">else</span> <span class="s2">"Chapter"</span>
-        <span class="n">chapter_title</span> <span class="o">=</span> <span class="n">chapter_title</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"Manual:"</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        soup = BeautifulSoup(html_content, 'html.parser')
+        chapter_title = soup.title.string.split(" - ")[0] if soup.title else "Chapter"
+        chapter_title = chapter_title.replace("Manual:", "").strip()
 
-        <span class="n">base_url</span> <span class="o">=</span> <span class="s2">"https://wiki.freecad.org"</span>
-        <span class="n">main_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_main_content</span><span class="p">(</span><span class="n">html_content</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">chapter_title</span><span class="p">,</span> <span class="n">chapter_id</span><span class="p">,</span> <span class="n">subchapters</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">main_content</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
+        base_url = "https://wiki.freecad.org"
+        main_content = self.extract_main_content(html_content, base_url, chapter_title, chapter_id, subchapters)
+        if not main_content:
+            return None
 
  
-        <span class="n">output_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">chapter_id</span><span class="si">}</span><span class="s2">.pdf"</span><span class="p">)</span>
+        output_file = os.path.join(output_dir, f"{chapter_id}.pdf")
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">toc_entries</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">chapter_number</span><span class="p">,</span> <span class="n">chapter_title</span><span class="p">,</span> <span class="n">chapter_id</span><span class="p">,</span> <span class="n">subchapters</span><span class="p">))</span>
+        self.toc_entries.append((chapter_number, chapter_title, chapter_id, subchapters))
 
-        <span class="n">styled_content</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"""</span>
-<span class="s2">        &lt;html&gt;</span>
-<span class="s2">        &lt;head&gt;</span>
-<span class="s2">        &lt;style&gt;</span>
-<span class="s2">        body </span><span class="se">{{</span><span class="s2"></span>
-<span class="s2">            margin: 20px;</span>
-<span class="s2">            font-family: Arial, sans-serif;</span>
-<span class="s2">        </span><span class="se">}}</span><span class="s2"></span>
-<span class="s2">        h1 </span><span class="se">{{</span><span class="s2"></span>
-<span class="s2">            text-align: center;</span>
-<span class="s2">            font-size: 24px;</span>
-<span class="s2">            margin-bottom: 10px;</span>
-<span class="s2">        </span><span class="se">}}</span><span class="s2"></span>
-<span class="s2">        h2 </span><span class="se">{{</span><span class="s2"></span>
-<span class="s2">            font-size: 18px;</span>
-<span class="s2">            margin-top: 10px;</span>
-<span class="s2">        </span><span class="se">}}</span><span class="s2"></span>
-<span class="s2">        img </span><span class="se">{{</span><span class="s2"></span>
-<span class="s2">            max-width: 100%;</span>
-<span class="s2">            height: auto;</span>
-<span class="s2">        </span><span class="se">}}</span><span class="s2"></span>
-<span class="s2">        code, pre </span><span class="se">{{</span><span class="s2"></span>
-<span class="s2">            font-family: Consolas, "Courier New", monospace;</span>
-<span class="s2">            font-size: 14px;</span>
-<span class="s2">            background-color: #f4f4f4;</span>
-<span class="s2">            padding: 10px;</span>
-<span class="s2">            display: block;</span>
-<span class="s2">            white-space: pre-wrap;</span>
-<span class="s2">            word-wrap: break-word;</span>
-<span class="s2">            overflow-x: auto;</span>
-<span class="s2">            border: 1px solid #ddd;</span>
-<span class="s2">            border-radius: 5px;</span>
-<span class="s2">        </span><span class="se">}}</span><span class="s2"></span>
-<span class="s2">        .mw-highlight </span><span class="se">{{</span><span class="s2"></span>
-<span class="s2">            padding: 10px;</span>
-<span class="s2">            margin: 10px 0;</span>
-<span class="s2">            border: 1px solid #ddd;</span>
-<span class="s2">            background-color: #f9f9f9;</span>
-<span class="s2">            border-radius: 5px;</span>
-<span class="s2">        </span><span class="se">}}</span><span class="s2"></span>
-<span class="s2">        .wikitable </span><span class="se">{{</span><span class="s2"></span>
-<span class="s2">            width: 100%;</span>
-<span class="s2">            border-collapse: collapse;</span>
-<span class="s2">            margin: 20px 0;</span>
-<span class="s2">            font-size: 14px;</span>
-<span class="s2">            text-align: left;</span>
-<span class="s2">            page-break-inside: avoid;</span>
-<span class="s2">        </span><span class="se">}}</span><span class="s2"></span>
-<span class="s2">        .wikitable th, .wikitable td [[:Template:Border: 1px solid]]</span>
-<span class="s2">        .wikitable tr [[:Template:Page-break-inside: avoid;]]</span>
-<span class="s2">        .wikitable tr:nth-child(even) [[:Template:Background-color:]]</span>
-<span class="s2">        .wikitable tr:hover [[:Template:Background-color:]]</span>
-<span class="s2">        .wikitable th [[:Template:Background-color:]]</span>
-<span class="s2">        &lt;/style&gt;</span>
-<span class="s2">        &lt;/head&gt;</span>
-<span class="s2">        &lt;body&gt;</span>
-<span class="s2">        </span><span class="si">{</span><span class="n">main_content</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">        &lt;/body&gt;</span>
-<span class="s2">        &lt;/html&gt;</span>
-<span class="s2">        """</span>
+        styled_content = f"""
+        &lt;html&gt;
+        &lt;head&gt;
+        &lt;style&gt;
+        body {{
+            margin: 20px;
+            font-family: Arial, sans-serif;
+        }}
+        h1 {{
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }}
+        h2 {{
+            font-size: 18px;
+            margin-top: 10px;
+        }}
+        img {{
+            max-width: 100%;
+            height: auto;
+        }}
+        code, pre {{
+            font-family: Consolas, "Courier New", monospace;
+            font-size: 14px;
+            background-color: #f4f4f4;
+            padding: 10px;
+            display: block;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }}
+        .mw-highlight {{
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }}
+        .wikitable {{
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 14px;
+            text-align: left;
+            page-break-inside: avoid;
+        }}
+        .wikitable th, .wikitable td [[:Template:Border: 1px solid]]
+        .wikitable tr [[:Template:Page-break-inside: avoid;]]
+        .wikitable tr:nth-child(even) [[:Template:Background-color:]]
+        .wikitable tr:hover [[:Template:Background-color:]]
+        .wikitable th [[:Template:Background-color:]]
+        &lt;/style&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+        {main_content}
+        &lt;/body&gt;
+        &lt;/html&gt;
+        """
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">HTML</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">styled_content</span><span class="p">)</span><span class="o">.</span><span class="n">write_pdf</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Created </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">output_file</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error creating PDF for </span><span class="si">{</span><span class="n">url</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="k">return</span> <span class="kc">None</span>
-
-
-    <span class="k">def</span> <span class="nf">generate_toc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="s1">'pdfs/Table_of_Contents.pdf'</span><span class="p">):</span>
-        <span class="sd">"""Generate a Table of Contents PDF with indented subchapters."""</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Generating Table of Contents..."</span><span class="p">)</span>
-        <span class="n">toc_html</span> <span class="o">=</span> <span class="s2">"""</span>
-<span class="s2">        &lt;html&gt;</span>
-<span class="s2">        &lt;head&gt;</span>
-<span class="s2">        &lt;style&gt;</span>
-<span class="s2">        body {{</span>
-<span class="s2">            margin: 20px;</span>
-<span class="s2">            font-family: Arial, sans-serif;</span>
-<span class="s2">        }}</span>
-<span class="s2">        h1 {{</span>
-<span class="s2">            text-align: center;</span>
-<span class="s2">            font-size: 28px;</span>
-<span class="s2">        }}</span>
-<span class="s2">        ul {{</span>
-<span class="s2">            list-style: none;</span>
-<span class="s2">            padding: 0;</span>
-<span class="s2">        }}</span>
-<span class="s2">        li [[:Template:Margin: 5px 0;]]</span>
-<span class="s2">        .chapter {{</span>
-<span class="s2">            font-weight: bold;</span>
-<span class="s2">            font-size: 16px;</span>
-<span class="s2">        }}</span>
-<span class="s2">        .subchapter {{</span>
-<span class="s2">            font-size: 14px;</span>
-<span class="s2">            margin-left: 20px;</span>
-<span class="s2">        }}</span>
-<span class="s2">        a {{</span>
-<span class="s2">            color: blue;</span>
-<span class="s2">            text-decoration: none;</span>
-<span class="s2">        }}</span>
-<span class="s2">        &lt;/style&gt;</span>
-<span class="s2">        &lt;/head&gt;</span>
-<span class="s2">        &lt;body&gt;</span>
-<span class="s2">        &lt;h1&gt;Table of Contents&lt;/h1&gt;</span>
-<span class="s2">        &lt;ul&gt;</span>
-<span class="s2">        """</span>
-        <span class="k">for</span> <span class="n">chapter_number</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">chapter_id</span><span class="p">,</span> <span class="n">subchapters</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">toc_entries</span><span class="p">:</span>
-            <span class="n">toc_html</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'&lt;li class="chapter"&gt;</span><span class="si">{</span><span class="n">chapter_number</span><span class="si">}</span><span class="s1">. &lt;a href="#</span><span class="si">{</span><span class="n">chapter_id</span><span class="si">}</span><span class="s1">"&gt;</span><span class="si">{</span><span class="n">title</span><span class="si">}</span><span class="s1">&lt;/a&gt;&lt;/li&gt;'</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sub</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">subchapters</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-                <span class="n">toc_html</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">'&lt;li class="subchapter"&gt;</span><span class="si">{</span><span class="n">chapter_number</span><span class="si">}</span><span class="s1">.</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1"> &lt;a href="#</span><span class="si">{</span><span class="n">chapter_id</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">sub</span><span class="si">}</span><span class="s1">"&gt;</span><span class="si">{</span><span class="n">sub</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s1">&lt;/a&gt;&lt;/li&gt;'</span>
-
-        <span class="n">toc_html</span> <span class="o">+=</span> <span class="s2">"&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;"</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">HTML</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">toc_html</span><span class="p">)</span><span class="o">.</span><span class="n">write_pdf</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Created </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error creating Table of Contents PDF: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        try:
+            HTML(string=styled_content).write_pdf(output_file)
+            print(f"Created {output_file}")
+            return output_file
+        except Exception as e:
+            print(f"Error creating PDF for {url}: {e}")
+            return None
 
 
-    <span class="k">def</span> <span class="nf">merge_pdfs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pdf_files</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Merging PDFs into </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
-        <span class="n">merger</span> <span class="o">=</span> <span class="n">PdfMerger</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">pdf</span> <span class="ow">in</span> <span class="n">pdf_files</span><span class="p">:</span>
-            <span class="n">merger</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdf</span><span class="p">)</span>
-        <span class="n">merger</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output_file</span><span class="p">)</span>
-        <span class="n">merger</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Successfully created </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    def generate_toc(self, output_file='pdfs/Table_of_Contents.pdf'):
+        """Generate a Table of Contents PDF with indented subchapters."""
+        print("Generating Table of Contents...")
+        toc_html = """
+        &lt;html&gt;
+        &lt;head&gt;
+        &lt;style&gt;
+        body {{
+            margin: 20px;
+            font-family: Arial, sans-serif;
+        }}
+        h1 {{
+            text-align: center;
+            font-size: 28px;
+        }}
+        ul {{
+            list-style: none;
+            padding: 0;
+        }}
+        li [[:Template:Margin: 5px 0;]]
+        .chapter {{
+            font-weight: bold;
+            font-size: 16px;
+        }}
+        .subchapter {{
+            font-size: 14px;
+            margin-left: 20px;
+        }}
+        a {{
+            color: blue;
+            text-decoration: none;
+        }}
+        &lt;/style&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+        &lt;h1&gt;Table of Contents&lt;/h1&gt;
+        &lt;ul&gt;
+        """
+        for chapter_number, title, chapter_id, subchapters in self.toc_entries:
+            toc_html += f'&lt;li class="chapter"&gt;{chapter_number}. &lt;a href="#{chapter_id}"&gt;{title}&lt;/a&gt;&lt;/li&gt;'
+            for i, sub in enumerate(subchapters, start=1):
+                toc_html += f'&lt;li class="subchapter"&gt;{chapter_number}.{i} &lt;a href="#{chapter_id}_{sub}"&gt;{sub.replace("_", " ").capitalize()}&lt;/a&gt;&lt;/li&gt;'
 
-    <span class="k">def</span> <span class="nf">create_epub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="s1">'FreeCAD_User_Manual.epub'</span><span class="p">):</span>
-        <span class="sd">"""Create an EPUB version of the manual."""</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Creating EPUB: </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        toc_html += "&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;"
 
-        <span class="c1"># Initialize EPUB book</span>
-        <span class="n">book</span> <span class="o">=</span> <span class="n">epub</span><span class="o">.</span><span class="n">EpubBook</span><span class="p">()</span>
-
-        <span class="c1"># Set metadata</span>
-        <span class="n">book</span><span class="o">.</span><span class="n">set_identifier</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
-        <span class="n">book</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">'FreeCAD User Manual'</span><span class="p">)</span>
-        <span class="n">book</span><span class="o">.</span><span class="n">set_language</span><span class="p">(</span><span class="s1">'en'</span><span class="p">)</span>
-        <span class="n">book</span><span class="o">.</span><span class="n">add_author</span><span class="p">(</span><span class="s1">'FreeCAD Community'</span><span class="p">)</span>
-        <span class="n">book</span><span class="o">.</span><span class="n">set_cover</span><span class="p">(</span><span class="s2">"cover.jpg"</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_cover</span><span class="p">())</span>
-
-        <span class="c1"># Add CSS</span>
-        <span class="n">style</span> <span class="o">=</span> <span class="s1">'''</span>
-<span class="s1">            body { margin: 20px; font-family: Arial, sans-serif; }</span>
-<span class="s1">            h1 { text-align: center; font-size: 2em; margin-bottom: 1em; }</span>
-<span class="s1">            h2 { font-size: 1.5em; margin-top: 1em; }</span>
-<span class="s1">            img { max-width: 100%; height: auto; }</span>
-<span class="s1">            code, pre {</span>
-<span class="s1">                font-family: monospace;</span>
-<span class="s1">                background-color: #f4f4f4;</span>
-<span class="s1">                padding: 0.5em;</span>
-<span class="s1">                display: block;</span>
-<span class="s1">                white-space: pre-wrap;</span>
-<span class="s1">                border: 1px solid #ddd;</span>
-<span class="s1">                border-radius: 5px;</span>
-<span class="s1">            }</span>
-<span class="s1">            table {</span>
-<span class="s1">                width: 100%;</span>
-<span class="s1">                border-collapse: collapse;</span>
-<span class="s1">                margin: 1em 0;</span>
-<span class="s1">            }</span>
-<span class="s1">            th, td {</span>
-<span class="s1">                border: 1px solid #ddd;</span>
-<span class="s1">                padding: 0.5em;</span>
-<span class="s1">            }</span>
-<span class="s1">        '''</span>
-        <span class="n">nav_css</span> <span class="o">=</span> <span class="n">epub</span><span class="o">.</span><span class="n">EpubItem</span><span class="p">(</span>
-            <span class="n">uid</span><span class="o">=</span><span class="s2">"style_nav"</span><span class="p">,</span>
-            <span class="n">file_name</span><span class="o">=</span><span class="s2">"style/nav.css"</span><span class="p">,</span>
-            <span class="n">media_type</span><span class="o">=</span><span class="s2">"text/css"</span><span class="p">,</span>
-            <span class="n">content</span><span class="o">=</span><span class="n">style</span>
-        <span class="p">)</span>
-        <span class="n">book</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">nav_css</span><span class="p">)</span>
-
-        <span class="c1"># Create chapters</span>
-        <span class="n">chapters</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">chapter_data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chapters_html</span><span class="p">:</span>
-            <span class="c1"># Create chapter</span>
-            <span class="n">chapter</span> <span class="o">=</span> <span class="n">epub</span><span class="o">.</span><span class="n">EpubHtml</span><span class="p">(</span>
-                <span class="n">title</span><span class="o">=</span><span class="n">chapter_data</span><span class="p">[</span><span class="s1">'title'</span><span class="p">],</span>
-                <span class="n">file_name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'chapter_</span><span class="si">{</span><span class="n">chapter_data</span><span class="p">[</span><span class="s2">"number"</span><span class="p">]</span><span class="si">}</span><span class="s1">.xhtml'</span><span class="p">,</span>
-                <span class="n">lang</span><span class="o">=</span><span class="s1">'en'</span>
-            <span class="p">)</span>
-
-            <span class="c1"># Process content for EPUB</span>
-            <span class="n">content</span> <span class="o">=</span> <span class="n">chapter_data</span><span class="p">[</span><span class="s1">'content'</span><span class="p">]</span>
-
-            <span class="c1"># Handle images</span>
-            <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">content</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">'img'</span><span class="p">):</span>
-                <span class="k">if</span> <span class="s1">'epub_data'</span> <span class="ow">in</span> <span class="n">img</span><span class="o">.</span><span class="n">attrs</span> <span class="ow">and</span> <span class="s1">'epub_src'</span> <span class="ow">in</span> <span class="n">img</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
-                    <span class="c1"># Generate a content hash for the image data</span>
-                    <span class="kn">import</span> <span class="nn">hashlib</span>
-                    <span class="n">img_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">img</span><span class="p">[</span><span class="s1">'epub_data'</span><span class="p">])</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
-
-                    <span class="c1"># Check if we've seen this image before</span>
-                    <span class="k">if</span> <span class="n">img_hash</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_cache</span><span class="p">:</span>
-                        <span class="c1"># This is a new image</span>
-                        <span class="n">image_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">img_hash</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">img</span><span class="p">[</span><span class="s2">"epub_src"</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">image_cache</span><span class="p">[</span><span class="n">img_hash</span><span class="p">]</span> <span class="o">=</span> <span class="n">image_filename</span>
-
-                        <span class="c1"># Add image to EPUB</span>
-                        <span class="n">image_item</span> <span class="o">=</span> <span class="n">epub</span><span class="o">.</span><span class="n">EpubItem</span><span class="p">(</span>
-                            <span class="n">uid</span><span class="o">=</span><span class="sa">f</span><span class="s1">'image_</span><span class="si">{</span><span class="n">img_hash</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-                            <span class="n">file_name</span><span class="o">=</span><span class="sa">f</span><span class="s1">'images/</span><span class="si">{</span><span class="n">image_filename</span><span class="si">}</span><span class="s1">'</span><span class="p">,</span>
-                            <span class="n">media_type</span><span class="o">=</span><span class="s1">'image/png'</span><span class="p">,</span>
-                            <span class="n">content</span><span class="o">=</span><span class="n">img</span><span class="p">[</span><span class="s1">'epub_data'</span><span class="p">]</span>
-                        <span class="p">)</span>
-                        <span class="n">book</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">image_item</span><span class="p">)</span>
-
-                    <span class="c1"># Update image source to use cached filename</span>
-                    <span class="n">img</span><span class="p">[</span><span class="s1">'src'</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'images/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">image_cache</span><span class="p">[</span><span class="n">img_hash</span><span class="p">]</span><span class="si">}</span><span class="s1">'</span>
-                    <span class="c1"># Remove EPUB-specific attributes</span>
-                    <span class="k">del</span> <span class="n">img</span><span class="p">[</span><span class="s1">'epub_data'</span><span class="p">]</span>
-                    <span class="k">del</span> <span class="n">img</span><span class="p">[</span><span class="s1">'epub_src'</span><span class="p">]</span>
-
-            <span class="c1"># Set chapter content</span>
-            <span class="n">chapter</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
-            <span class="n">chapter</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">nav_css</span><span class="p">)</span>
-
-            <span class="c1"># Add chapter</span>
-            <span class="n">book</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">chapter</span><span class="p">)</span>
-            <span class="n">chapters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">chapter</span><span class="p">)</span>
-
-        <span class="c1"># Create table of contents</span>
-        <span class="n">book</span><span class="o">.</span><span class="n">toc</span> <span class="o">=</span> <span class="p">[(</span><span class="n">epub</span><span class="o">.</span><span class="n">Section</span><span class="p">(</span><span class="s1">'Table of Contents'</span><span class="p">),</span> <span class="n">chapters</span><span class="p">)]</span>
-
-        <span class="c1"># Add navigation files</span>
-        <span class="n">book</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">epub</span><span class="o">.</span><span class="n">EpubNcx</span><span class="p">())</span>
-        <span class="n">book</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">epub</span><span class="o">.</span><span class="n">EpubNav</span><span class="p">())</span>
-
-        <span class="c1"># Define reading order</span>
-        <span class="n">book</span><span class="o">.</span><span class="n">spine</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'nav'</span><span class="p">]</span> <span class="o">+</span> <span class="n">chapters</span>
-
-        <span class="c1"># Write EPUB file</span>
-        <span class="n">epub</span><span class="o">.</span><span class="n">write_epub</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="n">book</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Successfully created </span><span class="si">{</span><span class="n">output_file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">generate_cover</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">"""Generate a simple cover image for the EPUB."""</span>
-        <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageDraw</span><span class="p">,</span> <span class="n">ImageFont</span>
-
-        <span class="c1"># Create a new image with a white background</span>
-        <span class="n">cover</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s1">'RGB'</span><span class="p">,</span> <span class="p">(</span><span class="mi">1600</span><span class="p">,</span> <span class="mi">2400</span><span class="p">),</span> <span class="s1">'white'</span><span class="p">)</span>
-        <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">cover</span><span class="p">)</span>
-
-        <span class="c1"># Add title text</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="s2">"Arial"</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span>
-        <span class="k">except</span><span class="p">:</span>
-            <span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">load_default</span><span class="p">()</span>
-
-        <span class="n">title</span> <span class="o">=</span> <span class="s2">"FreeCAD</span><span class="se">\n</span><span class="s2">User Manual"</span>
-        <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="mi">800</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">title</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s1">'black'</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">"mm"</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s2">"center"</span><span class="p">)</span>
-
-        <span class="c1"># Add date</span>
-        <span class="n">date_str</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">"%Y-%m-</span><span class="si">%d</span><span class="s2">"</span><span class="p">)</span>
-        <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="mi">800</span><span class="p">,</span> <span class="mi">1300</span><span class="p">),</span> <span class="n">date_str</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span> <span class="n">anchor</span><span class="o">=</span><span class="s2">"mm"</span><span class="p">)</span>
-
-        <span class="c1"># Convert to bytes</span>
-        <span class="n">img_byte_arr</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">()</span>
-        <span class="n">cover</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">img_byte_arr</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">'JPEG'</span><span class="p">)</span>
-        <span class="n">img_byte_arr</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">img_byte_arr</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">batch_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">links</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s1">'pdfs'</span><span class="p">,</span> <span class="n">merged_pdf</span><span class="o">=</span><span class="s1">'FreeCAD_User_Manual.pdf'</span><span class="p">,</span> <span class="n">create_epub</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="sd">"""Convert manual to both PDF and EPUB formats."""</span>
-        <span class="c1"># First create PDF as before</span>
-        <span class="n">pdf_files</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">chapter_number</span><span class="p">,</span> <span class="p">(</span><span class="n">chapter_url</span><span class="p">,</span> <span class="n">subchapters</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">links</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">chapter_id</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">'[&lt;&gt;:"/</span><span class="se">\\</span><span class="s1">?*]'</span><span class="p">,</span> <span class="s1">'_'</span><span class="p">,</span> <span class="n">chapter_url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-            <span class="n">pdf_file</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_to_pdf</span><span class="p">(</span><span class="n">chapter_url</span><span class="p">,</span> <span class="n">chapter_number</span><span class="p">,</span> <span class="n">chapter_id</span><span class="p">,</span> <span class="n">subchapters</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">pdf_file</span><span class="p">:</span>
-                <span class="n">pdf_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdf_file</span><span class="p">)</span>
-
-        <span class="c1"># Generate and merge Table of Contents</span>
-        <span class="n">toc_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">"Table_of_Contents.pdf"</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">generate_toc</span><span class="p">(</span><span class="n">toc_file</span><span class="p">)</span>
-        <span class="n">pdf_files</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">toc_file</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">pdf_files</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">merge_pdfs</span><span class="p">(</span><span class="n">pdf_files</span><span class="p">,</span> <span class="n">merged_pdf</span><span class="p">)</span>
-
-        <span class="c1"># Create EPUB version if requested</span>
-        <span class="k">if</span> <span class="n">create_epub</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">create_epub</span><span class="p">(</span><span class="s1">'FreeCAD_User_Manual.epub'</span><span class="p">)</span>
+        try:
+            HTML(string=toc_html).write_pdf(output_file)
+            print(f"Created {output_file}")
+        except Exception as e:
+            print(f"Error creating Table of Contents PDF: {e}")
 
 
-<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="n">converter</span> <span class="o">=</span> <span class="n">FreeCADManualConverter</span><span class="p">()</span>
-    <span class="n">manual_links</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">extract_manual_links</span><span class="p">()</span>
-    <span class="n">converter</span><span class="o">.</span><span class="n">batch_convert</span><span class="p">(</span><span class="n">manual_links</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="s1">'pdfs'</span><span class="p">,</span>
-                          <span class="n">merged_pdf</span><span class="o">=</span><span class="s1">'FreeCAD_User_Manual.pdf'</span><span class="p">,</span>
-                          <span class="n">create_epub</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    def merge_pdfs(self, pdf_files, output_file):
+        print(f"Merging PDFs into {output_file}...")
+        merger = PdfMerger()
+        for pdf in pdf_files:
+            merger.append(pdf)
+        merger.write(output_file)
+        merger.close()
+        print(f"Successfully created {output_file}")
+
+    def create_epub(self, output_file='FreeCAD_User_Manual.epub'):
+        """Create an EPUB version of the manual."""
+        print(f"Creating EPUB: {output_file}")
+
+        # Initialize EPUB book
+        book = epub.EpubBook()
+
+        # Set metadata
+        book.set_identifier(str(uuid.uuid4()))
+        book.set_title('FreeCAD User Manual')
+        book.set_language('en')
+        book.add_author('FreeCAD Community')
+        book.set_cover("cover.jpg", self.generate_cover())
+
+        # Add CSS
+        style = '''
+            body { margin: 20px; font-family: Arial, sans-serif; }
+            h1 { text-align: center; font-size: 2em; margin-bottom: 1em; }
+            h2 { font-size: 1.5em; margin-top: 1em; }
+            img { max-width: 100%; height: auto; }
+            code, pre {
+                font-family: monospace;
+                background-color: #f4f4f4;
+                padding: 0.5em;
+                display: block;
+                white-space: pre-wrap;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+            }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 1em 0;
+            }
+            th, td {
+                border: 1px solid #ddd;
+                padding: 0.5em;
+            }
+        '''
+        nav_css = epub.EpubItem(
+            uid="style_nav",
+            file_name="style/nav.css",
+            media_type="text/css",
+            content=style
+        )
+        book.add_item(nav_css)
+
+        # Create chapters
+        chapters = []
+        for chapter_data in self.chapters_html:
+            # Create chapter
+            chapter = epub.EpubHtml(
+                title=chapter_data['title'],
+                file_name=f'chapter_{chapter_data["number"]}.xhtml',
+                lang='en'
+            )
+
+            # Process content for EPUB
+            content = chapter_data['content']
+
+            # Handle images
+            for img in content.find_all('img'):
+                if 'epub_data' in img.attrs and 'epub_src' in img.attrs:
+                    # Generate a content hash for the image data
+                    import hashlib
+                    img_hash = hashlib.md5(img['epub_data']).hexdigest()
+
+                    # Check if we've seen this image before
+                    if img_hash not in self.image_cache:
+                        # This is a new image
+                        image_filename = f'{img_hash}_{img["epub_src"]}'
+                        self.image_cache[img_hash] = image_filename
+
+                        # Add image to EPUB
+                        image_item = epub.EpubItem(
+                            uid=f'image_{img_hash}',
+                            file_name=f'images/{image_filename}',
+                            media_type='image/png',
+                            content=img['epub_data']
+                        )
+                        book.add_item(image_item)
+
+                    # Update image source to use cached filename
+                    img['src'] = f'images/{self.image_cache[img_hash]}'
+                    # Remove EPUB-specific attributes
+                    del img['epub_data']
+                    del img['epub_src']
+
+            # Set chapter content
+            chapter.content = str(content)
+            chapter.add_item(nav_css)
+
+            # Add chapter
+            book.add_item(chapter)
+            chapters.append(chapter)
+
+        # Create table of contents
+        book.toc = [(epub.Section('Table of Contents'), chapters)]
+
+        # Add navigation files
+        book.add_item(epub.EpubNcx())
+        book.add_item(epub.EpubNav())
+
+        # Define reading order
+        book.spine = ['nav'] + chapters
+
+        # Write EPUB file
+        epub.write_epub(output_file, book, {})
+        print(f"Successfully created {output_file}")
+
+    def generate_cover(self):
+        """Generate a simple cover image for the EPUB."""
+        from PIL import Image, ImageDraw, ImageFont
+
+        # Create a new image with a white background
+        cover = Image.new('RGB', (1600, 2400), 'white')
+        draw = ImageDraw.Draw(cover)
+
+        # Add title text
+        try:
+            font = ImageFont.truetype("Arial", 120)
+        except:
+            font = ImageFont.load_default()
+
+        title = "FreeCAD\nUser Manual"
+        draw.text((800, 1000), title, font=font, fill='black', anchor="mm", align="center")
+
+        # Add date
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        draw.text((800, 1300), date_str, font=font, fill='gray', anchor="mm")
+
+        # Convert to bytes
+        img_byte_arr = BytesIO()
+        cover.save(img_byte_arr, format='JPEG')
+        img_byte_arr.seek(0)
+
+        return img_byte_arr.getvalue()
+
+    def batch_convert(self, links, output_dir='pdfs', merged_pdf='FreeCAD_User_Manual.pdf', create_epub=True):
+        """Convert manual to both PDF and EPUB formats."""
+        # First create PDF as before
+        pdf_files = []
+        for chapter_number, (chapter_url, subchapters) in enumerate(links.items(), start=1):
+            chapter_id = re.sub(r'[&lt;&gt;:"/\\?*]', '_', chapter_url.split('/')[-1])
+            pdf_file = self.convert_to_pdf(chapter_url, chapter_number, chapter_id, subchapters, output_dir)
+            if pdf_file:
+                pdf_files.append(pdf_file)
+
+        # Generate and merge Table of Contents
+        toc_file = os.path.join(output_dir, "Table_of_Contents.pdf")
+        self.generate_toc(toc_file)
+        pdf_files.insert(0, toc_file)
+
+        if pdf_files:
+            self.merge_pdfs(pdf_files, merged_pdf)
+
+        # Create EPUB version if requested
+        if create_epub:
+            self.create_epub('FreeCAD_User_Manual.epub')
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
-</pre></div>
+def main():
+    converter = FreeCADManualConverter()
+    manual_links = converter.extract_manual_links()
+    converter.batch_convert(manual_links, output_dir='pdfs',
+                          merged_pdf='FreeCAD_User_Manual.pdf',
+                          create_epub=True)
+
+
+if __name__ == "__main__":
+    main()</pre>
 <!-- 
 NewPP limit report
-Cached time: 20250624191310
+Cached time: 20250625120100
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc, no&#8208;toc&#8208;conversion]
-CPU time usage: 0.286 seconds
-Real time usage: 1.014 seconds
-Preprocessor visited node count: 175/1000000
-Post&#8208;expand include size: 2649/2097152 bytes
+CPU time usage: 0.084 seconds
+Real time usage: 0.332 seconds
+Preprocessor visited node count: 171/1000000
+Post&#8208;expand include size: 2601/2097152 bytes
 Template argument size: 17877/2097152 bytes
 Highest expansion depth: 7/100
-Expensive parser function count: 6/100
+Expensive parser function count: 4/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 72152/5000000 bytes
+Unstrip post&#8208;expand size: 20262/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%  670.132      1 -total
- 98.20%  658.052      2 Template:MacroCode
-  1.19%    7.959      1 Template:Macro
-  0.53%    3.543      2 Template:Code
-  0.15%    0.994      1 Template:Page-break-inside:_avoid;
-  0.14%    0.926      1 Template:Border:_1px_solid
-  0.13%    0.891      3 Template:Background-color:
-  0.13%    0.849      1 Template:Margin:_5px_0;
+100.00%  229.485      1 -total
+ 93.60%  214.800      2 Template:Code
+  3.58%    8.225      2 Template:MacroCode
+  2.53%    5.803      1 Template:Macro
+  0.47%    1.073      1 Template:Border:_1px_solid
+  0.26%    0.600      1 Template:Page-break-inside:_avoid;
+  0.22%    0.501      1 Template:Margin:_5px_0;
+  0.22%    0.500      3 Template:Background-color:
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:366536-0!canonical and timestamp 20250624191309 and revision id 1595957. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:366536-0!canonical and timestamp 20250625120100 and revision id 1596079. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="site.js"></script>
