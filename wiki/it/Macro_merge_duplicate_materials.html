@@ -1,138 +1,26 @@
-<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Macro merge duplicate materials/it</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="it" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-Macro+merge+duplicate+materials&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
-<li><a href="../Macro_merge_duplicate_materials.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="Macro merge duplicate materials (100% translated)" lang="en" dir="ltr">English</a></li>
-<li><a href="../fr/Macro_merge_duplicate_materials.html" class="mw-pt-progress mw-pt-progress--complete" title="Macro merge duplicate materials (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
-<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="it" dir="ltr">italiano</span></li>
-<li><a href="../pl/Macro_merge_duplicate_materials.html" class="mw-pt-progress mw-pt-progress--complete" title="Makrodefinicja: Po&#322;&#261;cz zduplikowane materia&#322;y (100% translated)" lang="pl" dir="ltr">polski</a></li></ul></div>
-<table class="fcinfobox wikitable ct" width="100%" style="float: right; width: 230px; margin-left: 10px;">
-<tbody><tr>
-<td class="ctTitle" style="font-weight: bold; font-size: 125%;">
-<p><span typeof="mw:File"><a href="../index.php?title=Macro_merge_duplicate_materials.png&amp;filetimestamp=20190712195312&amp;.html" class="mw-file-description"><img src="../File/Macro_merge_duplicate_materials.png" decoding="async" width="32" height="32" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span><span> </span>
-Unisci materiali duplicati
-</p>
-</td></tr>
-<tr>
-<th class="ctOdd">Descrizione
-</th></tr>
-<tr>
-<td class="ctEven left macro-description">Unisce i materiali che hanno lo stesso nome di base<br><br>Versione macro: 2.0<br>Ultima modifica: 2019-07-12<br>Versione FreeCAD: All<br>Download: <a rel="nofollow" class="external text" href="https://wiki.freecad.org/images/e/ed/Macro_merge_duplicate_materials.png">ToolBar Icon</a><br>Autore: yorik<br>
-</td></tr>
-<tr>
-<th class="ctOdd">Autore
-</th></tr>
-<tr>
-<td class="ctEven macro-author"><a href="../User;Yorik.html" title="User:Yorik">yorik</a>
-</td></tr>
-<tr>
-<th class="ctOdd">Download
-</th></tr>
-<tr>
-<td class="ctEven macro-download"><a rel="nofollow" class="external text" href="https://wiki.freecad.org/images/e/ed/Macro_merge_duplicate_materials.png">ToolBar Icon</a>
-</td></tr>
-<tr>
-<th class="ctOdd">Link
-</th></tr>
-<tr>
-<td class="ctEven macro-Links"><a href="../it/Macros_recipes.html" title="Macros recipes/it">Raccolta di macro</a><br><a href="../it/How_to_install_macros.html" title="How to install macros/it">Come installare le macro</a><br><a href="../it/Customize_Toolbars.html" title="Customize Toolbars/it">Personalizzare la  toolbar</a>
-</td></tr>
-<tr>
-<th class="ctOdd">Versione macro
-</th></tr>
-<tr>
-<td class="ctEven macro-version">2.0
-</td></tr>
-<tr>
-<th class="ctOdd">Data ultima modifica
-</th></tr>
-<tr>
-<td class="ctEven macro-date">2019-07-12
-</td></tr>
-<tr>
-<th class="ctOdd">Versioni di FreeCAD
-</th></tr>
-<tr>
-<td class="ctEven FreeCAD-version">All
-</td></tr>
-<tr>
-<th class="ctOdd">Scorciatoia
-</th></tr>
-<tr>
-<td class="ctEven"><i>Nessuna</i>
-</td></tr>
-<tr>
-<th class="ctOdd">Vedere anche
-</th></tr>
-<tr>
-<td class="ctEven"><i>Nessuno</i>
-</td></tr>
-<tr>
-<th class="ctOdd">
-</th></tr>
-<tr>
-<td class="ctToc"><br><meta property="mw:PageProp/toc">
-</td></tr>
-</tbody></table>
-<p><span id="Description"></span>
-</p>
-<h2><span class="mw-headline" id="Descrizione">Descrizione</span></h2>
-<p>Fonde i materiali che hanno lo stesso nome di base (con differenti terminazioni numerali come 001, 002, ...) in uno solo. Viene mantenuto solo il primo, e tutti gli oggetti che puntano ai duplicati sono invece indirizzati al primo. Quindi, prima di utilizzare questa macro, assicurarsi che il primo materiale sia quello giusto (sia quello senza finale numerico o con il numero pi&ugrave; basso presente).
-</p>
-<h2><span class="mw-headline" id="Script">Script</span></h2>
-<p>Icona barra strumenti
-<span class="mw-default-size" typeof="mw:File"><a href="../index.php?title=Macro_merge_duplicate_materials.png&amp;filetimestamp=20190712195312&amp;.html" class="mw-file-description"><img src="../File/Macro_merge_duplicate_materials.png" decoding="async" width="64" height="64" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
-</p><p><b>Merge duplicate materials.FCMacro</b>
-</p>
-<pre>import FreeCAD,FreeCADGui
-mats = [o for o in FreeCAD.ActiveDocument.Objects if o.isDerivedFrom("App::MaterialObject")]
-todelete = []
-for mat in mats:
-    if mat.Label[-1].isdigit() and mat.Label[-2].isdigit() and mat.Label[-3].isdigit():
-        orig = None
-        for om in mats:
-            if om.Label == mat.Label[:-3].strip():
-                orig = om
-                break
-        if orig:
-            for par in mat.InList:
-                for prop in par.PropertiesList:
-                    if getattr(par,prop) == mat:
-                        print( "Changed property '"+prop+"' of object "+par.Label+" from "+mat.Label+" to "+orig.Label)
-                        setattr(par,prop,orig)
-            todelete.append(mat)
-for tod in todelete:
-    if not tod.InList:
-        print( "Deleting material "+tod.Label)
-        FreeCAD.ActiveDocument.removeObject(tod.Name)
-    elif (len(tod.InList) == 1) and (tod.InList[0].isDerivedFrom("App::DocumentObjectGroup")):
-        print( "Deleting material "+tod.Label)
-        FreeCAD.ActiveDocument.removeObject(tod.Name)
-    else:
-        print( "Unable to delete material "+tod.Label+": InList not empty")</pre>
-<div style="clear:both"></div>
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Macro merge duplicate materials/it</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="it" dir="ltr">
 <!-- 
 NewPP limit report
-Cached time: 20250725080008
+Cached time: 20250725101106
 Cache expiry: 86400
 Reduced expiry: false
-Complications: [show&#8208;toc]
-CPU time usage: 0.042 seconds
-Real time usage: 0.057 seconds
-Preprocessor visited node count: 85/1000000
-Post&#8208;expand include size: 2055/2097152 bytes
-Template argument size: 1658/2097152 bytes
-Highest expansion depth: 5/100
+Complications: []
+CPU time usage: 0.002 seconds
+Real time usage: 0.003 seconds
+Preprocessor visited node count: 1/1000000
+Post&#8208;expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 1/100
 Expensive parser function count: 0/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 2295/5000000 bytes
+Unstrip post&#8208;expand size: 0/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%    5.767      1 -total
- 38.89%    2.243      1 Template:MacroCode
- 36.80%    2.122      1 Template:Macro/it
- 19.42%    1.120      1 Template:Clear
+100.00%    0.000      1 -total
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:80186-0!canonical and timestamp 20250725080008 and revision id 1617160. Rendering was triggered because: api-parse
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:80186-0!canonical and timestamp 20250725101106 and revision id 1617160. Rendering was triggered because: unknown
  -->
 </div>
 </div><script src="../site.js"></script>
