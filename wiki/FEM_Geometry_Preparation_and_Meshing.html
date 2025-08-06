@@ -199,6 +199,7 @@ to element ...
 <li><a href="Std_ToggleTransparency.html" title="Std ToggleTransparency">enabling transparency</a> and using the <a href="Selection_view.html" title="Selection view">Selection view</a> with the <i>Picked object list</i> option checked as described <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?t=96984#p826693">here</a>,</li>
 <li>selecting another, external object and editing the <i>References</i> property on the <i>Data</i> tab of a given analysis feature (requires manual specification of the geometric object's number).</li></ul>
 <h2><span class="mw-headline" id="Meshing_basics">Meshing basics</span></h2>
+<h4><span class="mw-headline" id="Choosing_element_size">Choosing element size</span></h4>
 <p>Too coarse mesh is one of the most common sources of inaccuracies and other issues in FEM. It's often a partial fault of automatic mesher settings - they typically generate very coarse, unsuitable meshes when the element size is not manually specified but left with a default value. One should always know the approximate dimensions of the part, especially the size of the smallest relevant feature (<a href="Std_Measure.html" title="Std Measure">Std Measure</a> tool can be used to find it) and specify the proper maximum element size based on that. There is also a minimum element size setting that can prevent the creation of too tiny elements around small geometric features which may lead to unnecessarily dense meshes (and sometimes even FreeCAD crashing or freezing when trying to generate such meshes). Generally speaking, it's better to start with a coarser mesh (taking less time to generate), see what it looks like (some experience is necessary) and refine it if necessary. It often makes sense to use dense mesh only around the areas of interest (locations with large stress gradients/concentrations - notches) and relatively coarse mesh away from them. This way, the number of elements can be significantly reduced, leading to shorter solving times. Local mesh refinement is defined using <a href="FEM_MeshRegion.html" title="FEM MeshRegion">FEM MeshRegion</a>.
 </p><p><span typeof="mw:File"><a href="index.php?title=FEM_default_mesh.PNG&amp;filetimestamp=20231228215838&amp;.html" class="mw-file-description"><img src="File/FEM_default_mesh.PNG" decoding="async" width="400" height="238" class="mw-file-element" data-file-width="829" data-file-height="493"></a></span>
 </p>
@@ -209,8 +210,11 @@ to element ...
 <p><span typeof="mw:File"><a href="index.php?title=FEM_locally_refined_mesh.PNG&amp;filetimestamp=20231228220149&amp;.html" class="mw-file-description"><img src="File/FEM_locally_refined_mesh.PNG" decoding="async" width="400" height="239" class="mw-file-element" data-file-width="838" data-file-height="501"></a></span>
 </p>
 <p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Locally refined mesh</p>
+<h4><span class="mw-headline" id="Choosing_element_type">Choosing element type</span></h4>
 <p>The choice of element type is not easy and depends on many factors but the general rule is that hexahedral and quadrilateral elements are preferable over tetrahedral and triangular ones. However, complex geometries can't be meshed with hexahedral elements and FreeCAD can't generate them properly (only using the Subdivision algorithm of the Gmsh mesher but its results are not what one would expect from a hex mesh). Quad or quad-dominated meshes can be generated normally on surfaces - see <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?t=20351">this forum thread</a>). Hexahedral elements can be imported from external meshers like <a rel="nofollow" class="external text" href="https://gmsh.info">Gmsh</a> and used in the FEM workbench as shown in <a rel="nofollow" class="external text" href="https://www.youtube.com/watch?v=vylt24G7qj4&amp;t=932s">this video</a>.
-</p><p>The choice of element order (first or second) depends on the analysis conditions but in most cases, second-order elements are preferred. This is particularly the case with triangular and tetrahedral elements - their first-order (linear) versions are normally not recommended for regular usage and they should be used only as filler elements in regions of low importance. However, since FreeCAD can't properly generate hexahedral elements, linear tetrahedrons can be used in some cases, if the meshes are dense enough. Especially when performing analyses with <a href="FEM_ConstraintContact.html" title="FEM ConstraintContact">contact</a>.
+</p>
+<h4><span class="mw-headline" id="Choosing_element_order">Choosing element order</span></h4>
+<p>The choice of element order (first or second) depends on the analysis conditions but in most cases, second-order elements are preferred. This is particularly the case with triangular and tetrahedral elements - their first-order (linear) versions are normally not recommended for regular usage and they should be used only as filler elements in regions of low importance. However, since FreeCAD can't properly generate hexahedral elements, linear tetrahedrons can be used in some cases, if the meshes are dense enough. Especially when performing analyses with <a href="FEM_ConstraintContact.html" title="FEM ConstraintContact">contact</a>.
 </p>
 <h2><span class="mw-headline" id="Negative_Jacobians">Negative Jacobians</span></h2>
 <p>If the above rules are followed (especially regarding geometry validity, defeaturing and element size selection), the mesh should be generated correctly. However, in some cases, the geometry can't be simplified too much, or the modeling procedure is appropriate but leads to small edges and faces anyway. Then meshing with second-order elements may fail due to negative Jacobians. The reason is that meshers have to follow the CAD model and put the mid-side nodes of second-order elements on the geometry. With more complex shapes, it may lead to elements being stretched so much that they become inverted. Jacobian is one of the most common mesh quality measures. It represents the element's deviation from the ideal shape. It becomes negative when the element turns inside out (becomes inverted) either due to large deformation during the analysis (not considered here) or because of the aforementioned meshing issues. Negative Jacobians in FreeCAD FEM might be reported by Gmsh or by CalculiX. Their locations in the mesh are highlighted when CalculiX analyses are submitted using the <a href="FEM_SolverRun.html" title="FEM SolverRun">Run solver calculations</a> button. The following tips can help eliminate them:
@@ -286,13 +290,13 @@ to element ...
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20250806100648
+Cached time: 20250806102827
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.111 seconds
-Real time usage: 0.125 seconds
-Preprocessor visited node count: 602/1000000
+CPU time usage: 0.100 seconds
+Real time usage: 0.112 seconds
+Preprocessor visited node count: 611/1000000
 Post&#8208;expand include size: 20775/2097152 bytes
 Template argument size: 7157/2097152 bytes
 Highest expansion depth: 7/100
@@ -302,19 +306,19 @@ Unstrip post&#8208;expand size: 1887/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   16.889      1 -total
- 22.45%    3.791      2 Template:Navigation_menu_2
- 21.82%    3.685      1 Template:FEM_Tools_navi
- 16.62%    2.807      1 Template:PropertyData
- 16.47%    2.782      1 Template:Userdocnavi
- 11.47%    1.937     13 Template:Caption
- 10.61%    1.792      1 Template:TutorialInfo
-  9.99%    1.687      2 Template:Code
-  9.84%    1.661      1 Template:Variable
-  5.75%    0.971      1 Template:FALSE
+100.00%   13.537      1 -total
+ 25.14%    3.404      1 Template:FEM_Tools_navi
+ 23.24%    3.146      2 Template:Navigation_menu_2
+ 13.61%    1.842      1 Template:PropertyData
+ 13.46%    1.822      1 Template:Userdocnavi
+ 12.83%    1.737     13 Template:Caption
+ 11.17%    1.512      1 Template:TutorialInfo
+  9.42%    1.275      2 Template:Code
+  7.42%    1.004      1 Template:Variable
+  6.47%    0.876      1 Template:FALSE
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:330886-0!canonical and timestamp 20250806100658 and revision id 1624345. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:330886-0!canonical and timestamp 20250806102827 and revision id 1624346. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
