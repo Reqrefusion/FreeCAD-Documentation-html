@@ -81,6 +81,7 @@
 <p>The geometry used for FEM has to be valid. Most importantly, there can't be any intersections. It's a common issue often occurring when assemblies are modeled without proper constraints between the parts. The <a href="Part_SectionCut.html" title="Part SectionCut">Part SectionCut</a> tool can help find such interferences between parts. Of course, <a href="Part_Fuse.html" title="Part Fuse">Part Fuse</a> may help resolve them if they are intentional. Other issues with the geometry (such as non-manifold geometries, redundant edges or faces and so on) also have to be fixed before proceeding to meshing. The <a href="Part_CheckGeometry.html" title="Part CheckGeometry">Part CheckGeometry</a> tool can be helpful but visual checks are also important. When preparing a simulation using solid elements and in doubt whether the part is really solid or just a closed shell, the aforementioned tools (Part SectionCut and <i>Shape Content</i> tab of the Part CheckGeometry tool output) may clarify this.
 </p>
 <h2><span class="mw-headline" id="Geometry_simplification">Geometry simplification</span></h2>
+<h4><span class="mw-headline" id="Defeaturing">Defeaturing</span></h4>
 <p>Designs prepared in CAD software are typically too detailed to be suitable for FEM simulations. In many cases, it's necessary to simplify them first. This step is often overlooked but it's very important because it can be hard to obtain a good mesh when the part is too detailed and even if such a mesh is obtained eventually, it might be very dense, leading to unreasonable solving times. Thus, one should always look at the design and try to simplify it as much as possible, leaving only those geometric features that may have a significant impact on the results (strength/stiffness) and thus can't be ignored. The following features are typically omitted:
 </p>
 <ul><li>small fillets and chamfers,</li>
@@ -96,8 +97,11 @@
 <p><span typeof="mw:File"><a href="index.php?title=FEM_bracket_simplified.PNG&amp;filetimestamp=20240105151930&amp;.html" class="mw-file-description"><img src="File/FEM_bracket_simplified.PNG" decoding="async" width="400" height="466" class="mw-file-element" data-file-width="609" data-file-height="710"></a></span>
 </p>
 <p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Bracket geometry simplified using only the Part Defeaturing tool</p>
+<h4><span class="mw-headline" id="Replacing_parts_with_boundary_conditions">Replacing parts with boundary conditions</span></h4>
 <p>In the case of assemblies (more about them in one of the next sections), often some parts can be excluded from simulations and replaced with boundary conditions if they were attached to parts being analyzed. Such approach is valid if the excluded parts are significantly stiffer (in terms of structural stiffness so considering not only elasticity of the material but also geometry of the part) than the analyzed parts to which they were connected. That's because fixed boundary conditions introduce rigidity (as if the analyzed part was attached to an infinitely stiff component) and flexible supports like spring elements are not available in the FEM workbench of FreeCAD when using CalculiX (Elmer has <a href="FEM_ConstraintSpring.html" title="FEM ConstraintSpring">FEM ConstraintSpring</a>).
-</p><p>Geometry simplification for FEM may also mean cutting it in one of the symmetry planes to make use of the planar symmetry assumption in the analysis. This assumption is valid only when all the following aspects of the model exhibit symmetry in a given plane:
+</p>
+<h4><span class="mw-headline" id="Utilizing_planar_symmetry">Utilizing planar symmetry</span></h4>
+<p>Geometry simplification for FEM may also mean cutting it in one of the symmetry planes to make use of the planar symmetry assumption in the analysis. This assumption is valid only when all the following aspects of the model exhibit symmetry in a given plane:
 </p>
 <ul><li>geometry,</li>
 <li>loads,</li>
@@ -111,14 +115,27 @@
 </p><p><span typeof="mw:File"><a href="index.php?title=FEM_symmetric_vessel.JPG&amp;filetimestamp=20231228201421&amp;.html" class="mw-file-description"><img src="File/FEM_symmetric_vessel.JPG" decoding="async" width="400" height="447" class="mw-file-element" data-file-width="641" data-file-height="717"></a></span>
 </p>
 <p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Model of 1/8 of a cylindrical pressure vessel with symmetry boundary conditions and internal pressure load</p>
+<h4><span class="mw-headline" id="Utilizing_cyclic_symmetry">Utilizing cyclic symmetry</span></h4>
 <p>Another, less common type of symmetry available in FreeCAD FEM is cyclic symmetry. It can be defined using the <a href="FEM_ConstraintTie.html#Cyclic_symmetry" title="FEM ConstraintTie">tie constraint</a> and makes it possible to analyze only a single representative sector of a structure consisting of such circular patterns around an axis. The assumption is that boundary conditions and loads also exhibit this form of symmetry. Tangential loads can be applied and thus torsion can be simulated this way. However, <a href="FEM_ConstraintCentrif.html" title="FEM ConstraintCentrif">centrifugal load</a> is commonly used with cyclic symmetry. This approach might be used e.g. for rotors, shafts, turbines, fans and flywheels.
 </p>
 <h2><span class="mw-headline" id="Geometry_partitioning">Geometry partitioning</span></h2>
-<p>So-called partitioning is a division of the geometry into smaller segments. In other software, it's commonly used to allow hex meshing, but in FreeCAD it can be useful for other reasons too. The main application of partitioning is when a load (or a boundary condition) has to be applied only to a selected region of the part's surface. The easiest way to achieve it for solid parts is to create a sketch with a proper contour on that face and use the <a href="Part_BooleanFragments.html" title="Part BooleanFragments">Part Boolean Fragments</a> tool to split the face with the sketch. Another reason for partitioning is when multiple materials have to be applied to a single part (without having to use multiple parts connected with each other). Then, partitioning can be done using a <a href="PartDesign_Plane.html" title="PartDesign Plane">datum plane</a> and Boolean Fragments tool with the <i>Compsolid</i> mode. Partitioning can also be used to create regions for <a href="FEM_MeshRegion.html" title="FEM MeshRegion">mesh refinement</a> or to control the meshing algorithm by forcing it to follow additional edges (particularly useful to control <a href="FEM_MeshGmshFromShape.html#Mesh_Growth" title="FEM MeshGmshFromShape">Gmsh's mesh growth</a>).
+<h4><span class="mw-headline" id="Partitioning_basics">Partitioning basics</span></h4>
+<p>So-called partitioning is a division of the geometry into smaller segments. In other software, it's commonly used to allow hex meshing, but in FreeCAD it can be useful for other reasons too:
+</p>
+<ul><li>creating subregions for analysis feature assignments,</li>
+<li>splitting parts into sections made of different materials,</li>
+<li>creating regions for <a href="FEM_MeshRegion.html" title="FEM MeshRegion">mesh refinement</a>,</li>
+<li>controlling the meshing algorithm by forcing it to follow additional edges (particularly useful to control <a href="FEM_MeshGmshFromShape.html#Mesh_Growth" title="FEM MeshGmshFromShape">Gmsh's mesh growth</a>).</li></ul>
+<h4><span class="mw-headline" id="Partitioning_faces_of_solids_with_sketches">Partitioning faces of solids with sketches</span></h4>
+<p>The main application of partitioning is when a load (or a boundary condition) has to be applied only to a selected region of the part's surface. The easiest way to achieve it for solid parts is to create a sketch with a proper contour on that face and use the <a href="Part_BooleanFragments.html" title="Part BooleanFragments">Part Boolean Fragments</a> tool to split the face with the sketch.
 </p><p><span typeof="mw:File"><a href="index.php?title=FEM_partition.JPG&amp;filetimestamp=20231228200133&amp;.html" class="mw-file-description"><img src="File/FEM_partition.JPG" decoding="async" width="400" height="404" class="mw-file-element" data-file-width="634" data-file-height="641"></a></span>
 </p>
 <p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Part with a face partition for load or boundary condition application</p>
-<p>In the case of surface (shell) geometries, the easiest way to make a sketch-based partition is to use the <a href="Part_BooleanFragments.html" title="Part BooleanFragments">Boolean Fragments</a> tool (like for the partitions on the faces of solids). However, as explained <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?t=96029#p820241">here</a>, when mesh group creation is enabled in the <a href="FEM_Preferences.html#General" title="FEM Preferences">FEM preferences</a>, it may not work properly and the following approach should be used:
+<h4><span class="mw-headline" id="Partitioning_volumes_of_solids_with_datum_planes">Partitioning volumes of solids with datum planes</span></h4>
+<p>Another reason for partitioning is when multiple materials have to be applied to a single part (without having to use multiple parts connected with each other). Then, partitioning can be done using a <a href="PartDesign_Plane.html" title="PartDesign Plane">datum plane</a> and Boolean Fragments tool with the <i>Compsolid</i> mode.
+</p>
+<h4><span class="mw-headline" id="Partitioning_surface_geometries_with_sketches">Partitioning surface geometries with sketches</span></h4>
+<p>In the case of surface (shell) geometries, the easiest way to make a sketch-based partition could be to use the <a href="Part_BooleanFragments.html" title="Part BooleanFragments">Boolean Fragments</a> tool (like for the partitions on the faces of solids). However, as explained <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?t=96029#p820241">here</a>, when mesh group creation is enabled in the <a href="FEM_Preferences.html#General" title="FEM Preferences">FEM preferences</a>, it may not work properly and the following approach should be used:
 </p>
 <ol><li>Create a face for one side using e.g. the <a href="Part_MakeFace.html" title="Part MakeFace">Part MakeFace</a> tool (e.g. a square plate with a circular hole).</li>
 <li>Create a face for the other side in an equivalent way (e.g. a circular face filling the hole in the square plate).</li>
@@ -126,6 +143,7 @@
 <p><span typeof="mw:File"><a href="index.php?title=FEM_shell_partition.JPG&amp;filetimestamp=20250701143021&amp;.html" class="mw-file-description"><img src="File/FEM_shell_partition.JPG" decoding="async" width="400" height="249" class="mw-file-element" data-file-width="845" data-file-height="526"></a></span>
 </p>
 <p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Square plate with a circular face partition</p>
+<h4><span class="mw-headline" id="Partitioning_faces_of_solids_with_datum_planes">Partitioning faces of solids with datum planes</span></h4>
 <p>Partitioning only the selected faces of a solid using datum planes instead of sketches without splitting the whole volume is also tricky. One possible approach is to:
 </p>
 <ol><li><a href="Draft_Downgrade.html" title="Draft Downgrade">Downgrade</a> the body to faces.</li>
@@ -268,13 +286,13 @@ to element ...
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20250806093854
+Cached time: 20250806100648
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.107 seconds
-Real time usage: 0.120 seconds
-Preprocessor visited node count: 575/1000000
+CPU time usage: 0.111 seconds
+Real time usage: 0.125 seconds
+Preprocessor visited node count: 602/1000000
 Post&#8208;expand include size: 20775/2097152 bytes
 Template argument size: 7157/2097152 bytes
 Highest expansion depth: 7/100
@@ -284,19 +302,19 @@ Unstrip post&#8208;expand size: 1887/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   16.754      1 -total
- 23.24%    3.894      1 Template:FEM_Tools_navi
- 21.92%    3.672      2 Template:Navigation_menu_2
- 18.74%    3.139      1 Template:PropertyData
- 15.65%    2.622      1 Template:Userdocnavi
- 10.86%    1.820     13 Template:Caption
- 10.77%    1.804      2 Template:Code
-  8.90%    1.491      1 Template:Variable
-  8.66%    1.450      1 Template:TutorialInfo
-  5.57%    0.933      1 Template:FALSE
+100.00%   16.889      1 -total
+ 22.45%    3.791      2 Template:Navigation_menu_2
+ 21.82%    3.685      1 Template:FEM_Tools_navi
+ 16.62%    2.807      1 Template:PropertyData
+ 16.47%    2.782      1 Template:Userdocnavi
+ 11.47%    1.937     13 Template:Caption
+ 10.61%    1.792      1 Template:TutorialInfo
+  9.99%    1.687      2 Template:Code
+  9.84%    1.661      1 Template:Variable
+  5.75%    0.971      1 Template:FALSE
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:330886-0!canonical and timestamp 20250806093854 and revision id 1624343. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:330886-0!canonical and timestamp 20250806100658 and revision id 1624345. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
