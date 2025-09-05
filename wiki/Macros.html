@@ -1,97 +1,69 @@
-<link href="site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Macros</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><p>import FreeCAD as App
+<link href="site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Macros</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><ol><li>-*- coding: utf-8 -*-</li></ol>
+<p>"""
+Genera una manguera flexible enrollada (tubo hueco sobre h&eacute;lice) y la exporta en STEP.
+Probado en FreeCAD 0.20+ (GUI o modo consola).
+</p><p>Par&aacute;metros editables:
+- hose_inner_diameter_mm, hose_outer_diameter_mm
+- helix_center_radius_mm (radio del enrollado al centro del tubo)
+- turns (vueltas), pitch_mm_per_turn (paso por vuelta)
+- lefthand (True = h&eacute;lice izquierda), is_frenet (True = mant&eacute;n secci&oacute;n perpendicular al camino)
+"""
+</p><p>import FreeCAD as App
 import Part
-from FreeCAD import Base
-</p><p>doc = App.newDocument("Channel_Block")
+import os
 </p>
-<ol><li>&#21019;&#24314;&#22522;&#30784;&#38271;&#26041;&#20307;</li></ol>
-<p>length = 300
-width = 110
-height = 60
-block = Part.makeBox(length, width, height)
-block_obj = doc.addObject("Part::Feature", "Block")
-block_obj.Shape = block
+<ol><li>========= PAR&Aacute;METROS =========</li></ol>
+<p>hose_inner_diameter_mm = 20.0
+hose_outer_diameter_mm = 24.0
+helix_center_radius_mm = 140.0
+turns = 10
+pitch_mm_per_turn = 50.0
+lefthand = False
+is_frenet = True
 </p>
-<ol><li>&#20989;&#25968;&#65306;&#21019;&#24314;&#21322;&#22278;&#26609;&#65288;&#21521;&#19979;&#20985;&#65292;&#27839;&#25351;&#23450;&#36724;&#65289;</li></ol>
-<p>def create_half_cylinder(radius, length, pos, direction):
+<ol><li>Ruta de exportaci&oacute;n (c&aacute;mbiala si quieres)</li></ol>
+<p>out_dir = App.getUserAppDataDir() if hasattr(App, "getUserAppDataDir") else os.getcwd()
+out_path = os.path.join(out_dir, "manguera_enrollada.step")
 </p>
-<pre>   # &#21019;&#24314;&#21322;&#22278;&#26059;&#36716;&#20307;
-   sketch = doc.addObject('Part::Part2DObject', 'Sketch')
-   sketch.Support = None
-   sketch.MapMode = 'FlatFace'
-   
-   # &#22312;&#33609;&#22270;&#20013;&#30011;&#19968;&#20010;&#30697;&#24418;&#65288;3x3&#65289;
-   sketch.addGeometry(Part.LineSegment(App.Vector(0,0,0), App.Vector(radius,0,0)), False)
-   sketch.addGeometry(Part.LineSegment(App.Vector(radius,0,0), App.Vector(radius,radius,0)), False)
-   sketch.addGeometry(Part.LineSegment(App.Vector(radius,radius,0), App.Vector(0,radius,0)), False)
-   sketch.addGeometry(Part.LineSegment(App.Vector(0,radius,0), App.Vector(0,0,0)), False)
-   
-   # &#25289;&#20280;&#24182;&#26059;&#36716;&#25104;&#21322;&#22278;&#26609;
-   # &#26356;&#31616;&#21333;&#65306;&#30452;&#25509;&#29992;&#26059;&#36716;
-   wire = Part.Wire([
-       Part.makeLine((0,0,0), (radius,0,0)),
-       Part.makeLine((radius,0,0), (radius,radius,0)),
-       Part.makeLine((radius,radius,0), (0,radius,0)),
-       Part.makeLine((0,radius,0), (0,0,0))
-   ])
-   face = Part.Face(wire)
-   solid = face.revolve(Base.Vector(0,0,0), Base.Vector(*direction), 180)
-   solid.translate(pos)
-   return solid
-</pre>
-<ol><li>&#21019;&#24314;X&#26041;&#21521;&#27133;&#65288;&#27839;X&#65292;Y&#38453;&#21015;&#65289;</li></ol>
-<p>x_slots = []
-for i in range(14):  # Y&#26041;&#21521;&#27599;&#38548;8mm
+<ol><li>==============================</li></ol>
+<p>Ri = hose_inner_diameter_mm / 2.0
+Ro = hose_outer_diameter_mm / 2.0
+height = turns * pitch_mm_per_turn
+</p><p>doc = App.newDocument("HoseHelixSTEP")
 </p>
-<pre>   y_pos = i * 8
-   pos = Base.Vector(0, y_pos, height - 3)  # Z=57
-   cyl = Part.makeCylinder(3, 300, pos, Base.Vector(1,0,0))
-   # &#29992;&#38271;&#26041;&#20307;&#20999;&#25481;&#19978;&#21322;&#37096;&#20998;&#65292;&#20445;&#30041;&#19979;&#21322;&#65288;Z &le; 57+3&#65289;
-   box = Part.makeBox(302, 6, 3, Base.Vector(-1, y_pos-3, height-3))
-   half_cyl = cyl.common(box)  # &#20132;&#38598; &rarr; &#19979;&#21322;&#22278;&#26609;
-   x_slots.append(half_cyl)
-</pre>
-<p>x_slot_union = x_slots[0]
-for s in x_slots[1:]:
+<ol><li>1) Crear la h&eacute;lice (trayectoria)</li>
+<li>Part.makeHelix(pitch, height, radius, angle=0, lefthand=False)</li></ol>
+<p>helix = Part.makeHelix(pitch_mm_per_turn, height, helix_center_radius_mm, 0.0, lefthand)
 </p>
-<pre>   x_slot_union = x_slot_union.fuse(s)
-</pre>
-<p>x_slot_obj = doc.addObject("Part::Feature", "X_Slots")
-x_slot_obj.Shape = x_slot_union
+<ol><li>2) Crear las secciones circular exterior e interior (como caras para obtener s&oacute;lidos)</li>
+<li>Ubicamos los c&iacute;rculos en el origen; el barrido con Frenet ajusta orientaci&oacute;n autom&aacute;ticamente</li></ol>
+<p>circle_outer = Part.Circle(App.Vector(0,0,0), App.Vector(0,0,1), Ro)
+wire_outer = Part.Wire([circle_outer.toShape()])
+face_outer = Part.Face(wire_outer)  # disco
+</p><p>circle_inner = Part.Circle(App.Vector(0,0,0), App.Vector(0,0,1), Ri)
+wire_inner = Part.Wire([circle_inner.toShape()])
+face_inner = Part.Face(wire_inner)  # disco
 </p>
-<ol><li>&#21019;&#24314;Y&#26041;&#21521;&#27133;&#65288;&#27839;Y&#65292;X&#38453;&#21015;&#65289;</li></ol>
-<p>y_slots = []
-for i in range(16):  # X&#26041;&#21521;&#27599;&#38548;20mm
+<ol><li>3) Barrer (sweep) las secciones sobre la h&eacute;lice</li>
+<li>Face.makePipe(path) crea un s&oacute;lido "varilla" a lo largo de la trayectoria</li></ol>
+<p>outer_solid = face_outer.makePipe(helix, isFrenet=is_frenet)
+inner_solid = face_inner.makePipe(helix, isFrenet=is_frenet)
 </p>
-<pre>   x_pos = i * 20
-   pos = Base.Vector(x_pos, 0, height - 3)
-   cyl = Part.makeCylinder(3, 110, pos, Base.Vector(0,1,0))
-   box = Part.makeBox(6, 112, 3, Base.Vector(x_pos-3, -1, height-3))
-   half_cyl = cyl.common(box)
-   y_slots.append(half_cyl)
-</pre>
-<p>y_slot_union = y_slots[0]
-for s in y_slots[1:]:
+<ol><li>4) Hacer el tubo hueco: outer - inner</li></ol>
+<p>tube_solid = outer_solid.cut(inner_solid)
 </p>
-<pre>   y_slot_union = y_slot_union.fuse(s)
-</pre>
-<p>y_slot_obj = doc.addObject("Part::Feature", "Y_Slots")
-y_slot_obj.Shape = y_slot_union
+<ol><li>5) Agregar al documento y recomputar</li></ol>
+<p>obj = doc.addObject("Part::Feature", "CoiledHose")
+obj.Shape = tube_solid
+doc.recompute()
 </p>
-<ol><li>&#21512;&#24182;&#25152;&#26377;&#20985;&#27133;</li></ol>
-<p>slots_union = x_slot_union.fuse(y_slot_union)
-slots_obj = doc.addObject("Part::Feature", "All_Slots")
-slots_obj.Shape = slots_union
-</p>
-<ol><li>&#20174;&#22359;&#20307;&#20013;&#20999;&#21106;</li></ol>
-<p>cut = doc.addObject("Part::Cut", "Final_Block")
-cut.Base = block_obj
-cut.Tool = slots_obj
-</p><p>doc.recompute()
-App.ActiveDocument.recompute()
+<ol><li>6) Exportar a STEP</li></ol>
+<p>Part.export([obj], out_path)
+</p><p>print("Exportado STEP a:", out_path)
 </p>
 <!-- 
 NewPP limit report
-Cached time: 20250807170012
+Cached time: 20250905221503
 Cache expiry: 86400
 Reduced expiry: false
 Complications: []
@@ -110,7 +82,7 @@ Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 -total
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:446-0!canonical and timestamp 20250807170012 and revision id 1624741. Rendering was triggered because: api-parse
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:446-0!canonical and timestamp 20250905221503 and revision id 1638016. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="site.js"></script>
