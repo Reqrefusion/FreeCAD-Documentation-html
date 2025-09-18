@@ -1,0 +1,166 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Embedding FreeCAD/en</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-Embedding+FreeCAD&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
+<li><a href="../id/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--low" title="Embedding FreeCAD (4% translated)" lang="id" dir="ltr">Bahasa Indonesia</a></li>
+<li><a href="../de/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--high" title="FreeCAD einbinden (91% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="../Embedding_FreeCAD.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="Embedding FreeCAD (100% translated)" lang="en" dir="ltr">English</a></li>
+<li><a href="../tr/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--low" title="Embedding FreeCAD/tr (0% translated)" lang="tr" dir="ltr">T&uuml;rk&ccedil;e</a></li>
+<li><a href="../es/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--med" title="Embedding FreeCAD (35% translated)" lang="es" dir="ltr">espa&ntilde;ol</a></li>
+<li><a href="../fr/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--high" title="Int&eacute;grer FreeCAD (91% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../it/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--high" title="Incorporare FreeCAD (91% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="../pl/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--high" title="Osadzanie programu FreeCAD (91% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../pt/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--low" title="Embedding FreeCAD (4% translated)" lang="pt" dir="ltr">portugu&ecirc;s</a></li>
+<li><a href="../ro/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--med" title="&Icirc;ncorporarea FreeCAD (43% translated)" lang="ro" dir="ltr">rom&acirc;n&#259;</a></li>
+<li><a href="../sv/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--med" title="Embedding FreeCAD (35% translated)" lang="sv" dir="ltr">svenska</a></li>
+<li><a href="../cs/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--low" title="Embedding FreeCAD (4% translated)" lang="cs" dir="ltr">&#269;e&scaron;tina</a></li>
+<li><a href="../ru/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--med" title="Embedding FreeCAD (48% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li>
+<li><a href="../zh-cn/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--low" title="Embedding FreeCAD/zh-cn (0% translated)" lang="zh-Hans-CN" dir="ltr">&#20013;&#25991;&#65288;&#20013;&#22269;&#22823;&#38470;&#65289;</a></li>
+<li><a href="../ja/Embedding_FreeCAD.html" class="mw-pt-progress mw-pt-progress--high" title="FreeCAD&#12398;&#32068;&#12415;&#36796;&#12415; (91% translated)" lang="ja" dir="ltr">&#26085;&#26412;&#35486;</a></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>FreeCAD can be imported as a <a href="../Python.html" title="Python">Python</a> module in other programs or in a standalone Python console, together with all its modules and components. It's even possible to import the FreeCAD user interface as a python module but with some restrictions indicated in <a href="#Caveats">Caveats</a>.
+</p>
+<h2><span class="mw-headline" id="Installation">Installation</span></h2>
+<p>The first important thing is to make sure Python will find our FreeCAD library. The library is generally called <code>FreeCAD.so</code> on Linux and <code>FreeCAD.pyd</code> on other platforms, thus the first step will be for you to find the path where that file is located. Once Python finds it, all FreeCAD modules such as Part (that we'll use as well) will be available automatically. So we simply take the <code>sys.path</code> variable, which is where Python searches for modules, and we append the FreeCAD library path. This modification is only temporary, and will be lost when we'll close our Python interpreter. An alternate way could be: making a link to your FreeCAD library in one of the python search paths. I stored the path in a constant (<code>FREECADPATH</code>) so it'll be easier for another user of the script to configure it to their own system. For Windows users it is important that the path be specified using <code>\\</code> or <code>/</code> as separator instead of just <code>\</code> since it is an escape character.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">FREECADPATH</span> <span class="o">=</span> <span class="s1">'C:</span><span class="se">\\</span><span class="s1">FreeCAD</span><span class="se">\\</span><span class="s1">bin'</span> <span class="c1"># path to your FreeCAD.so or FreeCAD.pyd file</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FREECADPATH</span><span class="p">)</span>
+</pre></div>
+<h2><span class="mw-headline" id="Using_FreeCAD_without_GUI">Using FreeCAD without GUI</span></h2>
+<p>The first, direct, easy, and useful application you can make of this is to import FreeCAD documents into your program. In the following example, we'll import the Part geometry of a FreeCAD document into <a rel="nofollow" class="external text" href="http://www.blender.org">blender</a>. Here is the complete script. I hope you'll be impressed by its simplicity:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">FREECADPATH</span> <span class="o">=</span> <span class="s1">'/usr/lib/freecad-python3/lib/'</span> <span class="c1"># path to your FreeCAD.so or FreeCAD.pyd file,</span>
+<span class="c1"># for Windows you must either use \\ or / in the path, using a single \ is problematic</span>
+<span class="c1"># FREECADPATH = 'C:\\FreeCAD\\bin'</span>
+<span class="kn">import</span> <span class="nn">Blender</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">FREECADPATH</span><span class="p">)</span>
+ 
+<span class="k">def</span> <span class="nf">import_fcstd</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+   <span class="k">try</span><span class="p">:</span>
+       <span class="kn">import</span> <span class="nn">FreeCAD</span>
+   <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+       <span class="n">Blender</span><span class="o">.</span><span class="n">Draw</span><span class="o">.</span><span class="n">PupMenu</span><span class="p">(</span><span class="s1">'Error%t|FreeCAD library not found. Please check the FREECADPATH variable in the import script is correct'</span><span class="p">)</span>
+   <span class="k">else</span><span class="p">:</span>
+       <span class="n">scene</span> <span class="o">=</span> <span class="n">Blender</span><span class="o">.</span><span class="n">Scene</span><span class="o">.</span><span class="n">GetCurrent</span><span class="p">()</span>
+       <span class="kn">import</span> <span class="nn">Part</span>
+       <span class="n">doc</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+       <span class="n">objects</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">Objects</span>
+       <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
+           <span class="k">if</span> <span class="n">ob</span><span class="o">.</span><span class="n">Type</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Part'</span><span class="p">:</span>
+               <span class="n">shape</span> <span class="o">=</span> <span class="n">ob</span><span class="o">.</span><span class="n">Shape</span>
+               <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">Faces</span><span class="p">:</span>
+                   <span class="n">mesh</span> <span class="o">=</span> <span class="n">Blender</span><span class="o">.</span><span class="n">Mesh</span><span class="o">.</span><span class="n">New</span><span class="p">()</span>
+                   <span class="n">rawdata</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">tessellate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rawdata</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                       <span class="n">mesh</span><span class="o">.</span><span class="n">verts</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">v</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">v</span><span class="o">.</span><span class="n">y</span><span class="p">,</span><span class="n">v</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+                   <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">rawdata</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                       <span class="n">mesh</span><span class="o">.</span><span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                   <span class="n">scene</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="n">ob</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+       <span class="n">Blender</span><span class="o">.</span><span class="n">Redraw</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+   <span class="n">Blender</span><span class="o">.</span><span class="n">Window</span><span class="o">.</span><span class="n">FileSelector</span><span class="p">(</span><span class="n">import_fcstd</span><span class="p">,</span> <span class="s1">'IMPORT FCSTD'</span><span class="p">,</span> 
+                        <span class="n">Blender</span><span class="o">.</span><span class="n">sys</span><span class="o">.</span><span class="n">makename</span><span class="p">(</span><span class="n">ext</span><span class="o">=</span><span class="s1">'.fcstd'</span><span class="p">))</span>    
+ 
+<span class="c1"># This lets you import the script without running it</span>
+<span class="k">if</span> <span class="vm">__name__</span><span class="o">==</span><span class="s1">'__main__'</span><span class="p">:</span>
+   <span class="n">main</span><span class="p">()</span>
+</pre></div>
+<p>Once we are sure the library is loaded (the <code>try</code>/<code>except</code> sequence), we can now work with FreeCAD, the same way as we would inside FreeCAD's own python interpreter. We open the FreeCAD document that is passed to us by the <code>main()</code> function, and we make a list of its objects. Then, as we chose only to care about Part geometry, we check if the Type property of each object contains "<code>Part</code>", then we tesselate it.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Part</span>
+       <span class="n">doc</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+       <span class="n">objects</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">Objects</span>
+       <span class="k">for</span> <span class="n">ob</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">:</span>
+           <span class="k">if</span> <span class="n">ob</span><span class="o">.</span><span class="n">Type</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Part'</span><span class="p">:</span>
+</pre></div>
+<p>The tesselation produce a list of vertices and a list of faces defined by vertices indexes. This is perfect, since it is exactly the same way as blender defines meshes. So, our task is ridiculously simple, we just add both lists contents to the verts and faces of a blender mesh. When everything is done, we just redraw the screen, and that's it!
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">if</span> <span class="n">ob</span><span class="o">.</span><span class="n">Type</span><span class="p">[:</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Part'</span><span class="p">:</span>
+               <span class="n">shape</span> <span class="o">=</span> <span class="n">ob</span><span class="o">.</span><span class="n">Shape</span>
+               <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">Faces</span><span class="p">:</span>
+                   <span class="n">mesh</span> <span class="o">=</span> <span class="n">Blender</span><span class="o">.</span><span class="n">Mesh</span><span class="o">.</span><span class="n">New</span><span class="p">()</span>
+                   <span class="n">rawdata</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">tessellate</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                   <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rawdata</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                       <span class="n">mesh</span><span class="o">.</span><span class="n">verts</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">v</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">v</span><span class="o">.</span><span class="n">y</span><span class="p">,</span><span class="n">v</span><span class="o">.</span><span class="n">z</span><span class="p">))</span>
+                   <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">rawdata</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                       <span class="n">mesh</span><span class="o">.</span><span class="n">faces</span><span class="o">.</span><span class="n">append</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                   <span class="n">scene</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span><span class="n">ob</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span>
+       <span class="n">Blender</span><span class="o">.</span><span class="n">Redraw</span><span class="p">()</span>
+</pre></div>
+<p>Of course this script is very simple (in fact I made a more advanced <a rel="nofollow" class="external text" href="https://yorik.uncreated.net/archive/scripts/blender24/import_freecad.py">FreeCAD to Blender importer</a>), you might want to extend it, for example importing mesh objects too, or importing Part geometry that has no faces, or import other file formats that FreeCAD can read. You might also want to export geometry to a FreeCAD document, which can be done the same way. You might also want to build a dialog, so the user can choose what to import, etc... The beauty of all this actually lies in the fact that you let FreeCAD do the ground work while presenting its results in the program of your choice.
+</p><p><i>Note:</i> checkout <a href="../Headless_FreeCAD.html" title="Headless FreeCAD">Headless FreeCAD</a> for running FreeCAD without the GUI.
+</p>
+<h2><span class="mw-headline" id="Using_FreeCAD_with_GUI">Using FreeCAD with GUI</span></h2>
+<p>From version 4.2 on Qt has the intriguing ability to embed Qt-GUI-dependent plugins into non-Qt host applications and share the host's event loop.
+</p><p>Especially, for FreeCAD this means that it can be imported from within another application with its whole user interface where the host application has full control over FreeCAD, then.
+</p><p>The whole python code to achieve that has only two lines
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCADGui</span> 
+<span class="n">FreeCADGui</span><span class="o">.</span><span class="n">showMainWindow</span><span class="p">()</span>
+</pre></div>
+<p>If the host application is based on Qt then this solution should work on all platforms which Qt supports. However, the host should link the same Qt version as FreeCAD because otherwise you could run into unexpected runtime errors. 
+</p><p>For non-Qt applications, however, there are a few limitations you must be aware of. This solution probably doesn't work together with all other toolkits. For Windows it works as long as the host application is directly based on Win32 or any other toolkit that internally uses the Win32 API such as wxWidgets, MFC or WinForms. In order to get it working under <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/X_Window_System">X11</a> the host application must link the <a rel="nofollow" class="external text" href="https://docs.gtk.org/glib/">glib</a> library.
+</p><p>Note, for any console application this solution of course doesn't work because there is no event loop running.
+</p>
+<h2><span class="mw-headline" id="Caveats">Caveats</span></h2>
+<p>Although it is possible to import FreeCAD to an external Python interpreter, this is not a common usage scenario and requires some care. Generally, it is better to use the Python included with FreeCAD, run FreeCAD via command line, or as a subprocess. See <a href="../Start_up_and_Configuration.html" title="Start up and Configuration">Start up and Configuration</a> for more on the last two options.
+</p><p>Since the FreeCAD Python module is compiled from C++ (rather than being a pure Python module), it can only be imported from a compatible Python interpreter. Generally this means that the Python interpreter must be compiled with the same C compiler as was used to build FreeCAD. Information about the compiler used to build a Python interpreter (including the one built with FreeCAD) can be found as follows:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">sys</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span>
+<span class="s1">'2.7.13 (default, Dec 17 2016, 23:03:43) </span><span class="se">\n</span><span class="s1">[GCC 4.2.1 Compatible Apple LLVM 8.0.0 (clang-800.0.42.1)]'</span>
+</pre></div>
+<h2><span class="mw-headline" id="Related">Related</span></h2>
+<ul><li><a href="../Headless_FreeCAD.html" title="Headless FreeCAD">Headless FreeCAD</a></li></ul>
+<p><br>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=Power_user_hub.png&amp;filetimestamp=20200511213015&amp;.html" class="mw-file-description"><img src="../File/Power_user_hub.png" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="128" data-file-height="128"></a></span> <a href="../en/Power_users_hub.html" title="Power users hub/en">Power user documentation</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b>FreeCAD scripting:</b> <a href="../en/Python.html" title="Python/en">Python</a>, <a href="../en/Introduction_to_Python.html" title="Introduction to Python/en">Introduction to Python</a>, <a href="../en/Python_scripting_tutorial.html" title="Python scripting tutorial/en">Python scripting tutorial</a>, <a href="../en/FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/en">FreeCAD Scripting Basics</a></li></ul>
+<hr>
+<ul><li><b>Modules:</b> <a href="../en/Builtin_modules.html" title="Builtin modules/en">Builtin modules</a>, <a href="../en/Units.html" title="Units/en">Units</a>, <a href="../en/Quantity.html" title="Quantity/en">Quantity</a></li>
+<li><b>Workbenches:</b> <a href="../en/Workbench_creation.html" title="Workbench creation/en">Workbench creation</a>, <a href="../en/Gui_Command.html" title="Gui Command/en">Gui Commands</a>, <a href="../en/Command.html" title="Command/en">Commands</a>, <a href="../en/Installing_more_workbenches.html" title="Installing more workbenches/en">Installing more workbenches</a></li>
+<li><b>Meshes and Parts:</b> <a href="../en/Mesh_Scripting.html" title="Mesh Scripting/en">Mesh Scripting</a>, <a href="../en/Topological_data_scripting.html" title="Topological data scripting/en">Topological data scripting</a>, <a href="../en/Mesh_to_Part.html" title="Mesh to Part/en">Mesh to Part</a>, <a href="../en/PythonOCC.html" title="PythonOCC/en">PythonOCC</a></li></ul>
+<hr>
+<ul><li><b>Parametric objects:</b> <a href="../en/Scripted_objects.html" title="Scripted objects/en">Scripted objects</a>, <a href="../en/Viewprovider.html" title="Viewprovider/en">Viewproviders</a> <small>(<a href="../en/Custom_icon_in_tree_view.html" title="Custom icon in tree view/en">Custom icon in tree view</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="../en/Scenegraph.html" title="Scenegraph/en">Coin (Inventor) scenegraph</a>, <a href="../en/Pivy.html" title="Pivy/en">Pivy</a></li>
+<li><b>Graphical interface:</b> <a href="../en/Interface_creation.html" title="Interface creation/en">Interface creation</a>, <a href="../en/Dialog_creation.html" title="Dialog creation/en">Interface creation completely in Python</a> <small>(<a href="../en/Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets/en">1</a>, <a href="../en/Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files/en">2</a>, <a href="../en/Dialog_creation_setting_colors.html" title="Dialog creation setting colors/en">3</a>, <a href="../en/Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF/en">4</a>, <a href="../en/PySide_usage_snippets.html" title="PySide usage snippets/en">5</a>)</small>, <a href="../en/PySide.html" title="PySide/en">PySide</a>, PySide examples <a href="../en/PySide_Beginner_Examples.html" title="PySide Beginner Examples/en">beginner</a>, <a href="../en/PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/en">intermediate</a>, <a href="../en/PySide_Advanced_Examples.html" title="PySide Advanced Examples/en">advanced</a></li>
+<li><b>Macros:</b> <a href="../en/Macros.html" title="Macros/en">Macros</a>, <a href="../en/How_to_install_macros.html" title="How to install macros/en">How to install macros</a></li>
+<li><b>Embedding:</b> <a class="mw-selflink selflink">Embedding FreeCAD</a>, <a href="../en/Embedding_FreeCADGui.html" title="Embedding FreeCADGui/en">Embedding FreeCADGui</a></li></ul>
+<hr>
+<ul><li><b>Other:</b> <a href="../en/Expressions.html" title="Expressions/en">Expressions</a>, <a href="../en/Code_snippets.html" title="Code snippets/en">Code snippets</a>, <a href="../en/Line_drawing_function.html" title="Line drawing function/en">Line drawing function</a>, <a href="../en/FreeCAD_vector_math_library.html" title="FreeCAD vector math library/en">FreeCAD vector math library</a> <small>(deprecated)</small></li></ul>
+<hr>
+<ul><li><b>Hubs:</b> <a href="../en/User_hub.html" title="User hub/en">User hub</a>, <a href="../en/Power_users_hub.html" title="Power users hub/en">Power users hub</a>, <a href="../en/Developer_hub.html" title="Developer hub/en">Developer hub</a></li></ul></div>
+    </div></div>
+<!-- 
+NewPP limit report
+Cached time: 20250918080058
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show&#8208;toc]
+CPU time usage: 0.095 seconds
+Real time usage: 0.114 seconds
+Preprocessor visited node count: 248/1000000
+Post&#8208;expand include size: 6991/2097152 bytes
+Template argument size: 3161/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 6/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 15569/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   15.236      1 -total
+ 44.04%    6.710      1 Template:Powerdocnavi/en
+ 20.81%    3.171      6 Template:Code
+ 12.39%    1.887      1 Template:Navigation_menu_2
+ 11.63%    1.773     11 Template:Incode
+  9.10%    1.387      1 Template:TOCright
+  6.09%    0.928      1 Template:Emphasis
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:42939-0!canonical and timestamp 20250918080058 and revision id 1643882. Rendering was triggered because: api-parse
+ -->
+</div>
+</div><script src="../site.js"></script>
