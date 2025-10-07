@@ -118,24 +118,27 @@
 <ol><li>Under <b>Display Options</b>, uncheck <b>Include Column Names</b> (since our first column is a custom label) and check <b>Print Results in Bold</b> for emphasis.</li>
 <li>Click <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="index.php?title=Document-save.svg&amp;filetimestamp=20240522171704&amp;.html" class="mw-file-description"><img src="File/Document-save.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> Save</span>. You now have a two-statement report. Click the main <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;">OK</span> button at the bottom of the Task Panel to execute it. The associated spreadsheet will open automatically with the formatted results.</li></ol>
 <h3><span class="mw-headline" id="Step_4:_Using_Pipelining_for_Advanced_Queries">Step 4: Using Pipelining for Advanced Queries</span></h3>
-<p>Pipelining allows you to chain queries together, where the output of one becomes the input for the next. This is useful for complex hierarchical selections.
-</p><p>For example, to find all doors located on the "Ground Floor", we must first find all objects on that floor, and <i>then</i> filter that list for doors.
+<p>Pipelining allows you to chain queries together, where the output of one becomes the input for the next. This is essential for complex hierarchical selections, such as when using the <code>CHILDREN()</code> function. Since it is not recursive, it only finds direct descendants.
+</p><p>For example, to find all doors located on the "Ground Floor," you must perform a multi-step query, because doors are children of walls, which are in turn children of the floor.
 </p>
 <ol><li>Create a new report.</li>
-<li><b>Statement 1: Find the Floor's Contents</b>
-<ul><li>Add a statement with the description <code>Ground Floor Objects</code>.</li>
-<li>Use this query to select all the child objects of the floor object:</li></ul></li></ol>
-<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">CHILDREN</span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">Label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Ground Floor'</span><span class="p">)</span>
-</pre></div>
-<ol><li><b>Statement 2: Filter for Doors</b>
-<ul><li>Add a second statement with the description <code>Doors on Ground Floor</code>.</li>
-<li>In the editor for this statement, under <b>Display Options</b>, check the <b>Use as Pipeline Step</b> checkbox. This is the key step that links this query to the previous one.</li>
-<li>Use this query to filter the incoming objects for doors:</li></ul></li></ol>
-<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">Label</span><span class="p">,</span><span class="w"> </span><span class="n">Width</span><span class="p">,</span><span class="w"> </span><span class="n">Height</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Door'</span>
-</pre></div>
-<p>Note: In a pipeline, <code>FROM document</code> is a placeholder; the engine uses the data from the previous step as the actual source.
+<li><b>Statement 1: Find the 'Ground Floor' Object</b>
+<ul><li>Add a statement with the description <code>Find Ground Floor</code>.</li>
+<li>This query selects the starting point of our search.<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">Label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Ground Floor'</span>
+</pre></div></li></ul></li>
+<li><b>Statement 2: Find the Walls on that Floor</b>
+<ul><li>Add a second statement with the description <code>Find Walls on Floor</code>.</li>
+<li>In the editor, check the <span style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #989898; border-radius: 0.2em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a href="index.php?title=CheckBoxFalse.svg&amp;filetimestamp=20200323161434&amp;.html" class="mw-file-description"><img src="File/CheckBoxFalse.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> Use as Pipeline Step<span></span></span> checkbox. This tells the statement to run on the results of the previous one (the floor object).</li>
+<li>Use this query to find all direct children of the floor and keep only the walls:<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">CHILDREN</span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="p">)</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Wall'</span>
+</pre></div></li></ul></li>
+<li><b>Statement 3: Find the Doors in those Walls</b>
+<ul><li>Add a third statement with the description <code>Find Doors in Walls</code>.</li>
+<li>Check the <span style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #989898; border-radius: 0.2em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a href="index.php?title=CheckBoxFalse.svg&amp;filetimestamp=20200323161434&amp;.html" class="mw-file-description"><img src="File/CheckBoxFalse.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> Use as Pipeline Step<span></span></span> checkbox again. This now links it to the output of Statement 2 (the list of walls).</li>
+<li>Use this query to find the children of the walls and keep only the doors:<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">Label</span><span class="p">,</span><span class="w"> </span><span class="n">Width</span><span class="p">,</span><span class="w"> </span><span class="n">Height</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">CHILDREN</span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="p">)</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Door'</span>
+</pre></div></li></ul></li>
+<li>Click <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;">OK</span>. The report will execute the full three-step pipeline.</li></ol>
+<p><b>Understanding the Result:</b> The final spreadsheet will only show the results of the last statement in the pipeline (the list of doors). The first two statements act as intermediate filters whose results are passed in memory but not printed to the spreadsheet, giving you a clean and precise final report.```
 </p>
-<ol><li>Click <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;">OK</span>. The report will execute the two-step pipeline, and the spreadsheet will show only the doors found on the ground floor.</li></ol>
 <h3><span class="mw-headline" id="Step_5:_Using_Presets_and_Templates">Step 5: Using Presets and Templates</span></h3>
 <ul><li><b>Report Templates</b> load a full, multi-statement report. In the <b>Report Statements Overview</b>, select a template like "Room and Area Schedule" from the dropdown to instantly load the configuration from Steps 2 &amp; 3. You can save your own reports as new templates for reuse.</li>
 <li><b>Query Presets</b> load a single query into the editor. In the <b>Statement Editor</b>, select a preset like "All Walls" from the dropdown to populate the SQL editor. You can save your own frequently used queries by clicking the <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;">Save...</span> button.</li></ul>
@@ -413,36 +416,51 @@ This query produces a formatted list of all spaces, grouped by the floor they be
 <p>For more complex, multi-step selections, you can use this function to execute a pipeline. It takes a list of <code>ArchSql.ReportStatement</code> objects and returns the final list of FreeCAD DocumentObjects that result from the full pipeline.
 </p><p>This is the programmatic equivalent of using the <b>"Use as Pipeline Step"</b> checkbox in the UI.
 </p><p><b>Example: Find all doors on the "Ground Floor"</b>
-This requires a multi-step process: first find the floor, then find its direct children (like walls), and finally find the children of those objects (the doors).
+This is a classic hierarchical problem that requires multiple steps. The goal is to find the "grandchildren" (doors) of a "grandparent" (the floor). Since the <code>CHILDREN()</code> function is not recursive, we must chain multiple steps in a pipeline.
 </p>
+<ol><li>First, we find the <code>'Ground Floor'</code> object.</li>
+<li>Second, we find its direct children (the walls, spaces, etc.).</li>
+<li>Third, we find the children of <i>those</i> objects (which will include the doors and windows hosted by the walls).</li>
+<li>Finally, we filter that last group to keep only the doors.</li></ol>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span>
 <span class="kn">import</span> <span class="nn">Arch</span>
 <span class="kn">import</span> <span class="nn">ArchSql</span>
 
-<span class="c1"># Step 1: Define the pipeline statements as ReportStatement objects.</span>
+<span class="c1"># Step 1: Define the pipeline statements.</span>
 <span class="c1"># The ReportStatement class must be imported from the ArchSql module.</span>
 
-<span class="c1"># Statement 1: Find the parent floor</span>
+<span class="c1"># Statement 1: Find the parent 'Ground Floor' object.</span>
+<span class="c1"># Output of this step: [Ground_Floor_Object]</span>
 <span class="n">stmt1</span> <span class="o">=</span> <span class="n">ArchSql</span><span class="o">.</span><span class="n">ReportStatement</span><span class="p">(</span>
     <span class="n">query_string</span><span class="o">=</span><span class="s2">"SELECT * FROM document WHERE Label = 'Ground Floor'"</span>
 <span class="p">)</span>
 
-<span class="c1"># Statement 2: Find all direct children of the floor.</span>
-<span class="c1"># Note that is_pipelined=True links this to the output of stmt1.</span>
+<span class="c1"># Statement 2: Find the direct children of the floor (walls, spaces, etc.).</span>
+<span class="c1"># is_pipelined=True tells this to run on the output of stmt1.</span>
+<span class="c1"># Output of this step: [Wall_Object_1, Wall_Object_2, Space_Object_1, ...]</span>
 <span class="n">stmt2</span> <span class="o">=</span> <span class="n">ArchSql</span><span class="o">.</span><span class="n">ReportStatement</span><span class="p">(</span>
     <span class="n">query_string</span><span class="o">=</span><span class="s2">"SELECT * FROM CHILDREN(SELECT * FROM document)"</span><span class="p">,</span>
     <span class="n">is_pipelined</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 
-<span class="c1"># Statement 3: Find the children of the walls (the doors) and filter them.</span>
+<span class="c1"># Statement 3: Find the children of the objects from the previous step.</span>
+<span class="c1"># This finds the doors and windows hosted by the walls.</span>
+<span class="c1"># Output of this step: [Door_Object, Window_Object_1, ...]</span>
 <span class="n">stmt3</span> <span class="o">=</span> <span class="n">ArchSql</span><span class="o">.</span><span class="n">ReportStatement</span><span class="p">(</span>
-    <span class="n">query_string</span><span class="o">=</span><span class="s2">"SELECT * FROM CHILDREN(SELECT * FROM document) WHERE IfcType = 'Door'"</span><span class="p">,</span>
+    <span class="n">query_string</span><span class="o">=</span><span class="s2">"SELECT * FROM CHILDREN(SELECT * FROM document)"</span><span class="p">,</span>
     <span class="n">is_pipelined</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 
-<span class="c1"># Step 2: Execute the pipeline.</span>
-<span class="c1"># The function takes a list of the statement objects.</span>
-<span class="n">pipeline_statements</span> <span class="o">=</span> <span class="p">[</span><span class="n">stmt1</span><span class="p">,</span> <span class="n">stmt2</span><span class="p">,</span> <span class="n">stmt3</span><span class="p">]</span>
+<span class="c1"># Statement 4: Filter the final list to keep only the doors.</span>
+<span class="c1"># This runs on the output of stmt3.</span>
+<span class="c1"># Final Output: [Door_Object]</span>
+<span class="n">stmt4</span> <span class="o">=</span> <span class="n">ArchSql</span><span class="o">.</span><span class="n">ReportStatement</span><span class="p">(</span>
+    <span class="n">query_string</span><span class="o">=</span><span class="s2">"SELECT * FROM document WHERE IfcType = 'Door'"</span><span class="p">,</span>
+    <span class="n">is_pipelined</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># Step 2: Execute the full pipeline.</span>
+<span class="n">pipeline_statements</span> <span class="o">=</span> <span class="p">[</span><span class="n">stmt1</span><span class="p">,</span> <span class="n">stmt2</span><span class="p">,</span> <span class="n">stmt3</span><span class="p">,</span> <span class="n">stmt4</span><span class="p">]</span>
 <span class="n">doors_on_floor</span> <span class="o">=</span> <span class="n">Arch</span><span class="o">.</span><span class="n">selectObjectsFromPipeline</span><span class="p">(</span><span class="n">pipeline_statements</span><span class="p">)</span>
 
 <span class="c1"># The result is the final list of door objects.</span>
@@ -498,35 +516,35 @@ This requires a multi-step process: first find the floor, then find its direct c
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20251007115654
+Cached time: 20251007130039
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.163 seconds
-Real time usage: 0.191 seconds
-Preprocessor visited node count: 1548/1000000
-Post&#8208;expand include size: 36054/2097152 bytes
-Template argument size: 13982/2097152 bytes
+CPU time usage: 0.217 seconds
+Real time usage: 2.932 seconds
+Preprocessor visited node count: 1612/1000000
+Post&#8208;expand include size: 37328/2097152 bytes
+Template argument size: 14676/2097152 bytes
 Highest expansion depth: 7/100
-Expensive parser function count: 19/100
+Expensive parser function count: 20/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 21253/5000000 bytes
+Unstrip post&#8208;expand size: 22994/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   37.928      1 -total
- 16.23%    6.155      1 Template:BIM_Tools_navi
- 14.93%    5.662     18 Template:Code
- 14.55%    5.517      2 Template:Navigation_menu_2
- 11.64%    4.413     91 Template:Incode
-  6.68%    2.535      1 Template:PropertyData
-  6.16%    2.337      1 Template:Userdocnavi
-  4.81%    1.826      1 Template:GuiCommand
-  4.50%    1.708      2 Template:Docnav
-  3.97%    1.504      1 Template:Variable
+100.00% 2779.364      1 -total
+ 98.59% 2740.212     19 Template:Code
+  0.28%    7.793      1 Template:BIM_Tools_navi
+  0.22%    6.088      2 Template:Navigation_menu_2
+  0.18%    5.094     94 Template:Incode
+  0.16%    4.490      7 Template:CheckBox
+  0.09%    2.621      1 Template:Userdocnavi
+  0.09%    2.467      1 Template:GuiCommand
+  0.09%    2.384      1 Template:PropertyData
+  0.08%    2.123      2 Template:Docnav
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:393208-0!canonical and timestamp 20251007115659 and revision id 1656574. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:393208-0!canonical and timestamp 20251007130039 and revision id 1656598. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="site.js"></script>
