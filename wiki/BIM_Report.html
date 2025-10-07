@@ -177,7 +177,7 @@
 <tr>
 <td><b>Aggregate</b>
 </td>
-<td><code>COUNT(property OR *)</code>
+<td><code>COUNT(property|*)</code>
 </td>
 <td>Counts the number of objects. <code>COUNT(*)</code> counts all rows; <code>COUNT(property)</code> counts rows where the specified property is not <code>NULL</code>.
 </td></tr>
@@ -214,7 +214,7 @@
 </td>
 <td><code>CHILDREN(subquery)</code>
 </td>
-<td>A function used in the <code>FROM</code> clause. Returns all children of objects found by the subquery, resolving both containment (<code>.Group</code>) and hosting (<code>.Hosts</code>) relationships.
+<td>A function used in the <code>FROM</code> clause. Returns all children of objects found by the subquery, resolving both containment (<code>.Group</code>) and hosting (<code>.Hosts</code>) relationships. This function is <b>not recursive</b>. To find grandchildren or deeper descendants, chain multiple <code>CHILDREN()</code> steps together using a pipeline.
 </td></tr>
 <tr>
 <td><b>Utility</b>
@@ -272,7 +272,7 @@
 <tr>
 <td><b>Comparison</b>
 </td>
-<td><code>{{{1}}}</code>, <code>{{{1}}}</code>, <code>&gt;</code>, <code>&lt;</code>, <code>{{{1}}}</code>, <code>{{{1}}}</code>
+<td><code><a href="index.php?title=%3D&amp;action=edit&amp;redlink=1.html" class="new" title="= (page does not exist)">=</a></code>, <code>!<a href="index.php?title=%3D&amp;action=edit&amp;redlink=1.html" class="new" title="= (page does not exist)">=</a></code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;<a href="index.php?title=%3D&amp;action=edit&amp;redlink=1.html" class="new" title="= (page does not exist)">=</a></code>, <code>&lt;<a href="index.php?title=%3D&amp;action=edit&amp;redlink=1.html" class="new" title="= (page does not exist)">=</a></code>
 </td>
 <td>Standard comparison operators.
 </td></tr>
@@ -311,9 +311,145 @@
 </td>
 <td>Perform calculations on numerical properties. Obeys standard operator precedence; use <code>()</code> to override.
 </td></tr></tbody></table>
-<h3><span class="mw-headline" id="Literals_and_Quotes">Literals and Quotes</span></h3>
-<p>Both single quotes (<code>'</code>) and double quotes (<code>"</code>) can be used for text literals (strings). For example, <code>{{{1}}}</code> and <code>{{{1}}}</code> are equivalent.
+<h3><span class="mw-headline" id="General_Syntax">General Syntax</span></h3>
+<ul><li><b>Literals and Quotes</b>: Both single quotes (<code>'</code>) and double quotes (<code>"</code>) can be used for text literals (strings). For example, <code>WHERE Label <a href="index.php?title=%3D&amp;action=edit&amp;redlink=1.html" class="new" title="= (page does not exist)">=</a> 'Wall'</code> and <code>WHERE Label <a href="index.php?title=%3D&amp;action=edit&amp;redlink=1.html" class="new" title="= (page does not exist)">=</a> "Wall"</code> are equivalent.</li>
+<li><b>Comments</b>: The parser ignores both single-line comments, which start with <code>--</code>, and multi-line comments, which are enclosed in <code>/* ... */</code>.</li>
+<li><b>Internationalization</b>: The parser correctly handles non-ASCII (Unicode) characters in property names (e.g., Fl&auml;che).</li></ul>
+<h2><span class="mw-headline" id="Sample_Queries">Sample Queries</span></h2>
+<p>This section provides a collection of practical queries that you can use directly or modify for your reports.
 </p>
+<h3><span class="mw-headline" id="Basic_Selections">Basic Selections</span></h3>
+<p><b>Select all structural elements (Columns and Beams):</b>
+</p>
+<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">Label</span><span class="p">,</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="p">(</span><span class="s1">'Column'</span><span class="p">,</span><span class="w"> </span><span class="s1">'Beam'</span><span class="p">)</span><span class="w"> </span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">IfcType</span><span class="p">,</span><span class="w"> </span><span class="n">Label</span>
+</pre></div>
+<p><b>Select all walls with "Exterior" in their name:</b>
+</p>
+<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">Label</span><span class="p">,</span><span class="w"> </span><span class="k">Length</span><span class="p">,</span><span class="w"> </span><span class="n">Height</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Wall'</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">Label</span><span class="w"> </span><span class="k">LIKE</span><span class="w"> </span><span class="s1">'%Exterior%'</span>
+</pre></div>
+<h3><span id="Data_Aggregation_.26_Summaries"></span><span class="mw-headline" id="Data_Aggregation_&amp;_Summaries">Data Aggregation &amp; Summaries</span></h3>
+<p><b>Count all BIM objects, grouped by their type:</b>
+</p>
+<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">IfcType</span><span class="p">,</span><span class="w"> </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span>
+<span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="k">ASC</span>
+</pre></div>
+<p><b>Get a full quantity takeoff for all walls:</b>
+This query calculates the total number of walls, their combined length, and the minimum and maximum wall heights.
+</p>
+<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span>
+<span class="w">    </span><span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="ss">"Total Count"</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="k">SUM</span><span class="p">(</span><span class="k">Length</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="ss">"Total Length (mm)"</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="k">MIN</span><span class="p">(</span><span class="n">Height</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="ss">"Min Height (mm)"</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="k">MAX</span><span class="p">(</span><span class="n">Height</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="ss">"Max Height (mm)"</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Wall'</span>
+</pre></div>
+<h3><span class="mw-headline" id="Hierarchical_Queries">Hierarchical Queries</span></h3>
+<p><b>List all objects located directly on the "Ground Floor":</b>
+This uses the <code>CHILDREN()</code> function to query the contents of a specific container object.
+</p>
+<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">Label</span><span class="p">,</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">CHILDREN</span><span class="p">(</span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">Label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Ground Floor'</span><span class="p">)</span><span class="w"> </span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">IfcType</span>
+</pre></div>
+<p><b>List all doors and the specific wall they are hosted in:</b>
+This uses the <code>PARENT()</code> function to find the host of each door.
+</p>
+<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span>
+<span class="w">    </span><span class="n">Label</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="ss">"Door_Name"</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">PARENT</span><span class="p">(</span><span class="o">*</span><span class="p">).</span><span class="n">Label</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="ss">"Host_Wall_Name"</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Door'</span><span class="w"> </span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="ss">"Host_Wall_Name"</span>
+</pre></div>
+<p><b>Find all windows on the "Ground Floor" (by checking the grandparent):</b>
+This query finds windows, checks their parent (the wall), and then checks that wall's parent (the floor).
+</p>
+<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">Label</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Window'</span><span class="w"> </span><span class="k">AND</span><span class="w"> </span><span class="n">PARENT</span><span class="p">(</span><span class="o">*</span><span class="p">).</span><span class="n">PARENT</span><span class="p">(</span><span class="o">*</span><span class="p">).</span><span class="n">Label</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Ground Floor'</span>
+</pre></div>
+<h3><span class="mw-headline" id="Advanced_Queries">Advanced Queries</span></h3>
+<p><b>Generate a complete room and area schedule:</b>
+This query produces a formatted list of all spaces, grouped by the floor they belong to, with their area converted to square meters.
+</p>
+<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span>
+<span class="w">    </span><span class="n">PARENT</span><span class="p">(</span><span class="o">*</span><span class="p">).</span><span class="n">Label</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="ss">"Floor"</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="n">Label</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="ss">"Room Name"</span><span class="p">,</span><span class="w"> </span>
+<span class="w">    </span><span class="k">CONVERT</span><span class="p">(</span><span class="n">Area</span><span class="p">,</span><span class="w"> </span><span class="s1">'m^2'</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="ss">"Area (m&sup2;)"</span><span class="w"> </span>
+<span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span>
+<span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Space'</span><span class="w"> </span>
+<span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="ss">"Floor"</span><span class="p">,</span><span class="w"> </span><span class="ss">"Room Name"</span>
+</pre></div>
+<h2><span class="mw-headline" id="Scripting_API">Scripting API</span></h2>
+<p>The BIM Report engine is fully accessible through Python, allowing you to integrate its advanced query capabilities into your own scripts and automations.
+</p>
+<h3><span id="Arch.selectObjects.28query_string.29"></span><span class="mw-headline" id="Arch.selectObjects(query_string)">Arch.selectObjects(query_string)</span></h3>
+<p>This is the primary function for executing a single, straightforward SQL query. It takes a query string as input and returns a list of the FreeCAD DocumentObjects that match the query. If the query is invalid or finds no objects, it returns an empty list and prints an error to the console.
+</p><p><b>Example: Get all Wall objects with "Exterior" in their name</b>
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span>
+<span class="kn">import</span> <span class="nn">Arch</span>
+
+<span class="c1"># This query selects all Wall objects whose Label contains the substring "Exterior"</span>
+<span class="n">query</span> <span class="o">=</span> <span class="s2">"SELECT * FROM document WHERE IfcType = 'Wall' AND Label LIKE '</span><span class="si">%E</span><span class="s2">xterior%'"</span>
+
+<span class="n">exterior_walls</span> <span class="o">=</span> <span class="n">Arch</span><span class="o">.</span><span class="n">selectObjects</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+<span class="c1"># The result is a list of FreeCAD objects</span>
+<span class="n">FreeCAD</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">exterior_walls</span><span class="p">)</span><span class="si">}</span><span class="s2"> exterior walls.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">wall</span> <span class="ow">in</span> <span class="n">exterior_walls</span><span class="p">:</span>
+    <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="sa">f</span><span class="s2">"- </span><span class="si">{</span><span class="n">wall</span><span class="o">.</span><span class="n">Label</span><span class="si">}</span><span class="s2"> (Length: </span><span class="si">{</span><span class="n">wall</span><span class="o">.</span><span class="n">Length</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+<h3><span id="Arch.selectObjectsFromPipeline.28statements.29"></span><span class="mw-headline" id="Arch.selectObjectsFromPipeline(statements)">Arch.selectObjectsFromPipeline(statements)</span></h3>
+<p>For more complex, multi-step selections, you can use this function to execute a pipeline. It takes a list of <code>ArchSql.ReportStatement</code> objects and returns the final list of FreeCAD DocumentObjects that result from the full pipeline.
+</p><p>This is the programmatic equivalent of using the <b>"Use as Pipeline Step"</b> checkbox in the UI.
+</p><p><b>Example: Find all doors on the "Ground Floor"</b>
+This requires a multi-step process: first find the floor, then find its direct children (like walls), and finally find the children of those objects (the doors).
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span>
+<span class="kn">import</span> <span class="nn">Arch</span>
+<span class="kn">import</span> <span class="nn">ArchSql</span>
+
+<span class="c1"># Step 1: Define the pipeline statements as ReportStatement objects.</span>
+<span class="c1"># The ReportStatement class must be imported from the ArchSql module.</span>
+
+<span class="c1"># Statement 1: Find the parent floor</span>
+<span class="n">stmt1</span> <span class="o">=</span> <span class="n">ArchSql</span><span class="o">.</span><span class="n">ReportStatement</span><span class="p">(</span>
+    <span class="n">query_string</span><span class="o">=</span><span class="s2">"SELECT * FROM document WHERE Label = 'Ground Floor'"</span>
+<span class="p">)</span>
+
+<span class="c1"># Statement 2: Find all direct children of the floor.</span>
+<span class="c1"># Note that is_pipelined=True links this to the output of stmt1.</span>
+<span class="n">stmt2</span> <span class="o">=</span> <span class="n">ArchSql</span><span class="o">.</span><span class="n">ReportStatement</span><span class="p">(</span>
+    <span class="n">query_string</span><span class="o">=</span><span class="s2">"SELECT * FROM CHILDREN(SELECT * FROM document)"</span><span class="p">,</span>
+    <span class="n">is_pipelined</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># Statement 3: Find the children of the walls (the doors) and filter them.</span>
+<span class="n">stmt3</span> <span class="o">=</span> <span class="n">ArchSql</span><span class="o">.</span><span class="n">ReportStatement</span><span class="p">(</span>
+    <span class="n">query_string</span><span class="o">=</span><span class="s2">"SELECT * FROM CHILDREN(SELECT * FROM document) WHERE IfcType = 'Door'"</span><span class="p">,</span>
+    <span class="n">is_pipelined</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># Step 2: Execute the pipeline.</span>
+<span class="c1"># The function takes a list of the statement objects.</span>
+<span class="n">pipeline_statements</span> <span class="o">=</span> <span class="p">[</span><span class="n">stmt1</span><span class="p">,</span> <span class="n">stmt2</span><span class="p">,</span> <span class="n">stmt3</span><span class="p">]</span>
+<span class="n">doors_on_floor</span> <span class="o">=</span> <span class="n">Arch</span><span class="o">.</span><span class="n">selectObjectsFromPipeline</span><span class="p">(</span><span class="n">pipeline_statements</span><span class="p">)</span>
+
+<span class="c1"># The result is the final list of door objects.</span>
+<span class="n">FreeCAD</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">doors_on_floor</span><span class="p">)</span><span class="si">}</span><span class="s2"> doors on the ground floor.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">door</span> <span class="ow">in</span> <span class="n">doors_on_floor</span><span class="p">:</span>
+    <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintMessage</span><span class="p">(</span><span class="sa">f</span><span class="s2">"- </span><span class="si">{</span><span class="n">door</span><span class="o">.</span><span class="n">Label</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
 <div class="docnav">
     <div><span class="mw-default-size" typeof="mw:File"><span><img src="File/Arrow-left.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <span class="mw-default-size" typeof="mw:File"><span><img src="File/Arch_Schedule.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <a href="Arch_Schedule.html" title="Arch Schedule">Schedule</a></div>
     <div><span class="mw-default-size" typeof="mw:File"><span><img src="File/BIM_Preflight.png" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <a href="BIM_Preflight.html" title="BIM Preflight">Preflight</a>
@@ -362,35 +498,35 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20251007111458
+Cached time: 20251007115654
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.132 seconds
-Real time usage: 0.141 seconds
-Preprocessor visited node count: 1335/1000000
-Post&#8208;expand include size: 34953/2097152 bytes
-Template argument size: 11077/2097152 bytes
+CPU time usage: 0.163 seconds
+Real time usage: 0.191 seconds
+Preprocessor visited node count: 1548/1000000
+Post&#8208;expand include size: 36054/2097152 bytes
+Template argument size: 13982/2097152 bytes
 Highest expansion depth: 7/100
-Expensive parser function count: 9/100
+Expensive parser function count: 19/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 5455/5000000 bytes
+Unstrip post&#8208;expand size: 21253/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   28.802      1 -total
- 20.60%    5.932      1 Template:BIM_Tools_navi
- 18.37%    5.290      2 Template:Navigation_menu_2
- 10.13%    2.918     85 Template:Incode
-  9.81%    2.827      8 Template:Code
-  8.21%    2.365      1 Template:Userdocnavi
-  7.74%    2.228      1 Template:PropertyData
-  6.70%    1.930      2 Template:Docnav
-  5.93%    1.707      1 Template:GuiCommand
-  4.71%    1.357      5 Template:CheckBox
+100.00%   37.928      1 -total
+ 16.23%    6.155      1 Template:BIM_Tools_navi
+ 14.93%    5.662     18 Template:Code
+ 14.55%    5.517      2 Template:Navigation_menu_2
+ 11.64%    4.413     91 Template:Incode
+  6.68%    2.535      1 Template:PropertyData
+  6.16%    2.337      1 Template:Userdocnavi
+  4.81%    1.826      1 Template:GuiCommand
+  4.50%    1.708      2 Template:Docnav
+  3.97%    1.504      1 Template:Variable
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:393208-0!canonical and timestamp 20251007111501 and revision id 1656568. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:393208-0!canonical and timestamp 20251007115659 and revision id 1656574. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
