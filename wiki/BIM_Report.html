@@ -139,6 +139,181 @@
 <h3><span class="mw-headline" id="Step_5:_Using_Presets_and_Templates">Step 5: Using Presets and Templates</span></h3>
 <ul><li><b>Report Templates</b> load a full, multi-statement report. In the <b>Report Statements Overview</b>, select a template like "Room and Area Schedule" from the dropdown to instantly load the configuration from Steps 2 &amp; 3. You can save your own reports as new templates for reuse.</li>
 <li><b>Query Presets</b> load a single query into the editor. In the <b>Statement Editor</b>, select a preset like "All Walls" from the dropdown to populate the SQL editor. You can save your own frequently used queries by clicking the <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;">Save...</span> button.</li></ul>
+<h2><span class="mw-headline" id="BIM_SQL_Dialect_Reference">BIM SQL Dialect Reference</span></h2>
+<p>This section provides a detailed reference for the SQL dialect used by the BIM Report tool.
+</p><p><b>Note</b>: The most up-to-date reference for all clauses and functions can always be found in the UI by clicking the <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="index.php?title=Help-browser.svg&amp;filetimestamp=20240704193154&amp;.html" class="mw-file-description"><img src="File/Help-browser.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> Help</span> button within the report's Task Panel editor.
+</p>
+<h3><span class="mw-headline" id="Clauses">Clauses</span></h3>
+<ul><li><code>SELECT</code>: Specifies the columns of data to return. Can use <code>*</code> to select a default identifier for all objects.</li>
+<li><code>FROM</code>: Specifies the data source. In a standalone query, this is always <code>document</code>. In a pipeline, <code>document</code> is a placeholder for the data from the previous step. Can also use the <code>CHILDREN()</code> function.</li>
+<li><code>WHERE</code>: Filters objects based on conditions.</li>
+<li><code>GROUP BY</code>: Groups rows that have the same values into summary rows, typically used with aggregate functions.</li>
+<li><code>ORDER BY</code>: Sorts the final results. Can be followed by <code>ASC</code> (ascending, default) or <code>DESC</code> (descending). Supports sorting by multiple columns.</li>
+<li><code>AS</code>: Creates an alias (a custom name) for a column in the <code>SELECT</code> clause, e.g., <code>SELECT Area AS "My Area"</code>.</li></ul>
+<h4><span class="mw-headline" id="Usage_Notes_for_GROUP_BY_and_ORDER_BY">Usage Notes for GROUP BY and ORDER BY</span></h4>
+<p>The dialect has specific rules for how to use expressions (like functions or arithmetic) in the <code>GROUP BY</code> and <code>ORDER BY</code> clauses.
+</p>
+<ul><li><b>For <code>GROUP BY</code>:</b> When grouping by an expression, you must repeat the entire expression in the <code>GROUP BY</code> clause. Using an alias from the <code>SELECT</code> list is not supported.
+<ul><li>&#9989; <b>Correct:</b> <div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="k">TYPE</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">TYPE</span><span class="p">(</span><span class="o">*</span><span class="p">)</span>
+</pre></div></li>
+<li>&#10060; <b>Incorrect:</b><div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="k">TYPE</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">BimType</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">BimType</span>
+</pre></div></li></ul></li></ul>
+<ul><li><b>For <code>ORDER BY</code>:</b> Conversely, sorting by a raw expression is not supported. To sort by the result of an expression, you <b>must</b> first include it in the <code>SELECT</code> list with an <code>AS</code> alias, and then refer to that alias in the <code>ORDER BY</code> clause.
+<ul><li>&#9989; <b>Correct:</b><div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">Label</span><span class="p">,</span><span class="w"> </span><span class="k">LOWER</span><span class="p">(</span><span class="n">Label</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">sort_key</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">sort_key</span>
+</pre></div></li>
+<li>&#10060; <b>Incorrect:</b><div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">Label</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">LOWER</span><span class="p">(</span><span class="n">Label</span><span class="p">)</span>
+</pre></div></li></ul></li></ul>
+<h3><span class="mw-headline" id="Functions">Functions</span></h3>
+<p>The dialect includes a library of built-in functions for data manipulation and analysis.
+</p>
+<table class="wikitable">
+<tbody><tr>
+<th>Category
+</th>
+<th>Function
+</th>
+<th>Description
+</th></tr>
+<tr>
+<td><b>Aggregate</b>
+</td>
+<td><code>COUNT(property OR *)</code>
+</td>
+<td>Counts the number of objects. <code>COUNT(*)</code> counts all rows; <code>COUNT(property)</code> counts rows where the specified property is not <code>NULL</code>.
+</td></tr>
+<tr>
+<td>
+</td>
+<td><code>SUM(property)</code>
+</td>
+<td>Calculates the sum of a numerical property.
+</td></tr>
+<tr>
+<td>
+</td>
+<td><code>MIN(property)</code>
+</td>
+<td>Finds the minimum value of a numerical property.
+</td></tr>
+<tr>
+<td>
+</td>
+<td><code>MAX(property)</code>
+</td>
+<td>Finds the maximum value of a numerical property.
+</td></tr>
+<tr>
+<td><b>Hierarchical</b>
+</td>
+<td><code>PARENT(*)</code>
+</td>
+<td>Returns the architecturally significant parent of an object (e.g., the Wall a Window is in), transparently skipping over generic groups.
+</td></tr>
+<tr>
+<td>
+</td>
+<td><code>CHILDREN(subquery)</code>
+</td>
+<td>A function used in the <code>FROM</code> clause. Returns all children of objects found by the subquery, resolving both containment (<code>.Group</code>) and hosting (<code>.Hosts</code>) relationships.
+</td></tr>
+<tr>
+<td><b>Utility</b>
+</td>
+<td><code>TYPE(*)</code>
+</td>
+<td>Returns the object's user-facing type, as determined by its proxy (e.g., <code>Wall</code>, <code>Space</code>, <code>Part::Box</code>).
+</td></tr>
+<tr>
+<td>
+</td>
+<td><code>CONVERT(quantity, 'unit')</code>
+</td>
+<td>Converts a FreeCAD Quantity object to a new unit and returns it as a raw number. Example: <code>CONVERT(Area, 'm^2')</code>.
+</td></tr>
+<tr>
+<td><b>String</b>
+</td>
+<td><code>LOWER(property)</code>
+</td>
+<td>Converts a text property to lowercase.
+</td></tr>
+<tr>
+<td>
+</td>
+<td><code>UPPER(property)</code>
+</td>
+<td>Converts a text property to uppercase.
+</td></tr>
+<tr>
+<td>
+</td>
+<td><code>CONCAT(val1, val2, ...)</code>
+</td>
+<td>Joins multiple text values and properties together into a single string.
+</td></tr></tbody></table>
+<h3><span class="mw-headline" id="Property_Access">Property Access</span></h3>
+<p>You can access any property of an object, including nested data structures.
+</p>
+<ul><li><b>Direct Access:</b> Access a simple property directly by its name.
+<ul><li>Example: <code>Label</code>, <code>IfcType</code></li></ul></li>
+<li><b>Nested Access:</b> Use dot notation to access sub-properties.
+<ul><li>Example: <code>Shape.Volume</code>, <code>Placement.Base.z</code></li></ul></li>
+<li><b>Chained Access:</b> Chain property access onto the result of a function, most commonly <code>PARENT()</code>.
+<ul><li>Example: <code>PARENT(*).Label</code>, <code>PARENT(*).PARENT(*).Height</code></li></ul></li></ul>
+<h3><span class="mw-headline" id="Operators">Operators</span></h3>
+<table class="wikitable">
+<tbody><tr>
+<th>Type
+</th>
+<th>Operators
+</th>
+<th>Description
+</th></tr>
+<tr>
+<td><b>Comparison</b>
+</td>
+<td><code>{{{1}}}</code>, <code>{{{1}}}</code>, <code>&gt;</code>, <code>&lt;</code>, <code>{{{1}}}</code>, <code>{{{1}}}</code>
+</td>
+<td>Standard comparison operators.
+</td></tr>
+<tr>
+<td>
+</td>
+<td><code>LIKE</code>
+</td>
+<td>Case-insensitive pattern matching. Use <code>%</code> for multiple characters and <code>_</code> for a single character.
+</td></tr>
+<tr>
+<td>
+</td>
+<td><code>IS NULL</code>, <code>IS NOT NULL</code>
+</td>
+<td>Checks if a property has a value.
+</td></tr>
+<tr>
+<td>
+</td>
+<td><code>IN (value1, value2, ...)</code>
+</td>
+<td>Checks if a property's value is in a given list of literals.
+</td></tr>
+<tr>
+<td><b>Logical</b>
+</td>
+<td><code>AND</code>, <code>OR</code>
+</td>
+<td>Used in the <code>WHERE</code> clause to combine multiple conditions.
+</td></tr>
+<tr>
+<td><b>Arithmetic</b>
+</td>
+<td><code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>
+</td>
+<td>Perform calculations on numerical properties. Obeys standard operator precedence; use <code>()</code> to override.
+</td></tr></tbody></table>
+<h3><span class="mw-headline" id="Literals_and_Quotes">Literals and Quotes</span></h3>
+<p>Both single quotes (<code>'</code>) and double quotes (<code>"</code>) can be used for text literals (strings). For example, <code>{{{1}}}</code> and <code>{{{1}}}</code> are equivalent.
+</p>
 <div class="docnav">
     <div><span class="mw-default-size" typeof="mw:File"><span><img src="File/Arrow-left.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <span class="mw-default-size" typeof="mw:File"><span><img src="File/Arch_Schedule.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <a href="Arch_Schedule.html" title="Arch Schedule">Schedule</a></div>
     <div><span class="mw-default-size" typeof="mw:File"><span><img src="File/BIM_Preflight.png" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <a href="BIM_Preflight.html" title="BIM Preflight">Preflight</a>
@@ -187,35 +362,35 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20251007105759
+Cached time: 20251007111458
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.112 seconds
-Real time usage: 0.121 seconds
-Preprocessor visited node count: 807/1000000
-Post&#8208;expand include size: 32659/2097152 bytes
-Template argument size: 10282/2097152 bytes
+CPU time usage: 0.132 seconds
+Real time usage: 0.141 seconds
+Preprocessor visited node count: 1335/1000000
+Post&#8208;expand include size: 34953/2097152 bytes
+Template argument size: 11077/2097152 bytes
 Highest expansion depth: 7/100
-Expensive parser function count: 5/100
+Expensive parser function count: 9/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 3058/5000000 bytes
+Unstrip post&#8208;expand size: 5455/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   26.162      1 -total
- 26.16%    6.843      1 Template:BIM_Tools_navi
- 23.63%    6.183      2 Template:Navigation_menu_2
- 12.05%    3.154      4 Template:Code
- 11.88%    3.107      1 Template:Userdocnavi
-  8.23%    2.153      1 Template:PropertyData
-  7.24%    1.895      1 Template:GuiCommand
-  6.34%    1.659      2 Template:Docnav
-  5.50%    1.440      5 Template:CheckBox
-  5.42%    1.417     19 Template:Button
+100.00%   28.802      1 -total
+ 20.60%    5.932      1 Template:BIM_Tools_navi
+ 18.37%    5.290      2 Template:Navigation_menu_2
+ 10.13%    2.918     85 Template:Incode
+  9.81%    2.827      8 Template:Code
+  8.21%    2.365      1 Template:Userdocnavi
+  7.74%    2.228      1 Template:PropertyData
+  6.70%    1.930      2 Template:Docnav
+  5.93%    1.707      1 Template:GuiCommand
+  4.71%    1.357      5 Template:CheckBox
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:393208-0!canonical and timestamp 20251007105815 and revision id 1656564. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:393208-0!canonical and timestamp 20251007111501 and revision id 1656568. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
