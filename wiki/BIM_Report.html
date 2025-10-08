@@ -7,7 +7,7 @@
     <div><a href="BIM_Workbench.html" title="BIM Workbench">BIM</a>
  <span class="mw-default-size" typeof="mw:File"><span><img src="File/Workbench_BIM.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span></div>
 </div>
-<div id="itsfree" class="warning-box">THIS COMMAND IS EXPERIMENTAL AND NOT PART OF FREECAD. It is a work in progress PR (<a rel="nofollow" class="external free" href="https://github.com/FreeCAD/FreeCAD/pull/24078">https://github.com/FreeCAD/FreeCAD/pull/24078</a>) that needs to be reviewed and tested. This is a placeholder to host documentation for testers.</div>
+<div id="itsfree" class="warning-box">THIS COMMAND IS EXPERIMENTAL AND NOT PART OF FREECAD. It is a <b>work in progress PR</b> (<a rel="nofollow" class="external free" href="https://github.com/FreeCAD/FreeCAD/pull/24078">https://github.com/FreeCAD/FreeCAD/pull/24078</a>) that needs to be reviewed and tested. This page is a placeholder to host documentation for testers.</div>
 <table class="fcinfobox wikitable ct" width="100%" style="float: right; width: 230px; margin-left: 1em">
 <tbody><tr>
 <td class="ctTitle" style="font-weight: bold; font-size: 125%;">
@@ -399,6 +399,30 @@ This query produces a formatted list of all spaces, grouped by the floor they be
 <span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Space'</span><span class="w"> </span>
 <span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="ss">"Floor"</span><span class="p">,</span><span class="w"> </span><span class="ss">"Room Name"</span>
 </pre></div>
+<h2><span class="mw-headline" id="Usage_Notes">Usage Notes</span></h2>
+<h3><span class="mw-headline" id="Units">Units</span></h3>
+<p>When you select a property that has units (a `Quantity`), such as `Length` or `Area`, the BIM Report engine returns the raw numerical value of that property as it is stored internally in the FreeCAD document. FreeCAD's internal units are always based on millimeters (<code>mm</code>).
+</p><p>This means the default output will be in <code>mm</code> for length, <code>mm&sup2;</code> for area, and <code>mm&sup3;</code> for volume, regardless of your current unit schema or user preferences. The automatically generated column header will correctly reflect this internal unit.
+</p><p><b>Example: Default Behavior</b>
+</p><p>If you run this simple query on a space that is 1 meter by 1 meter:
+</p>
+<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">Label</span><span class="p">,</span><span class="w"> </span><span class="n">Area</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Space'</span>
+</pre></div>
+<p>The resulting spreadsheet will show:
+</p>
+<ul><li><b>Header:</b> <code>Area (mm&sup2;)</code></li>
+<li><b>Value:</b> <code>1000000.0</code></li></ul>
+<h4><span id="Using_CONVERT.28.29"></span><span class="mw-headline" id="Using_CONVERT()">Using <code>CONVERT()</code></span></h4>
+<p>To get the results in the units you desire, you can use the <code>CONVERT()</code> function, which provides explicit control over the output. To obtain the area in square meters, modify the query as follows:
+</p>
+<div class="mw-highlight mw-highlight-lang-sql mw-content-ltr" dir="ltr"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">Label</span><span class="p">,</span><span class="w"> </span><span class="k">CONVERT</span><span class="p">(</span><span class="n">Area</span><span class="p">,</span><span class="w"> </span><span class="s1">'m^2'</span><span class="p">)</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="ss">"Area (m&sup2;)"</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">document</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">IfcType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'Space'</span>
+</pre></div>
+<p>This query now produces the result in the desired unit:
+</p>
+<ul><li><b>Header:</b> <code>Area (m&sup2;)</code></li>
+<li><b>Value:</b> <code>1.0</code></li></ul>
+<p>Using <code>CONVERT()</code> guarantees that your report's output is unambiguous and that any calculations you perform within the query (e.g., <code>SUM(CONVERT(Area, 'm^2'))</code>) are mathematically correct.
+</p>
 <h2><span class="mw-headline" id="Scripting_API">Scripting API</span></h2>
 <p>The BIM Report engine is fully accessible through Python, allowing you to integrate its advanced query capabilities into your own scripts and automations.
 </p>
@@ -552,35 +576,35 @@ This is a classic hierarchical problem that requires multiple steps. The goal is
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20251008160006
+Cached time: 20251008220006
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.236 seconds
-Real time usage: 2.487 seconds
-Preprocessor visited node count: 1722/1000000
-Post&#8208;expand include size: 39482/2097152 bytes
-Template argument size: 15201/2097152 bytes
+CPU time usage: 0.237 seconds
+Real time usage: 2.099 seconds
+Preprocessor visited node count: 1829/1000000
+Post&#8208;expand include size: 39918/2097152 bytes
+Template argument size: 15459/2097152 bytes
 Highest expansion depth: 7/100
-Expensive parser function count: 22/100
+Expensive parser function count: 24/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 25597/5000000 bytes
+Unstrip post&#8208;expand size: 27141/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00% 2313.355      1 -total
- 98.18% 2271.204     21 Template:Code
-  0.35%    8.014      1 Template:BIM_Tools_navi
-  0.28%    6.429      2 Template:Navigation_menu_2
-  0.25%    5.894    101 Template:Incode
-  0.13%    3.060      1 Template:PropertyData
-  0.12%    2.694      1 Template:Userdocnavi
-  0.10%    2.426      2 Template:Docnav
-  0.10%    2.305      1 Template:GuiCommand
-  0.09%    2.154      7 Template:CheckBox
+100.00% 1915.886      1 -total
+ 97.66% 1871.130     23 Template:Code
+  0.47%    8.964      1 Template:BIM_Tools_navi
+  0.33%    6.293      2 Template:Navigation_menu_2
+  0.29%    5.628    113 Template:Incode
+  0.19%    3.681      7 Template:CheckBox
+  0.18%    3.414      1 Template:PropertyData
+  0.14%    2.728      1 Template:Userdocnavi
+  0.13%    2.570      2 Template:Docnav
+  0.12%    2.386      1 Template:GuiCommand
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:393208-0!canonical and timestamp 20251008160006 and revision id 1657146. Rendering was triggered because: api-parse
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:393208-0!canonical and timestamp 20251008220006 and revision id 1657148. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="site.js"></script>
