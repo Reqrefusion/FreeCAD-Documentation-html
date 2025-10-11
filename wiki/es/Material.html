@@ -1,0 +1,818 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Material/es</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="es" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-Material&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
+<li><a href="../de/Material.html" class="mw-pt-progress mw-pt-progress--low" title="Material (1% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="../Material.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="Material (100% translated)" lang="en" dir="ltr">English</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--low" lang="es" dir="ltr">espa&ntilde;ol</span></li>
+<li><a href="../fr/Material.html" class="mw-pt-progress mw-pt-progress--low" title="Mat&eacute;riau (1% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../it/Material.html" class="mw-pt-progress mw-pt-progress--low" title="Materiale (1% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="../pl/Material.html" class="mw-pt-progress mw-pt-progress--high" title="Materia&#322; (96% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../pt-br/Material.html" class="mw-pt-progress mw-pt-progress--low" title="Material (1% translated)" lang="pt-BR" dir="ltr">portugu&ecirc;s do Brasil</a></li>
+<li><a href="../cs/Material.html" class="mw-pt-progress mw-pt-progress--low" title="Materi&aacute;l (1% translated)" lang="cs" dir="ltr">&#269;e&scaron;tina</a></li>
+<li><a href="../ru/Material.html" class="mw-pt-progress mw-pt-progress--low" title="&#1052;&#1072;&#1090;&#1077;&#1088;&#1080;&#1072;&#1083; (1% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li></ul></div>
+<div class="warning-box">
+<p>This documentation is not finished. Please help and contribute documentation.
+</p><p><a href="../GuiCommand_model.html" title="GuiCommand model">GuiCommand model</a> explains how commands should be documented. Browse <a href="../Category;UnfinishedDocu.html" title="Category:UnfinishedDocu">Category:UnfinishedDocu</a> to see more incomplete pages like this one. See <a href="../Category;Command_Reference.html" title="Category:Command Reference">Category:Command Reference</a> for all commands.
+</p><p>See <a href="../WikiPages.html" title="WikiPages">WikiPages</a> to learn about editing the wiki pages, and go to <a href="../Help_FreeCAD.html" title="Help FreeCAD">Help FreeCAD</a> to learn about other ways in which you can contribute.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Overview">Overview</span></h2>
+</div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>This page is about the Material data system in FreeCAD.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>It is currently being edited to reflect changes to the Material system currently under development.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Abstract">Abstract</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>In a departure from how it was implemented in previous versions, materials are no longer implemented as a simple dictionary. The previous system had the advantage of simplicity, with the disadvantage of a limited range when describing material properties.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>In the new system, properties are defined separately as a series of YAML files. Properties are then combined into a property description with values specified for the required properties. Newer data types, such as arrays, mean that this can no longer be accessed using simple dictionaries. Rather, an API is used to access the material property and data values. This allows for greater capabilities than previously possible.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Tools">Tools</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>There are some good resources out there to handle materials more easily:
+</p>
+<ul><li><a rel="nofollow" class="external text" href="http://www.dimensionengine.com/">Units calculator</a> to get your material information in the units needed for FreeCAD</li>
+<li><a rel="nofollow" class="external text" href="http://www.matweb.com/">http://www.matweb.com/</a> <a rel="nofollow" class="external text" href="http://matweb.com/reference/terms.aspx">free of charge</a> Material database with thousands of material values</li>
+<li><a rel="nofollow" class="external text" href="https://www.uuidgenerator.net/">UUID generator</a> to create unique UUIDs for new models. A Version 4 UUID is recommended.</li></ul>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Properties">Properties</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>In contrast with the previous materials standard, material properties are clearly defined. They have been designed to be granular and extensible. Properties can inherit multiple properties, adding only what is different. This will improve searching and simplify implementation.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Currently, there is no dedicated property editor. It can be edited using any YAML tool, or a simple editor such as nano or Notepad.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>The property definition files are referred to as models.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="Example_Property_Model_YAML_file">Example Property Model YAML file</span></h3>
+</div>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">Model</span><span class="p">:</span>
+  <span class="n">Name</span><span class="p">:</span> <span class="s1">'Linear Elastic'</span>
+  <span class="n">UUID</span><span class="p">:</span> <span class="s1">'7b561d1d-fb9b-44f6-9da9-56a4f74d7536'</span>
+  <span class="n">URL</span><span class="p">:</span> <span class="s1">'https://en.wikipedia.org/wiki/Linear_elasticity'</span>
+  <span class="n">Description</span><span class="p">:</span> <span class="o">&gt;</span>
+    <span class="n">Materials</span> <span class="n">that</span> <span class="n">are</span> <span class="n">linearly</span> <span class="n">elastic</span> <span class="n">obey</span> <span class="n">Hooke</span><span class="s1">'s law i.e. the stress and</span>
+    <span class="n">strain</span> <span class="n">relationship</span> <span class="ow">is</span> <span class="n">linear</span>
+  <span class="n">DOI</span><span class="p">:</span> <span class="s2">"10.1016/j.ijplas.2004.06.004"</span>
+  <span class="n">Inherits</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">Density</span><span class="p">:</span>
+      <span class="n">UUID</span><span class="p">:</span> <span class="s1">'454661e5-265b-4320-8e6f-fcf6223ac3af'</span>
+    <span class="o">-</span> <span class="n">IsotropicLinearElastic</span><span class="p">:</span>
+      <span class="n">UUID</span><span class="p">:</span> <span class="s1">'f6f9e48c-b116-4e82-ad7f-3659a9219c50'</span>
+  <span class="n">AngleOfFriction</span><span class="p">:</span>
+    <span class="n">Type</span><span class="p">:</span> <span class="s1">'Quantity'</span>
+    <span class="n">Units</span><span class="p">:</span> <span class="s1">'deg'</span>
+    <span class="n">URL</span><span class="p">:</span> <span class="s1">'https://en.wikipedia.org/wiki/Friction#Angle_of_friction'</span>
+    <span class="n">Description</span><span class="p">:</span> <span class="o">&gt;</span>
+      <span class="n">Further</span> <span class="n">information</span> <span class="n">can</span> <span class="n">be</span> <span class="n">found</span> <span class="n">at</span>
+      <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">en</span><span class="o">.</span><span class="n">wikipedia</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">wiki</span><span class="o">/</span><span class="n">Mohr</span><span class="o">%</span><span class="n">E2</span><span class="o">%</span><span class="mi">80</span><span class="o">%</span><span class="mi">93</span><span class="n">Coulomb_theory</span>
+  <span class="n">CompressiveStrength</span><span class="p">:</span>
+    <span class="n">Type</span><span class="p">:</span> <span class="s1">'Quantity'</span>
+    <span class="n">Units</span><span class="p">:</span> <span class="s1">'kPa'</span>
+    <span class="n">URL</span><span class="p">:</span> <span class="s1">'https://en.wikipedia.org/wiki/Compressive_strength'</span>
+    <span class="n">Description</span><span class="p">:</span> <span class="s2">"Compressive strength in [FreeCAD Pressure unit]"</span>
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Rather than a large monolithic definition file, properties are granular, typically focused on a specific task. Models fall into two basic categories:
+</p>
+<ul><li>Physical models: identified by the keyword 'Model' as shown here, these define physical properties of the material</li>
+<li>Appearance models: identified by the keyword 'AppearanceModel', these define how the material will be displayed.</li></ul>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Each model has a unique identifier, or UUID, that is used to reference it internally. Consistency of this UUID is important as changing it for one document can also affect other documents. As a general rule, additions to the definition don't require an identifier change, as they can still be used in other documents, but value changes would require a new UUID.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>An optional URL can link to a detailed description of the material property being described. Given that this is a description of the property and not the material itself, it should be pretty generic at this point. A shorter description, typically one or two lines, can be included in the model description as well.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Each material can also include a DOI (Digital Object Identifier) that links through <a rel="nofollow" class="external free" href="https://www.doi.org/">https://www.doi.org/</a> to a research publication or similar item of interest.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="Inheritance">Inheritance</span></h3>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Inheritance is a new capability. There are two principal use cases.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>One use case is to provide the ability to tweak models without breaking other documents. For example, in cases where a property type is different, you can define a derived property model that only changes that specific property without breaking any existing documents that reference it.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>A second use case is to group properties in a searchable fashion. For example, all physical objects have density, and in many cases, that will be all the information available for that material. In cases where linear elasticity properties are available, we would want to include those as well. In yet another example where the elasticity is different in different directions, such as wood, we can define yet another model that is derived from density. Information is not duplicated across the 3 property models. Additionally, we can do a search for materials that have the density property and return all three models.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>The example shown above inherits from two other property definitions. It does this by specifying the 'Inherits' keyword followed by a list of the model names and identifiers. If there is no inheritance, this section may be omitted.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="Properties_2">Properties</span></h3>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Properties are defined by providing the name of the property, followed by a series of descriptors. The 'Type' descriptor is always required. The remaining descriptors are only required to complete the Type information. The URL and description are optional but recommended where possible.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<table class="wikitable" style="width:80%;">
+<caption>Property Descriptors
+</caption>
+<tbody><tr>
+<th>Name
+</th>
+<th>Description
+</th></tr>
+<tr>
+<td>Type
+</td>
+<td>The property type. See the next section
+</td></tr>
+<tr>
+<td>Columns
+</td>
+<td>Columns in 2D or 3D arrays. See description below.
+</td></tr>
+<tr>
+<td>Units
+</td>
+<td>The units associated with the Quantity type.
+</td></tr>
+<tr>
+<td>URL
+</td>
+<td>A link to a detailed description of the property.
+</td></tr>
+<tr>
+<td>Description
+</td>
+<td>A short description of the property.
+</td></tr></tbody></table>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="Property_Types">Property Types</span></h3>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<table class="wikitable" style="width:80%;">
+<caption>Property Types
+</caption>
+<tbody><tr>
+<th>Type Name
+</th>
+<th>Description
+</th></tr>
+<tr>
+<td>String
+</td>
+<td>A character string.
+</td></tr>
+<tr>
+<td>Integer
+</td>
+<td>An unsigned integer.
+</td></tr>
+<tr>
+<td>Float
+</td>
+<td>A floating point number.
+</td></tr>
+<tr>
+<td>URL
+</td>
+<td>A URL such as <a rel="nofollow" class="external free" href="https://www.freecad.org">https://www.freecad.org</a>.
+</td></tr>
+<tr>
+<td>Quantity
+</td>
+<td>A FreeCAD quantity that includes a floating-point numeric value and units appropriate to the property.
+</td></tr>
+<tr>
+<td>Color
+</td>
+<td>A string in the form of (r,g,b,a) or (r,g,b) where r=red, g=green, b=blue, a=alpha as floating point values between 0 and 1.
+</td></tr>
+<tr>
+<td>File
+</td>
+<td>Path to a file.
+</td></tr>
+<tr>
+<td>FileList
+</td>
+<td>A list of file paths. See description below.
+</td></tr>
+<tr>
+<td>Image
+</td>
+<td>Embedded image file saved as Base64. This can result in a very large material card file.
+</td></tr>
+<tr>
+<td>ImageList
+</td>
+<td>A list of embedded image files saved as Base64. This can result in a very large material card file. See description below.
+</td></tr>
+<tr>
+<td>List
+</td>
+<td>A list of string values.
+</td></tr>
+<tr>
+<td>MultiLineString
+</td>
+<td>A character string that spans multiple lines.
+</td></tr>
+<tr>
+<td>2DArray
+</td>
+<td>A 2-dimensional array. See description below.
+</td></tr>
+<tr>
+<td>3DArray
+</td>
+<td>A 3-dimensional array. See description below.
+</td></tr></tbody></table>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="Lists">Lists</span></h3>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>There are three list types: 'List', 'FileList', and 'ImageList'. In reality, all three are the same except that they use different editors. For the 'FileList', each entry has a file chooser. Similarly, the 'ImageList' opens the image editor. 'ImageList' is different in that it is a very large string representation of an image and may produce extremely large material card files. Use with caution.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="2D_Arrays">2D Arrays</span></h3>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Arrays have some unique properties compared to other property types. Each of the array columns needs to be described, necessitating the addition of the 'Columns' property. The columns property is then a list of properties describing each column.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>2D arrays have a minimum of 2 columns and only support the 'Quantity' property type. This may be expanded to other property types in the future.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Values in the array are specified by providing a value from the first column.
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">TestArray2D3Column</span><span class="p">:</span>
+  <span class="n">Type</span><span class="p">:</span> <span class="s1">'2DArray'</span>
+  <span class="n">Columns</span><span class="p">:</span>
+    <span class="n">Temperature</span><span class="p">:</span>
+      <span class="n">Type</span><span class="p">:</span> <span class="s1">'Quantity'</span>
+      <span class="n">Units</span><span class="p">:</span> <span class="s1">'C'</span>
+      <span class="n">URL</span><span class="p">:</span> <span class="s1">''</span>
+      <span class="n">Description</span><span class="p">:</span> <span class="s2">"Temperature"</span>
+    <span class="n">Density</span><span class="p">:</span>
+      <span class="n">Type</span><span class="p">:</span> <span class="s1">'Quantity'</span>
+      <span class="n">Units</span><span class="p">:</span> <span class="s1">'kg/m^3'</span>
+      <span class="n">URL</span><span class="p">:</span> <span class="s1">'https://en.wikipedia.org/wiki/Density'</span>
+      <span class="n">Description</span><span class="p">:</span> <span class="s2">"Density in [FreeCAD Density unit]"</span>
+    <span class="n">InitialYieldStress</span><span class="p">:</span>
+      <span class="n">Type</span><span class="p">:</span> <span class="s1">'Quantity'</span>
+      <span class="n">Units</span><span class="p">:</span> <span class="s1">'kPa'</span>
+      <span class="n">URL</span><span class="p">:</span> <span class="s1">''</span>
+      <span class="n">Description</span><span class="p">:</span> <span class="o">&gt;</span>
+        <span class="n">Saturation</span> <span class="n">stress</span> <span class="k">for</span> <span class="n">Voce</span> <span class="n">isotropic</span> <span class="n">hardening</span> <span class="p">[</span><span class="n">FreeCAD</span> <span class="n">Pressure</span> <span class="n">unit</span><span class="p">]</span>
+  <span class="n">URL</span><span class="p">:</span> <span class="s1">''</span>
+  <span class="n">Description</span><span class="p">:</span> <span class="o">&gt;</span>
+    <span class="mi">2</span> <span class="n">Dimensional</span> <span class="n">array</span> <span class="n">showing</span> <span class="n">density</span> <span class="ow">and</span> <span class="n">initial</span> <span class="k">yield</span> <span class="n">stress</span> <span class="k">with</span> <span class="n">temperature</span>
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="3D_Arrays">3D Arrays</span></h3>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>3D arrays are similar in implementation to 2D arrays described in the previous sections. There is a 'Columns' keyword followed by a list of properties to describe the columns. The first column describes the depth or 3rd dimension of the array, with the remaining columns describing the remaining columns. This can be thought of as an indexed list of 2-dimensional arrays.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Since a 2-dimensional array requires a minimum of 2 dimensions, this will require a minimum of 3 columns.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Values in the array are accessed by first specifying the depth, then the value from the first column of the 2D array (the second column here).
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">TestArray3D</span><span class="p">:</span>
+  <span class="n">Type</span><span class="p">:</span> <span class="s1">'3DArray'</span>
+  <span class="n">Columns</span><span class="p">:</span>
+    <span class="n">Temperature</span><span class="p">:</span>
+      <span class="n">Type</span><span class="p">:</span> <span class="s1">'Quantity'</span>
+      <span class="n">Units</span><span class="p">:</span> <span class="s1">'C'</span>
+      <span class="n">URL</span><span class="p">:</span> <span class="s1">''</span>
+      <span class="n">Description</span><span class="p">:</span> <span class="s2">"Temperature"</span>
+    <span class="n">Stress</span><span class="p">:</span>
+      <span class="n">Type</span><span class="p">:</span> <span class="s1">'Quantity'</span>
+      <span class="n">Units</span><span class="p">:</span> <span class="s1">'MPa'</span>
+      <span class="n">URL</span><span class="p">:</span> <span class="s1">''</span>
+      <span class="n">Description</span><span class="p">:</span> <span class="s2">"Stress"</span>
+    <span class="n">Strain</span><span class="p">:</span>
+      <span class="n">Type</span><span class="p">:</span> <span class="s1">'Quantity'</span>
+      <span class="n">Units</span><span class="p">:</span> <span class="s1">'MPa'</span>
+      <span class="n">URL</span><span class="p">:</span> <span class="s1">''</span>
+      <span class="n">Description</span><span class="p">:</span> <span class="s2">"Strain"</span>
+  <span class="n">URL</span><span class="p">:</span> <span class="s1">''</span>
+  <span class="n">Description</span><span class="p">:</span> <span class="o">&gt;</span>
+    <span class="mi">3</span> <span class="n">Dimensional</span> <span class="n">array</span> <span class="n">showing</span> <span class="n">stress</span> <span class="ow">and</span> <span class="n">strain</span> <span class="k">as</span>
+    <span class="n">a</span> <span class="n">function</span> <span class="n">of</span> <span class="n">temperature</span>
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="A_note_about_arrays">A note about arrays</span></h3>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>These are a new feature, not previously available. Many capabilities may be added in the future that aren't currently implemented. For example, arrays with columns of strings are potentially useful but not currently implemented.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Interpolation is an important feature that isn't currently implemented. For example, an array with row entry values of 1 and 2 will only return exact matches. So a lookup of 1.5 will return an error. In the future, the arrays will determine an approximate value by interpolating from available data.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Material_Database">Material Database</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Given that the above standard is implemented, it wouldn't make sense to store all the properties again and again to objects. Basically, we can build up a Material database with the Name as a primary key. So if you have no special needs for your material, you just define e.g. Name=Steel, and FreeCAD can retrieve all properties from that DB. Every additional property you set in the map overrides the one from the DB.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>In the future, we can host that database somewhere on the Web and build up a general open-source material database.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>At the moment, I think of a database compiled in a mini dataset with a set of "basic" materials and its basic properties, and a SQLite-based full version.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Material.py">Material.py</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Since handling material properties is tedious work, we should implement a Python front-end module called <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Material.py</span> [<a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/blob/master/src/Mod/Material/Material.py">source</a>]. This will be the place to implement all kinds of helper methods for material handling.
+</p>
+<ul><li>Calculation of mass out of volume and density</li>
+<li>Translation in different unit systems</li>
+<li>Calculation needed in a special application (such as FEM)</li>
+<li>And anything else we don't know yet</li></ul>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>The module should be implemented in such a way that it can run in FreeCAD or stand alone on the command line (material-property-map has to be given as a Python map).
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="The_FreeCAD_material_card_file_format">The FreeCAD material card file format</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Working with materials often involves importing/exporting material definitions. Therefore, a file format is needed. Since we have only a key/value form, we can use a simple and easy-to-read to read and parse file format. Therefore, the <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/INI_file">ini-file</a> format is chosen. It's standardized, and there are already parsers available. For example, the <a rel="nofollow" class="external text" href="https://docs.python.org/2/library/configparser.html">Config parser module in Python</a>.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Each material definition resides in a file with the ending <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">.FCMat</span>. Some of these files are part of the FreeCAD source and get compiled into the binary. This is to save overhead in distribution and access. But also, files can be placed and searched in different places to allow additional non-standard material definitions.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="Example_.FCMat_file">Example .FCMat file</span></h3>
+</div>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="p">;</span> <span class="n">last</span> <span class="n">modified</span> <span class="mi">1</span> <span class="n">April</span> <span class="mi">2001</span> <span class="n">by</span> <span class="n">John</span> <span class="n">Doe</span>
+
+<span class="n">Name</span><span class="o">=</span><span class="n">Steel_Cast</span>
+<span class="n">Father</span><span class="o">=</span><span class="n">Steel</span>
+<span class="n">Source</span><span class="o">=</span><span class="n">Some</span> <span class="n">material</span> <span class="n">book</span> <span class="n">everyone</span> <span class="n">knows</span> <span class="p">(</span><span class="ow">or</span> <span class="ow">not</span><span class="p">);</span> <span class="n">Some</span> <span class="n">comment</span>
+
+<span class="p">[</span><span class="n">EN10027</span><span class="p">]</span>
+<span class="p">;</span> <span class="n">steel</span> <span class="n">standard</span> <span class="n">EN</span> <span class="mi">10027</span><span class="o">-</span><span class="mi">1</span>
+<span class="n">Name</span><span class="o">=</span><span class="n">S235JR</span><span class="o">+</span><span class="n">AR</span>
+
+<span class="p">[</span><span class="n">Graphic</span><span class="p">]</span>
+<span class="n">EmissiveColor</span> <span class="o">=</span> <span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span>
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Material_properties">Material properties</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Here's the description of the agreed material properties. Feel free to add a subsection for the material properties of your field of expertise.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="General">General</span></h3>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<table class="wikitable" style="width:80%;">
+<caption>General material properties
+</caption>
+<tbody><tr>
+<th>Property name
+</th>
+<th>Description
+</th>
+<th>Unit/Data-Type
+</th></tr>
+<tr>
+<td>Name
+</td>
+<td>Unique name of the property, following the rules described above</td>
+<td>ASCII string 7-bit
+</td></tr>
+<tr>
+<td>Father
+</td>
+<td>Name of the material group this material belongs to. If defined, this material inherits all the father's properties. Thus, if not defined, the father's properties will be used.</td>
+<td>ASCII string 7-bit
+</td></tr>
+<tr>
+<td>Description
+</td>
+<td>A placeholder for a longer description of the material</td>
+<td>ASCII string 7-bit
+</td></tr>
+<tr>
+<td>SpecificWeight
+</td>
+<td>The specific weight (also known as the unit weight) is the weight per unit volume of a material. see: <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Specific_weight">Specific weight</a></td>
+<td>N/m^3
+</td></tr>
+<tr>
+<td>Vendor
+</td>
+<td>Specifies the brand or vendor of the material</td>
+<td>ASCII string 7-bit
+</td></tr>
+<tr>
+<td>ProductURL
+</td>
+<td>An URL where to find more information about the material</td>
+<td>ASCII string 7-bit
+</td></tr>
+<tr>
+<td>SpecificPrice
+</td>
+<td>The price per unit of this material. Units can vary a lot (USD/m<math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><msup> <mrow data-mjx-texclass="ORD"><mn>3</mn></mrow></msup></math>, EUR/piece, etc...)</td>
+<td>ASCII string 7-bit
+</td></tr></tbody></table>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p><b>ToDos:</b> add some properties with an ordering system for materials (metal, alloy, mineral, wood, ...)
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="Mechanical">Mechanical</span></h3>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<table class="wikitable" style="width:80%;">
+<caption>Material properties used in mechanical or structural engineering
+</caption>
+<tbody><tr>
+<th>Property name
+</th>
+<th>Description
+</th>
+<th>Unit/Data-Type
+</th></tr>
+<tr>
+<td>Young's Modulus
+</td>
+<td>Young's modulus, also known as the tensile modulus or elastic modulus, is a measure of the stiffness of an elastic material and is a quantity used to characterize materials. See: <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Young%27s_modulus">Young's modulus</a>
+</td>
+<td>N/(mm^2) (MPa)
+</td></tr>
+<tr>
+<td>Poisson's Ratio
+</td>
+<td>The lateral contraction of materials under tension as a fraction of their elongation. See: <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Poisson%27s_ratio">Poisson's Ratio</a>
+</td>
+<td>dimensionless (-)
+</td></tr>
+<tr>
+<td>Yield Strength
+</td>
+<td>The stress at which a ductile material (like steel) starts to develop plastic (irreversible) deformation. See: <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Yield_(engineering)">Yield Strength</a>
+</td>
+<td>N/(mm^2) (MPa)
+</td></tr>
+<tr>
+<td>Ultimate Tensile Strength (UTS)
+</td>
+<td>The stress at which the material ruptures. For ductile materials, this may be after experiencing significant plastic deformation (see Yield Strength). For brittle materials, Yield strength and Ultimate Tensile Strength coincide. See: <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Ultimate_tensile_strength">UTS</a>
+</td>
+<td>N/(mm^2) (MPa)
+</td></tr>
+<tr>
+<td>Yield Points
+</td>
+<td>Used in a FEM non-linear material object to describe a ductile uniaxial stress-strain curve of a material. The values are entered as (yield stress, plastic strain) tuples, where the first combination is (Yield Strength, 0) and the last (UTS, Fracture Strain). See: <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Work_hardening">YieldPoints</a>
+</td>
+<td>(N/(mm^2) (MPa), dimensionless (-)
+</td></tr>
+<tr>
+<td>Uniaxial Compressive Strength (FCK)
+</td>
+<td>The compressive strength of concrete, defined as the strength of a 150 mm cube tested for 28 days. See <a rel="nofollow" class="external text" href="http://eurocodes.jrc.ec.europa.eu/doc/WS2008/EN1992_1_Walraven.pdf">FCK</a>
+</td>
+<td>N/(mm^2) (MPa)
+</td></tr>
+<tr>
+<td>Friction Angle (PHI)
+</td>
+<td>The angle of internal friction of a granular material like sand or concrete, as used in the Mohr-Coulomb yield criterion. See <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Mohr%E2%80%93Coulomb_theory">PHI</a>
+</td>
+<td>&deg;
+</td></tr>
+<tr>
+<td>Hardness
+</td>
+<td>A measure of the material's resistance to localized plastic (permanent) deformations caused by indentation (pressing) or scratching (abrasion). See <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Hardness">Hardness</a>
+</td>
+<td>no dedicated units in FreeCAD
+</td></tr>
+<tr>
+<td>EN-10027-1
+</td>
+<td>In the case of steel materials, the <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Steel_grades">Steel grade</a> as defined in the <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/European_Committee_for_Standardization">European standard</a> No. 10027-1.</td>
+<td>string ASCII 7-bit
+</td></tr></tbody></table>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p><b>ToDos:</b> add further properties needed for mechanical design.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="Graphical">Graphical</span></h3>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>This section defines material properties that are related to the visual appearance of the material.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<table class="wikitable" style="width:80%;">
+<caption>visual appearance
+</caption>
+<tbody><tr>
+<th>Property name
+</th>
+<th>Description
+</th>
+<th>Unit/Data-Type
+</th></tr>
+<tr>
+<td>AmbientColor
+</td>
+<td>Ambient color in the Coin3D color model</td>
+<td>float,float,float range: 0.0-1.0
+</td></tr>
+<tr>
+<td>DiffuseColor
+</td>
+<td>Diffuse color in the Coin3D color model</td>
+<td>float,float,float range: 0.0-1.0
+</td></tr>
+<tr>
+<td>SpecularColor
+</td>
+<td>Specular color in the Coin3D color model</td>
+<td>float,float,float range: 0.0-1.0
+</td></tr>
+<tr>
+<td>EmissiveColor
+</td>
+<td>Emissive color in the Coin3D color model</td>
+<td>float,float,float range: 0.0-1.0
+</td></tr>
+<tr>
+<td>SectionColor
+</td>
+<td>Color shown when the material is cut in the Coin3D color model</td>
+<td>float,float,float range: 0.0-1.0
+</td></tr>
+<tr>
+<td>Shininess
+</td>
+<td>Ambient color in the Coin3D color model</td>
+<td>float range: 0.0-1.0
+</td></tr>
+<tr>
+<td>Transparency
+</td>
+<td>Ambient color in the Coin3D color model</td>
+<td>float range: 0.0-1.0
+</td></tr>
+<tr>
+<td>VertxShader
+</td>
+<td>Vertex shader program as defined in <a rel="nofollow" class="external text" href="http://de.wikipedia.org/wiki/OpenGL_Shading_Language">GlSl</a></td>
+<td>multi line string ASCII 7-bit
+</td></tr>
+<tr>
+<td>FragmentShader
+</td>
+<td>Fragment shader program as defined in <a rel="nofollow" class="external text" href="http://de.wikipedia.org/wiki/OpenGL_Shading_Language">GlSl</a></td>
+<td>multi line string ASCII 7-bit
+</td></tr></tbody></table>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="Thermal">Thermal</span></h3>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<table class="wikitable" style="width:80%;">
+<caption>Thermal properties
+</caption>
+<tbody><tr>
+<th>Property name
+</th>
+<th>Description
+</th>
+<th>Unit/Data-Type
+</th></tr>
+<tr>
+<td>ThermalConductivity
+</td>
+<td>The <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Thermal_conductivity">thermal conductivity (R or lambda coefficient)</a> indicating the material's ability to transfer heat.</td>
+<td>W/(m*K)
+</td></tr>
+<tr>
+<td>ThermalExpansionCoefficient
+</td>
+<td>The <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Thermal_expansion">Thermal expansion coefficient</a> describing the material's increase in size due to an increase in temperature.</td>
+<td>&micro;m/(m*K)
+</td></tr>
+<tr>
+<td>SpecificHeat
+</td>
+<td>The <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Specific_heat_capacity">Specific heat capacity</a> indicating the amount of heat needed to increase the temperature of one unit of mass of the material by one unit. J/(kg*K)
+</td></tr></tbody></table>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h3><span class="mw-headline" id="Architecture_and_BIM">Architecture and BIM</span></h3>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<table class="wikitable" style="width:80%;">
+<caption>Material properties used in architectural design
+</caption>
+<tbody><tr>
+<th>Property name
+</th>
+<th>Description
+</th>
+<th>Unit/Data-Type
+</th></tr>
+<tr>
+<td>StandardCodeXXXX
+</td>
+<td>Where XXXX is the name of the standard (for example, taken from <a rel="nofollow" class="external text" href="https://github.com/Moult/IfcClassification/tree/master/ifc">the BlenderBIM standards repository</a>). For example, StandardCodeUniclass2. The value is the specific code of this material in the given standard. This property can appear several times, each with a different standard code</td>
+<td>string ASCII 7-bit
+</td></tr>
+<tr>
+<td>FireStandard
+</td>
+<td>The fire rating standard used in the material</td>
+<td>string ASCII 7-bit
+</td></tr>
+<tr>
+<td>FireClass
+</td>
+<td>The <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Fire-resistance_rating">fire resistance class</a> of the material in the above standard</td>
+<td>string ASCII 7-bit
+</td></tr>
+<tr>
+<td>SoundTransmission
+</td>
+<td>The sound transmission coefficient of this material</td>
+<td>W/m<math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><msup> <mrow data-mjx-texclass="ORD"><mn>2</mn></mrow></msup></math>K
+</td></tr>
+<tr>
+<td>Finish
+</td>
+<td>The type of finishing/coating of this material</td>
+<td>string ASCII 7-bit
+</td></tr>
+<tr>
+<td>Color
+</td>
+<td>The color specification of this material. This is not necessarily the color to display in the viewport, but might be, for example, the color name specified in the supplier's catalog</td>
+<td>string ASCII 7-bit
+</td></tr>
+<tr>
+<td>UnitsArea
+</td>
+<td>The number of units of this material necessary to fill a certain area. For example, in the case of a brick, 45 bricks/m&sup2;</td>
+<td>units/m<math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><msup> <mrow data-mjx-texclass="ORD"><mn>2</mn></mrow></msup></math>
+</td></tr></tbody></table>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="TODO">TODO</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<ul><li>add sustainability &amp; LEED properties</li></ul>
+</div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=Workbench_BIM.svg&amp;filetimestamp=20240524155736&amp;.html" class="mw-file-description"><img src="../File/Workbench_BIM.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../es/BIM_Workbench.html" title="BIM Workbench/es">BIM</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b>2D drafting:</b> <a href="../index.php?title=BIM_Sketch/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Sketch/es (page does not exist)">Sketch</a>, <a href="../es/Draft_Line.html" title="Draft Line/es">Line</a>, <a href="../es/Draft_Wire.html" title="Draft Wire/es">Polyline</a>, <a href="../es/Draft_Circle.html" title="Draft Circle/es">Circle</a>, <a href="../es/Draft_Arc.html" title="Draft Arc/es">Arc</a>, <a href="../index.php?title=Draft_Arc_3Points/es&amp;action=edit&amp;redlink=1.html" class="new" title="Draft Arc 3Points/es (page does not exist)">Arc by 3 points</a>, <a href="../index.php?title=Draft_Fillet/es&amp;action=edit&amp;redlink=1.html" class="new" title="Draft Fillet/es (page does not exist)">Fillet</a>, <a href="../es/Draft_Ellipse.html" title="Draft Ellipse/es">Ellipse</a>, <a href="../es/Draft_Polygon.html" title="Draft Polygon/es">Polygon</a>, <a href="../es/Draft_Rectangle.html" title="Draft Rectangle/es">Rectangle</a>, <a href="../es/Draft_BSpline.html" title="Draft BSpline/es">B-spline</a>, <a href="../es/Draft_BezCurve.html" title="Draft BezCurve/es">B&eacute;zier curve</a>, <a href="../es/Draft_CubicBezCurve.html" title="Draft CubicBezCurve/es">Cubic B&eacute;zier curve</a>, <a href="../es/Draft_Point.html" title="Draft Point/es">Point</a></li></ul>
+<hr>
+<ul><li><b>3D/BIM:</b> <a href="../index.php?title=BIM_Project/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Project/es (page does not exist)">Project</a>, <a href="../es/Arch_Site.html" title="Arch Site/es">Site</a>, <a href="../es/Arch_Building.html" title="Arch Building/es">Building</a>, <a href="../es/Arch_Floor.html" title="Arch Floor/es">Level</a>, <a href="../es/Arch_Space.html" title="Arch Space/es">Space</a>, <a href="../es/Arch_Wall.html" title="Arch Wall/es">Wall</a>, <a href="../es/Arch_CurtainWall.html" title="Arch CurtainWall/es">Curtain Wall</a>, <a href="../index.php?title=BIM_Column/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Column/es (page does not exist)">Column</a>, <a href="../index.php?title=BIM_Beam/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Beam/es (page does not exist)">Beam</a>, <a href="../index.php?title=BIM_Slab/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Slab/es (page does not exist)">Slab</a>, <a href="../index.php?title=BIM_Door/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Door/es (page does not exist)">Door</a>, <a href="../es/Arch_Window.html" title="Arch Window/es">Window</a>, <a href="../es/Arch_Pipe.html" title="Arch Pipe/es">Pipe</a>, <a href="../es/Arch_PipeConnector.html" title="Arch PipeConnector/es">Pipe Connector</a>, <a href="../es/Arch_Stairs.html" title="Arch Stairs/es">Stairs</a>, <a href="../es/Arch_Roof.html" title="Arch Roof/es">Roof</a>, <a href="../es/Arch_Panel.html" title="Arch Panel/es">Panel</a>, <a href="../es/Arch_Frame.html" title="Arch Frame/es">Frame</a>, <a href="../index.php?title=Arch_Fence/es&amp;action=edit&amp;redlink=1.html" class="new" title="Arch Fence/es (page does not exist)">Fence</a>, <a href="../es/Arch_Truss.html" title="Arch Truss/es">Truss</a>, <a href="../es/Arch_Equipment.html" title="Arch Equipment/es">Equipment</a>
+<ul><li><b>Reinforcement tools:</b> <a href="../es/Arch_Rebar.html" title="Arch Rebar/es">Custom Rebar</a>, <a href="../es/Reinforcement_StraightRebar.html" title="Reinforcement StraightRebar/es">Straight Rebar</a>, <a href="../es/Reinforcement_UShapeRebar.html" title="Reinforcement UShapeRebar/es">U-Shape Rebar</a>, <a href="../es/Reinforcement_LShapeRebar.html" title="Reinforcement LShapeRebar/es">L-Shape Rebar</a>, <a href="../es/Reinforcement_StirrupRebar.html" title="Reinforcement StirrupRebar/es">Stirrup</a>, <a href="../es/Reinforcement_BentShapeRebar.html" title="Reinforcement BentShapeRebar/es">Bent-Shape Rebar</a>, <a href="../es/Reinforcement_HelicalRebar.html" title="Reinforcement HelicalRebar/es">Helical Rebar</a>, <a href="../index.php?title=Reinforcement_ColumnRebars/es&amp;action=edit&amp;redlink=1.html" class="new" title="Reinforcement ColumnRebars/es (page does not exist)">Column Reinforcement</a>, <a href="../index.php?title=Reinforcement_BeamRebars/es&amp;action=edit&amp;redlink=1.html" class="new" title="Reinforcement BeamRebars/es (page does not exist)">Beam Reinforcement</a>, <a href="../index.php?title=Reinforcement_SlabRebars/es&amp;action=edit&amp;redlink=1.html" class="new" title="Reinforcement SlabRebars/es (page does not exist)">Slab Reinforcement</a>, <a href="../index.php?title=Reinforcement_FootingRebars/es&amp;action=edit&amp;redlink=1.html" class="new" title="Reinforcement FootingRebars/es (page does not exist)">Footing Reinforcement</a></li>
+<li><b>Generic 3D tools:</b> <a href="../es/Arch_Profile.html" title="Arch Profile/es">Profile</a>, <a href="../es/BIM_Box.html" title="BIM Box/es">Box</a>, <a href="../es/Part_Builder.html" title="Part Builder/es">Shape builder...</a>, <a href="../es/Draft_Facebinder.html" title="Draft Facebinder/es">Facebinder</a>, <a href="../es/BIM_Library.html" title="BIM Library/es">Objects library</a>, <a href="../es/Arch_Component.html" title="Arch Component/es">Component</a>, <a href="../es/Arch_Reference.html" title="Arch Reference/es">External reference</a></li></ul></li></ul>
+<hr>
+<ul><li><b>Annotation:</b> <a href="../BIM_Text.html" title="BIM Text">Text</a>, <a href="../es/Draft_ShapeString.html" title="Draft ShapeString/es">Shape from text</a>, <a href="../index.php?title=BIM_DimensionAligned/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM DimensionAligned/es (page does not exist)">Aligned dimension</a>, <a href="../index.php?title=BIM_DimensionHorizontal/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM DimensionHorizontal/es (page does not exist)">Horizontal dimension</a>, <a href="../index.php?title=BIM_DimensionVertical/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM DimensionVertical/es (page does not exist)">Vertical dimension</a>, <a href="../index.php?title=BIM_Leader/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Leader/es (page does not exist)">Leader</a>, <a href="../es/Draft_Label.html" title="Draft Label/es">Label</a>, <a href="../es/Arch_Axis.html" title="Arch Axis/es">Axis</a>, <a href="../es/Arch_AxisSystem.html" title="Arch AxisSystem/es">Axes System</a>, <a href="../es/Arch_Grid.html" title="Arch Grid/es">Grid</a>, <a href="../es/Arch_SectionPlane.html" title="Arch SectionPlane/es">Section Plane</a>, <a href="../index.php?title=Draft_Hatch/es&amp;action=edit&amp;redlink=1.html" class="new" title="Draft Hatch/es (page does not exist)">Hatch</a>, <a href="../index.php?title=BIM_TDPage/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM TDPage/es (page does not exist)">Page</a>, <a href="../index.php?title=BIM_TDView/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM TDView/es (page does not exist)">View</a>, <a href="../index.php?title=BIM_Shape2DView/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Shape2DView/es (page does not exist)">Shape-based view</a></li></ul>
+<hr>
+<ul><li><b><a href="../es/Draft_Snap.html" title="Draft Snap/es">Snapping</a>:</b> <a href="../es/Draft_Snap_Lock.html" title="Draft Snap Lock/es">Snap lock</a>, <a href="../index.php?title=Draft_Snap_Endpoint/es&amp;action=edit&amp;redlink=1.html" class="new" title="Draft Snap Endpoint/es (page does not exist)">Snap endpoint</a>, <a href="../es/Draft_Snap_Midpoint.html" title="Draft Snap Midpoint/es">Snap midpoint</a>, <a href="../es/Draft_Snap_Center.html" title="Draft Snap Center/es">Snap center</a>, <a href="../es/Draft_Snap_Angle.html" title="Draft Snap Angle/es">Snap angle</a>, <a href="../es/Draft_Snap_Intersection.html" title="Draft Snap Intersection/es">Snap intersection</a>, <a href="../index.php?title=Draft_Snap_Perpendicular/es&amp;action=edit&amp;redlink=1.html" class="new" title="Draft Snap Perpendicular/es (page does not exist)">Snap perpendicular</a>, <a href="../es/Draft_Snap_Extension.html" title="Draft Snap Extension/es">Snap extension</a>, <a href="../es/Draft_Snap_Parallel.html" title="Draft Snap Parallel/es">Snap parallel</a>, <a href="../index.php?title=Draft_Snap_Special/es&amp;action=edit&amp;redlink=1.html" class="new" title="Draft Snap Special/es (page does not exist)">Snap special</a>, <a href="../index.php?title=Draft_Snap_Near/es&amp;action=edit&amp;redlink=1.html" class="new" title="Draft Snap Near/es (page does not exist)">Snap near</a>, <a href="../es/Draft_Snap_Ortho.html" title="Draft Snap Ortho/es">Snap ortho</a>, <a href="../index.php?title=Draft_Snap_Grid/es&amp;action=edit&amp;redlink=1.html" class="new" title="Draft Snap Grid/es (page does not exist)">Snap grid</a>, <a href="../index.php?title=Draft_Snap_WorkingPlane/es&amp;action=edit&amp;redlink=1.html" class="new" title="Draft Snap WorkingPlane/es (page does not exist)">Snap working plane</a>, <a href="../index.php?title=Draft_Snap_Dimensions/es&amp;action=edit&amp;redlink=1.html" class="new" title="Draft Snap Dimensions/es (page does not exist)">Snap dimensions</a>, <a href="../es/Draft_ToggleGrid.html" title="Draft ToggleGrid/es">Toggle grid</a>, <a href="../index.php?title=BIM_SetWPTop/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM SetWPTop/es (page does not exist)">Working Plane Top</a>, <a href="../index.php?title=BIM_SetWPFront/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM SetWPFront/es (page does not exist)">Working Plane Front</a>, <a href="../index.php?title=BIM_SetWPSide/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM SetWPSide/es (page does not exist)">Working Plane Side</a></li></ul>
+<hr>
+<ul><li><b>Modify:</b> <a href="../es/Draft_Move.html" title="Draft Move/es">Move</a>, <a href="../es/BIM_Copy.html" title="BIM Copy/es">Copy</a>, <a href="../es/Draft_Rotate.html" title="Draft Rotate/es">Rotate</a>, <a href="../index.php?title=BIM_Clone/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Clone/es (page does not exist)">Clone</a>, <a href="../es/BIM_SimpleCopy.html" class="mw-redirect" title="BIM SimpleCopy/es">Create simple copy</a>, <a href="../es/BIM_Compound.html" class="mw-redirect" title="BIM Compound/es">Make compound</a>, <a href="../es/Draft_Offset.html" title="Draft Offset/es">Offset</a>, <a href="../es/BIM_Offset2D.html" class="mw-redirect" title="BIM Offset2D/es">2D Offset...</a>, <a href="../es/Draft_Trimex.html" title="Draft Trimex/es">Trimex</a>, <a href="../index.php?title=Draft_Join/es&amp;action=edit&amp;redlink=1.html" class="new" title="Draft Join/es (page does not exist)">Join</a>, <a href="../index.php?title=Draft_Split/es&amp;action=edit&amp;redlink=1.html" class="new" title="Draft Split/es (page does not exist)">Split</a>, <a href="../es/Draft_Scale.html" title="Draft Scale/es">Scale</a>, <a href="../es/Draft_Stretch.html" title="Draft Stretch/es">Stretch</a>, <a href="../es/Draft_Draft2Sketch.html" title="Draft Draft2Sketch/es">Draft to sketch</a>, <a href="../es/Draft_Upgrade.html" title="Draft Upgrade/es">Upgrade</a>, <a href="../es/Draft_Downgrade.html" title="Draft Downgrade/es">Downgrade</a>, <a href="../es/Arch_Add.html" title="Arch Add/es">Add component</a>, <a href="../es/Arch_Remove.html" title="Arch Remove/es">Remove component</a>, <a href="../es/Draft_OrthoArray.html" title="Draft OrthoArray/es">Array</a>, <a href="../es/Draft_PathArray.html" title="Draft PathArray/es">Path array</a>, <a href="../es/Draft_PolarArray.html" title="Draft PolarArray/es">Polar array</a>, <a href="../es/Draft_PointArray.html" title="Draft PointArray/es">Point array</a>, <a href="../es/Arch_CutPlane.html" title="Arch CutPlane/es">Cut with plane</a>, <a href="../es/Draft_Mirror.html" title="Draft Mirror/es">Mirror</a>, <a href="../es/BIM_Extrude.html" class="mw-redirect" title="BIM Extrude/es">Extrude...</a>, <a href="../es/BIM_Cut.html" class="mw-redirect" title="BIM Cut/es">Difference</a>, <a href="../es/BIM_Fuse.html" class="mw-redirect" title="BIM Fuse/es">Union</a>, <a href="../es/BIM_Common.html" class="mw-redirect" title="BIM Common/es">Intersection</a></li></ul>
+<hr>
+<ul><li><b>Manage:</b> <a href="../es/BIM_Setup.html" title="BIM Setup/es">BIM Setup...</a>, <a href="../index.php?title=BIM_Views/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Views/es (page does not exist)">Views manager</a>, <a href="../es/BIM_ProjectManager.html" title="BIM ProjectManager/es">Manage project...</a>, <a href="../index.php?title=BIM_Windows/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Windows/es (page does not exist)">Manage doors and windows...</a>, <a href="../index.php?title=BIM_IfcElements/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM IfcElements/es (page does not exist)">Manage IFC elements...</a>, <a href="../index.php?title=BIM_IfcQuantities/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM IfcQuantities/es (page does not exist)">Manage IFC quantities...</a>, <a href="../index.php?title=BIM_IfcProperties/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM IfcProperties/es (page does not exist)">Manage IFC properties...</a>, <a href="../index.php?title=BIM_Classification/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Classification/es (page does not exist)">Manage classification...</a>, <a href="../index.php?title=BIM_Layers/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Layers/es (page does not exist)">Manage layers...</a>, <a href="../index.php?title=BIM_Material/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Material/es (page does not exist)">Material</a>, <a href="../index.php?title=Arch_Schedule/es&amp;action=edit&amp;redlink=1.html" class="new" title="Arch Schedule/es (page does not exist)">Schedule</a>, <a href="../index.php?title=BIM_Preflight/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Preflight/es (page does not exist)">Preflight checks...</a>, <a href="../es/Draft_AnnotationStyleEditor.html" title="Draft AnnotationStyleEditor/es">Annotation styles...</a></li></ul>
+<hr>
+<ul><li><b>Utils:</b> <a href="../index.php?title=BIM_TogglePanels/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM TogglePanels/es (page does not exist)">Toggle bottom panels</a>, <a href="../index.php?title=BIM_Trash/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Trash/es (page does not exist)">Move to Trash</a>, <a href="../index.php?title=BIM_WPView/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM WPView/es (page does not exist)">Working Plane View</a>, <a href="../es/Draft_SelectGroup.html" title="Draft SelectGroup/es">Select group</a>, <a href="../es/Draft_Slope.html" title="Draft Slope/es">Set slope</a>, <a href="../es/Draft_WorkingPlaneProxy.html" title="Draft WorkingPlaneProxy/es">Create working plane proxy</a>, <a href="../es/Draft_AddConstruction.html" title="Draft AddConstruction/es">Add to construction group</a>, <a href="../es/Arch_SplitMesh.html" title="Arch SplitMesh/es">Split Mesh</a>, <a href="../es/Arch_MeshToShape.html" title="Arch MeshToShape/es">Mesh to Shape</a>, <a href="../es/Arch_SelectNonSolidMeshes.html" title="Arch SelectNonSolidMeshes/es">Select non-manifold meshes</a>, <a href="../es/Arch_RemoveShape.html" title="Arch RemoveShape/es">Remove Shape from Arch</a>, <a href="../es/Arch_CloseHoles.html" title="Arch CloseHoles/es">Close Holes</a>, <a href="../index.php?title=Arch_MergeWalls/es&amp;action=edit&amp;redlink=1.html" class="new" title="Arch MergeWalls/es (page does not exist)">Merge Walls</a>, <a href="../es/Arch_Check.html" title="Arch Check/es">Check</a>, <a href="../es/Arch_ToggleIfcBrepFlag.html" title="Arch ToggleIfcBrepFlag/es">Toggle IFC Brep flag</a>, <a href="../es/Arch_ToggleSubs.html" title="Arch ToggleSubs/es">Toggle subcomponents</a>, <a href="../es/Arch_Survey.html" title="Arch Survey/es">Survey</a>, <a href="../index.php?title=BIM_Diff/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Diff/es (page does not exist)">IFC Diff</a>, <a href="../es/BIM_IfcExplorer.html" title="BIM IfcExplorer/es">IFC explorer</a>, <a href="../index.php?title=Arch_IfcSpreadsheet/es&amp;action=edit&amp;redlink=1.html" class="new" title="Arch IfcSpreadsheet/es (page does not exist)">Create IFC spreadsheet...</a>, <a href="../index.php?title=BIM_ImagePlane/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM ImagePlane/es (page does not exist)">Image plane</a>, <a href="../index.php?title=BIM_Unclone/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Unclone/es (page does not exist)">Unclone</a>, <a href="../index.php?title=BIM_Rewire/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Rewire/es (page does not exist)">Rewire</a>, <a href="../index.php?title=BIM_Glue/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Glue/es (page does not exist)">Glue</a>, <a href="../index.php?title=BIM_Reextrude/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Reextrude/es (page does not exist)">Reextrude</a>
+<ul><li><b>Panel tools:</b> <a href="../es/Arch_Panel.html" title="Arch Panel/es">Panel</a>, <a href="../es/Arch_Panel_Cut.html" title="Arch Panel Cut/es">Panel Cut</a>, <a href="../es/Arch_Panel_Sheet.html" title="Arch Panel Sheet/es">Panel Sheet</a>, <a href="../es/Arch_Nest.html" title="Arch Nest/es">Nest</a></li>
+<li><b>Structure tools:</b> <a href="../es/Arch_Structure.html" title="Arch Structure/es">Structure</a>, <a href="../index.php?title=Arch_StructuralSystem/es&amp;action=edit&amp;redlink=1.html" class="new" title="Arch StructuralSystem/es (page does not exist)">Structural System</a>, <a href="../index.php?title=Arch_StructuresFromSelection/es&amp;action=edit&amp;redlink=1.html" class="new" title="Arch StructuresFromSelection/es (page does not exist)">Multiple Structures</a></li>
+<li><b>IFC tools:</b> <a href="../index.php?title=IFC_Diff/es&amp;action=edit&amp;redlink=1.html" class="new" title="IFC Diff/es (page does not exist)">IFC Diff...</a>, <a href="../index.php?title=IFC_Expand/es&amp;action=edit&amp;redlink=1.html" class="new" title="IFC Expand/es (page does not exist)">IFC Expand</a>, <a href="../index.php?title=IFC_MakeProject/es&amp;action=edit&amp;redlink=1.html" class="new" title="IFC MakeProject/es (page does not exist)">Make IFC project</a>, <a href="../index.php?title=IFC_UpdateIOS/es&amp;action=edit&amp;redlink=1.html" class="new" title="IFC UpdateIOS/es (page does not exist)">IfcOpenShell update</a></li>
+<li><b>Nudge:</b> <a href="../index.php?title=BIM_Nudge_Switch/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Nudge Switch/es (page does not exist)">Nudge Switch</a>, <a href="../index.php?title=BIM_Nudge_Up/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Nudge Up/es (page does not exist)">Nudge Up</a>, <a href="../index.php?title=BIM_Nudge_Down/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Nudge Down/es (page does not exist)">Nudge Down</a>, <a href="../index.php?title=BIM_Nudge_Left/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Nudge Left/es (page does not exist)">Nudge Left</a>, <a href="../index.php?title=BIM_Nudge_Right/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Nudge Right/es (page does not exist)">Nudge Right</a>, <a href="../index.php?title=BIM_Nudge_RotateLeft/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Nudge RotateLeft/es (page does not exist)">Nudge Rotate Left</a>, <a href="../index.php?title=BIM_Nudge_RotateRight/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Nudge RotateRight/es (page does not exist)">Nudge Rotate Right</a>, <a href="../index.php?title=BIM_Nudge_Extend/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Nudge Extend/es (page does not exist)">Nudge Extend</a>, <a href="../index.php?title=BIM_Nudge_Shrink/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Nudge Shrink/es (page does not exist)">Nudge Shrink</a></li></ul></li></ul>
+<hr>
+<ul><li><b>Additional:</b> <a href="../index.php?title=BIM_Preferences/es&amp;action=edit&amp;redlink=1.html" class="new" title="BIM Preferences/es (page does not exist)">Preferences</a>, <a href="../index.php?title=Fine-tuning/es&amp;action=edit&amp;redlink=1.html" class="new" title="Fine-tuning/es (page does not exist)">Fine tuning</a>, <a href="../es/Import_Export_Preferences.html" title="Import Export Preferences/es">Import Export Preferences</a>, <a href="../es/Arch_IFC.html" title="Arch IFC/es">IFC</a>, <a href="../es/Arch_DAE.html" title="Arch DAE/es">DAE</a>, <a href="../es/Arch_OBJ.html" title="Arch OBJ/es">OBJ</a>, <a href="../index.php?title=Arch_JSON/es&amp;action=edit&amp;redlink=1.html" class="new" title="Arch JSON/es (page does not exist)">JSON</a>, <a href="../index.php?title=Arch_3DS/es&amp;action=edit&amp;redlink=1.html" class="new" title="Arch 3DS/es (page does not exist)">3DS</a>, <a href="../index.php?title=Arch_SHP/es&amp;action=edit&amp;redlink=1.html" class="new" title="Arch SHP/es (page does not exist)">SHP</a></li></ul></div>
+    </div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=Workbench_FEM.svg&amp;filetimestamp=20240405093343&amp;.html" class="mw-file-description"><img src="../File/Workbench_FEM.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../es/FEM_Workbench.html" title="FEM Workbench/es">FEM</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><a href="../index.php?title=FEM_Analysis/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM Analysis/es (page does not exist)">FEM Analysis</a></li></ul>
+<ul><li><b>Materials:</b> <a href="../es/FEM_MaterialSolid.html" title="FEM MaterialSolid/es">Solid</a>, <a href="../index.php?title=FEM_MaterialFluid/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM MaterialFluid/es (page does not exist)">Fluid</a>, <a href="../index.php?title=FEM_MaterialMechanicalNonlinear/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM MaterialMechanicalNonlinear/es (page does not exist)">Nonlinear mechanical</a>, <a href="../index.php?title=FEM_MaterialReinforced/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM MaterialReinforced/es (page does not exist)">Reinforced (concrete)</a>; <a href="../index.php?title=FEM_MaterialEditor/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM MaterialEditor/es (page does not exist)">Material editor</a></li></ul>
+<ul><li><b>Element geometry:</b> <a href="../index.php?title=FEM_ElementGeometry1D/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ElementGeometry1D/es (page does not exist)">Beam (1D)</a>, <a href="../index.php?title=FEM_ElementRotation1D/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ElementRotation1D/es (page does not exist)">Beam rotation (1D)</a>, <a href="../index.php?title=FEM_ElementGeometry2D/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ElementGeometry2D/es (page does not exist)">Shell (2D)</a>, <a href="../index.php?title=FEM_ElementFluid1D/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ElementFluid1D/es (page does not exist)">Fluid flow (1D)</a></li></ul>
+<hr>
+<p><b>Constraints</b>
+</p>
+<ul><li><b>Electromagnetic:</b> <a href="../index.php?title=FEM_ConstraintElectrostaticPotential/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintElectrostaticPotential/es (page does not exist)">Electrostatic potential</a>, <a href="../index.php?title=FEM_ConstraintCurrentDensity/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintCurrentDensity/es (page does not exist)">Current density</a>, <a href="../index.php?title=FEM_ConstraintMagnetization/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintMagnetization/es (page does not exist)">Magnetization</a></li></ul>
+<ul><li><b>Fluid:</b> <a href="../index.php?title=FEM_ConstraintInitialFlowVelocity/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintInitialFlowVelocity/es (page does not exist)">Initial flow velocity</a>, <a href="../index.php?title=FEM_ConstraintInitialPressure/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintInitialPressure/es (page does not exist)">Initial pressure</a>, <a href="../index.php?title=FEM_ConstraintFlowVelocity/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintFlowVelocity/es (page does not exist)">Flow velocity</a></li></ul>
+<ul><li><b>Geometrical:</b> <a href="../index.php?title=FEM_ConstraintPlaneRotation/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintPlaneRotation/es (page does not exist)">Plane rotation</a>, <a href="../index.php?title=FEM_ConstraintSectionPrint/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintSectionPrint/es (page does not exist)">Section print</a>, <a href="../index.php?title=FEM_ConstraintTransform/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintTransform/es (page does not exist)">Transform</a></li></ul>
+<ul><li><b>Mechanical:</b> <a href="../index.php?title=FEM_ConstraintFixed/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintFixed/es (page does not exist)">Fixed</a>, <a href="../index.php?title=FEM_ConstraintDisplacement/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintDisplacement/es (page does not exist)">Displacement</a>, <a href="../index.php?title=FEM_ConstraintContact/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintContact/es (page does not exist)">Contact</a>, <a href="../index.php?title=FEM_ConstraintTie/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintTie/es (page does not exist)">Tie</a>, <a href="../index.php?title=FEM_ConstraintSpring/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintSpring/es (page does not exist)">Spring</a>, <a href="../index.php?title=FEM_ConstraintForce/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintForce/es (page does not exist)">Force</a>, <a href="../index.php?title=FEM_ConstraintPressure/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintPressure/es (page does not exist)">Pressure</a>, <a href="../index.php?title=FEM_ConstraintCentrif/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintCentrif/es (page does not exist)">Centrif</a>, <a href="../index.php?title=FEM_ConstraintSelfWeight/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintSelfWeight/es (page does not exist)">Self weight</a></li></ul>
+<ul><li><b>Thermal:</b> <a href="../index.php?title=FEM_ConstraintInitialTemperature/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintInitialTemperature/es (page does not exist)">Initial temperature</a>, <a href="../index.php?title=FEM_ConstraintHeatflux/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintHeatflux/es (page does not exist)">Heat flux</a>, <a href="../index.php?title=FEM_ConstraintTemperature/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintTemperature/es (page does not exist)">Temperature</a>, <a href="../index.php?title=FEM_ConstraintBodyHeatSource/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintBodyHeatSource/es (page does not exist)">Body heat source</a></li></ul>
+<ul><li><b>Overwrite Constants:</b> <a href="../index.php?title=FEM_ConstantVacuumPermittivity/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstantVacuumPermittivity/es (page does not exist)">Constant vacuum permittivity</a></li></ul>
+<hr>
+<ul><li><b>Mesh:</b> <a href="../index.php?title=FEM_MeshNetgenFromShape/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM MeshNetgenFromShape/es (page does not exist)">Mesh Netgen</a>, <a href="../index.php?title=FEM_MeshGmshFromShape/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM MeshGmshFromShape/es (page does not exist)">Mesh GMSH</a>, <a href="../index.php?title=FEM_MeshBoundaryLayer/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM MeshBoundaryLayer/es (page does not exist)">Mesh boundary layer</a>, <a href="../index.php?title=FEM_MeshRegion/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM MeshRegion/es (page does not exist)">Mesh region</a>, <a href="../index.php?title=FEM_MeshGroup/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM MeshGroup/es (page does not exist)">Mesh group</a>, <a href="../index.php?title=FEM_CreateNodesSet/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM CreateNodesSet/es (page does not exist)">Nodes set</a>, <a href="../index.php?title=FEM_FemMesh2Mesh/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM FemMesh2Mesh/es (page does not exist)">Mesh to mesh</a></li></ul>
+<ul><li><b>Solve:</b> <a href="../es/FEM_SolverCalculixCcxtools.html" title="FEM SolverCalculixCcxtools/es">CalculiX Standard</a>, <a href="../index.php?title=FEM_SolverElmer/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM SolverElmer/es (page does not exist)">Elmer</a>, <a href="../index.php?title=FEM_SolverMystran/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM SolverMystran/es (page does not exist)">Mystran</a>, <a href="../index.php?title=FEM_SolverZ88/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM SolverZ88/es (page does not exist)">Z88</a>; <b>Equations:</b> <a href="../index.php?title=FEM_EquationDeformation/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM EquationDeformation/es (page does not exist)">Deformation</a>, <a href="../index.php?title=FEM_EquationElasticity/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM EquationElasticity/es (page does not exist)">Elasticity</a>, <a href="../index.php?title=FEM_EquationElectrostatic/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM EquationElectrostatic/es (page does not exist)">Electrostatic</a>, <a href="../index.php?title=FEM_EquationElectricforce/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM EquationElectricforce/es (page does not exist)">Electricforce</a>, <a href="../index.php?title=FEM_EquationMagnetodynamic/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM EquationMagnetodynamic/es (page does not exist)">Magnetodynamic</a>, <a href="../index.php?title=FEM_EquationMagnetodynamic2D/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM EquationMagnetodynamic2D/es (page does not exist)">Magnetodynamic 2D</a>, <a href="../index.php?title=FEM_EquationFlow/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM EquationFlow/es (page does not exist)">Flow</a>, <a href="../index.php?title=FEM_EquationFlux/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM EquationFlux/es (page does not exist)">Flux</a>, <a href="../index.php?title=FEM_EquationHeat/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM EquationHeat/es (page does not exist)">Heat</a>; <b>Solver:</b> <a href="../index.php?title=FEM_SolverControl/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM SolverControl/es (page does not exist)">Solver control</a>, <a href="../index.php?title=FEM_SolverRun/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM SolverRun/es (page does not exist)">Solver run</a></li></ul>
+<ul><li><b>Results:</b> <a href="../index.php?title=FEM_ResultsPurge/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ResultsPurge/es (page does not exist)">Purge</a>, <a href="../index.php?title=FEM_ResultShow/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ResultShow/es (page does not exist)">Show</a>; <b>Postprocessing:</b> <a href="../index.php?title=FEM_PostApplyChanges/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostApplyChanges/es (page does not exist)">Apply changes</a>, <a href="../es/FEM_PostPipelineFromResult.html" title="FEM PostPipelineFromResult/es">Pipeline from result</a>, <a href="../index.php?title=FEM_PostFilterWarp/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostFilterWarp/es (page does not exist)">Warp filter</a>, <a href="../index.php?title=FEM_PostFilterClipScalar/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostFilterClipScalar/es (page does not exist)">Scalar clip filter</a>, <a href="../index.php?title=FEM_PostFilterCutFunction/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostFilterCutFunction/es (page does not exist)">Function cut filter</a>, <a href="../index.php?title=FEM_PostFilterClipRegion/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostFilterClipRegion/es (page does not exist)">Region clip filter</a>, <a href="../index.php?title=FEM_PostFilterContours/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostFilterContours/es (page does not exist)">Contours filter</a>, <a href="../index.php?title=FEM_PostFilterDataAlongLine/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostFilterDataAlongLine/es (page does not exist)">Line clip filter</a>, <a href="../index.php?title=FEM_PostFilterLinearizedStresses/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostFilterLinearizedStresses/es (page does not exist)">Stress linearization plot</a>, <a href="../index.php?title=FEM_PostFilterDataAtPoint/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostFilterDataAtPoint/es (page does not exist)">Data at point clip filter</a>, <a href="../index.php?title=FEM_PostCreateFunctionPlane/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostCreateFunctionPlane/es (page does not exist)">Filter function plane</a>, <a href="../index.php?title=FEM_PostCreateFunctionSphere/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostCreateFunctionSphere/es (page does not exist)">Filter function sphere</a>, <a href="../index.php?title=FEM_PostCreateFunctionCylinder/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostCreateFunctionCylinder/es (page does not exist)">Filter function cylinder</a>, <a href="../index.php?title=FEM_PostCreateFunctionBox/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostCreateFunctionBox/es (page does not exist)">Filter function box</a></li></ul>
+<ul><li><b>Utilities:</b> <a href="../index.php?title=FEM_ClippingPlaneAdd/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ClippingPlaneAdd/es (page does not exist)">Clipping plane</a>, <a href="../index.php?title=FEM_ClippingPlaneRemoveAll/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ClippingPlaneRemoveAll/es (page does not exist)">Remove clipping planes</a>, <a href="../index.php?title=FEM_Examples/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM Examples/es (page does not exist)">Open FEM examples</a>; <a href="../index.php?title=FEM_MeshClear/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM MeshClear/es (page does not exist)">Mesh clear</a>, <a href="../index.php?title=FEM_MeshDisplayInfo/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM MeshDisplayInfo/es (page does not exist)">Mesh display info</a></li></ul>
+<hr>
+<ul><li><b>Additional:</b> <a href="../index.php?title=FEM_Preferences/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM Preferences/es (page does not exist)">Preferences</a>; <a href="../es/FEM_Install.html" title="FEM Install/es">FEM Install</a>, <a href="../es/FEM_Mesh.html" title="FEM Mesh/es">FEM Mesh</a>, <a href="../es/FEM_Solver.html" title="FEM Solver/es">FEM Solver</a>, <a href="../index.php?title=FEM_CalculiX/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM CalculiX/es (page does not exist)">FEM CalculiX</a>, <a href="../index.php?title=FEM_Concrete/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM Concrete/es (page does not exist)">FEM Concrete</a>; <a href="../index.php?title=FEM_Element_Types/es&amp;action=edit&amp;redlink=1.html" class="new" title="FEM Element Types/es (page does not exist)">FEM Element Types</a></li></ul></div>
+    </div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=User_hub.png&amp;filetimestamp=20190221145008&amp;.html" class="mw-file-description"><img src="../File/User_hub.png" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../es/User_hub.html" title="User hub/es">User documentation</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b><a href="../es/Getting_started.html" title="Getting started/es">Getting started</a></b></li>
+<li><b>Installation:</b> <a href="../es/Download.html" title="Download/es">Download</a>, <a href="../es/Installing_on_Windows.html" title="Installing on Windows/es">Windows</a>, <a href="../es/Installing_on_Linux.html" title="Installing on Linux/es">Linux</a>, <a href="../es/Installing_on_Mac.html" title="Installing on Mac/es">Mac</a>, <a href="../es/Installing_additional_components.html" title="Installing additional components/es">Additional components</a>, <a href="../es/Compile_on_Docker.html" title="Compile on Docker/es">Docker</a>, <a href="../es/AppImage.html" title="AppImage/es">AppImage</a>, <a href="../es/Ubuntu_Snap.html" title="Ubuntu Snap/es">Ubuntu Snap</a></li>
+<li><b>Basics:</b> <a href="../es/About_FreeCAD.html" title="About FreeCAD/es">About FreeCAD</a>, <a href="../es/Interface.html" title="Interface/es">Interface</a>, <a href="../es/Mouse_navigation.html" title="Mouse navigation/es">Mouse navigation</a>, <a href="../es/Selection_methods.html" title="Selection methods/es">Selection methods</a>, <a href="../es/Object_name.html" title="Object name/es">Object name</a>, <a href="../es/Preferences_Editor.html" title="Preferences Editor/es">Preferences</a>, <a href="../es/Workbenches.html" title="Workbenches/es">Workbenches</a>, <a href="../es/Document_structure.html" title="Document structure/es">Document structure</a>, <a href="../es/Property.html" title="Property/es">Properties</a>, <a href="../es/Help_FreeCAD.html" title="Help FreeCAD/es">Help FreeCAD</a>, <a href="../es/Donate.html" title="Donate/es">Donate</a></li></ul>
+<hr>
+<ul><li><b>Help:</b> <a href="../es/Tutorials.html" title="Tutorials/es">Tutorials</a>, <a href="../es/Video_tutorials.html" title="Video tutorials/es">Video tutorials</a></li>
+<li><b><a href="../es/Workbenches.html" title="Workbenches/es">Workbenches</a>:</b> <a href="../es/Std_Base.html" title="Std Base/es">Std Base</a>, <a href="../index.php?title=Assembly_Workbench/es&amp;action=edit&amp;redlink=1.html" class="new" title="Assembly Workbench/es (page does not exist)">Assembly</a>, <a href="../es/BIM_Workbench.html" title="BIM Workbench/es">BIM</a>, <a href="../es/CAM_Workbench.html" title="CAM Workbench/es">CAM</a>, <a href="../es/Draft_Workbench.html" title="Draft Workbench/es">Draft</a>, <a href="../es/FEM_Workbench.html" title="FEM Workbench/es">FEM</a>, <a href="../es/Inspection_Workbench.html" title="Inspection Workbench/es">Inspection</a>, <a href="../index.php?title=Material_Workbench/es&amp;action=edit&amp;redlink=1.html" class="new" title="Material Workbench/es (page does not exist)">Material</a>, <a href="../es/Mesh_Workbench.html" title="Mesh Workbench/es">Mesh</a>, <a href="../es/OpenSCAD_Workbench.html" title="OpenSCAD Workbench/es">OpenSCAD</a>, <a href="../es/Part_Workbench.html" title="Part Workbench/es">Part</a>, <a href="../es/PartDesign_Workbench.html" title="PartDesign Workbench/es">PartDesign</a>, <a href="../es/Points_Workbench.html" title="Points Workbench/es">Points</a>, <a href="../es/Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/es">Reverse Engineering</a>, <a href="../es/Robot_Workbench.html" title="Robot Workbench/es">Robot</a>, <a href="../es/Sketcher_Workbench.html" title="Sketcher Workbench/es">Sketcher</a>, <a href="../es/Spreadsheet_Workbench.html" title="Spreadsheet Workbench/es">Spreadsheet</a>, <a href="../es/Surface_Workbench.html" title="Surface Workbench/es">Surface</a>, <a href="../es/TechDraw_Workbench.html" title="TechDraw Workbench/es">TechDraw</a>, <a href="../es/Testing.html" title="Testing/es">Test Framework</a></li></ul>
+<hr>
+<ul><li><b><a href="../es/Addon.html" title="Addon/es">Addons</a>:</b> <a href="../es/Std_AddonMgr.html" title="Std AddonMgr/es">Addon Manager</a>, <a href="../es/External_workbenches.html" title="External workbenches/es">External workbenches</a>, <a href="../es/Scripting_and_macros.html" title="Scripting and macros/es">Scripting and macros</a></li></ul>
+<hr>
+<ul><li><b>Hubs:</b> <a href="../es/User_hub.html" title="User hub/es">User hub</a>, <a href="../es/Power_users_hub.html" title="Power users hub/es">Power users hub</a>, <a href="../es/Developer_hub.html" title="Developer hub/es">Developer hub</a></li></ul></div>
+    </div></div>
+<!-- 
+NewPP limit report
+Cached time: 20251011180032
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show&#8208;toc]
+CPU time usage: 0.153 seconds
+Real time usage: 0.257 seconds
+Preprocessor visited node count: 603/1000000
+Post&#8208;expand include size: 32799/2097152 bytes
+Template argument size: 14993/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 4/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 12048/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   46.545      1 -total
+ 33.50%   15.594      1 Template:BIM_Tools_navi/es
+ 20.36%    9.476      3 Template:Navigation_menu_2
+ 17.08%    7.951      1 Template:FEM_Tools_navi/es
+ 16.87%    7.854      1 Template:UnfinishedDocu/es
+ 11.40%    5.305      1 Template:Userdocnavi/es
+  9.19%    4.276      4 Template:Code
+  3.74%    1.740      2 Template:FileName
+  2.88%    1.341      1 Template:TOCright
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:393433-0!canonical and timestamp 20251011180032 and revision id 1660404. Rendering was triggered because: api-parse
+ -->
+</div>
+</div><script src="../site.js"></script>
