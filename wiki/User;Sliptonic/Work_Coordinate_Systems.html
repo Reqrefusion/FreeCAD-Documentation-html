@@ -1,26 +1,153 @@
-<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">User:Sliptonic/Work Coordinate Systems</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><h2><span class="mw-headline" id="Work_Coordinate_Systems">Work Coordinate Systems</span></h2>
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">User:Sliptonic/Work Coordinate Systems</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><p>FreeCAD&rsquo;s <b>CAM Work Coordinate System (WCS)</b> feature allows you to define and manage multiple work offsets within a single Job. Each offset&mdash;commonly called a <i>fixture</i>&mdash;corresponds to one of the standard CNC work coordinate registers: <code>G54</code> through <code>G59.9</code>.
+</p><p>Multiple WCS fixtures let a single CNC program reference different physical locations on the machine table. This is especially useful for:
+</p>
+<ul><li>Running <b>multiple copies of the same part</b> in one cycle.</li>
+<li><b>Switching between setups</b> (for example, top and bottom machining).</li>
+<li>Managing <b>multiple vises, pallets, or tombstones</b> on a single machine.</li></ul>
+<p>FreeCAD CAM makes this powerful professional feature accessible directly from the <b>Job Setup</b> page.  The Current implementation only supports multiple copies of the same part.  
+</p>
+<meta property="mw:PageProp/toc">
+<h2><span id="What_is_a_WCS.3F"></span><span class="mw-headline" id="What_is_a_WCS?">What is a WCS?</span></h2>
+<p>Every CNC controller maintains several coordinate systems.  
+The default is <code>G54</code>, which defines where the machine expects the part origin (usually the stock corner or center) to be located.
+</p><p>By activating a different WCS&mdash;say <code>G55</code>&mdash;the controller effectively shifts its zero point to a new location. The same G-code operations can then be reused on a second fixture or part without rewriting toolpaths.
+</p><p><b>Example:</b>  
+You have two identical vises holding two identical parts.  
+</p>
+<ul><li><code>G54</code> is set to the left vise.</li>
+<li><code>G55</code> is set to the right vise.</li></ul>
+<p>The machine will automatically cut the left part using <code>G54</code>, then switch to <code>G55</code> to cut the right part in the same cycle.
+</p>
+<h2><span class="mw-headline" id="Enabling_and_Managing_Fixtures">Enabling and Managing Fixtures</span></h2>
+<p>In FreeCAD, WCS fixtures are configured in the <b>Job Setup</b> dialog.
+</p><p>Each Job can include up to <b>ten WCS entries</b>, representing <code>G54</code> through <code>G59.9</code>.  
+By default, <code>G54</code> is enabled.
+</p><p>To configure fixtures:
+</p>
+<ol><li>Open the <b>Job Setup</b> page.</li>
+<li>In the <b>Fixtures / WCS</b> section, check the boxes for the offsets you want to include.</li>
+<li>For each fixture, set its <b>placement</b> (offset in X, Y, Z) or link it to a <b>Placement object</b> in the 3D model to represent its physical location.</li></ol>
+<h2><span class="mw-headline" id="Processing_Order_and_Output_Options">Processing Order and Output Options</span></h2>
+<p>The order that operations appear in the tree and the Job workplan dictate the order in which work is done on the part.  This order will never be violated.  However, when multiple fixtures are enabled, multiple valid orders are possible.   FreeCAD provides two key controls for how the system sequences toolpaths and writes G-code when multiple fixtures are used.
+</p>
+<h3><span class="mw-headline" id="Order_by">Order by</span></h3>
+<p>Controls the sequence in which operations are processed across tools, fixtures, or operations.
+</p>
+<table class="wikitable">
+<tbody><tr>
+<th>Option</th>
+<th>Description</th>
+<th>Typical Use
+</th></tr>
+<tr>
+<td><b>Tool</b></td>
+<td>Minimizes tool changes. Each tool completes all available operations in all fixtures before changing.</td>
+<td>Manual tool change setups and minimizing total cycle time.
+</td></tr>
+<tr>
+<td><b>Fixture</b></td>
+<td>Completes all operations (including tool changes) for one fixture before moving to the next.</td>
+<td>Machines with automatic tool changers or multi-station setups where the operator can safely load/unload parts from one fixture while machining continues in another.
+</td></tr>
+<tr>
+<td><b>Operation</b></td>
+<td>Runs the same operation across all fixtures before proceeding to the next. Even if the same tool is reused, the operation sequence is maintained.</td>
+<td>When you want to inspect a part between operations or clean manually clear chips.
+</td></tr></tbody></table>
+<h3><span class="mw-headline" id="Split_Output">Split Output</span></h3>
+<p>When enabled, FreeCAD writes output to a <b>separate G-code file</b>.  
+This is useful if you want to:
+</p>
+<ul><li>Run each fixture independently.</li>
+<li>Test or re-run a specific setup without regenerating the entire program.</li>
+<li>Send partial programs to the machine for staged production.</li></ul>
+<p><br>
+Output splitting is possible even if a single fixture is selected but will have no effect unless 
+</p>
+<ul><li>Order by is set to Tool and multiple tools are used</li>
+<li>Order by is set to Operation and the job has multiple operations enabled.</li></ul>
+<h2><span id="Example:_Two_Fixtures.2C_One_Job"></span><span class="mw-headline" id="Example:_Two_Fixtures,_One_Job">Example: Two Fixtures, One Job</span></h2>
+<p>Imagine a small router table with two vises:
+</p>
+<ul><li>The first vise holds part <b>A</b> at the left of the table (<code>G54</code>).</li>
+<li>The second vise holds part <b>B</b> at the right (<code>G55</code>).</li></ul>
+<p>You create one Job with both fixtures enabled.  
+FreeCAD will automatically generate toolpaths for each fixture and output something like this:
+</p>
+<div class="mw-highlight mw-highlight-lang-gcode mw-content-ltr" dir="ltr"><pre><span></span>(Tool 1 - 6mm Endmill)
+<span class="nb">G54</span>
+... operations for Part A ...
+<span class="nb">G55</span>
+... operations for Part B ...
+</pre></div>
+<p>Both parts are machined in a single cycle, using the same toolpaths&mdash;just offset in position.
+</p>
+<h2><span class="mw-headline" id="Why_This_Matters">Why This Matters</span></h2>
+<dl><dt>For professionals</dt>
+<dd></dd></dl>
+<p>FreeCAD&rsquo;s WCS handling mirrors the workflow found in industrial CAM systems like Fusion 360, Mastercam, or Siemens NX. You can manage multi-setup or multi-fixture operations cleanly without duplicating Jobs or models.
+</p>
+<dl><dt>For hobbyists</dt>
+<dd></dd></dl>
+<p>WCS fixtures are the key to scaling up your workflow. Instead of running the same program twice for two parts, you can cut both at once&mdash;saving time and improving repeatability. It&rsquo;s like giving your machine a map of where each part lives on the table.  Fixtures simplify job setup for multiple copies of a part because it is not necessary to duplicate the base object.
+</p>
+<h2><span class="mw-headline" id="Summary">Summary</span></h2>
+<table class="wikitable">
+<tbody><tr>
+<th>Setting</th>
+<th>Description</th>
+<th>Typical Use Case
+</th></tr>
+<tr>
+<td><b>WCS (G54&ndash;G59.9)</b></td>
+<td>Defines multiple fixture offsets</td>
+<td>Multi-part or multi-setup jobs
+</td></tr>
+<tr>
+<td><b>Order by: Tool</b></td>
+<td>Minimizes tool changes</td>
+<td>Manual tool change setups
+</td></tr>
+<tr>
+<td><b>Order by: Fixture</b></td>
+<td>Completes all ops per fixture</td>
+<td>Multi-station or ATC setups
+</td></tr>
+<tr>
+<td><b>Order by: Operation</b></td>
+<td>Runs each op across all fixtures</td>
+<td>Chip clearing or inspection between ops
+</td></tr>
+<tr>
+<td><b>Split Output</b></td>
+<td>Writes one G-code file per fixture</td>
+<td>Running or testing fixtures separately
+</td></tr></tbody></table>
+<h3><span class="mw-headline" id="Limitations">Limitations</span></h3>
+<ul><li>The simulators will not visualize the processing of multiple parts in different fixtures.</li>
+<li>Handling different setups in the same job is not possible at this time</li></ul>
 <!-- 
 NewPP limit report
-Cached time: 20251015155805
+Cached time: 20251016210014
 Cache expiry: 86400
 Reduced expiry: false
-Complications: []
-CPU time usage: 0.001 seconds
-Real time usage: 0.001 seconds
-Preprocessor visited node count: 2/1000000
+Complications: [show&#8208;toc]
+CPU time usage: 0.011 seconds
+Real time usage: 0.012 seconds
+Preprocessor visited node count: 32/1000000
 Post&#8208;expand include size: 0/2097152 bytes
 Template argument size: 0/2097152 bytes
 Highest expansion depth: 2/100
-Expensive parser function count: 0/100
+Expensive parser function count: 1/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 0/5000000 bytes
+Unstrip post&#8208;expand size: 292/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
 100.00%    0.000      1 -total
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:393782-0!canonical and timestamp 20251015155804 and revision id 1663483. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:393782-0!canonical and timestamp 20251016210014 and revision id 1665269. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="../site.js"></script>
