@@ -1,115 +1,77 @@
-<link href="../site.css" rel="stylesheet" type="text/css"/>
-<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">FEM Mesh/ru</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--high" dir="ltr" href="../de\FEM_Mesh.html" lang="de" title="FEM Polygonnetz (63% translated)">Deutsch</a></li>
-<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="../FEM_Mesh.html" lang="en" title="FEM Mesh (100% translated)">English</a></li>
-<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="../es\FEM_Mesh.html" lang="es" title="MEF Malla (5% translated)">español</a></li>
-<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="../fr\FEM_Mesh.html" lang="fr" title="FEM Maillage (100% translated)">français</a></li>
-<li><a class="mw-pt-progress mw-pt-progress--high" dir="ltr" href="../it\FEM_Mesh.html" lang="it" title="Mesh FEM (75% translated)">italiano</a></li>
-<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="../pl\FEM_Mesh.html" lang="pl" title="MES: Siatka (100% translated)">polski</a></li>
-<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="../ro\FEM_Mesh.html" lang="ro" title="FEM: Mesh/Plasă de discretizare MEF (1% translated)">română</a></li>
-<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--low" dir="ltr" lang="ru">русский</span></li></ul></div>
-<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
-<ul>
-<li class="toclevel-1 tocsection-1"><a href="#Создание_сетки_конечных_элементов"><span class="tocnumber">1</span> <span class="toctext">Создание сетки конечных элементов</span></a></li>
-<li class="toclevel-1 tocsection-2"><a href="#Программное_обеспечение_для_разделения_тел_на_сетки_конечных_элементов"><span class="tocnumber">2</span> <span class="toctext">Программное обеспечение для разделения тел на сетки конечных элементов</span></a>
-<ul>
-<li class="toclevel-2 tocsection-3"><a href="#Встроенные_в_интерфейс_FreeCAD"><span class="tocnumber">2.1</span> <span class="toctext">Встроенные в интерфейс FreeCAD</span></a></li>
-<li class="toclevel-2 tocsection-4"><a href="#Не_встроенные_в_интерфейс_FreeCAD"><span class="tocnumber">2.2</span> <span class="toctext">Не встроенные в интерфейс FreeCAD</span></a></li>
-</ul>
-</li>
-<li class="toclevel-1 tocsection-5"><a href="#Поддерживаемые_в_FreeCAD_элементы_сетки"><span class="tocnumber">3</span> <span class="toctext">Поддерживаемые в FreeCAD элементы сетки</span></a></li>
-<li class="toclevel-1 tocsection-6"><a href="#Типы_элементов_МКЭ"><span class="tocnumber">4</span> <span class="toctext">Типы элементов МКЭ</span></a>
-<ul>
-<li class="toclevel-2 tocsection-7"><a href="#Сегмент_(сегментный_элемент)"><span class="tocnumber">4.1</span> <span class="toctext">Сегмент (сегментный элемент)</span></a></li>
-<li class="toclevel-2 tocsection-8"><a href="#Треугольный_элемент"><span class="tocnumber">4.2</span> <span class="toctext">Треугольный элемент</span></a></li>
-<li class="toclevel-2 tocsection-9"><a href="#Четырехугольный_элемент"><span class="tocnumber">4.3</span> <span class="toctext">Четырехугольный элемент</span></a></li>
-<li class="toclevel-2 tocsection-10"><a href="#Тетраэдральный_элемент"><span class="tocnumber">4.4</span> <span class="toctext">Тетраэдральный элемент</span></a></li>
-<li class="toclevel-2 tocsection-11"><a href="#Шестигранный_элемент"><span class="tocnumber">4.5</span> <span class="toctext">Шестигранный элемент</span></a></li>
-<li class="toclevel-2 tocsection-12"><a href="#Пентаэдральный_(призматический)_элемент"><span class="tocnumber">4.6</span> <span class="toctext">Пентаэдральный (призматический) элемент</span></a></li>
-<li class="toclevel-2 tocsection-13"><a href="#Пирамидальный_элемент"><span class="tocnumber">4.7</span> <span class="toctext">Пирамидальный элемент</span></a></li>
-</ul>
-</li>
-<li class="toclevel-1 tocsection-14"><a href="#Программирование"><span class="tocnumber">5</span> <span class="toctext">Программирование</span></a>
-<ul>
-<li class="toclevel-2 tocsection-15"><a href="#Create_a_FEM_mesh_completely_in_Python"><span class="tocnumber">5.1</span> <span class="toctext">Create a FEM mesh completely in Python</span></a>
-<ul>
-<li class="toclevel-3 tocsection-16"><a href="#Creating_a_mesh_with_one_Tet-10_element"><span class="tocnumber">5.1.1</span> <span class="toctext">Creating a mesh with one Tet-10 element</span></a></li>
-<li class="toclevel-3 tocsection-17"><a href="#Visual_properties"><span class="tocnumber">5.1.2</span> <span class="toctext">Visual properties</span></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toclevel-1 tocsection-18"><a href="#Scripting_examples_of_each_supported_element_type"><span class="tocnumber">6</span> <span class="toctext">Scripting examples of each supported element type</span></a>
-<ul>
-<li class="toclevel-2 tocsection-19"><a href="#Beam,_2_node_line,_seg2_(linear)"><span class="tocnumber">6.1</span> <span class="toctext">Beam, 2 node line, seg2 (linear)</span></a></li>
-<li class="toclevel-2 tocsection-20"><a href="#Beam,_3_node_line,_seg3_(quadratic)"><span class="tocnumber">6.2</span> <span class="toctext">Beam, 3 node line, seg3 (quadratic)</span></a></li>
-<li class="toclevel-2 tocsection-21"><a href="#Shell,_3_node_triangle,_tria3_(linear)"><span class="tocnumber">6.3</span> <span class="toctext">Shell, 3 node triangle, tria3 (linear)</span></a></li>
-<li class="toclevel-2 tocsection-22"><a href="#Shell,_6_node_triangle,_tria6_(quadratic)"><span class="tocnumber">6.4</span> <span class="toctext">Shell, 6 node triangle, tria6 (quadratic)</span></a></li>
-<li class="toclevel-2 tocsection-23"><a href="#Shell,_4_node_quadrangle,_quad4_(linear)"><span class="tocnumber">6.5</span> <span class="toctext">Shell, 4 node quadrangle, quad4 (linear)</span></a></li>
-<li class="toclevel-2 tocsection-24"><a href="#Shell,_8_node_quadrangle,_quad8_(quadratic)"><span class="tocnumber">6.6</span> <span class="toctext">Shell, 8 node quadrangle, quad8 (quadratic)</span></a></li>
-<li class="toclevel-2 tocsection-25"><a href="#Volume,_4_node_tetrahedron,_tetra4_(linear)"><span class="tocnumber">6.7</span> <span class="toctext">Volume, 4 node tetrahedron, tetra4 (linear)</span></a></li>
-<li class="toclevel-2 tocsection-26"><a href="#Volume,_10_node_tetrahedron,_tetra10_(quadratic)"><span class="tocnumber">6.8</span> <span class="toctext">Volume, 10 node tetrahedron, tetra10 (quadratic)</span></a></li>
-<li class="toclevel-2 tocsection-27"><a href="#Volume,_8_node_hexahedron,_hexa8_(linear)"><span class="tocnumber">6.9</span> <span class="toctext">Volume, 8 node hexahedron, hexa8 (linear)</span></a></li>
-<li class="toclevel-2 tocsection-28"><a href="#Volume,_20_node_hexahedron,_hexa20_(quadratic)"><span class="tocnumber">6.10</span> <span class="toctext">Volume, 20 node hexahedron, hexa20 (quadratic)</span></a></li>
-<li class="toclevel-2 tocsection-29"><a href="#Volume,_6_node_pentahedron,_penta6_(linear)"><span class="tocnumber">6.11</span> <span class="toctext">Volume, 6 node pentahedron, penta6 (linear)</span></a></li>
-<li class="toclevel-2 tocsection-30"><a href="#Volume,_15_node_pentahedron,_penta15_(quadratic)"><span class="tocnumber">6.12</span> <span class="toctext">Volume, 15 node pentahedron, penta15 (quadratic)</span></a></li>
-<li class="toclevel-2 tocsection-31"><a href="#Volume,_5_node_pyramid,_pyra5_(linear)"><span class="tocnumber">6.13</span> <span class="toctext">Volume, 5 node pyramid, pyra5 (linear)</span></a></li>
-<li class="toclevel-2 tocsection-32"><a href="#Volume,_13_node_pyramid,_pyra13_(quadratic)"><span class="tocnumber">6.14</span> <span class="toctext">Volume, 13 node pyramid, pyra13 (quadratic)</span></a></li>
-</ul>
-</li>
-<li class="toclevel-1 tocsection-33"><a href="#Scripting_examples_for_groups"><span class="tocnumber">7</span> <span class="toctext">Scripting examples for groups</span></a></li>
-</ul>
-</div>
-</div>
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">FEM Mesh/ru</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="ru" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-FEM+Mesh&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
+<li><a href="../de/FEM_Mesh.html" class="mw-pt-progress mw-pt-progress--med" title="FEM Polygonnetz (64% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="../FEM_Mesh.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="FEM Mesh (100% translated)" lang="en" dir="ltr">English</a></li>
+<li><a href="../es/FEM_Mesh.html" class="mw-pt-progress mw-pt-progress--low" title="MEF Malla (5% translated)" lang="es" dir="ltr">espa&ntilde;ol</a></li>
+<li><a href="../fr/FEM_Mesh.html" class="mw-pt-progress mw-pt-progress--complete" title="FEM Maillage (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../it/FEM_Mesh.html" class="mw-pt-progress mw-pt-progress--high" title="Mesh FEM (76% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="../pl/FEM_Mesh.html" class="mw-pt-progress mw-pt-progress--complete" title="MES: Siatka (100% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../ro/FEM_Mesh.html" class="mw-pt-progress mw-pt-progress--low" title="FEM: Mesh/Plas&#259; de discretizare MEF (1% translated)" lang="ro" dir="ltr">rom&acirc;n&#259;</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--med" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</span></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
 <p><span id="Create_a_finite_element_mesh"></span>
 </p>
-<h2><span id=".D0.A1.D0.BE.D0.B7.D0.B4.D0.B0.D0.BD.D0.B8.D0.B5_.D1.81.D0.B5.D1.82.D0.BA.D0.B8_.D0.BA.D0.BE.D0.BD.D0.B5.D1.87.D0.BD.D1.8B.D1.85_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82.D0.BE.D0.B2"></span><span class="mw-headline" id="Создание_сетки_конечных_элементов">Создание сетки конечных элементов</span></h2>
+<h2><span id=".D0.A1.D0.BE.D0.B7.D0.B4.D0.B0.D0.BD.D0.B8.D0.B5_.D1.81.D0.B5.D1.82.D0.BA.D0.B8_.D0.BA.D0.BE.D0.BD.D0.B5.D1.87.D0.BD.D1.8B.D1.85_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82.D0.BE.D0.B2"></span><span class="mw-headline" id="&#1057;&#1086;&#1079;&#1076;&#1072;&#1085;&#1080;&#1077;_&#1089;&#1077;&#1090;&#1082;&#1080;_&#1082;&#1086;&#1085;&#1077;&#1095;&#1085;&#1099;&#1093;_&#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;">&#1057;&#1086;&#1079;&#1076;&#1072;&#1085;&#1080;&#1077; &#1089;&#1077;&#1090;&#1082;&#1080; &#1082;&#1086;&#1085;&#1077;&#1095;&#1085;&#1099;&#1093; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;</span></h2>
 <div class="mw-translate-fuzzy">
-<p>Анализ методом конечных элементов выполняется над сеткой состоящей из множества соединенных между собой треугольных и четырехугольных конечных элементов, которые формируются в результате разделения исходного тела. Чем точнее сформирована эта сетка, тем точнее будут результаты вычислений, но и время потраченное на вычисления тоже будет больше. Баланс между размером сетки, временем вычислений и точностью результатов является важной характеристикой качественного анализа методом конечных элементов.
+<p>&#1040;&#1085;&#1072;&#1083;&#1080;&#1079; &#1084;&#1077;&#1090;&#1086;&#1076;&#1086;&#1084; &#1082;&#1086;&#1085;&#1077;&#1095;&#1085;&#1099;&#1093; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074; &#1074;&#1099;&#1087;&#1086;&#1083;&#1085;&#1103;&#1077;&#1090;&#1089;&#1103; &#1085;&#1072;&#1076; &#1089;&#1077;&#1090;&#1082;&#1086;&#1081; &#1089;&#1086;&#1089;&#1090;&#1086;&#1103;&#1097;&#1077;&#1081; &#1080;&#1079; &#1084;&#1085;&#1086;&#1078;&#1077;&#1089;&#1090;&#1074;&#1072; &#1089;&#1086;&#1077;&#1076;&#1080;&#1085;&#1077;&#1085;&#1085;&#1099;&#1093; &#1084;&#1077;&#1078;&#1076;&#1091; &#1089;&#1086;&#1073;&#1086;&#1081; &#1090;&#1088;&#1077;&#1091;&#1075;&#1086;&#1083;&#1100;&#1085;&#1099;&#1093; &#1080; &#1095;&#1077;&#1090;&#1099;&#1088;&#1077;&#1093;&#1091;&#1075;&#1086;&#1083;&#1100;&#1085;&#1099;&#1093; &#1082;&#1086;&#1085;&#1077;&#1095;&#1085;&#1099;&#1093; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;, &#1082;&#1086;&#1090;&#1086;&#1088;&#1099;&#1077; &#1092;&#1086;&#1088;&#1084;&#1080;&#1088;&#1091;&#1102;&#1090;&#1089;&#1103; &#1074; &#1088;&#1077;&#1079;&#1091;&#1083;&#1100;&#1090;&#1072;&#1090;&#1077; &#1088;&#1072;&#1079;&#1076;&#1077;&#1083;&#1077;&#1085;&#1080;&#1103; &#1080;&#1089;&#1093;&#1086;&#1076;&#1085;&#1086;&#1075;&#1086; &#1090;&#1077;&#1083;&#1072;. &#1063;&#1077;&#1084; &#1090;&#1086;&#1095;&#1085;&#1077;&#1077; &#1089;&#1092;&#1086;&#1088;&#1084;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1072; &#1101;&#1090;&#1072; &#1089;&#1077;&#1090;&#1082;&#1072;, &#1090;&#1077;&#1084; &#1090;&#1086;&#1095;&#1085;&#1077;&#1077; &#1073;&#1091;&#1076;&#1091;&#1090; &#1088;&#1077;&#1079;&#1091;&#1083;&#1100;&#1090;&#1072;&#1090;&#1099; &#1074;&#1099;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1080;&#1081;, &#1085;&#1086; &#1080; &#1074;&#1088;&#1077;&#1084;&#1103; &#1087;&#1086;&#1090;&#1088;&#1072;&#1095;&#1077;&#1085;&#1085;&#1086;&#1077; &#1085;&#1072; &#1074;&#1099;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1080;&#1103; &#1090;&#1086;&#1078;&#1077; &#1073;&#1091;&#1076;&#1077;&#1090; &#1073;&#1086;&#1083;&#1100;&#1096;&#1077;. &#1041;&#1072;&#1083;&#1072;&#1085;&#1089; &#1084;&#1077;&#1078;&#1076;&#1091; &#1088;&#1072;&#1079;&#1084;&#1077;&#1088;&#1086;&#1084; &#1089;&#1077;&#1090;&#1082;&#1080;, &#1074;&#1088;&#1077;&#1084;&#1077;&#1085;&#1077;&#1084; &#1074;&#1099;&#1095;&#1080;&#1089;&#1083;&#1077;&#1085;&#1080;&#1081; &#1080; &#1090;&#1086;&#1095;&#1085;&#1086;&#1089;&#1090;&#1100;&#1102; &#1088;&#1077;&#1079;&#1091;&#1083;&#1100;&#1090;&#1072;&#1090;&#1086;&#1074; &#1103;&#1074;&#1083;&#1103;&#1077;&#1090;&#1089;&#1103; &#1074;&#1072;&#1078;&#1085;&#1086;&#1081; &#1093;&#1072;&#1088;&#1072;&#1082;&#1090;&#1077;&#1088;&#1080;&#1089;&#1090;&#1080;&#1082;&#1086;&#1081; &#1082;&#1072;&#1095;&#1077;&#1089;&#1090;&#1074;&#1077;&#1085;&#1085;&#1086;&#1075;&#1086; &#1072;&#1085;&#1072;&#1083;&#1080;&#1079;&#1072; &#1084;&#1077;&#1090;&#1086;&#1076;&#1086;&#1084; &#1082;&#1086;&#1085;&#1077;&#1095;&#1085;&#1099;&#1093; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;.
 </p>
 </div>
-<p>В <a href="../ru\FEM_Workbench.html" title="FEM Workbench/ru">верстаке FEM</a> существует несколько способов получения сетки для расчета МКЭ:
+<p>&#1042; <a href="../ru/FEM_Workbench.html" title="FEM Workbench/ru">&#1074;&#1077;&#1088;&#1089;&#1090;&#1072;&#1082;&#1077; FEM</a> &#1089;&#1091;&#1097;&#1077;&#1089;&#1090;&#1074;&#1091;&#1077;&#1090; &#1085;&#1077;&#1089;&#1082;&#1086;&#1083;&#1100;&#1082;&#1086; &#1089;&#1087;&#1086;&#1089;&#1086;&#1073;&#1086;&#1074; &#1087;&#1086;&#1083;&#1091;&#1095;&#1077;&#1085;&#1080;&#1103; &#1089;&#1077;&#1090;&#1082;&#1080; &#1076;&#1083;&#1103; &#1088;&#1072;&#1089;&#1095;&#1077;&#1090;&#1072; &#1052;&#1050;&#1069;:
 </p>
-<ul><li>Через графический интерфейс с помощью инструмента <a href="../ru\FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape/ru">GMSH</a>.</li>
-<li>Через графический интерфейс с помощью инструмента <a href="../ru\FEM_MeshNetgenFromShape.html" title="FEM MeshNetgenFromShape/ru">Netgen</a>.</li>
-<li>Импорт сетки из другой программы. В частности, Gmsh и Netgen могут использоваться сами по себе вне FreeCAD для генерации сеток из твердых тел таких как Step-файлы.</li>
-<li>Создание сетки "вручную" с помощью <a href="../ru\Python.html" title="Python/ru">Python</a> скриптов.</li></ul>
+<ul><li>&#1063;&#1077;&#1088;&#1077;&#1079; &#1075;&#1088;&#1072;&#1092;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080;&#1081; &#1080;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089; &#1089; &#1087;&#1086;&#1084;&#1086;&#1097;&#1100;&#1102; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1072; <a href="../ru/FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape/ru">GMSH</a>.</li>
+<li>&#1063;&#1077;&#1088;&#1077;&#1079; &#1075;&#1088;&#1072;&#1092;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080;&#1081; &#1080;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089; &#1089; &#1087;&#1086;&#1084;&#1086;&#1097;&#1100;&#1102; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1072; <a href="../ru/FEM_MeshNetgenFromShape.html" title="FEM MeshNetgenFromShape/ru">Netgen</a>.</li>
+<li>&#1048;&#1084;&#1087;&#1086;&#1088;&#1090; &#1089;&#1077;&#1090;&#1082;&#1080; &#1080;&#1079; &#1076;&#1088;&#1091;&#1075;&#1086;&#1081; &#1087;&#1088;&#1086;&#1075;&#1088;&#1072;&#1084;&#1084;&#1099;. &#1042; &#1095;&#1072;&#1089;&#1090;&#1085;&#1086;&#1089;&#1090;&#1080;, Gmsh &#1080; Netgen &#1084;&#1086;&#1075;&#1091;&#1090; &#1080;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1100;&#1089;&#1103; &#1089;&#1072;&#1084;&#1080; &#1087;&#1086; &#1089;&#1077;&#1073;&#1077; &#1074;&#1085;&#1077; FreeCAD &#1076;&#1083;&#1103; &#1075;&#1077;&#1085;&#1077;&#1088;&#1072;&#1094;&#1080;&#1080; &#1089;&#1077;&#1090;&#1086;&#1082; &#1080;&#1079; &#1090;&#1074;&#1077;&#1088;&#1076;&#1099;&#1093; &#1090;&#1077;&#1083; &#1090;&#1072;&#1082;&#1080;&#1093; &#1082;&#1072;&#1082; Step-&#1092;&#1072;&#1081;&#1083;&#1099;.</li>
+<li>&#1057;&#1086;&#1079;&#1076;&#1072;&#1085;&#1080;&#1077; &#1089;&#1077;&#1090;&#1082;&#1080; "&#1074;&#1088;&#1091;&#1095;&#1085;&#1091;&#1102;" &#1089; &#1087;&#1086;&#1084;&#1086;&#1097;&#1100;&#1102; <a href="../ru/Python.html" title="Python/ru">Python</a> &#1089;&#1082;&#1088;&#1080;&#1087;&#1090;&#1086;&#1074;.</li></ul>
 <div class="mw-translate-fuzzy">
-<p>Инструменты Gmsh и Netgen поддерживают создание сеток из тел, созданных в верстаках <a href="../ru\Part_Workbench.html" title="Part Workbench/ru">Part</a> и <a href="../ru\PartDesign_Workbench.html" title="PartDesign Workbench/ru">PartDesign</a>, а также из простых копии этих тел. В общем, любой верстак, который генерирует твердые объекты, например <a href="../ru\Arch_Workbench.html" title="Arch Workbench/ru">верстак Arch</a>, также можно использовать для создания сеток. Обратите внимание, что сетка, используемая для АКЭ, не то же самое что сетка, созданная или импортированная из <a href="../ru\Mesh_Workbench.html" title="Mesh Workbench/ru">верстака Mesh</a>.
+<p>&#1048;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1099; Gmsh &#1080; Netgen &#1087;&#1086;&#1076;&#1076;&#1077;&#1088;&#1078;&#1080;&#1074;&#1072;&#1102;&#1090; &#1089;&#1086;&#1079;&#1076;&#1072;&#1085;&#1080;&#1077; &#1089;&#1077;&#1090;&#1086;&#1082; &#1080;&#1079; &#1090;&#1077;&#1083;, &#1089;&#1086;&#1079;&#1076;&#1072;&#1085;&#1085;&#1099;&#1093; &#1074; &#1074;&#1077;&#1088;&#1089;&#1090;&#1072;&#1082;&#1072;&#1093; <a href="../ru/Part_Workbench.html" title="Part Workbench/ru">Part</a> &#1080; <a href="../ru/PartDesign_Workbench.html" title="PartDesign Workbench/ru">PartDesign</a>, &#1072; &#1090;&#1072;&#1082;&#1078;&#1077; &#1080;&#1079; &#1087;&#1088;&#1086;&#1089;&#1090;&#1099;&#1093; &#1082;&#1086;&#1087;&#1080;&#1080; &#1101;&#1090;&#1080;&#1093; &#1090;&#1077;&#1083;. &#1042; &#1086;&#1073;&#1097;&#1077;&#1084;, &#1083;&#1102;&#1073;&#1086;&#1081; &#1074;&#1077;&#1088;&#1089;&#1090;&#1072;&#1082;, &#1082;&#1086;&#1090;&#1086;&#1088;&#1099;&#1081; &#1075;&#1077;&#1085;&#1077;&#1088;&#1080;&#1088;&#1091;&#1077;&#1090; &#1090;&#1074;&#1077;&#1088;&#1076;&#1099;&#1077; &#1086;&#1073;&#1098;&#1077;&#1082;&#1090;&#1099;, &#1085;&#1072;&#1087;&#1088;&#1080;&#1084;&#1077;&#1088; <a href="../ru/Arch_Workbench.html" title="Arch Workbench/ru">&#1074;&#1077;&#1088;&#1089;&#1090;&#1072;&#1082; Arch</a>, &#1090;&#1072;&#1082;&#1078;&#1077; &#1084;&#1086;&#1078;&#1085;&#1086; &#1080;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1100; &#1076;&#1083;&#1103; &#1089;&#1086;&#1079;&#1076;&#1072;&#1085;&#1080;&#1103; &#1089;&#1077;&#1090;&#1086;&#1082;. &#1054;&#1073;&#1088;&#1072;&#1090;&#1080;&#1090;&#1077; &#1074;&#1085;&#1080;&#1084;&#1072;&#1085;&#1080;&#1077;, &#1095;&#1090;&#1086; &#1089;&#1077;&#1090;&#1082;&#1072;, &#1080;&#1089;&#1087;&#1086;&#1083;&#1100;&#1079;&#1091;&#1077;&#1084;&#1072;&#1103; &#1076;&#1083;&#1103; &#1040;&#1050;&#1069;, &#1085;&#1077; &#1090;&#1086; &#1078;&#1077; &#1089;&#1072;&#1084;&#1086;&#1077; &#1095;&#1090;&#1086; &#1089;&#1077;&#1090;&#1082;&#1072;, &#1089;&#1086;&#1079;&#1076;&#1072;&#1085;&#1085;&#1072;&#1103; &#1080;&#1083;&#1080; &#1080;&#1084;&#1087;&#1086;&#1088;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1072;&#1103; &#1080;&#1079; <a href="../ru/Mesh_Workbench.html" title="Mesh Workbench/ru">&#1074;&#1077;&#1088;&#1089;&#1090;&#1072;&#1082;&#1072; Mesh</a>.
 </p>
 </div>
-<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_Workbench_workflow.svg"><img decoding="async" height="271" src="../File/FEM_Workbench_workflow.svg" width="600"/></a></span>
+<p><span typeof="mw:File"><a href="../index.php?title=FEM_Workbench_workflow.svg&amp;filetimestamp=20190417210813&amp;.html" class="mw-file-description"><img src="../File/FEM_Workbench_workflow.svg" decoding="async" width="600" height="271" class="mw-file-element" data-file-width="743" data-file-height="335"></a></span>
 </p>
-<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Вестак FEM вызывает внешний инструмент Gmsh для получения сетки сгенерированной из твердого тела, которое может быть создано в нескольких верстаках FreeCAD; также можно импортировать сетку, созданную внешним приложением</p>
-<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_Mesh.png"><img decoding="async" height="324" src="../File/FEM_Mesh.png" width="600"/></a></span>
+<p style="text-align:left; font-style:italic; max-width:800px; box-sizing:border-box; margin-block:1em; margin-inline:clamp(1em, 6vw, 2em); padding-inline:clamp(0.75em, 4vw, 2em); word-break:normal; overflow-wrap:break-word;">&#1042;&#1077;&#1089;&#1090;&#1072;&#1082; FEM &#1074;&#1099;&#1079;&#1099;&#1074;&#1072;&#1077;&#1090; &#1074;&#1085;&#1077;&#1096;&#1085;&#1080;&#1081; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090; Gmsh &#1076;&#1083;&#1103; &#1087;&#1086;&#1083;&#1091;&#1095;&#1077;&#1085;&#1080;&#1103; &#1089;&#1077;&#1090;&#1082;&#1080; &#1089;&#1075;&#1077;&#1085;&#1077;&#1088;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1086;&#1081; &#1080;&#1079; &#1090;&#1074;&#1077;&#1088;&#1076;&#1086;&#1075;&#1086; &#1090;&#1077;&#1083;&#1072;, &#1082;&#1086;&#1090;&#1086;&#1088;&#1086;&#1077; &#1084;&#1086;&#1078;&#1077;&#1090; &#1073;&#1099;&#1090;&#1100; &#1089;&#1086;&#1079;&#1076;&#1072;&#1085;&#1086; &#1074; &#1085;&#1077;&#1089;&#1082;&#1086;&#1083;&#1100;&#1082;&#1080;&#1093; &#1074;&#1077;&#1088;&#1089;&#1090;&#1072;&#1082;&#1072;&#1093; FreeCAD; &#1090;&#1072;&#1082;&#1078;&#1077; &#1084;&#1086;&#1078;&#1085;&#1086; &#1080;&#1084;&#1087;&#1086;&#1088;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1090;&#1100; &#1089;&#1077;&#1090;&#1082;&#1091;, &#1089;&#1086;&#1079;&#1076;&#1072;&#1085;&#1085;&#1091;&#1102; &#1074;&#1085;&#1077;&#1096;&#1085;&#1080;&#1084; &#1087;&#1088;&#1080;&#1083;&#1086;&#1078;&#1077;&#1085;&#1080;&#1077;&#1084;</p>
+<p><span typeof="mw:File"><a href="../index.php?title=FEM_Mesh.png&amp;filetimestamp=20190409190923&amp;.html" class="mw-file-description"><img src="../File/FEM_Mesh.png" decoding="async" width="600" height="324" class="mw-file-element" data-file-width="1090" data-file-height="588"></a></span>
 </p>
-<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">(1) Твердое тело, созданное с помощью PartDesign; (2) сетка, созданная инструментом Gmsh в FEM верстке (все элементы треугольные); и (3) сетка, созданная Gmsh извне, экспортированная в формат Abaqus <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">.inp</span>, а затем импортированная в FreeCAD (все элементы четырехугольные)</p>
+<p style="text-align:left; font-style:italic; max-width:800px; box-sizing:border-box; margin-block:1em; margin-inline:clamp(1em, 6vw, 2em); padding-inline:clamp(0.75em, 4vw, 2em); word-break:normal; overflow-wrap:break-word;">(1) &#1058;&#1074;&#1077;&#1088;&#1076;&#1086;&#1077; &#1090;&#1077;&#1083;&#1086;, &#1089;&#1086;&#1079;&#1076;&#1072;&#1085;&#1085;&#1086;&#1077; &#1089; &#1087;&#1086;&#1084;&#1086;&#1097;&#1100;&#1102; PartDesign; (2) &#1089;&#1077;&#1090;&#1082;&#1072;, &#1089;&#1086;&#1079;&#1076;&#1072;&#1085;&#1085;&#1072;&#1103; &#1080;&#1085;&#1089;&#1090;&#1088;&#1091;&#1084;&#1077;&#1085;&#1090;&#1086;&#1084; Gmsh &#1074; FEM &#1074;&#1077;&#1088;&#1089;&#1090;&#1082;&#1077; (&#1074;&#1089;&#1077; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1099; &#1090;&#1088;&#1077;&#1091;&#1075;&#1086;&#1083;&#1100;&#1085;&#1099;&#1077;); &#1080; (3) &#1089;&#1077;&#1090;&#1082;&#1072;, &#1089;&#1086;&#1079;&#1076;&#1072;&#1085;&#1085;&#1072;&#1103; Gmsh &#1080;&#1079;&#1074;&#1085;&#1077;, &#1101;&#1082;&#1089;&#1087;&#1086;&#1088;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1072;&#1103; &#1074; &#1092;&#1086;&#1088;&#1084;&#1072;&#1090; Abaqus <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">.inp</span>, &#1072; &#1079;&#1072;&#1090;&#1077;&#1084; &#1080;&#1084;&#1087;&#1086;&#1088;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1085;&#1072;&#1103; &#1074; FreeCAD (&#1074;&#1089;&#1077; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1099; &#1095;&#1077;&#1090;&#1099;&#1088;&#1077;&#1093;&#1091;&#1075;&#1086;&#1083;&#1100;&#1085;&#1099;&#1077;)</p>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>The <a href="../FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape">Gmsh</a> and <a href="../FEM_MeshNetgenFromShape.html" title="FEM MeshNetgenFromShape">Netgen tools</a> are convenience tools to quickly mesh a body, and thus don't expose the full capabilities of these programs; they normally create triangular meshes, which may not be ideal for some types of analysis. If you'd like to have more control of the created mesh (use only quadrilaterals, precise element number and size, variable resolution of the mesh, etc.), you should use these programs externally, produce a mesh file in a supported format (<span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">.inp</span>, <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">.unv</span>, <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">.vtk</span>, <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">.z88</span>), and import this file into FreeCAD.
-</p><p>Previously, Netgen was included with FreeCAD and could be used immediately. Now, both Netgen and Gmsh should be installed before they can be used by the <a href="../FEM_Workbench.html" title="FEM Workbench">FEM Workbench</a>. Refer to <a href="../FEM_Install.html" title="FEM Install">FEM Install</a> for instructions.
-</p><p><span id="Meshing_software"></span>
 </p>
-<h2><span id=".D0.9F.D1.80.D0.BE.D0.B3.D1.80.D0.B0.D0.BC.D0.BC.D0.BD.D0.BE.D0.B5_.D0.BE.D0.B1.D0.B5.D1.81.D0.BF.D0.B5.D1.87.D0.B5.D0.BD.D0.B8.D0.B5_.D0.B4.D0.BB.D1.8F_.D1.80.D0.B0.D0.B7.D0.B4.D0.B5.D0.BB.D0.B5.D0.BD.D0.B8.D1.8F_.D1.82.D0.B5.D0.BB_.D0.BD.D0.B0_.D1.81.D0.B5.D1.82.D0.BA.D0.B8_.D0.BA.D0.BE.D0.BD.D0.B5.D1.87.D0.BD.D1.8B.D1.85_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82.D0.BE.D0.B2"></span><span class="mw-headline" id="Программное_обеспечение_для_разделения_тел_на_сетки_конечных_элементов">Программное обеспечение для разделения тел на сетки конечных элементов</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Previously, Netgen was included with FreeCAD and could be used immediately. Now, both Netgen and Gmsh should be installed before they can be used by the <a href="../FEM_Workbench.html" title="FEM Workbench">FEM Workbench</a>. Refer to <a href="../FEM_Install.html" title="FEM Install">FEM Install</a> for instructions.
+</p>
+</div>
+<p><span id="Meshing_software"></span>
+</p>
+<h2><span id=".D0.9F.D1.80.D0.BE.D0.B3.D1.80.D0.B0.D0.BC.D0.BC.D0.BD.D0.BE.D0.B5_.D0.BE.D0.B1.D0.B5.D1.81.D0.BF.D0.B5.D1.87.D0.B5.D0.BD.D0.B8.D0.B5_.D0.B4.D0.BB.D1.8F_.D1.80.D0.B0.D0.B7.D0.B4.D0.B5.D0.BB.D0.B5.D0.BD.D0.B8.D1.8F_.D1.82.D0.B5.D0.BB_.D0.BD.D0.B0_.D1.81.D0.B5.D1.82.D0.BA.D0.B8_.D0.BA.D0.BE.D0.BD.D0.B5.D1.87.D0.BD.D1.8B.D1.85_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82.D0.BE.D0.B2"></span><span class="mw-headline" id="&#1055;&#1088;&#1086;&#1075;&#1088;&#1072;&#1084;&#1084;&#1085;&#1086;&#1077;_&#1086;&#1073;&#1077;&#1089;&#1087;&#1077;&#1095;&#1077;&#1085;&#1080;&#1077;_&#1076;&#1083;&#1103;_&#1088;&#1072;&#1079;&#1076;&#1077;&#1083;&#1077;&#1085;&#1080;&#1103;_&#1090;&#1077;&#1083;_&#1085;&#1072;_&#1089;&#1077;&#1090;&#1082;&#1080;_&#1082;&#1086;&#1085;&#1077;&#1095;&#1085;&#1099;&#1093;_&#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;">&#1055;&#1088;&#1086;&#1075;&#1088;&#1072;&#1084;&#1084;&#1085;&#1086;&#1077; &#1086;&#1073;&#1077;&#1089;&#1087;&#1077;&#1095;&#1077;&#1085;&#1080;&#1077; &#1076;&#1083;&#1103; &#1088;&#1072;&#1079;&#1076;&#1077;&#1083;&#1077;&#1085;&#1080;&#1103; &#1090;&#1077;&#1083; &#1085;&#1072; &#1089;&#1077;&#1090;&#1082;&#1080; &#1082;&#1086;&#1085;&#1077;&#1095;&#1085;&#1099;&#1093; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;</span></h2>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Meshing software operates on solid bodies that can be in different formats, like Step and Brep. These programs can be used independently of FreeCAD, and typically have many options to control the meshing algorithms, element size, and boundary conditions.
-</p><p>The <a href="../FEM_Workbench.html" title="FEM Workbench">FEM Workbench</a> has developed simple communication interfaces to use Gmsh and Netgen directly inside FreeCAD. Other programs don't have an interface, but this could change in the future if there is interest from the community, and if those applications are easy to integrate. The meshing software can be compiled and distributed together with FreeCAD only if its license is compatible with the LGPL2 license; otherwise, the program has to be used as an external binary, like Gmsh (GPL2) is used.
-</p><p><span id="Interface_implemented_in_FreeCAD"></span>
 </p>
-<h3><span id=".D0.92.D1.81.D1.82.D1.80.D0.BE.D0.B5.D0.BD.D0.BD.D1.8B.D0.B5_.D0.B2_.D0.B8.D0.BD.D1.82.D0.B5.D1.80.D1.84.D0.B5.D0.B9.D1.81_FreeCAD"></span><span class="mw-headline" id="Встроенные_в_интерфейс_FreeCAD">Встроенные в интерфейс FreeCAD</span></h3>
-<ul><li>Gmsh: <a class="external text" href="http://gmsh.info/" rel="nofollow">основной вебсайт</a>, <a class="external text" href="https://gitlab.onelab.info/gmsh/gmsh" rel="nofollow">исходный код</a></li>
-<li>Netgen: <a class="external text" href="https://ngsolve.org/" rel="nofollow">основной вебсайт</a>, <a class="external text" href="https://github.com/NGSolve/netgen" rel="nofollow">исходный код</a></li></ul>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>The <a href="../FEM_Workbench.html" title="FEM Workbench">FEM Workbench</a> has developed simple communication interfaces to use Gmsh and Netgen directly inside FreeCAD. Other programs don't have an interface, but this could change in the future if there is interest from the community, and if those applications are easy to integrate. The meshing software can be compiled and distributed together with FreeCAD only if its license is compatible with the LGPL2 license; otherwise, the program has to be used as an external binary, like Gmsh (GPL2) is used.
+</p>
+</div>
+<p><span id="Interface_implemented_in_FreeCAD"></span>
+</p>
+<h3><span id=".D0.92.D1.81.D1.82.D1.80.D0.BE.D0.B5.D0.BD.D0.BD.D1.8B.D0.B5_.D0.B2_.D0.B8.D0.BD.D1.82.D0.B5.D1.80.D1.84.D0.B5.D0.B9.D1.81_FreeCAD"></span><span class="mw-headline" id="&#1042;&#1089;&#1090;&#1088;&#1086;&#1077;&#1085;&#1085;&#1099;&#1077;_&#1074;_&#1080;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089;_FreeCAD">&#1042;&#1089;&#1090;&#1088;&#1086;&#1077;&#1085;&#1085;&#1099;&#1077; &#1074; &#1080;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089; FreeCAD</span></h3>
+<ul><li>Gmsh: <a rel="nofollow" class="external text" href="http://gmsh.info/">&#1086;&#1089;&#1085;&#1086;&#1074;&#1085;&#1086;&#1081; &#1074;&#1077;&#1073;&#1089;&#1072;&#1081;&#1090;</a>, <a rel="nofollow" class="external text" href="https://gitlab.onelab.info/gmsh/gmsh">&#1080;&#1089;&#1093;&#1086;&#1076;&#1085;&#1099;&#1081; &#1082;&#1086;&#1076;</a></li>
+<li>Netgen: <a rel="nofollow" class="external text" href="https://ngsolve.org/">&#1086;&#1089;&#1085;&#1086;&#1074;&#1085;&#1086;&#1081; &#1074;&#1077;&#1073;&#1089;&#1072;&#1081;&#1090;</a>, <a rel="nofollow" class="external text" href="https://github.com/NGSolve/netgen">&#1080;&#1089;&#1093;&#1086;&#1076;&#1085;&#1099;&#1081; &#1082;&#1086;&#1076;</a></li></ul>
 <p><span id="No_interface_in_FreeCAD"></span>
 </p>
-<h3><span id=".D0.9D.D0.B5_.D0.B2.D1.81.D1.82.D1.80.D0.BE.D0.B5.D0.BD.D0.BD.D1.8B.D0.B5_.D0.B2_.D0.B8.D0.BD.D1.82.D0.B5.D1.80.D1.84.D0.B5.D0.B9.D1.81_FreeCAD"></span><span class="mw-headline" id="Не_встроенные_в_интерфейс_FreeCAD">Не встроенные в интерфейс FreeCAD</span></h3>
-<ul><li>ENigMA, <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=18&amp;t=33048" rel="nofollow">ветка на форуме</a>, <a class="external text" href="https://github.com/bjaraujo/ENigMA" rel="nofollow">исходный код</a></li>
-<li>libMesh, <a class="external text" href="http://libmesh.github.io/" rel="nofollow">основной вебсайт</a>, <a class="external text" href="https://github.com/libMesh/libmesh" rel="nofollow">исходный код</a>, <a class="external text" href="https://forum.freecadweb.org/viewtopic.php?f=18&amp;t=33621" rel="nofollow">ветка на форуме</a>; это активный проект, но работает только на C++</li>
-<li>PythonOCC, <a class="external text" href="http://www.pythonocc.org/" rel="nofollow">основной вебсайт</a></li>
-<li>SnappyHexMesh, <a class="external text" href="https://openfoamwiki.net/index.php/SnappyHexMesh" rel="nofollow">основной вебсайт</a></li>
-<li>Tetgen, <a class="external text" href="http://wias-berlin.de/software/tetgen/" rel="nofollow">основной вебсайт</a></li></ul>
+<h3><span id=".D0.9D.D0.B5_.D0.B2.D1.81.D1.82.D1.80.D0.BE.D0.B5.D0.BD.D0.BD.D1.8B.D0.B5_.D0.B2_.D0.B8.D0.BD.D1.82.D0.B5.D1.80.D1.84.D0.B5.D0.B9.D1.81_FreeCAD"></span><span class="mw-headline" id="&#1053;&#1077;_&#1074;&#1089;&#1090;&#1088;&#1086;&#1077;&#1085;&#1085;&#1099;&#1077;_&#1074;_&#1080;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089;_FreeCAD">&#1053;&#1077; &#1074;&#1089;&#1090;&#1088;&#1086;&#1077;&#1085;&#1085;&#1099;&#1077; &#1074; &#1080;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089; FreeCAD</span></h3>
+<ul><li>ENigMA, <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?f=18&amp;t=33048">&#1074;&#1077;&#1090;&#1082;&#1072; &#1085;&#1072; &#1092;&#1086;&#1088;&#1091;&#1084;&#1077;</a>, <a rel="nofollow" class="external text" href="https://github.com/bjaraujo/ENigMA">&#1080;&#1089;&#1093;&#1086;&#1076;&#1085;&#1099;&#1081; &#1082;&#1086;&#1076;</a></li>
+<li>libMesh, <a rel="nofollow" class="external text" href="http://libmesh.github.io/">&#1086;&#1089;&#1085;&#1086;&#1074;&#1085;&#1086;&#1081; &#1074;&#1077;&#1073;&#1089;&#1072;&#1081;&#1090;</a>, <a rel="nofollow" class="external text" href="https://github.com/libMesh/libmesh">&#1080;&#1089;&#1093;&#1086;&#1076;&#1085;&#1099;&#1081; &#1082;&#1086;&#1076;</a>, <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?f=18&amp;t=33621">&#1074;&#1077;&#1090;&#1082;&#1072; &#1085;&#1072; &#1092;&#1086;&#1088;&#1091;&#1084;&#1077;</a>; &#1101;&#1090;&#1086; &#1072;&#1082;&#1090;&#1080;&#1074;&#1085;&#1099;&#1081; &#1087;&#1088;&#1086;&#1077;&#1082;&#1090;, &#1085;&#1086; &#1088;&#1072;&#1073;&#1086;&#1090;&#1072;&#1077;&#1090; &#1090;&#1086;&#1083;&#1100;&#1082;&#1086; &#1085;&#1072; C++</li>
+<li>PythonOCC, <a rel="nofollow" class="external text" href="http://www.pythonocc.org/">&#1086;&#1089;&#1085;&#1086;&#1074;&#1085;&#1086;&#1081; &#1074;&#1077;&#1073;&#1089;&#1072;&#1081;&#1090;</a></li>
+<li>SnappyHexMesh, <a rel="nofollow" class="external text" href="https://openfoamwiki.net/index.php/SnappyHexMesh">&#1086;&#1089;&#1085;&#1086;&#1074;&#1085;&#1086;&#1081; &#1074;&#1077;&#1073;&#1089;&#1072;&#1081;&#1090;</a></li>
+<li>Tetgen, <a rel="nofollow" class="external text" href="http://wias-berlin.de/software/tetgen/">&#1086;&#1089;&#1085;&#1086;&#1074;&#1085;&#1086;&#1081; &#1074;&#1077;&#1073;&#1089;&#1072;&#1081;&#1090;</a></li></ul>
 <p><span id="Mesh_elements_in_FreeCAD"></span>
 </p>
-<h2><span id=".D0.9F.D0.BE.D0.B4.D0.B4.D0.B5.D1.80.D0.B6.D0.B8.D0.B2.D0.B0.D0.B5.D0.BC.D1.8B.D0.B5_.D0.B2_FreeCAD_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82.D1.8B_.D1.81.D0.B5.D1.82.D0.BA.D0.B8"></span><span class="mw-headline" id="Поддерживаемые_в_FreeCAD_элементы_сетки">Поддерживаемые в FreeCAD элементы сетки</span></h2>
-<p>FreeCAD supports various element types. The following article explains the difference between them, and when should be used: <a class="external text" href="https://www.comsol.com/blogs/meshing-your-geometry-various-element-types/" rel="nofollow">Meshing Your Geometry: When to Use the Various Element Types</a>.
+<h2><span id=".D0.9F.D0.BE.D0.B4.D0.B4.D0.B5.D1.80.D0.B6.D0.B8.D0.B2.D0.B0.D0.B5.D0.BC.D1.8B.D0.B5_.D0.B2_FreeCAD_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82.D1.8B_.D1.81.D0.B5.D1.82.D0.BA.D0.B8"></span><span class="mw-headline" id="&#1055;&#1086;&#1076;&#1076;&#1077;&#1088;&#1078;&#1080;&#1074;&#1072;&#1077;&#1084;&#1099;&#1077;_&#1074;_FreeCAD_&#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1099;_&#1089;&#1077;&#1090;&#1082;&#1080;">&#1055;&#1086;&#1076;&#1076;&#1077;&#1088;&#1078;&#1080;&#1074;&#1072;&#1077;&#1084;&#1099;&#1077; &#1074; FreeCAD &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1099; &#1089;&#1077;&#1090;&#1082;&#1080;</span></h2>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>FreeCAD supports various element types. The following article explains the difference between them, and when should be used: <a rel="nofollow" class="external text" href="https://www.comsol.com/blogs/meshing-your-geometry-various-element-types/">Meshing Your Geometry: When to Use the Various Element Types</a>.
 </p>
-<table border="1" cellpadding="5" cellspacing="0" class="wikitable" style="color:black; background-color:#eeeeef;">
-<caption>Импорт и экспорт элементов сетки
+</div>
+<table class="wikitable" style="color:black; background-color:#eeeeef;" cellpadding="5" cellspacing="0" border="1">
+<caption>&#1048;&#1084;&#1087;&#1086;&#1088;&#1090; &#1080; &#1101;&#1082;&#1089;&#1087;&#1086;&#1088;&#1090; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074; &#1089;&#1077;&#1090;&#1082;&#1080;
 </caption>
 <tbody><tr>
 <th>Element</th>
@@ -136,236 +98,251 @@
 <td>FEniCS
 </td></tr>
 <tr>
-<td>Название</td>
-<td>Название</td>
-<td>создание элементов</td>
-<td>просмотр элементов</td>
-<td>импорт/экспорт</td>
-<td>импорт/экспорт</td>
-<td>импорт/экспорт</td>
-<td>импорт</td>
-<td>импорт/экспорт</td>
-<td>импорт/экспорт
+<td>&#1053;&#1072;&#1079;&#1074;&#1072;&#1085;&#1080;&#1077;</td>
+<td>&#1053;&#1072;&#1079;&#1074;&#1072;&#1085;&#1080;&#1077;</td>
+<td>&#1089;&#1086;&#1079;&#1076;&#1072;&#1085;&#1080;&#1077; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;</td>
+<td>&#1087;&#1088;&#1086;&#1089;&#1084;&#1086;&#1090;&#1088; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;</td>
+<td>&#1080;&#1084;&#1087;&#1086;&#1088;&#1090;/&#1101;&#1082;&#1089;&#1087;&#1086;&#1088;&#1090;</td>
+<td>&#1080;&#1084;&#1087;&#1086;&#1088;&#1090;/&#1101;&#1082;&#1089;&#1087;&#1086;&#1088;&#1090;</td>
+<td>&#1080;&#1084;&#1087;&#1086;&#1088;&#1090;/&#1101;&#1082;&#1089;&#1087;&#1086;&#1088;&#1090;</td>
+<td>&#1080;&#1084;&#1087;&#1086;&#1088;&#1090;</td>
+<td>&#1080;&#1084;&#1087;&#1086;&#1088;&#1090;/&#1101;&#1082;&#1089;&#1087;&#1086;&#1088;&#1090;</td>
+<td>&#1080;&#1084;&#1087;&#1086;&#1088;&#1090;/&#1101;&#1082;&#1089;&#1087;&#1086;&#1088;&#1090;
 </td></tr>
 <tr>
 <td>seg 2</td>
 <td>B31</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr>
 <tr>
 <td>seg 3</td>
 <td>B32</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td>НР</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td>&#1053;&#1056;</td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr>
 <tr>
 <td>tria 3</td>
 <td>S3</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr>
 <tr>
 <td>tria 6</td>
 <td>S6</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr>
 <tr>
 <td>quad 4</td>
 <td>S4</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr>
 <tr>
 <td>quad 8</td>
 <td>S8</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr>
 <tr>
 <td>tetra 4</td>
 <td>C3D4</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr>
 <tr>
 <td>tetra 10</td>
 <td>C3D10</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr>
 <tr>
 <td>hexa 8</td>
 <td>C3D8</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td>(<span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span>) допускается форматом,<br/> но не доступно для чтения или записи <br/>с помощью FEniCS
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td>(<span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>) &#1076;&#1086;&#1087;&#1091;&#1089;&#1082;&#1072;&#1077;&#1090;&#1089;&#1103; &#1092;&#1086;&#1088;&#1084;&#1072;&#1090;&#1086;&#1084;,<br> &#1085;&#1086; &#1085;&#1077; &#1076;&#1086;&#1089;&#1090;&#1091;&#1087;&#1085;&#1086; &#1076;&#1083;&#1103; &#1095;&#1090;&#1077;&#1085;&#1080;&#1103; &#1080;&#1083;&#1080; &#1079;&#1072;&#1087;&#1080;&#1089;&#1080; <br>&#1089; &#1087;&#1086;&#1084;&#1086;&#1097;&#1100;&#1102; FEniCS
 </td></tr>
 <tr>
 <td>hexa 20</td>
 <td>C3D20</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr>
 <tr>
 <td>penta 6</td>
 <td>C3D6</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
 <td>?</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr>
 <tr>
 <td>penta 15</td>
 <td>C3D15</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
 <td>?</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr>
 <tr>
 <td>pyra 5</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr>
 <tr>
 <td>pyra 13</td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_OK.svg"><img decoding="async" height="20" src="../File/Edit_OK.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span></td>
-<td><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_OK.svg&amp;filetimestamp=20240704192428&amp;.html" class="mw-file-description"><img src="../File/Edit_OK.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span></td>
+<td><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </td></tr></tbody></table>
-<ul><li>"НР" означает, что тип элемента Не Реализован в FreeCAD, но формат будет поддерживать его.</li>
-<li><span typeof="mw:File"><a class="mw-file-description" href="../File/Edit_Cancel.svg"><img decoding="async" height="20" src="../File/Edit_Cancel.svg" width="20"/></a></span> означает, что спецификация формата не поддерживает этот тип элемента, поэтому FreeCAD не поддерживает его.</li>
-<li>"?" означает, что неизвестно, поддерживает ли формат этот тип элементов.</li></ul>
+<ul><li>"&#1053;&#1056;" &#1086;&#1079;&#1085;&#1072;&#1095;&#1072;&#1077;&#1090;, &#1095;&#1090;&#1086; &#1090;&#1080;&#1087; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1072; &#1053;&#1077; &#1056;&#1077;&#1072;&#1083;&#1080;&#1079;&#1086;&#1074;&#1072;&#1085; &#1074; FreeCAD, &#1085;&#1086; &#1092;&#1086;&#1088;&#1084;&#1072;&#1090; &#1073;&#1091;&#1076;&#1077;&#1090; &#1087;&#1086;&#1076;&#1076;&#1077;&#1088;&#1078;&#1080;&#1074;&#1072;&#1090;&#1100; &#1077;&#1075;&#1086;.</li>
+<li><span typeof="mw:File"><a href="../index.php?title=Edit_Cancel.svg&amp;filetimestamp=20240704192407&amp;.html" class="mw-file-description"><img src="../File/Edit_Cancel.svg" decoding="async" width="20" height="20" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> &#1086;&#1079;&#1085;&#1072;&#1095;&#1072;&#1077;&#1090;, &#1095;&#1090;&#1086; &#1089;&#1087;&#1077;&#1094;&#1080;&#1092;&#1080;&#1082;&#1072;&#1094;&#1080;&#1103; &#1092;&#1086;&#1088;&#1084;&#1072;&#1090;&#1072; &#1085;&#1077; &#1087;&#1086;&#1076;&#1076;&#1077;&#1088;&#1078;&#1080;&#1074;&#1072;&#1077;&#1090; &#1101;&#1090;&#1086;&#1090; &#1090;&#1080;&#1087; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1072;, &#1087;&#1086;&#1101;&#1090;&#1086;&#1084;&#1091; FreeCAD &#1085;&#1077; &#1087;&#1086;&#1076;&#1076;&#1077;&#1088;&#1078;&#1080;&#1074;&#1072;&#1077;&#1090; &#1077;&#1075;&#1086;.</li>
+<li>"?" &#1086;&#1079;&#1085;&#1072;&#1095;&#1072;&#1077;&#1090;, &#1095;&#1090;&#1086; &#1085;&#1077;&#1080;&#1079;&#1074;&#1077;&#1089;&#1090;&#1085;&#1086;, &#1087;&#1086;&#1076;&#1076;&#1077;&#1088;&#1078;&#1080;&#1074;&#1072;&#1077;&#1090; &#1083;&#1080; &#1092;&#1086;&#1088;&#1084;&#1072;&#1090; &#1101;&#1090;&#1086;&#1090; &#1090;&#1080;&#1087; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;.</li></ul>
 <p><span id="FEM_element_types"></span>
 </p>
-<h2><span id=".D0.A2.D0.B8.D0.BF.D1.8B_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82.D0.BE.D0.B2_.D0.9C.D0.9A.D0.AD"></span><span class="mw-headline" id="Типы_элементов_МКЭ">Типы элементов МКЭ</span></h2>
+<h2><span id=".D0.A2.D0.B8.D0.BF.D1.8B_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82.D0.BE.D0.B2_.D0.9C.D0.9A.D0.AD"></span><span class="mw-headline" id="&#1058;&#1080;&#1087;&#1099;_&#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074;_&#1052;&#1050;&#1069;">&#1058;&#1080;&#1087;&#1099; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;&#1086;&#1074; &#1052;&#1050;&#1069;</span></h2>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>More information on the elements, and their data structure inside FreeCAD can be found in <a href="../FEM_Element_Types.html" title="FEM Element Types">FEM Element Types</a>.
-</p><p><span id="Segment_element"></span>
 </p>
-<h3><span id=".D0.A1.D0.B5.D0.B3.D0.BC.D0.B5.D0.BD.D1.82_.28.D1.81.D0.B5.D0.B3.D0.BC.D0.B5.D0.BD.D1.82.D0.BD.D1.8B.D0.B9_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82.29"></span><span class="mw-headline" id="Сегмент_(сегментный_элемент)">Сегмент (сегментный элемент)</span></h3>
-<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_mesh_elements_1_segment.svg"><img decoding="async" height="43" src="../File/FEM_mesh_elements_1_segment.svg" width="600"/></a></span>
+</div>
+<p><span id="Segment_element"></span>
+</p>
+<h3><span id=".D0.A1.D0.B5.D0.B3.D0.BC.D0.B5.D0.BD.D1.82_.28.D1.81.D0.B5.D0.B3.D0.BC.D0.B5.D0.BD.D1.82.D0.BD.D1.8B.D0.B9_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82.29"></span><span class="mw-headline" id="&#1057;&#1077;&#1075;&#1084;&#1077;&#1085;&#1090;_(&#1089;&#1077;&#1075;&#1084;&#1077;&#1085;&#1090;&#1085;&#1099;&#1081;_&#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;)">&#1057;&#1077;&#1075;&#1084;&#1077;&#1085;&#1090; (&#1089;&#1077;&#1075;&#1084;&#1077;&#1085;&#1090;&#1085;&#1099;&#1081; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;)</span></h3>
+<p><span typeof="mw:File"><a href="../index.php?title=FEM_mesh_elements_1_segment.svg&amp;filetimestamp=20190412043806&amp;.html" class="mw-file-description"><img src="../File/FEM_mesh_elements_1_segment.svg" decoding="async" width="600" height="43" class="mw-file-element" data-file-width="540" data-file-height="39"></a></span>
 </p><p><span id="Triangle_element"></span>
 </p>
-<h3><span id=".D0.A2.D1.80.D0.B5.D1.83.D0.B3.D0.BE.D0.BB.D1.8C.D0.BD.D1.8B.D0.B9_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82"></span><span class="mw-headline" id="Треугольный_элемент">Треугольный элемент</span></h3>
-<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_mesh_elements_2_triangle.svg"><img decoding="async" height="227" src="../File/FEM_mesh_elements_2_triangle.svg" width="600"/></a></span>
+<h3><span id=".D0.A2.D1.80.D0.B5.D1.83.D0.B3.D0.BE.D0.BB.D1.8C.D0.BD.D1.8B.D0.B9_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82"></span><span class="mw-headline" id="&#1058;&#1088;&#1077;&#1091;&#1075;&#1086;&#1083;&#1100;&#1085;&#1099;&#1081;_&#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;">&#1058;&#1088;&#1077;&#1091;&#1075;&#1086;&#1083;&#1100;&#1085;&#1099;&#1081; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;</span></h3>
+<p><span typeof="mw:File"><a href="../index.php?title=FEM_mesh_elements_2_triangle.svg&amp;filetimestamp=20190412062024&amp;.html" class="mw-file-description"><img src="../File/FEM_mesh_elements_2_triangle.svg" decoding="async" width="600" height="227" class="mw-file-element" data-file-width="591" data-file-height="224"></a></span>
 </p><p><span id="Quadrangle_element"></span>
 </p>
-<h3><span id=".D0.A7.D0.B5.D1.82.D1.8B.D1.80.D0.B5.D1.85.D1.83.D0.B3.D0.BE.D0.BB.D1.8C.D0.BD.D1.8B.D0.B9_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82"></span><span class="mw-headline" id="Четырехугольный_элемент">Четырехугольный элемент</span></h3>
-<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_mesh_elements_3_quadrangle.svg"><img decoding="async" height="197" src="../File/FEM_mesh_elements_3_quadrangle.svg" width="600"/></a></span>
+<h3><span id=".D0.A7.D0.B5.D1.82.D1.8B.D1.80.D0.B5.D1.85.D1.83.D0.B3.D0.BE.D0.BB.D1.8C.D0.BD.D1.8B.D0.B9_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82"></span><span class="mw-headline" id="&#1063;&#1077;&#1090;&#1099;&#1088;&#1077;&#1093;&#1091;&#1075;&#1086;&#1083;&#1100;&#1085;&#1099;&#1081;_&#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;">&#1063;&#1077;&#1090;&#1099;&#1088;&#1077;&#1093;&#1091;&#1075;&#1086;&#1083;&#1100;&#1085;&#1099;&#1081; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;</span></h3>
+<p><span typeof="mw:File"><a href="../index.php?title=FEM_mesh_elements_3_quadrangle.svg&amp;filetimestamp=20190412062109&amp;.html" class="mw-file-description"><img src="../File/FEM_mesh_elements_3_quadrangle.svg" decoding="async" width="600" height="197" class="mw-file-element" data-file-width="624" data-file-height="205"></a></span>
 </p><p><span id="Tetrahedron_element"></span>
 </p>
-<h3><span id=".D0.A2.D0.B5.D1.82.D1.80.D0.B0.D1.8D.D0.B4.D1.80.D0.B0.D0.BB.D1.8C.D0.BD.D1.8B.D0.B9_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82"></span><span class="mw-headline" id="Тетраэдральный_элемент">Тетраэдральный элемент</span></h3>
-<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_mesh_elements_4_tetrahedron.svg"><img decoding="async" height="193" src="../File/FEM_mesh_elements_4_tetrahedron.svg" width="600"/></a></span>
+<h3><span id=".D0.A2.D0.B5.D1.82.D1.80.D0.B0.D1.8D.D0.B4.D1.80.D0.B0.D0.BB.D1.8C.D0.BD.D1.8B.D0.B9_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82"></span><span class="mw-headline" id="&#1058;&#1077;&#1090;&#1088;&#1072;&#1101;&#1076;&#1088;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081;_&#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;">&#1058;&#1077;&#1090;&#1088;&#1072;&#1101;&#1076;&#1088;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;</span></h3>
+<p><span typeof="mw:File"><a href="../index.php?title=FEM_mesh_elements_4_tetrahedron.svg&amp;filetimestamp=20190412062213&amp;.html" class="mw-file-description"><img src="../File/FEM_mesh_elements_4_tetrahedron.svg" decoding="async" width="600" height="193" class="mw-file-element" data-file-width="640" data-file-height="206"></a></span>
 </p><p><span id="Hexahedron_element"></span>
 </p>
-<h3><span id=".D0.A8.D0.B5.D1.81.D1.82.D0.B8.D0.B3.D1.80.D0.B0.D0.BD.D0.BD.D1.8B.D0.B9_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82"></span><span class="mw-headline" id="Шестигранный_элемент">Шестигранный элемент</span></h3>
-<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_mesh_elements_5_hexahedron.svg"><img decoding="async" height="194" src="../File/FEM_mesh_elements_5_hexahedron.svg" width="600"/></a></span>
+<h3><span id=".D0.A8.D0.B5.D1.81.D1.82.D0.B8.D0.B3.D1.80.D0.B0.D0.BD.D0.BD.D1.8B.D0.B9_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82"></span><span class="mw-headline" id="&#1064;&#1077;&#1089;&#1090;&#1080;&#1075;&#1088;&#1072;&#1085;&#1085;&#1099;&#1081;_&#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;">&#1064;&#1077;&#1089;&#1090;&#1080;&#1075;&#1088;&#1072;&#1085;&#1085;&#1099;&#1081; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;</span></h3>
+<p><span typeof="mw:File"><a href="../index.php?title=FEM_mesh_elements_5_hexahedron.svg&amp;filetimestamp=20190412044722&amp;.html" class="mw-file-description"><img src="../File/FEM_mesh_elements_5_hexahedron.svg" decoding="async" width="600" height="194" class="mw-file-element" data-file-width="705" data-file-height="228"></a></span>
 </p><p><span id="Pentahedron_element_(prism)"></span>
 </p>
-<h3><span id=".D0.9F.D0.B5.D0.BD.D1.82.D0.B0.D1.8D.D0.B4.D1.80.D0.B0.D0.BB.D1.8C.D0.BD.D1.8B.D0.B9_.28.D0.BF.D1.80.D0.B8.D0.B7.D0.BC.D0.B0.D1.82.D0.B8.D1.87.D0.B5.D1.81.D0.BA.D0.B8.D0.B9.29_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82"></span><span class="mw-headline" id="Пентаэдральный_(призматический)_элемент">Пентаэдральный (призматический) элемент</span></h3>
-<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_mesh_elements_6_pentahedron.svg"><img decoding="async" height="178" src="../File/FEM_mesh_elements_6_pentahedron.svg" width="600"/></a></span>
+<h3><span id=".D0.9F.D0.B5.D0.BD.D1.82.D0.B0.D1.8D.D0.B4.D1.80.D0.B0.D0.BB.D1.8C.D0.BD.D1.8B.D0.B9_.28.D0.BF.D1.80.D0.B8.D0.B7.D0.BC.D0.B0.D1.82.D0.B8.D1.87.D0.B5.D1.81.D0.BA.D0.B8.D0.B9.29_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82"></span><span class="mw-headline" id="&#1055;&#1077;&#1085;&#1090;&#1072;&#1101;&#1076;&#1088;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081;_(&#1087;&#1088;&#1080;&#1079;&#1084;&#1072;&#1090;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080;&#1081;)_&#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;">&#1055;&#1077;&#1085;&#1090;&#1072;&#1101;&#1076;&#1088;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; (&#1087;&#1088;&#1080;&#1079;&#1084;&#1072;&#1090;&#1080;&#1095;&#1077;&#1089;&#1082;&#1080;&#1081;) &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;</span></h3>
+<p><span typeof="mw:File"><a href="../index.php?title=FEM_mesh_elements_6_pentahedron.svg&amp;filetimestamp=20190412062257&amp;.html" class="mw-file-description"><img src="../File/FEM_mesh_elements_6_pentahedron.svg" decoding="async" width="600" height="178" class="mw-file-element" data-file-width="710" data-file-height="211"></a></span>
 </p><p><span id="Pyramid_element"></span>
 </p>
-<h3><span id=".D0.9F.D0.B8.D1.80.D0.B0.D0.BC.D0.B8.D0.B4.D0.B0.D0.BB.D1.8C.D0.BD.D1.8B.D0.B9_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82"></span><span class="mw-headline" id="Пирамидальный_элемент">Пирамидальный элемент</span></h3>
-<p><span typeof="mw:File"><a class="mw-file-description" href="../File/FEM_mesh_elements_7_pyramid.svg"><img decoding="async" height="201" src="../File/FEM_mesh_elements_7_pyramid.svg" width="600"/></a></span>
+<h3><span id=".D0.9F.D0.B8.D1.80.D0.B0.D0.BC.D0.B8.D0.B4.D0.B0.D0.BB.D1.8C.D0.BD.D1.8B.D0.B9_.D1.8D.D0.BB.D0.B5.D0.BC.D0.B5.D0.BD.D1.82"></span><span class="mw-headline" id="&#1055;&#1080;&#1088;&#1072;&#1084;&#1080;&#1076;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081;_&#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;">&#1055;&#1080;&#1088;&#1072;&#1084;&#1080;&#1076;&#1072;&#1083;&#1100;&#1085;&#1099;&#1081; &#1101;&#1083;&#1077;&#1084;&#1077;&#1085;&#1090;</span></h3>
+<p><span typeof="mw:File"><a href="../index.php?title=FEM_mesh_elements_7_pyramid.svg&amp;filetimestamp=20190412062439&amp;.html" class="mw-file-description"><img src="../File/FEM_mesh_elements_7_pyramid.svg" decoding="async" width="600" height="201" class="mw-file-element" data-file-width="705" data-file-height="236"></a></span>
 </p><p><span id="Scripting"></span>
 </p>
-<h2><span id=".D0.9F.D1.80.D0.BE.D0.B3.D1.80.D0.B0.D0.BC.D0.BC.D0.B8.D1.80.D0.BE.D0.B2.D0.B0.D0.BD.D0.B8.D0.B5"></span><span class="mw-headline" id="Программирование">Программирование</span></h2>
+<h2><span id=".D0.9F.D1.80.D0.BE.D0.B3.D1.80.D0.B0.D0.BC.D0.BC.D0.B8.D1.80.D0.BE.D0.B2.D0.B0.D0.BD.D0.B8.D0.B5"></span><span class="mw-headline" id="&#1055;&#1088;&#1086;&#1075;&#1088;&#1072;&#1084;&#1084;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077;">&#1055;&#1088;&#1086;&#1075;&#1088;&#1072;&#1084;&#1084;&#1080;&#1088;&#1086;&#1074;&#1072;&#1085;&#1080;&#1077;</span></h2>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span class="mw-headline" id="Create_a_FEM_mesh_completely_in_Python">Create a FEM mesh completely in Python</span></h3>
-<p><i>Смотрите так же:</i> <a href="../ru\FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/ru">Основы составления скриптов в FreeCAD</a>.
-</p><p>The Python API allows the user to define a finite element mesh by directly adding individual nodes, and defining edges, faces, and volumes.
-</p><p>The mesh itself is of type <code>Fem::FemMesh</code>, which needs to be attached to a proper document object of type <code>Fem::FemMeshObject</code>.
+</div>
+<p><i>&#1057;&#1084;&#1086;&#1090;&#1088;&#1080;&#1090;&#1077; &#1090;&#1072;&#1082; &#1078;&#1077;:</i> <a href="../ru/FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/ru">&#1054;&#1089;&#1085;&#1086;&#1074;&#1099; &#1089;&#1086;&#1089;&#1090;&#1072;&#1074;&#1083;&#1077;&#1085;&#1080;&#1103; &#1089;&#1082;&#1088;&#1080;&#1087;&#1090;&#1086;&#1074; &#1074; FreeCAD</a>.
 </p>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>The Python API allows the user to define a finite element mesh by directly adding individual nodes, and defining edges, faces, and volumes.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>The mesh itself is of type <code>Fem::FemMesh</code>, which needs to be attached to a proper document object of type <code>Fem::FemMeshObject</code>.
+</p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Mesh_object</span><span class="o">.</span><span class="n">TypeId</span> <span class="o">=</span> <span class="n">Fem</span><span class="p">::</span><span class="n">FemMeshObject</span>
                               <span class="o">.</span>
                               <span class="o">.</span>
                               <span class="o">.</span><span class="n">FemMesh</span><span class="o">.</span><span class="n">TypeId</span> <span class="o">=</span> <span class="n">Fem</span><span class="p">::</span><span class="n">FemMesh</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h4><span class="mw-headline" id="Creating_a_mesh_with_one_Tet-10_element">Creating a mesh with one Tet-10 element</span></h4>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Create an empty FemMesh, populate it with nodes, create the volume, and finally call <code>Fem.show()</code> to create the document object with the corresponding mesh.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span><span class="o">,</span> <span class="nn">Fem</span>
 
 <span class="n">m</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -385,9 +362,14 @@
 <span class="n">Fem</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
 <span class="n">obj</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ActiveObject</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>If you want to have predefined node and element numbering, pass the appropriate ID to the node and volume methods.
-</p><p>To create an actual document object, instead of <code>Fem.show()</code> you can also use the document <code>addObject()</code> method; then attach the created mesh to this object's <code>FemMesh</code> attribute.
 </p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>To create an actual document object, instead of <code>Fem.show()</code> you can also use the document <code>addObject()</code> method; then attach the created mesh to this object's <code>FemMesh</code> attribute.
+</p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 
 <span class="n">a</span><span class="o">.</span><span class="n">addNode</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span>    <span class="mi">1</span><span class="p">,</span>    <span class="mi">0</span><span class="p">,</span>    <span class="mi">1</span><span class="p">)</span>
@@ -406,34 +388,56 @@
 <span class="n">obj_2</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">obj_2</span><span class="o">.</span><span class="n">FemMesh</span> <span class="o">=</span> <span class="n">a</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h4><span class="mw-headline" id="Visual_properties">Visual properties</span></h4>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Once a FemMesh object has been created with <code>Fem.show()</code>, some of its visual properties can be changed by modifying the different attributes of its <code>ViewObject</code>. This can be useful to postprocess the mesh after a finite element solution has been obtained.
-</p><p>Highlight some nodes in the mesh
 </p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Highlight some nodes in the mesh
+</p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">Fem</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
 <span class="n">obj</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ActiveObject</span>
 
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">HighlightedNodes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>The individual elements of a mesh can be modified by passing a dictionary with the appropriate <code>key:value</code> pairs.
-</p><p>Set volume 1 to red
 </p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Set volume 1 to red
+</p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">ElementColor</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)}</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Set nodes 1, 2 and 3 to a certain color; the faces between the nodes acquire an interpolated color.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">NodeColor</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">3</span><span class="p">:(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)}</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Displace the nodes 1 and 2 by the magnitude and direction defined by a vector.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">NodeDisplacement</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">:</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)}</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Double the factor of the displacement shown. (<i>Note to editors: removed in newer versions?</i>)
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">animate</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h2><span class="mw-headline" id="Scripting_examples_of_each_supported_element_type">Scripting examples of each supported element type</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Beam.2C_2_node_line.2C_seg2_.28linear.29"></span><span class="mw-headline" id="Beam,_2_node_line,_seg2_(linear)">Beam, 2 node line, seg2 (linear)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">seg2</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -447,7 +451,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Beam.2C_3_node_line.2C_seg3_.28quadratic.29"></span><span class="mw-headline" id="Beam,_3_node_line,_seg3_(quadratic)">Beam, 3 node line, seg3 (quadratic)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">seg3</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -462,7 +468,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Shell.2C_3_node_triangle.2C_tria3_.28linear.29"></span><span class="mw-headline" id="Shell,_3_node_triangle,_tria3_(linear)">Shell, 3 node triangle, tria3 (linear)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">tria3</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -478,8 +486,10 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">BackfaceCulling</span> <span class="o">=</span> <span class="kc">False</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Add a face with the element number.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">elemtria3</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">tria3</span><span class="o">.</span><span class="n">Nodes</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -494,7 +504,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">BackfaceCulling</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elemtria3</span><span class="o">.</span><span class="n">Faces</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Shell.2C_6_node_triangle.2C_tria6_.28quadratic.29"></span><span class="mw-headline" id="Shell,_6_node_triangle,_tria6_(quadratic)">Shell, 6 node triangle, tria6 (quadratic)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">tria6</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -513,8 +525,10 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">BackfaceCulling</span> <span class="o">=</span> <span class="kc">False</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Add a face with the element number.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">elemtria6</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">tria6</span><span class="o">.</span><span class="n">Nodes</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -528,7 +542,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">BackfaceCulling</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elemtria6</span><span class="o">.</span><span class="n">Faces</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Shell.2C_4_node_quadrangle.2C_quad4_.28linear.29"></span><span class="mw-headline" id="Shell,_4_node_quadrangle,_quad4_(linear)">Shell, 4 node quadrangle, quad4 (linear)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">quad4</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -545,8 +561,10 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">BackfaceCulling</span> <span class="o">=</span> <span class="kc">False</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Add a face with the element number.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">elemquad4</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">quad4</span><span class="o">.</span><span class="n">Nodes</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -560,7 +578,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">BackfaceCulling</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elemquad4</span><span class="o">.</span><span class="n">Faces</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Shell.2C_8_node_quadrangle.2C_quad8_.28quadratic.29"></span><span class="mw-headline" id="Shell,_8_node_quadrangle,_quad8_(quadratic)">Shell, 8 node quadrangle, quad8 (quadratic)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">quad8</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -581,8 +601,10 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">BackfaceCulling</span> <span class="o">=</span> <span class="kc">False</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Add a face with the element number.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">elemquad8</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">quad8</span><span class="o">.</span><span class="n">Nodes</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -596,7 +618,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">BackfaceCulling</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elemquad8</span><span class="o">.</span><span class="n">Faces</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Volume.2C_4_node_tetrahedron.2C_tetra4_.28linear.29"></span><span class="mw-headline" id="Volume,_4_node_tetrahedron,_tetra4_(linear)">Volume, 4 node tetrahedron, tetra4 (linear)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">tetra4</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -612,8 +636,10 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Add a volume with the element number.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">elemtetra4</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">tetra4</span><span class="o">.</span><span class="n">Nodes</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -626,7 +652,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elemtetra4</span><span class="o">.</span><span class="n">Volumes</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Volume.2C_10_node_tetrahedron.2C_tetra10_.28quadratic.29"></span><span class="mw-headline" id="Volume,_10_node_tetrahedron,_tetra10_(quadratic)">Volume, 10 node tetrahedron, tetra10 (quadratic)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">tetra10</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -650,8 +678,10 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Add a volume with the element number.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">elemtetra10</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">tetra10</span><span class="o">.</span><span class="n">Nodes</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -664,7 +694,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elemtetra10</span><span class="o">.</span><span class="n">Volumes</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Volume.2C_8_node_hexahedron.2C_hexa8_.28linear.29"></span><span class="mw-headline" id="Volume,_8_node_hexahedron,_hexa8_(linear)">Volume, 8 node hexahedron, hexa8 (linear)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">hexa8</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -684,8 +716,10 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">60</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Add a volume with the element number.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">elemhexa8</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">hexa8</span><span class="o">.</span><span class="n">Nodes</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -698,7 +732,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elemhexa8</span><span class="o">.</span><span class="n">Volumes</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Volume.2C_20_node_hexahedron.2C_hexa20_.28quadratic.29"></span><span class="mw-headline" id="Volume,_20_node_hexahedron,_hexa20_(quadratic)">Volume, 20 node hexahedron, hexa20 (quadratic)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">hexa20</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -733,8 +769,10 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Add a volume with the element number.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">elemhexa20</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">hexa20</span><span class="o">.</span><span class="n">Nodes</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -747,7 +785,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elemhexa20</span><span class="o">.</span><span class="n">Volumes</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Volume.2C_6_node_pentahedron.2C_penta6_.28linear.29"></span><span class="mw-headline" id="Volume,_6_node_pentahedron,_penta6_(linear)">Volume, 6 node pentahedron, penta6 (linear)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">penta6</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -765,8 +805,10 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Add a volume with the element number.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">elempenta6</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">penta6</span><span class="o">.</span><span class="n">Nodes</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -779,7 +821,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elempenta6</span><span class="o">.</span><span class="n">Volumes</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Volume.2C_15_node_pentahedron.2C_penta15_.28quadratic.29"></span><span class="mw-headline" id="Volume,_15_node_pentahedron,_penta15_(quadratic)">Volume, 15 node pentahedron, penta15 (quadratic)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">penta15</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -809,8 +853,10 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Add a volume with the element number.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">elempenta15</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">penta15</span><span class="o">.</span><span class="n">Nodes</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -823,7 +869,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elempenta15</span><span class="o">.</span><span class="n">Volumes</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Volume.2C_5_node_pyramid.2C_pyra5_.28linear.29"></span><span class="mw-headline" id="Volume,_5_node_pyramid,_pyra5_(linear)">Volume, 5 node pyramid, pyra5 (linear)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">pyra5</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -840,8 +888,10 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Add a volume with the element number.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">elempyra5</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">pyra5</span><span class="o">.</span><span class="n">Nodes</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -854,7 +904,9 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elempyra5</span><span class="o">.</span><span class="n">Volumes</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Volume.2C_13_node_pyramid.2C_pyra13_.28quadratic.29"></span><span class="mw-headline" id="Volume,_13_node_pyramid,_pyra13_(quadratic)">Volume, 13 node pyramid, pyra13 (quadratic)</span></h3>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">Fem</span>
 
 <span class="n">pyra13</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
@@ -881,8 +933,10 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">120</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <p>Add a volume with the element number.
 </p>
+</div>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">elempyra13</span> <span class="o">=</span> <span class="n">Fem</span><span class="o">.</span><span class="n">FemMesh</span><span class="p">()</span>
 <span class="n">nodes</span> <span class="o">=</span> <span class="n">pyra13</span><span class="o">.</span><span class="n">Nodes</span>
 <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">:</span>
@@ -895,77 +949,84 @@
 <span class="n">obj</span><span class="o">.</span><span class="n">ViewObject</span><span class="o">.</span><span class="n">DisplayMode</span> <span class="o">=</span> <span class="s2">"Faces, Wireframe &amp; Nodes"</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">elempyra13</span><span class="o">.</span><span class="n">Volumes</span><span class="p">)</span>
 </pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
 <h2><span class="mw-headline" id="Scripting_examples_for_groups">Scripting examples for groups</span></h2>
-<p>See for example <a class="external free" href="https://forum.freecadweb.org/viewtopic.php?f=18&amp;t=37304&amp;start=20#p318823" rel="nofollow">https://forum.freecadweb.org/viewtopic.php?f=18&amp;t=37304&amp;start=20#p318823</a>
-</p><p><br/>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>See for example <a rel="nofollow" class="external free" href="https://forum.freecad.org/viewtopic.php?f=18&amp;t=37304&amp;start=20#p318823">https://forum.freecad.org/viewtopic.php?f=18&amp;t=37304&amp;start=20#p318823</a>
+</p>
+</div>
+<p><br>
 </p>
 <div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
-<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Workbench_FEM.svg"><img decoding="async" height="24" src="../File/Workbench_FEM.svg" width="24"/></a></span> <a href="../ru\FEM_Workbench.html" title="FEM Workbench/ru">FEM</a>
-<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
-<ul><li><a href="../ru\FEM_Analysis.html" title="FEM Analysis/ru">FEM Analysis</a></li></ul>
-<ul><li><b>Materials:</b> <a href="../ru\FEM_MaterialSolid.html" title="FEM MaterialSolid/ru">Solid</a>, <a href="../ru\FEM_MaterialFluid.html" title="FEM MaterialFluid/ru">Fluid</a>, <a href="../ru\FEM_MaterialMechanicalNonlinear.html" title="FEM MaterialMechanicalNonlinear/ru">Nonlinear mechanical</a>, <a href="../ru\FEM_MaterialReinforced.html" title="FEM MaterialReinforced/ru">Reinforced (concrete)</a>; <a href="../ru\FEM_MaterialEditor.html" title="FEM MaterialEditor/ru">Material editor</a></li></ul>
-<ul><li><b>Element geometry:</b> <a href="../ru\FEM_ElementGeometry1D.html" title="FEM ElementGeometry1D/ru">Beam (1D)</a>, <a href="../ru\FEM_ElementRotation1D.html" title="FEM ElementRotation1D/ru">Beam rotation (1D)</a>, <a href="../ru\FEM_ElementGeometry2D.html" title="FEM ElementGeometry2D/ru">Shell (2D)</a>, <a href="../ru\FEM_ElementFluid1D.html" title="FEM ElementFluid1D/ru">Fluid flow (1D)</a></li></ul>
-<hr/>
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=Workbench_FEM.svg&amp;filetimestamp=20240405093343&amp;.html" class="mw-file-description"><img src="../File/Workbench_FEM.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../ru/FEM_Workbench.html" title="FEM Workbench/ru">FEM</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><a href="../ru/FEM_Analysis.html" title="FEM Analysis/ru">FEM Analysis</a></li></ul>
+<ul><li><b>Materials:</b> <a href="../ru/FEM_MaterialSolid.html" title="FEM MaterialSolid/ru">Solid</a>, <a href="../ru/FEM_MaterialFluid.html" title="FEM MaterialFluid/ru">Fluid</a>, <a href="../ru/FEM_MaterialMechanicalNonlinear.html" title="FEM MaterialMechanicalNonlinear/ru">Nonlinear mechanical</a>, <a href="../ru/FEM_MaterialReinforced.html" title="FEM MaterialReinforced/ru">Reinforced (concrete)</a>; <a href="../ru/FEM_MaterialEditor.html" title="FEM MaterialEditor/ru">Material editor</a></li></ul>
+<ul><li><b>Element geometry:</b> <a href="../ru/FEM_ElementGeometry1D.html" title="FEM ElementGeometry1D/ru">Beam (1D)</a>, <a href="../ru/FEM_ElementRotation1D.html" title="FEM ElementRotation1D/ru">Beam rotation (1D)</a>, <a href="../ru/FEM_ElementGeometry2D.html" title="FEM ElementGeometry2D/ru">Shell (2D)</a>, <a href="../ru/FEM_ElementFluid1D.html" title="FEM ElementFluid1D/ru">Fluid flow (1D)</a></li></ul>
+<hr>
 <p><b>Constraints</b>
 </p>
-<ul><li><b>Electromagnetic:</b> <a href="../ru\FEM_ConstraintElectrostaticPotential.html" title="FEM ConstraintElectrostaticPotential/ru">Electrostatic potential</a>, <a class="new" href="../index.php?title=FEM_ConstraintCurrentDensity_ru&amp;action=edit&amp;redlink=1.html" title="FEM ConstraintCurrentDensity/ru (page does not exist)">Current density</a>, <a class="new" href="../index.php?title=FEM_ConstraintMagnetization_ru&amp;action=edit&amp;redlink=1.html" title="FEM ConstraintMagnetization/ru (page does not exist)">Magnetization</a></li></ul>
-<ul><li><b>Fluid:</b> <a href="../ru\FEM_ConstraintInitialFlowVelocity.html" title="FEM ConstraintInitialFlowVelocity/ru">Initial flow velocity</a>, <a class="new" href="../index.php?title=FEM_ConstraintInitialPressure_ru&amp;action=edit&amp;redlink=1.html" title="FEM ConstraintInitialPressure/ru (page does not exist)">Initial pressure</a>, <a href="../ru\FEM_ConstraintFlowVelocity.html" title="FEM ConstraintFlowVelocity/ru">Flow velocity</a></li></ul>
-<ul><li><b>Geometrical:</b> <a href="../ru\FEM_ConstraintPlaneRotation.html" title="FEM ConstraintPlaneRotation/ru">Plane rotation</a>, <a href="../ru\FEM_ConstraintSectionPrint.html" title="FEM ConstraintSectionPrint/ru">Section print</a>, <a href="../ru\FEM_ConstraintTransform.html" title="FEM ConstraintTransform/ru">Transform</a></li></ul>
-<ul><li><b>Mechanical:</b> <a href="../ru\FEM_ConstraintFixed.html" title="FEM ConstraintFixed/ru">Fixed</a>, <a href="../ru\FEM_ConstraintDisplacement.html" title="FEM ConstraintDisplacement/ru">Displacement</a>, <a href="../ru\FEM_ConstraintContact.html" title="FEM ConstraintContact/ru">Contact</a>, <a href="../ru\FEM_ConstraintTie.html" title="FEM ConstraintTie/ru">Tie</a>, <a href="../ru\FEM_ConstraintSpring.html" title="FEM ConstraintSpring/ru">Spring</a>, <a href="../ru\FEM_ConstraintForce.html" title="FEM ConstraintForce/ru">Force</a>, <a href="../ru\FEM_ConstraintPressure.html" title="FEM ConstraintPressure/ru">Pressure</a>, <a href="../ru\FEM_ConstraintCentrif.html" title="FEM ConstraintCentrif/ru">Centrif</a>, <a href="../ru\FEM_ConstraintSelfWeight.html" title="FEM ConstraintSelfWeight/ru">Self weight</a></li></ul>
-<ul><li><b>Thermal:</b> <a href="../ru\FEM_ConstraintInitialTemperature.html" title="FEM ConstraintInitialTemperature/ru">Initial temperature</a>, <a href="../ru\FEM_ConstraintHeatflux.html" title="FEM ConstraintHeatflux/ru">Heat flux</a>, <a href="../ru\FEM_ConstraintTemperature.html" title="FEM ConstraintTemperature/ru">Temperature</a>, <a href="../ru\FEM_ConstraintBodyHeatSource.html" title="FEM ConstraintBodyHeatSource/ru">Body heat source</a></li></ul>
-<ul><li><b>Overwrite Constants:</b> <a href="../ru\FEM_ConstantVacuumPermittivity.html" title="FEM ConstantVacuumPermittivity/ru">Constant vacuum permittivity</a></li></ul>
-<hr/>
-<ul><li><b>Mesh:</b> <a href="../ru\FEM_MeshNetgenFromShape.html" title="FEM MeshNetgenFromShape/ru">Mesh Netgen</a>, <a href="../ru\FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape/ru">Mesh GMSH</a>, <a href="../ru\FEM_MeshBoundaryLayer.html" title="FEM MeshBoundaryLayer/ru">Mesh boundary layer</a>, <a href="../ru\FEM_MeshRegion.html" title="FEM MeshRegion/ru">Mesh region</a>, <a href="../ru\FEM_MeshGroup.html" title="FEM MeshGroup/ru">Mesh group</a>, <a href="../ru\FEM_CreateNodesSet.html" title="FEM CreateNodesSet/ru">Nodes set</a>, <a href="../ru\FEM_FemMesh2Mesh.html" title="FEM FemMesh2Mesh/ru">Mesh to mesh</a></li></ul>
-<ul><li><b>Solve:</b> <a href="../ru\FEM_SolverCalculixCxxtools.html" title="FEM SolverCalculixCxxtools/ru">CalculiX Standard</a>, <a href="../ru\FEM_SolverElmer.html" title="FEM SolverElmer/ru">Elmer</a>, <a href="../ru\FEM_SolverMystran.html" title="FEM SolverMystran/ru">Mystran</a>, <a href="../ru\FEM_SolverZ88.html" title="FEM SolverZ88/ru">Z88</a>; <b>Equations:</b> <a class="new" href="../index.php?title=FEM_EquationDeformation_ru&amp;action=edit&amp;redlink=1.html" title="FEM EquationDeformation/ru (page does not exist)">Deformation</a>, <a href="../ru\FEM_EquationElasticity.html" title="FEM EquationElasticity/ru">Elasticity</a>, <a href="../ru\FEM_EquationElectrostatic.html" title="FEM EquationElectrostatic/ru">Electrostatic</a>, <a href="../ru\FEM_EquationElectricforce.html" title="FEM EquationElectricforce/ru">Electricforce</a>, <a class="new" href="../index.php?title=FEM_EquationMagnetodynamic_ru&amp;action=edit&amp;redlink=1.html" title="FEM EquationMagnetodynamic/ru (page does not exist)">Magnetodynamic</a>, <a class="new" href="../index.php?title=FEM_EquationMagnetodynamic2D_ru&amp;action=edit&amp;redlink=1.html" title="FEM EquationMagnetodynamic2D/ru (page does not exist)">Magnetodynamic 2D</a>, <a href="../ru\FEM_EquationFlow.html" title="FEM EquationFlow/ru">Flow</a>, <a href="../ru\FEM_EquationFlux.html" title="FEM EquationFlux/ru">Flux</a>, <a href="../ru\FEM_EquationHeat.html" title="FEM EquationHeat/ru">Heat</a>; <b>Solver:</b> <a href="../ru\FEM_SolverControl.html" title="FEM SolverControl/ru">Solver control</a>, <a href="../ru\FEM_SolverRun.html" title="FEM SolverRun/ru">Solver run</a></li></ul>
-<ul><li><b>Results:</b> <a href="../ru\FEM_ResultsPurge.html" title="FEM ResultsPurge/ru">Purge</a>, <a href="../ru\FEM_ResultShow.html" title="FEM ResultShow/ru">Show</a>; <b>Postprocessing:</b> <a href="../ru\FEM_PostApplyChanges.html" title="FEM PostApplyChanges/ru">Apply changes</a>, <a href="../ru\FEM_PostPipelineFromResult.html" title="FEM PostPipelineFromResult/ru">Pipeline from result</a>, <a href="../ru\FEM_PostFilterWarp.html" title="FEM PostFilterWarp/ru">Warp filter</a>, <a href="../ru\FEM_PostFilterClipScalar.html" title="FEM PostFilterClipScalar/ru">Scalar clip filter</a>, <a href="../ru\FEM_PostFilterCutFunction.html" title="FEM PostFilterCutFunction/ru">Function cut filter</a>, <a href="../ru\FEM_PostFilterClipRegion.html" title="FEM PostFilterClipRegion/ru">Region clip filter</a>, <a class="new" href="../index.php?title=FEM_PostFilterContours_ru&amp;action=edit&amp;redlink=1.html" title="FEM PostFilterContours/ru (page does not exist)">Contours filter</a>, <a href="../ru\FEM_PostFilterDataAlongLine.html" title="FEM PostFilterDataAlongLine/ru">Line clip filter</a>, <a href="../ru\FEM_PostFilterLinearizedStresses.html" title="FEM PostFilterLinearizedStresses/ru">Stress linearization plot</a>, <a href="../ru\FEM_PostFilterDataAtPoint.html" title="FEM PostFilterDataAtPoint/ru">Data at point clip filter</a>, <a class="new" href="../index.php?title=FEM_PostCreateFunctionPlane_ru&amp;action=edit&amp;redlink=1.html" title="FEM PostCreateFunctionPlane/ru (page does not exist)">Filter function plane</a>, <a class="new" href="../index.php?title=FEM_PostCreateFunctionSphere_ru&amp;action=edit&amp;redlink=1.html" title="FEM PostCreateFunctionSphere/ru (page does not exist)">Filter function sphere</a>, <a class="new" href="../index.php?title=FEM_PostCreateFunctionCylinder_ru&amp;action=edit&amp;redlink=1.html" title="FEM PostCreateFunctionCylinder/ru (page does not exist)">Filter function cylinder</a>, <a class="new" href="../index.php?title=FEM_PostCreateFunctionBox_ru&amp;action=edit&amp;redlink=1.html" title="FEM PostCreateFunctionBox/ru (page does not exist)">Filter function box</a></li></ul>
-<ul><li><b>Utilities:</b> <a href="../ru\FEM_ClippingPlaneAdd.html" title="FEM ClippingPlaneAdd/ru">Clipping plane</a>, <a href="../ru\FEM_ClippingPlaneRemoveAll.html" title="FEM ClippingPlaneRemoveAll/ru">Remove clipping planes</a>, <a href="../ru\FEM_Examples.html" title="FEM Examples/ru">Open FEM examples</a>; <a href="../ru\FEM_MeshClear.html" title="FEM MeshClear/ru">Mesh clear</a>, <a href="../ru\FEM_MeshDisplayInfo.html" title="FEM MeshDisplayInfo/ru">Mesh display info</a></li></ul>
-<hr/>
-<ul><li><b>Additional:</b> <a href="../ru\FEM_Preferences.html" title="FEM Preferences/ru">Preferences</a>; <a href="../ru\FEM_Install.html" title="FEM Install/ru">FEM Install</a>, <a class="mw-selflink selflink">FEM Mesh</a>, <a href="../ru\FEM_Solver.html" title="FEM Solver/ru">FEM Solver</a>, <a href="../ru\FEM_CalculiX.html" title="FEM CalculiX/ru">FEM CalculiX</a>, <a href="../ru\FEM_Concrete.html" title="FEM Concrete/ru">FEM Concrete</a>; <a href="../ru\FEM_Element_Types.html" title="FEM Element Types/ru">FEM Element Types</a></li></ul></div>
-</div></div>
+<ul><li><b>Electromagnetic:</b> <a href="../ru/FEM_ConstraintElectrostaticPotential.html" title="FEM ConstraintElectrostaticPotential/ru">Electrostatic potential</a>, <a href="../index.php?title=FEM_ConstraintCurrentDensity/ru&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintCurrentDensity/ru (page does not exist)">Current density</a>, <a href="../index.php?title=FEM_ConstraintMagnetization/ru&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintMagnetization/ru (page does not exist)">Magnetization</a></li></ul>
+<ul><li><b>Fluid:</b> <a href="../ru/FEM_ConstraintInitialFlowVelocity.html" title="FEM ConstraintInitialFlowVelocity/ru">Initial flow velocity</a>, <a href="../index.php?title=FEM_ConstraintInitialPressure/ru&amp;action=edit&amp;redlink=1.html" class="new" title="FEM ConstraintInitialPressure/ru (page does not exist)">Initial pressure</a>, <a href="../ru/FEM_ConstraintFlowVelocity.html" title="FEM ConstraintFlowVelocity/ru">Flow velocity</a></li></ul>
+<ul><li><b>Geometrical:</b> <a href="../ru/FEM_ConstraintPlaneRotation.html" title="FEM ConstraintPlaneRotation/ru">Plane rotation</a>, <a href="../ru/FEM_ConstraintSectionPrint.html" title="FEM ConstraintSectionPrint/ru">Section print</a>, <a href="../ru/FEM_ConstraintTransform.html" title="FEM ConstraintTransform/ru">Transform</a></li></ul>
+<ul><li><b>Mechanical:</b> <a href="../ru/FEM_ConstraintFixed.html" title="FEM ConstraintFixed/ru">Fixed</a>, <a href="../ru/FEM_ConstraintDisplacement.html" title="FEM ConstraintDisplacement/ru">Displacement</a>, <a href="../ru/FEM_ConstraintContact.html" title="FEM ConstraintContact/ru">Contact</a>, <a href="../ru/FEM_ConstraintTie.html" title="FEM ConstraintTie/ru">Tie</a>, <a href="../ru/FEM_ConstraintSpring.html" title="FEM ConstraintSpring/ru">Spring</a>, <a href="../ru/FEM_ConstraintForce.html" title="FEM ConstraintForce/ru">Force</a>, <a href="../ru/FEM_ConstraintPressure.html" title="FEM ConstraintPressure/ru">Pressure</a>, <a href="../ru/FEM_ConstraintCentrif.html" title="FEM ConstraintCentrif/ru">Centrif</a>, <a href="../ru/FEM_ConstraintSelfWeight.html" title="FEM ConstraintSelfWeight/ru">Self weight</a></li></ul>
+<ul><li><b>Thermal:</b> <a href="../ru/FEM_ConstraintInitialTemperature.html" title="FEM ConstraintInitialTemperature/ru">Initial temperature</a>, <a href="../ru/FEM_ConstraintHeatflux.html" title="FEM ConstraintHeatflux/ru">Heat flux</a>, <a href="../ru/FEM_ConstraintTemperature.html" title="FEM ConstraintTemperature/ru">Temperature</a>, <a href="../ru/FEM_ConstraintBodyHeatSource.html" title="FEM ConstraintBodyHeatSource/ru">Body heat source</a></li></ul>
+<ul><li><b>Overwrite Constants:</b> <a href="../ru/FEM_ConstantVacuumPermittivity.html" title="FEM ConstantVacuumPermittivity/ru">Constant vacuum permittivity</a></li></ul>
+<hr>
+<ul><li><b>Mesh:</b> <a href="../ru/FEM_MeshNetgenFromShape.html" title="FEM MeshNetgenFromShape/ru">Mesh Netgen</a>, <a href="../ru/FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape/ru">Mesh GMSH</a>, <a href="../ru/FEM_MeshBoundaryLayer.html" title="FEM MeshBoundaryLayer/ru">Mesh boundary layer</a>, <a href="../ru/FEM_MeshRegion.html" title="FEM MeshRegion/ru">Mesh region</a>, <a href="../ru/FEM_MeshGroup.html" title="FEM MeshGroup/ru">Mesh group</a>, <a href="../ru/FEM_CreateNodesSet.html" title="FEM CreateNodesSet/ru">Nodes set</a>, <a href="../ru/FEM_FemMesh2Mesh.html" title="FEM FemMesh2Mesh/ru">Mesh to mesh</a></li></ul>
+<ul><li><b>Solve:</b> <a href="../ru/FEM_SolverCalculixCcxtools.html" title="FEM SolverCalculixCcxtools/ru">CalculiX Standard</a>, <a href="../ru/FEM_SolverElmer.html" title="FEM SolverElmer/ru">Elmer</a>, <a href="../ru/FEM_SolverMystran.html" title="FEM SolverMystran/ru">Mystran</a>, <a href="../ru/FEM_SolverZ88.html" title="FEM SolverZ88/ru">Z88</a>; <b>Equations:</b> <a href="../index.php?title=FEM_EquationDeformation/ru&amp;action=edit&amp;redlink=1.html" class="new" title="FEM EquationDeformation/ru (page does not exist)">Deformation</a>, <a href="../ru/FEM_EquationElasticity.html" title="FEM EquationElasticity/ru">Elasticity</a>, <a href="../ru/FEM_EquationElectrostatic.html" title="FEM EquationElectrostatic/ru">Electrostatic</a>, <a href="../ru/FEM_EquationElectricforce.html" title="FEM EquationElectricforce/ru">Electricforce</a>, <a href="../index.php?title=FEM_EquationMagnetodynamic/ru&amp;action=edit&amp;redlink=1.html" class="new" title="FEM EquationMagnetodynamic/ru (page does not exist)">Magnetodynamic</a>, <a href="../index.php?title=FEM_EquationMagnetodynamic2D/ru&amp;action=edit&amp;redlink=1.html" class="new" title="FEM EquationMagnetodynamic2D/ru (page does not exist)">Magnetodynamic 2D</a>, <a href="../ru/FEM_EquationFlow.html" title="FEM EquationFlow/ru">Flow</a>, <a href="../ru/FEM_EquationFlux.html" title="FEM EquationFlux/ru">Flux</a>, <a href="../ru/FEM_EquationHeat.html" title="FEM EquationHeat/ru">Heat</a>; <b>Solver:</b> <a href="../ru/FEM_SolverControl.html" title="FEM SolverControl/ru">Solver control</a>, <a href="../ru/FEM_SolverRun.html" title="FEM SolverRun/ru">Solver run</a></li></ul>
+<ul><li><b>Results:</b> <a href="../ru/FEM_ResultsPurge.html" title="FEM ResultsPurge/ru">Purge</a>, <a href="../ru/FEM_ResultShow.html" title="FEM ResultShow/ru">Show</a>; <b>Postprocessing:</b> <a href="../ru/FEM_PostApplyChanges.html" title="FEM PostApplyChanges/ru">Apply changes</a>, <a href="../ru/FEM_PostPipelineFromResult.html" title="FEM PostPipelineFromResult/ru">Pipeline from result</a>, <a href="../ru/FEM_PostFilterWarp.html" title="FEM PostFilterWarp/ru">Warp filter</a>, <a href="../ru/FEM_PostFilterClipScalar.html" title="FEM PostFilterClipScalar/ru">Scalar clip filter</a>, <a href="../ru/FEM_PostFilterCutFunction.html" title="FEM PostFilterCutFunction/ru">Function cut filter</a>, <a href="../ru/FEM_PostFilterClipRegion.html" title="FEM PostFilterClipRegion/ru">Region clip filter</a>, <a href="../index.php?title=FEM_PostFilterContours/ru&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostFilterContours/ru (page does not exist)">Contours filter</a>, <a href="../ru/FEM_PostFilterDataAlongLine.html" title="FEM PostFilterDataAlongLine/ru">Line clip filter</a>, <a href="../ru/FEM_PostFilterLinearizedStresses.html" title="FEM PostFilterLinearizedStresses/ru">Stress linearization plot</a>, <a href="../ru/FEM_PostFilterDataAtPoint.html" title="FEM PostFilterDataAtPoint/ru">Data at point clip filter</a>, <a href="../index.php?title=FEM_PostCreateFunctionPlane/ru&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostCreateFunctionPlane/ru (page does not exist)">Filter function plane</a>, <a href="../index.php?title=FEM_PostCreateFunctionSphere/ru&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostCreateFunctionSphere/ru (page does not exist)">Filter function sphere</a>, <a href="../index.php?title=FEM_PostCreateFunctionCylinder/ru&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostCreateFunctionCylinder/ru (page does not exist)">Filter function cylinder</a>, <a href="../index.php?title=FEM_PostCreateFunctionBox/ru&amp;action=edit&amp;redlink=1.html" class="new" title="FEM PostCreateFunctionBox/ru (page does not exist)">Filter function box</a></li></ul>
+<ul><li><b>Utilities:</b> <a href="../ru/FEM_ClippingPlaneAdd.html" title="FEM ClippingPlaneAdd/ru">Clipping plane</a>, <a href="../ru/FEM_ClippingPlaneRemoveAll.html" title="FEM ClippingPlaneRemoveAll/ru">Remove clipping planes</a>, <a href="../ru/FEM_Examples.html" title="FEM Examples/ru">Open FEM examples</a>; <a href="../ru/FEM_MeshClear.html" title="FEM MeshClear/ru">Mesh clear</a>, <a href="../ru/FEM_MeshDisplayInfo.html" title="FEM MeshDisplayInfo/ru">Mesh display info</a></li></ul>
+<hr>
+<ul><li><b>Additional:</b> <a href="../ru/FEM_Preferences.html" title="FEM Preferences/ru">Preferences</a>; <a href="../ru/FEM_Install.html" title="FEM Install/ru">FEM Install</a>, <a class="mw-selflink selflink">FEM Mesh</a>, <a href="../ru/FEM_Solver.html" title="FEM Solver/ru">FEM Solver</a>, <a href="../ru/FEM_CalculiX.html" title="FEM CalculiX/ru">FEM CalculiX</a>, <a href="../ru/FEM_Concrete.html" title="FEM Concrete/ru">FEM Concrete</a>; <a href="../ru/FEM_Element_Types.html" title="FEM Element Types/ru">FEM Element Types</a></li></ul></div>
+    </div></div>
 <div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
-<div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: #fefefe;"><span typeof="mw:File"><a class="mw-file-description" href="../File/User_hub.png"><img decoding="async" height="24" src="../File/User_hub.png" width="24"/></a></span> <a href="../ru\User_hub.html" title="User hub/ru">Документация пользователя</a>
-<div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid #aaaaaa; text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: #fefefe;">
-<ul><li><b><a href="../ru\Getting_started.html" title="Getting started/ru">Начинающим</a></b></li>
-<li><b>Установка:</b> <a href="../ru\Download.html" title="Download/ru">Загрузка</a>, <a href="../ru\Installing_on_Windows.html" title="Installing on Windows/ru">Windows</a>, <a href="../ru\Installing_on_Linux.html" title="Installing on Linux/ru">Linux</a>, <a href="../ru\Installing_on_Mac.html" title="Installing on Mac/ru">Mac</a>, <a href="../ru\Installing_additional_components.html" title="Installing additional components/ru">
-Дополнительных компонентов</a>, <a href="../ru\Compile_on_Docker.html" title="Compile on Docker/ru">Docker</a>, <a href="../ru\AppImage.html" title="AppImage/ru">AppImage</a>, <a href="../ru\Ubuntu_Snap.html" title="Ubuntu Snap/ru">Ubuntu Snap</a></li>
-<li><b>Базовая:</b> <a href="../ru\About_FreeCAD.html" title="About FreeCAD/ru">О FreeCAD</a>, <a href="../ru\Interface.html" title="Interface/ru">Интерфейс</a>, <a href="../ru\Mouse_navigation.html" title="Mouse navigation/ru">Навигация мыши</a>, <a href="../ru\Selection_methods.html" title="Selection methods/ru">Методы выделения</a>, <a href="../ru\Object_name.html" title="Object name/ru">Имя объекта</a>, <a href="../ru\Preferences_Editor.html" title="Preferences Editor/ru">Настройки</a>, <a href="../ru\Workbenches.html" title="Workbenches/ru">Верстаки</a>, <a href="../ru\Document_structure.html" title="Document structure/ru">Структура документа</a>, <a href="../ru\Property.html" title="Property/ru">Свойства</a>, <a href="../ru\Help_FreeCAD.html" title="Help FreeCAD/ru">Помоги FreeCAD</a>, <a href="../ru\Donate.html" title="Donate/ru">Пожертвования</a></li></ul>
-<hr/>
-<ul><li><b>Помощь:</b> <a href="../ru\Tutorials.html" title="Tutorials/ru">Учебники</a>, <a href="../ru\Video_tutorials.html" title="Video tutorials/ru">Видео учебники</a></li>
-<li><b><a href="../ru\Workbenches.html" title="Workbenches/ru">Верстаки</a>:</b> <a href="../ru\Std_Base.html" title="Std Base/ru">Std Base</a>, <a href="../ru\Arch_Workbench.html" title="Arch Workbench/ru">Arch</a>, <a class="new" href="../index.php?title=Assembly_Workbench_ru&amp;action=edit&amp;redlink=1.html" title="Assembly Workbench/ru (page does not exist)">Assembly</a>, <a href="../ru\CAM_Workbench.html" title="CAM Workbench/ru">CAM</a>, <a href="../ru\Draft_Workbench.html" title="Draft Workbench/ru">Draft</a>, <a href="../ru\FEM_Workbench.html" title="FEM Workbench/ru">FEM</a>, <a href="../ru\Inspection_Workbench.html" title="Inspection Workbench/ru">Inspection</a>, <a href="../ru\Mesh_Workbench.html" title="Mesh Workbench/ru">Mesh</a>, <a href="../ru\OpenSCAD_Workbench.html" title="OpenSCAD Workbench/ru">OpenSCAD</a>, <a href="../ru\Part_Workbench.html" title="Part Workbench/ru">Part</a>, <a href="../ru\PartDesign_Workbench.html" title="PartDesign Workbench/ru">PartDesign</a>, <a href="../ru\Points_Workbench.html" title="Points Workbench/ru">Points</a>, <a href="../ru\Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/ru">Reverse Engineering</a>, <a href="../ru\Robot_Workbench.html" title="Robot Workbench/ru">Robot</a>, <a href="../ru\Sketcher_Workbench.html" title="Sketcher Workbench/ru">Sketcher</a>, <a href="../ru\Spreadsheet_Workbench.html" title="Spreadsheet Workbench/ru">Spreadsheet</a>, <a href="../ru\Surface_Workbench.html" title="Surface Workbench/ru">Surface</a>, <a href="../ru\TechDraw_Workbench.html" title="TechDraw Workbench/ru">TechDraw</a>, <a href="../ru\Testing.html" title="Testing/ru">Test Framework</a></li></ul>
-<hr/>
-<ul><li><b><a href="../ru\Addon.html" title="Addon/ru">Addons</a>:</b> <a href="../ru\Std_AddonMgr.html" title="Std AddonMgr/ru">Менеджер дополнений</a>, <a href="../ru\External_workbenches.html" title="External workbenches/ru">Внешние верстаки</a>, <a href="../ru\Scripting_and_macros.html" title="Scripting and macros/ru">Cкрипты и макросы</a></li></ul>
-<hr/>
-<ul><li><b>Hubs:</b> <a href="../ru\User_hub.html" title="User hub/ru">Уголок пользователя</a>, <a href="../ru\Power_users_hub.html" title="Power users hub/ru">Уголок опытных пользователей</a>, <a href="../ru\Developer_hub.html" title="Developer hub/ru">Уголок разработчиков</a></li></ul></div>
-</div></div>
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=User_hub.png&amp;filetimestamp=20190221145008&amp;.html" class="mw-file-description"><img src="../File/User_hub.png" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../ru/User_hub.html" title="User hub/ru">&#1044;&#1086;&#1082;&#1091;&#1084;&#1077;&#1085;&#1090;&#1072;&#1094;&#1080;&#1103; &#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1077;&#1083;&#1103;</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b><a href="../ru/Getting_started.html" title="Getting started/ru">&#1053;&#1072;&#1095;&#1080;&#1085;&#1072;&#1102;&#1097;&#1080;&#1084;</a></b></li>
+<li><b>&#1059;&#1089;&#1090;&#1072;&#1085;&#1086;&#1074;&#1082;&#1072;:</b> <a href="../ru/Download.html" title="Download/ru">&#1047;&#1072;&#1075;&#1088;&#1091;&#1079;&#1082;&#1072;</a>, <a href="../ru/Installing_on_Windows.html" title="Installing on Windows/ru">Windows</a>, <a href="../ru/Installing_on_Linux.html" title="Installing on Linux/ru">Linux</a>, <a href="../ru/Installing_on_Mac.html" title="Installing on Mac/ru">Mac</a>, <a href="../ru/Installing_additional_components.html" title="Installing additional components/ru">
+&#1044;&#1086;&#1087;&#1086;&#1083;&#1085;&#1080;&#1090;&#1077;&#1083;&#1100;&#1085;&#1099;&#1093; &#1082;&#1086;&#1084;&#1087;&#1086;&#1085;&#1077;&#1085;&#1090;&#1086;&#1074;</a>, <a href="../ru/Compile_on_Docker.html" title="Compile on Docker/ru">Docker</a>, <a href="../ru/AppImage.html" title="AppImage/ru">AppImage</a>, <a href="../ru/Ubuntu_Snap.html" title="Ubuntu Snap/ru">Ubuntu Snap</a></li>
+<li><b>&#1041;&#1072;&#1079;&#1086;&#1074;&#1072;&#1103;:</b> <a href="../ru/About_FreeCAD.html" title="About FreeCAD/ru">&#1054; FreeCAD</a>, <a href="../ru/Interface.html" title="Interface/ru">&#1048;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089;</a>, <a href="../ru/Mouse_navigation.html" title="Mouse navigation/ru">&#1053;&#1072;&#1074;&#1080;&#1075;&#1072;&#1094;&#1080;&#1103; &#1084;&#1099;&#1096;&#1080;</a>, <a href="../ru/Selection_methods.html" title="Selection methods/ru">&#1052;&#1077;&#1090;&#1086;&#1076;&#1099; &#1074;&#1099;&#1076;&#1077;&#1083;&#1077;&#1085;&#1080;&#1103;</a>, <a href="../ru/Object_name.html" title="Object name/ru">&#1048;&#1084;&#1103; &#1086;&#1073;&#1098;&#1077;&#1082;&#1090;&#1072;</a>, <a href="../ru/Preferences_Editor.html" title="Preferences Editor/ru">&#1053;&#1072;&#1089;&#1090;&#1088;&#1086;&#1081;&#1082;&#1080;</a>, <a href="../ru/Workbenches.html" title="Workbenches/ru">&#1042;&#1077;&#1088;&#1089;&#1090;&#1072;&#1082;&#1080;</a>, <a href="../ru/Document_structure.html" title="Document structure/ru">&#1057;&#1090;&#1088;&#1091;&#1082;&#1090;&#1091;&#1088;&#1072; &#1076;&#1086;&#1082;&#1091;&#1084;&#1077;&#1085;&#1090;&#1072;</a>, <a href="../ru/Property.html" title="Property/ru">&#1057;&#1074;&#1086;&#1081;&#1089;&#1090;&#1074;&#1072;</a>, <a href="../ru/Help_FreeCAD.html" title="Help FreeCAD/ru">&#1055;&#1086;&#1084;&#1086;&#1075;&#1080; FreeCAD</a>, <a href="../ru/Donate.html" title="Donate/ru">&#1055;&#1086;&#1078;&#1077;&#1088;&#1090;&#1074;&#1086;&#1074;&#1072;&#1085;&#1080;&#1103;</a></li></ul>
+<hr>
+<ul><li><b>&#1055;&#1086;&#1084;&#1086;&#1097;&#1100;:</b> <a href="../ru/Tutorials.html" title="Tutorials/ru">&#1059;&#1095;&#1077;&#1073;&#1085;&#1080;&#1082;&#1080;</a>, <a href="../ru/Video_tutorials.html" title="Video tutorials/ru">&#1042;&#1080;&#1076;&#1077;&#1086; &#1091;&#1095;&#1077;&#1073;&#1085;&#1080;&#1082;&#1080;</a></li>
+<li><b><a href="../ru/Workbenches.html" title="Workbenches/ru">&#1042;&#1077;&#1088;&#1089;&#1090;&#1072;&#1082;&#1080;</a>:</b> <a href="../ru/Std_Base.html" title="Std Base/ru">Std Base</a>, <a href="../ru/Arch_Workbench.html" title="Arch Workbench/ru">Arch</a>, <a href="../ru/Assembly_Workbench.html" title="Assembly Workbench/ru">Assembly</a>, <a href="../ru/CAM_Workbench.html" title="CAM Workbench/ru">CAM</a>, <a href="../ru/Draft_Workbench.html" title="Draft Workbench/ru">Draft</a>, <a href="../ru/FEM_Workbench.html" title="FEM Workbench/ru">FEM</a>, <a href="../ru/Inspection_Workbench.html" title="Inspection Workbench/ru">Inspection</a>, <a href="../ru/Mesh_Workbench.html" title="Mesh Workbench/ru">Mesh</a>, <a href="../ru/OpenSCAD_Workbench.html" title="OpenSCAD Workbench/ru">OpenSCAD</a>, <a href="../ru/Part_Workbench.html" title="Part Workbench/ru">Part</a>, <a href="../ru/PartDesign_Workbench.html" title="PartDesign Workbench/ru">PartDesign</a>, <a href="../ru/Points_Workbench.html" title="Points Workbench/ru">Points</a>, <a href="../ru/Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/ru">Reverse Engineering</a>, <a href="../ru/Robot_Workbench.html" title="Robot Workbench/ru">Robot</a>, <a href="../ru/Sketcher_Workbench.html" title="Sketcher Workbench/ru">Sketcher</a>, <a href="../ru/Spreadsheet_Workbench.html" title="Spreadsheet Workbench/ru">Spreadsheet</a>, <a href="../ru/Surface_Workbench.html" title="Surface Workbench/ru">Surface</a>, <a href="../ru/TechDraw_Workbench.html" title="TechDraw Workbench/ru">TechDraw</a>, <a href="../ru/Testing.html" title="Testing/ru">Test Framework</a></li></ul>
+<hr>
+<ul><li><b><a href="../ru/Addon.html" title="Addon/ru">Addons</a>:</b> <a href="../ru/Std_AddonMgr.html" title="Std AddonMgr/ru">&#1052;&#1077;&#1085;&#1077;&#1076;&#1078;&#1077;&#1088; &#1076;&#1086;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1081;</a>, <a href="../ru/External_workbenches.html" title="External workbenches/ru">&#1042;&#1085;&#1077;&#1096;&#1085;&#1080;&#1077; &#1074;&#1077;&#1088;&#1089;&#1090;&#1072;&#1082;&#1080;</a>, <a href="../ru/Scripting_and_macros.html" title="Scripting and macros/ru">C&#1082;&#1088;&#1080;&#1087;&#1090;&#1099; &#1080; &#1084;&#1072;&#1082;&#1088;&#1086;&#1089;&#1099;</a></li></ul>
+<hr>
+<ul><li><b>Hubs:</b> <a href="../ru/User_hub.html" title="User hub/ru">&#1059;&#1075;&#1086;&#1083;&#1086;&#1082; &#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1077;&#1083;&#1103;</a>, <a href="../ru/Power_users_hub.html" title="Power users hub/ru">&#1059;&#1075;&#1086;&#1083;&#1086;&#1082; &#1086;&#1087;&#1099;&#1090;&#1085;&#1099;&#1093; &#1087;&#1086;&#1083;&#1100;&#1079;&#1086;&#1074;&#1072;&#1090;&#1077;&#1083;&#1077;&#1081;</a>, <a href="../ru/Developer_hub.html" title="Developer hub/ru">&#1059;&#1075;&#1086;&#1083;&#1086;&#1082; &#1088;&#1072;&#1079;&#1088;&#1072;&#1073;&#1086;&#1090;&#1095;&#1080;&#1082;&#1086;&#1074;</a></li></ul></div>
+    </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20241214204259
+Cached time: 20251018150038
 Cache expiry: 86400
 Reduced expiry: false
-Complications: [show‐toc, no‐toc‐conversion]
-CPU time usage: 0.268 seconds
-Real time usage: 1.891 seconds
-Preprocessor visited node count: 935/1000000
-Post‐expand include size: 21899/2097152 bytes
+Complications: [show&#8208;toc]
+CPU time usage: 0.310 seconds
+Real time usage: 0.350 seconds
+Preprocessor visited node count: 985/1000000
+Post&#8208;expand include size: 23159/2097152 bytes
 Template argument size: 21088/2097152 bytes
 Highest expansion depth: 6/100
 Expensive parser function count: 34/100
 Unstrip recursion depth: 0/20
-Unstrip post‐expand size: 117491/5000000 bytes
+Unstrip post&#8208;expand size: 117699/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00% 1641.455      1 -total
- 98.98% 1624.715     34 Template:Code
-  0.24%    3.939      2 Template:Emphasis
-  0.21%    3.448      1 Template:FEM_Tools_navi/ru
-  0.14%    2.351      2 Template:Caption
-  0.11%    1.855      2 Template:Navigation_menu_2
-  0.06%    0.974      9 Template:Incode
-  0.06%    0.928      5 Template:FileName
-  0.05%    0.830      1 Template:Userdocnavi/ru
-  0.04%    0.664      1 Template:TOCright
+100.00%   29.516      1 -total
+ 39.08%   11.536     34 Template:Code
+ 23.90%    7.054      1 Template:FEM_Tools_navi/ru
+ 10.15%    2.995      2 Template:Navigation_menu_2
+  8.67%    2.558      1 Template:Userdocnavi/ru
+  7.00%    2.066      2 Template:Caption
+  3.84%    1.132      9 Template:Incode
+  3.35%    0.989      1 Template:TOCright
+  3.35%    0.989      5 Template:FileName
+  3.11%    0.918      2 Template:Emphasis
 -->
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:79955-0!canonical and timestamp 20241214204257 and revision id 1459822. Rendering was triggered because: api-parse
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:79955-0!canonical and timestamp 20251018150038 and revision id 1666794. Rendering was triggered because: api-parse
  -->
-</div></div><script src="../script.js"></script>
+</div>
+</div><script src="../site.js"></script>
