@@ -1,5 +1,5 @@
 <link href="site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Macro ExpandTreeItem</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="index.php?title=Special;Translate&amp;group=page-Macro+ExpandTreeItem&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
-<li><a href="de/Macro_ExpandTreeItem.html" class="mw-pt-progress mw-pt-progress--high" title="Makro Baumobjekte ausklappen (85% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="de/Macro_ExpandTreeItem.html" class="mw-pt-progress mw-pt-progress--complete" title="Makro Baumobjekte ausklappen (100% translated)" lang="de" dir="ltr">Deutsch</a></li>
 <li><span class="mw-pt-languages-ui mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="en" dir="ltr">English</span></li>
 <li><a href="fr/Macro_ExpandTreeItem.html" class="mw-pt-progress mw-pt-progress--complete" title="Macro ExpandTreeItem (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
 <li><a href="it/Macro_ExpandTreeItem.html" class="mw-pt-progress mw-pt-progress--complete" title="Macro ExpandTreeItem (100% translated)" lang="it" dir="ltr">italiano</a></li>
@@ -76,31 +76,92 @@ Macro ExpandTreeItem
 <p>Expands selected tree and all sub trees in the tree view.
 </p><p>if selected tree is already expanded, this tree and all sub trees are collapsed.
 </p><p>if there is no selection, all trees are expanded.
-</p><p><br>
+</p><p><span class="mw-default-size" typeof="mw:File"><a href="index.php?title=Collapsed00.gif&amp;filetimestamp=20180713180944&amp;.html" class="mw-file-description"><img src="File/Collapsed00.gif" decoding="async" width="403" height="557" class="mw-file-element" data-file-width="403" data-file-height="557"></a></span>
+</p>
+<h2><span class="mw-headline" id="Usage">Usage</span></h2>
+<p>Copy the macro in your macro directory, create your tool bar and launch.
+</p>
+<h2><span class="mw-headline" id="Script">Script</span></h2>
+<p>ToolBar Icon .PNG <span class="mw-default-size" typeof="mw:File"><a href="index.php?title=Macro_ExpandTreeItem.png&amp;filetimestamp=20180711190427&amp;.html" class="mw-file-description"><img src="File/Macro_ExpandTreeItem.png" decoding="async" width="58" height="49" class="mw-file-element" data-file-width="58" data-file-height="49"></a></span> and the .SVG <span class="mw-default-size" typeof="mw:File"><a href="index.php?title=Macro_ExpandTreeItem.svg&amp;filetimestamp=20180711185421&amp;.html" class="mw-file-description"><img src="File/Macro_ExpandTreeItem.svg" decoding="async" width="64" height="64" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
+</p><p><b>Macro_ExpandTreeItem.FCMacro</b>
+</p>
+<pre># -*- coding: utf-8 -*-
+#
+# Expands selected tree and all sub trees in the tree view.
+# if selected tree is already expanded this tree and all sub trees are collapsed True/False
+# if there is no selection all trees are expanded
+#
+__Title__    = "Macro ExpandTreeItem"
+__Author__   = "wmayer, UR_"
+__Version__  = "00.02"
+__Date__     = "2019-07-25"
+
+import PySide
+from PySide import QtGui ,QtCore
+from PySide.QtGui import *
+from PySide.QtCore import *
+
+def toggleAll(tree, item, collapse):
+    if collapse == False:
+        tree.expandItem(item)
+    elif collapse == True:  
+        tree.collapseItem(item)
+
+    for i in range(item.childCount()):
+        toggleAll(tree, item.child(i), collapse)
+
+mw = Gui.getMainWindow()
+trees = mw.findChildren(QtGui.QTreeWidget)
+
+for tree in trees:
+    items = tree.selectedItems()
+
+    try:
+        if items == []:
+            #tree.selectAll()                          # select all object
+            for obj in FreeCAD.ActiveDocument.Objects: # select obj.OutList
+                if len(obj.OutList)&nbsp;!= 0:
+                    Gui.Selection.addSelection(obj)
+                    items = tree.selectedItems()
+            for item in items:
+                toggleAll(tree, item, False)
+    except Exception:
+        None
+
+    for item in items:
+            if item.isExpanded() == True:
+                toggleAll(tree, item, True)
+        #            print ("collapsing")
+            else:
+                toggleAll(tree, item, False)
+        #            print ("expanding")</pre>
+<h2><span class="mw-headline" id="Link">Link</span></h2>
+<p><a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?f=13&amp;t=29406">Objektbaum mit einem Klick komplett aufklappen?</a>
 </p>
 <!-- 
 NewPP limit report
-Cached time: 20251023081647
+Cached time: 20251023165755
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.056 seconds
-Real time usage: 0.079 seconds
-Preprocessor visited node count: 72/1000000
-Post&#8208;expand include size: 1948/2097152 bytes
-Template argument size: 516/2097152 bytes
+CPU time usage: 0.047 seconds
+Real time usage: 0.055 seconds
+Preprocessor visited node count: 103/1000000
+Post&#8208;expand include size: 2010/2097152 bytes
+Template argument size: 2027/2097152 bytes
 Highest expansion depth: 5/100
 Expensive parser function count: 0/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 1214/5000000 bytes
+Unstrip post&#8208;expand size: 2741/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%    4.059      1 Template:Macro
-100.00%    4.059      1 -total
+100.00%    3.745      1 -total
+ 60.99%    2.284      1 Template:Macro
+ 36.79%    1.378      1 Template:MacroCode
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:98346-0!canonical and timestamp 20251023081647 and revision id 1674467. Rendering was triggered because: api-parse
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:98346-0!canonical and timestamp 20251023165755 and revision id 1675384. Rendering was triggered because: unknown
  -->
 </div>
 </div><script src="site.js"></script>
