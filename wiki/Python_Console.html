@@ -16,69 +16,25 @@
 </p><p><span typeof="mw:File"><a href="index.php?title=FreeCAD_Python_console.png&amp;filetimestamp=20190921064541&amp;.html" class="mw-file-description"><img src="File/FreeCAD_Python_console.png" decoding="async" width="600" height="277" class="mw-file-element" data-file-width="779" data-file-height="359"></a></span>
 </p>
 <p style="text-align:left; font-style:italic; max-width:800px; box-sizing:border-box; margin-block:1em; margin-inline:clamp(1em, 6vw, 2em); padding-inline:clamp(0.75em, 4vw, 2em); word-break:normal; overflow-wrap:break-word;">The Python Console showing messages when FreeCAD has just started.</p>
-<p>import FreeCAD as App
-import Part
-from FreeCAD import Vector
+<h2><span class="mw-headline" id="Scripting">Scripting</span></h2>
+<p><i>For absolute beginners, see:</i> <a href="Introduction_to_Python.html" title="Introduction to Python">Introduction to Python</a>, and <a href="Python_scripting_tutorial.html" title="Python scripting tutorial">Python scripting tutorial</a>.
+</p><p><i>See also:</i> <a href="FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics">FreeCAD scripting basics</a>, and <a href="Scripted_objects.html" title="Scripted objects">Scripted objects</a>.
+</p><p>The Python Console can perform basic code completion when a dot is written after an object; it will show public methods and attributes (variables) of the current object (class), for example, <code>obj.</code>
+</p><p>The console is also able to show the documentation string of a particular function when the opening parenthesis is written, for example, <code>function(</code>
+</p><p><span typeof="mw:File"><a href="index.php?title=FreeCAD_Python_console_example.png&amp;filetimestamp=20190921072538&amp;.html" class="mw-file-description"><img src="File/FreeCAD_Python_console_example.png" decoding="async" width="600" height="273" class="mw-file-element" data-file-width="779" data-file-height="354"></a></span>
 </p>
-<ol><li>-----------------------------------------------------</li>
-<li>ROTATING EYE BOLT PARAMETERS</li>
-<li>-----------------------------------------------------</li></ol>
-<p>total_length   = 183.0     # mm
-rod_dia        = 20.0      # mm
-stud_length    = 40.0      # mm
-eye_inner_len  = 82.0      # mm
-eye_inner_wid  = 39.83     # mm
-eye_thickness  = 20.0      # mm
-eye_wall       = 20.0      # mm
-color          = (0.0, 1.0, 1.0)   # Aqua Blue (R,G,B)
+<p style="text-align:left; font-style:italic; max-width:800px; box-sizing:border-box; margin-block:1em; margin-inline:clamp(1em, 6vw, 2em); padding-inline:clamp(0.75em, 4vw, 2em); word-break:normal; overflow-wrap:break-word;">Example Python code that produces objects in the 3D view.</p>
+<p>The FreeCAD initialization scripts automatically load some modules, and define some aliases. Therefore, in the Python Console these are available:
 </p>
-<ol><li>-----------------------------------------------------</li>
-<li>CREATE NEW DOCUMENT</li>
-<li>-----------------------------------------------------</li></ol>
-<p>doc = App.newDocument("Rotating_Eye_Bolt")
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span> <span class="o">=</span> <span class="n">FreeCAD</span>
+<span class="n">Gui</span> <span class="o">=</span> <span class="n">FreeCADGui</span>
+</pre></div>
+<p>Therefore these are equal:
 </p>
-<ol><li>-----------------------------------------------------</li>
-<li>BUILD THE EYE RING (ELLIPTICAL)</li>
-<li>-----------------------------------------------------</li></ol>
-<p>a_inner = eye_inner_len / 2
-b_inner = eye_inner_wid / 2
-a_outer = a_inner + eye_wall
-b_outer = b_inner + eye_wall
-</p><p>outer_ellipse = Part.Ellipse(Vector(0,0,0), Vector(a_outer,0,0), Vector(0,b_outer,0))
-inner_ellipse = Part.Ellipse(Vector(0,0,0), Vector(a_inner,0,0), Vector(0,b_inner,0))
-</p><p>outer_face = Part.Face(Part.Wire(outer_ellipse.toShape()))
-inner_face = Part.Face(Part.Wire(inner_ellipse.toShape()))
-eye_face   = outer_face.cut(inner_face)
-eye_solid  = eye_face.extrude(Vector(0,0,eye_thickness))
-</p>
-<ol><li>-----------------------------------------------------</li>
-<li>BUILD THE ROD (CYLINDER)</li>
-<li>-----------------------------------------------------</li></ol>
-<p>rod_radius = rod_dia / 2
-rod_length = total_length - eye_thickness
-rod = Part.makeCylinder(rod_radius, rod_length)
-</p>
-<ol><li>-----------------------------------------------------</li>
-<li>ASSEMBLE (rod + eye)</li>
-<li>-----------------------------------------------------</li></ol>
-<p>eye_solid.translate(Vector(0,0,rod_length))
-bolt = rod.fuse(eye_solid)
-</p>
-<ol><li>-----------------------------------------------------</li>
-<li>ADD TO DOCUMENT &amp; COLOR</li>
-<li>-----------------------------------------------------</li></ol>
-<p>obj = doc.addObject("Part::Feature", "Rotating_Eye_Bolt")
-obj.Shape = bolt
-obj.ViewObject.ShapeColor = color
-App.ActiveDocument.recompute()
-</p>
-<ol><li>-----------------------------------------------------</li>
-<li>EXPORT TO STEP (AutoCAD-compatible)</li>
-<li>-----------------------------------------------------</li></ol>
-<p>out_path = App.getUserAppDataDir() + "Rotating_Eye_Bolt.step"
-Part.export([obj], out_path)
-</p><p>print("&#9989; STEP file created at:", out_path)
-print("Open in AutoCAD &rarr; File &rarr; Import &rarr; STEP &rarr; Save As DWG.")
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>
+<span class="n">FreeCAD</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>
+</pre></div>
+<p><i>Note:</i> these pre-loaded modules and aliases are only available from the Python Console embedded inside the FreeCAD program. If you use FreeCAD as a library in an external program, you must remember to load the <code>FreeCAD</code> and <code>FreeCADGui</code> modules and define the necessary aliases if you wish.
 </p>
 <h2><span class="mw-headline" id="Context_menu">Context menu</span></h2>
 <p>Right-clicking the Python Console opens a context menu with the following commands: 
@@ -162,35 +118,35 @@ print("Open in AutoCAD &rarr; File &rarr; Import &rarr; STEP &rarr; Save As DWG.
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20251103110006
+Cached time: 20251103120006
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.114 seconds
-Real time usage: 0.169 seconds
-Preprocessor visited node count: 450/1000000
-Post&#8208;expand include size: 28212/2097152 bytes
-Template argument size: 10965/2097152 bytes
+CPU time usage: 0.136 seconds
+Real time usage: 0.275 seconds
+Preprocessor visited node count: 548/1000000
+Post&#8208;expand include size: 29250/2097152 bytes
+Template argument size: 11163/2097152 bytes
 Highest expansion depth: 5/100
-Expensive parser function count: 0/100
+Expensive parser function count: 2/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 1814/5000000 bytes
+Unstrip post&#8208;expand size: 2515/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   31.002      1 -total
- 36.49%   11.313      3 Template:Navigation_menu_2
- 28.03%    8.691      1 Template:Std_Base_navi
- 19.12%    5.929      1 Template:Interface_navi
-  9.54%    2.957      2 Template:Incode
-  9.06%    2.808      1 Template:Userdocnavi
-  8.90%    2.758      2 Template:KEY
-  8.22%    2.547      1 Template:Caption
-  7.43%    2.302     11 Template:MenuCommand
-  4.78%    1.483      1 Template:TOCright
+100.00%   51.747      1 -total
+ 20.98%   10.856      3 Template:Navigation_menu_2
+ 18.71%    9.680      1 Template:Userdocnavi
+ 17.59%    9.101      1 Template:Std_Base_navi
+ 15.36%    7.950      1 Template:Interface_navi
+ 14.74%    7.627      6 Template:Incode
+ 10.22%    5.289      2 Template:Caption
+  4.96%    2.566      2 Template:Code
+  4.52%    2.341     11 Template:MenuCommand
+  4.32%    2.236      3 Template:Emphasis
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:159271-0!canonical and timestamp 20251103110006 and revision id 1680629. Rendering was triggered because: api-parse
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:159271-0!canonical and timestamp 20251103120006 and revision id 1680632. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="site.js"></script>
