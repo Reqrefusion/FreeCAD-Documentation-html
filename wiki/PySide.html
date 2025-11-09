@@ -39,7 +39,7 @@
 </p>
 <p style="text-align:left; font-style:italic; max-width:800px; box-sizing:border-box; margin-block:1em; margin-inline:clamp(1em, 6vw, 2em); padding-inline:clamp(0.75em, 4vw, 2em); word-break:normal; overflow-wrap:break-word;">Examples created with PySide. Left: a simple dialog. Right: a more complex dialog with graphs.</p>
 <h2><span class="mw-headline" id="FreeCAD_and_PySide">FreeCAD and PySide</span></h2>
-<p>The original idea behind FreeCAD was to bring Cas.CADE (geometric kernel), Qt (gui toolkit) and Python together to a &ldquo;free&rdquo; 3d parametric CAD with a built-in scripting engine. This was in the early 2000&rsquo;s, i.e. prior to the existence of PySide, thus a different wrapper &ndash; PyQt &ndash; was used for the first good decade of FreeCAD&rsquo;s life. PySide came about to solve licensing issues with PyQt, and the switch for FreeCAD to PySide was made in 2013 (<a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/commit/1dc122dc9a">commit 1dc122dc9a</a>).
+<p>The original idea behind FreeCAD was to bring Cas.CADE (geometric kernel), Qt (gui toolkit) and Python together to create a free 3D parametric CAD program with a built-in scripting engine. This was in the early 2000&rsquo;s, i.e. prior to the existence of PySide, thus a different wrapper &ndash; PyQt &ndash; was used for the first good decade of FreeCAD&rsquo;s life. PySide came about to solve licensing issues with PyQt, and the switch for FreeCAD to PySide was made in 2013 (<a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/commit/1dc122dc9a">commit 1dc122dc9a</a>).
 </p><p>If you would like to know which Qt version your installation uses, the <a href="Std_About.html" title="Std About">About dialog</a> has version listings where Qt is included.
 </p><p>For more information see:
 </p>
@@ -48,12 +48,9 @@
 <p>When you install FreeCAD, you will get both Qt and a matching PySide as part of the package. If you are <a href="Compiling.html" title="Compiling">compiling</a> yourself, you must verify that matching versions of these two libraries are installed in order for FreeCAD to run correctly. Of course, PySide will only work if Qt is present.
 </p>
 <h2><span class="mw-headline" id="Multi_version_compatibility">Multi version compatibility</span></h2>
-<p>To keep up with the evolution of Qt and it&rsquo;s python wrappers, FreeCAD has over time been made compatible with the newer versions. For example version 1.0 of FreeCAD was shipped with Qt5/PySide2, but could be compiled with Qt6/PySide6.
-</p><p>FreeCAD&rsquo;s approach to handle the different versions of Qt/PySide from a user perspective is to call them all PySide, which really should be thought of as PySideX. It does not matter which Qt/PySide version that is installed, they are all imported with PySide.
-</p><p>The multi-version compatibility is solved by introducing a shim, which handles the differences between the versions.
-</p><p>The main difference between the native PySide and subsequent PySide2 and PySide6 libraries is the namespacing. PySide (Qt4) has the main namespaces <code>QtGui</code> and <code>QtCore</code>, whereas PySide2 (Qt5) and PySide6 (Qt6) introduced the additional namespace <code>QtWidgets</code>, where all the widgets are now located, they used to be in QtGui namespace.
-</p><p>Normally, the <code>PySide</code> module provides support for Qt4, while <code>PySide2</code> provides support for Qt5. However, in FreeCAD there is no need to use <code>PySide2</code> directly (actually it is discouraged), as a special <code>PySide</code> module is included to handle Qt5.
-</p><p>This <code>PySide</code> shim is located in the <code>Ext/</code> directory of an installation of FreeCAD compiled for Qt5/Qt6.
+<p>The main difference between the PySide and subsequent PySide2 and PySide6 libraries is the namespacing. PySide (Qt4) has the main namespaces <code>QtGui</code> and <code>QtCore</code>, whereas PySide2 (Qt5) and PySide6 (Qt6) introduced the additional namespace <code>QtWidgets</code>, where all the widgets are now located, they used to be in QtGui namespace.
+</p><p>FreeCAD&rsquo;s approach to handle the different versions of Qt/PySide is to call them all PySide, which really should be thought of as PySideX. It does not matter which Qt/PySide version is installed, they are all imported with PySide.
+</p><p>A <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Shim_(computing)">shim</a> handles the differences between the versions. This <code>PySide</code> shim is located in the <code>Ext/</code> directory of an installation of FreeCAD compiled for Qt5/Qt6.
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">freecad</span><span class="o">/</span><span class="n">Ext</span><span class="o">/</span><span class="n">PySide</span>
 </pre></div>
@@ -65,18 +62,16 @@
 <span class="n">PySide2</span><span class="o">.</span><span class="n">QtSvg</span> <span class="o">-&gt;</span> <span class="n">PySide</span><span class="o">.</span><span class="n">QtSvg</span>
 <span class="n">PySide2</span><span class="o">.</span><span class="n">QtUiTools</span> <span class="o">-&gt;</span> <span class="n">PySide</span><span class="o">.</span><span class="n">QtUiTools</span>
 </pre></div>
-<p>The only unusual aspect is that the <code>PySide2.QtWidgets</code> classes are placed in the <code>PySide.QtGui</code> namespace.
+<p>For this reason the <code>PySide2.QtWidgets</code> classes are also placed in the <code>PySide.QtGui</code> namespace.
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">PySide2</span><span class="o">.</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span> <span class="o">-&gt;</span> <span class="n">PySide</span><span class="o">.</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QCheckBox</span>
 </pre></div>
-<p>The current recommended way to use PySide is to use the modern namespacing.
+<p>But the current recommended way is to use the modern namespacing.
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtWidgets</span>
 
 <span class="n">my_check_box</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QCheckBox</span><span class="p">()</span>
 </pre></div>
-<p>This way, new users are not subjected to fact that Qt4 was used 10 years ago.
-</p>
 <p><a href="#top">Top</a></p>
 <h2><span class="mw-headline" id="Examples_of_PySide_use">Examples of PySide use</span></h2>
 <ul><li><a href="PySide_Beginner_Examples.html" title="PySide Beginner Examples">PySide Beginner Examples</a>, hello world, announcements, enter text, enter number.</li>
@@ -121,15 +116,15 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20251108110551
+Cached time: 20251109190155
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.115 seconds
-Real time usage: 0.547 seconds
-Preprocessor visited node count: 352/1000000
-Post&#8208;expand include size: 8603/2097152 bytes
-Template argument size: 2817/2097152 bytes
+CPU time usage: 0.089 seconds
+Real time usage: 0.108 seconds
+Preprocessor visited node count: 326/1000000
+Post&#8208;expand include size: 8525/2097152 bytes
+Template argument size: 2791/2097152 bytes
 Highest expansion depth: 5/100
 Expensive parser function count: 5/100
 Unstrip recursion depth: 0/20
@@ -137,18 +132,18 @@ Unstrip post&#8208;expand size: 5458/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%  413.046      1 -total
- 96.67%  399.306      5 Template:Code
-  0.85%    3.519      3 Template:Top
-  0.83%    3.416      1 Template:Powerdocnavi
-  0.46%    1.917      1 Template:Navigation_menu_2
-  0.42%    1.754      2 Template:Docnav
-  0.34%    1.384     13 Template:Incode
-  0.25%    1.045      1 Template:Caption
-  0.19%    0.799      1 Template:TOCright
+100.00%   16.608      1 -total
+ 24.60%    4.085      5 Template:Code
+ 18.06%    2.999      1 Template:Powerdocnavi
+ 14.27%    2.370      2 Template:Docnav
+ 13.48%    2.238      9 Template:Incode
+ 10.84%    1.800      1 Template:Navigation_menu_2
+  7.98%    1.325      1 Template:Caption
+  7.33%    1.217      3 Template:Top
+  6.85%    1.137      1 Template:TOCright
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:578-0!canonical and timestamp 20251108110619 and revision id 1683362. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:578-0!canonical and timestamp 20251109190155 and revision id 1685247. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
