@@ -1,268 +1,182 @@
 <link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Mesh Generation/fr</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="fr" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-Mesh+Generation&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
 <li><a href="../de/Mesh_Generation.html" class="mw-pt-progress mw-pt-progress--med" title="Mesh Erzeugung (35% translated)" lang="de" dir="ltr">Deutsch</a></li>
 <li><a href="../Mesh_Generation.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="Mesh Generation (100% translated)" lang="en" dir="ltr">English</a></li>
-<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--low" lang="fr" dir="ltr">fran&ccedil;ais</span></li></ul></div>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--med" lang="fr" dir="ltr">fran&ccedil;ais</span></li></ul></div>
 <div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
 <p>Les maillages sont un moyen de mod&eacute;liser des formes 3D sous la forme d'un ensemble de faces de base, d&eacute;limit&eacute;es par des ar&ecirc;tes et des points. En g&eacute;n&eacute;ral, il ne s'agit pas de la repr&eacute;sentation standard des formes dans les logiciels de CAO 3D, car elle ne permet pas de mod&eacute;liser des g&eacute;om&eacute;tries exactes sous la forme de courbes et de surfaces param&eacute;triques (ces repr&eacute;sentations sont appel&eacute;es &laquo;&nbsp;repr&eacute;sentation par les limites&nbsp;&raquo; ou B-rep). N&eacute;anmoins, leur simplicit&eacute; (seuls des points, des segments de ligne et des faces simples sont utilis&eacute;s pour repr&eacute;senter une forme) a fait des maillages la repr&eacute;sentation de choix pour de nombreuses applications telles que le rendu, le d&eacute;coupage pour l'impression 3D, etc. Nous avons d&eacute;lib&eacute;r&eacute;ment omis de mentionner l'utilisation des maillages pour effectuer des analyses FEM (m&eacute;thode des &eacute;l&eacute;ments finis), car dans ce cas, les maillages ne sont plus utilis&eacute;s pour leur simplicit&eacute;, mais pour leur capacit&eacute; &agrave; transporter et &agrave; propager des informations &agrave; travers les corps.
+</p><p>La plupart des logiciels de mod&eacute;lisation param&eacute;trique de CAO offrent des possibilit&eacute;s de g&eacute;n&eacute;ration et de manipulation de maillages, et FreeCAD ne fait pas exception. FreeCAD h&eacute;berge un <a href="../fr/Mesh_Workbench.html" title="Mesh Workbench/fr">atelier d&eacute;di&eacute; au travail avec les maillages</a> qui offre de nombreux outils et fonctions utiles. Nous nous concentrerons sur celui qui permet de g&eacute;n&eacute;rer des maillages &agrave; partir de formes FreeCAD&nbsp;: <span typeof="mw:File"><a href="../index.php?title=Mesh_FromPartShape.svg&amp;filetimestamp=20200625160359&amp;.html" class="mw-file-description"><img src="../File/Mesh_FromPartShape.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../fr/Mesh_FromPartShape.html" title="Mesh FromPartShape/fr">Mesh Cr&eacute;er un maillage</a>.
+</p><p>Cet outil permet d'utiliser quatre algorithmes de maillage diff&eacute;rents, &agrave; savoir&nbsp;: Standard, GMSH, NetGen et Mefisto. Nous nous concentrerons sur le premier, car les trois autres sont d&eacute;di&eacute;s aux maillages d'analyse FEM et ne sont pas d&eacute;velopp&eacute;s en interne.
+</p><p><span id="The_standard_algorithm"></span>
 </p>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Most CAD parametric modeling software offer mesh generation and manipulation possibilities, and FreeCAD is no exception. FreeCAD hosts a <a href="../Mesh_Workbench.html" title="Mesh Workbench">workbench dedicated to working with meshes</a> that offers many useful tools and functionalities, and we will focus on the one that allows generating meshes from FreeCAD shapes: <span typeof="mw:File"><a href="../index.php?title=Mesh_FromPartShape.svg&amp;filetimestamp=20200625160359&amp;.html" class="mw-file-description"><img src="../File/Mesh_FromPartShape.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../Mesh_FromPartShape.html" title="Mesh FromPartShape">Mesh FromPartShape</a>.
+<h2><span id="L.27algorithme_standard"></span><span class="mw-headline" id="L'algorithme_standard">L'algorithme standard</span></h2>
+<p>L'objectif de cette page est de fournir un aper&ccedil;u du fonctionnement et de la configuration du maillage d'un point de vue g&eacute;n&eacute;ral, sans entrer dans les d&eacute;tails des op&eacute;rations complexes qui se produisent lors de la g&eacute;n&eacute;ration des maillages. L'algorithme standard correspond &agrave; l'algorithme de maillage fourni par OCCT, le noyau de mod&eacute;lisation g&eacute;om&eacute;trique de FreeCAD. Cet algorithme g&eacute;n&egrave;re des maillages de surface non structur&eacute;s et fonctionne essentiellement en deux &eacute;tapes&nbsp;:
 </p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>The tool allows using four different meshing algorithms, namely: Standard, GMSH, NetGen and Mefisto. We will focus on the first one, as the three others are dedicated to FEM analysis meshes, and are not in-house.
+<ol><li>Les ar&ecirc;tes des formes sont d'abord discr&eacute;tis&eacute;es, ce qui signifie que les courbes sont transform&eacute;es en polylignes (les contours ferm&eacute;s deviennent ainsi des polygones).</li>
+<li>Ensuite, les surfaces sont tessell&eacute;es, c'est-&agrave;-dire qu'elles sont recouvertes de formes g&eacute;om&eacute;triques, des triangles dans notre cas.</li></ol>
+<p>La g&eacute;n&eacute;ration d'un maillage &agrave; partir d'une forme est une op&eacute;ration complexe qui implique des actions et des param&egrave;tres cach&eacute;s pouvant entra&icirc;ner des comportements difficiles &agrave; comprendre, notamment en ce qui concerne le r&eacute;glage des trois param&egrave;tres auxquels nous avons acc&egrave;s. Examinons leur influence &agrave; l'aide d'exemples pratiques afin de mieux comprendre comment d&eacute;finir de bons r&eacute;glages et, &agrave; terme, g&eacute;n&eacute;rer de bons maillages.
+</p><p><span id="Angular_deviation"></span>
 </p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<h2><span class="mw-headline" id="The_standard_algorithm">The standard algorithm</span></h2>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>The goal of this page is to provide an insight into how meshing works and can be set up from a high-level point of view, without entering into details into the complex operations occurring during the generation of meshes. The standard algorithm stands for the meshing algorithm provided by OCCT, FreeCAD&rsquo;s geometric modeling kernel. This algorithm generates surface unstructured meshes and basically works in two steps:
+<h2><span id="D.C3.A9viation_angulaire"></span><span class="mw-headline" id="D&eacute;viation_angulaire">D&eacute;viation angulaire</span></h2>
+<p>La <b>d&eacute;viation angulaire</b> est principalement utilis&eacute;e lors de l'&eacute;tape de discr&eacute;tisation des ar&ecirc;tes. Ce param&egrave;tre permet d'assurer la fluidit&eacute; des polylignes qui repr&eacute;sentent les courbes en emp&ecirc;chant la formation d'angles aigus entre des segments de ligne cons&eacute;cutifs. La discr&eacute;tisation des ar&ecirc;tes a un impact important sur le maillage global des formes, car les points (&agrave; la transition entre les segments de ligne) g&eacute;n&eacute;r&eacute;s lors de cette &eacute;tape serviront de n&oelig;uds de base pour la construction des triangles qui seront ensuite utilis&eacute;s pour tesseller les faces d&eacute;limit&eacute;es par les ar&ecirc;tes. 
 </p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<ol><li>Edges of the shapes are first discretized, meaning that curves are transformed into polylines (thus closed contours become polygons),</li>
-<li>Then, surfaces are tessellated, meaning they are covered using geometric shapes, triangles in our case.</li></ol>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Generating a mesh from a shape is a complex operation, and implies hidden actions and parameters, which can lead to behaviors that are not trivial to understand, in particular regarding the setting of the 3 parameters we have access to. Let&rsquo;s have a look at their influence with practical examples to better understand how to define good set-ups, and eventually generate good meshes.
+<figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=ParamsOCCT_649p168.png&amp;filetimestamp=20251027005332&amp;.html" class="mw-file-description"><img alt="D&eacute;viation angulaire et d&eacute;viation lin&eacute;aire telles que d&eacute;crites dans la documentation OCCT" src="../File/ParamsOCCT_649p168.png" decoding="async" width="300" height="78" class="mw-file-element" data-file-width="649" data-file-height="168"></a><figcaption>D&eacute;viation angulaire et d&eacute;viation lin&eacute;aire telles que d&eacute;crites dans la documentation OCCT</figcaption></figure>
+<p>La valeur de ce param&egrave;tre est relative &agrave; la taille de la forme &agrave; mailler&nbsp;: quelle que soit la taille de la forme, une valeur d'angle &eacute;lev&eacute;e peut entra&icirc;ner des transitions abruptes entre les segments de ligne cons&eacute;cutifs, tandis qu'une valeur faible garantira des transitions plus fluides.
+</p><p>Pour illustrer le comportement de l'algorithme standard en mati&egrave;re de d&eacute;viation angulaire, modifions ce param&egrave;tre tout en maillant une surface circulaire simple. Le param&egrave;tre de d&eacute;viation de surface jouant &eacute;galement un r&ocirc;le dans le processus, il a &eacute;t&eacute; r&eacute;gl&eacute; sur une valeur suffisamment &eacute;lev&eacute;e pour &eacute;viter toute interf&eacute;rence avec notre d&eacute;monstration&nbsp;: le diam&egrave;tre de notre cercle est de 50 mm, tout comme la d&eacute;viation de surface.
 </p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<h2><span class="mw-headline" id="Angular_deviation">Angular deviation</span></h2>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>The <b>angular deviation</b> is mainly used at the edges discretization step. This parameter helps ensure the smoothness of polylines that represent curves by preventing sharp angles between consecutive line segments. Edge discretization has a great impact on the overall meshing of the shapes, because points (at the transition between line segments) generated at this step will serve as basis nodes for the construction of triangles that will further be used to tessellate faces delimited by the edges.
-</p>
-</div> 
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=ParamsOCCT_649p168.png&amp;filetimestamp=20251027005332&amp;.html" class="mw-file-description"><img alt="Angular deflection and linear deflection as depicted in OCCT documentation" src="../File/ParamsOCCT_649p168.png" decoding="async" width="300" height="78" class="mw-file-element" data-file-width="649" data-file-height="168"></a><figcaption>Angular deflection and linear deflection as depicted in OCCT documentation</figcaption></figure>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>This parameter value is relative to the size of the shape to be meshed: regardless of the shape's size, a high angle value may lead to sharp transitions between consecutive line segments, whereas a low value will ensure smoother transitions.
-</p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>To illustrate the behavior of the standard algorithm regarding angular deviation, let&rsquo;s vary this parameter while meshing a simple circular surface. As the surface deviation parameter also plays a role in the process, it has been set to a value high enough to avoid any interference with our demonstration: our circle diameter is 50mm, and so is the surface deviation.
-</p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
 <table>
 <tbody><tr>
-<th width="25%"><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_orig_vignette.png&amp;filetimestamp=20251027005541&amp;.html" class="mw-file-description"><img src="../File/Cercle_orig_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
+<th width="25%"><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_orig_vignette.png&amp;filetimestamp=20251027005541&amp;.html" class="mw-file-description"><img src="../File/Cercle_orig_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>rien</figcaption></figure>
 </th>
-<th width="25%"><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-90_vignette.png&amp;filetimestamp=20251027005700&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-90_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
+<th width="25%"><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-90_vignette.png&amp;filetimestamp=20251027005700&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-90_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>rien</figcaption></figure>
 </th>
-<th width="25%"><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-30_vignette.png&amp;filetimestamp=20251027005735&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-30_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
+<th width="25%"><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-30_vignette.png&amp;filetimestamp=20251027005735&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-30_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>rien</figcaption></figure>
 </th>
-<th width="25%"><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-5_vignette.png&amp;filetimestamp=20251027005809&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-5_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
+<th width="25%"><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-5_vignette.png&amp;filetimestamp=20251027005809&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-5_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>rien</figcaption></figure>
 </th></tr>
 <tr>
-<td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_detail_vignette.png&amp;filetimestamp=20251027005936&amp;.html" class="mw-file-description"><img src="../File/Cercle_detail_vignette.png" decoding="async" width="181" height="144" class="mw-file-element" data-file-width="181" data-file-height="144"></a><figcaption></figcaption></figure>
+<td><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_detail_vignette.png&amp;filetimestamp=20251027005936&amp;.html" class="mw-file-description"><img src="../File/Cercle_detail_vignette.png" decoding="async" width="181" height="144" class="mw-file-element" data-file-width="181" data-file-height="144"></a><figcaption>rien</figcaption></figure>
 </td>
-<td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-90_detail_vignette.png&amp;filetimestamp=20251027010010&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-90_detail_vignette.png" decoding="async" width="181" height="144" class="mw-file-element" data-file-width="181" data-file-height="144"></a><figcaption></figcaption></figure>
+<td><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-90_detail_vignette.png&amp;filetimestamp=20251027010010&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-90_detail_vignette.png" decoding="async" width="181" height="144" class="mw-file-element" data-file-width="181" data-file-height="144"></a><figcaption>rien</figcaption></figure>
 </td>
-<td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-30_detail_vignette.png&amp;filetimestamp=20251027010040&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-30_detail_vignette.png" decoding="async" width="181" height="144" class="mw-file-element" data-file-width="181" data-file-height="144"></a><figcaption></figcaption></figure>
+<td><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-30_detail_vignette.png&amp;filetimestamp=20251027010040&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-30_detail_vignette.png" decoding="async" width="181" height="144" class="mw-file-element" data-file-width="181" data-file-height="144"></a><figcaption>rien</figcaption></figure>
 </td>
-<td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-5_detail_vignette.png&amp;filetimestamp=20251027010110&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-5_detail_vignette.png" decoding="async" width="181" height="144" class="mw-file-element" data-file-width="181" data-file-height="144"></a><figcaption></figcaption></figure>
+<td><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-5_detail_vignette.png&amp;filetimestamp=20251027010110&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-5_detail_vignette.png" decoding="async" width="181" height="144" class="mw-file-element" data-file-width="181" data-file-height="144"></a><figcaption>rien</figcaption></figure>
 </td></tr>
 <tr>
 <td>
-<p><b>Top:</b> Original BRep circular face (blue) delimited by outer circle (red)
+<p><b>En haut&nbsp;:</b> face circulaire originale de la B-rep(bleue) d&eacute;limit&eacute;e par un cercle ext&eacute;rieur (rouge)
+</p><p><b>En bas&nbsp;:</b> d&eacute;tail en haut &agrave; gauche
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p><b>Bottom:</b> Top left detail
-</p>
-</div></td>
+</td>
 <td>
-<p>Surface deviation: 50mm
+<p>&Eacute;cart de surface&nbsp;: 50 mm
+</p><p>D&eacute;viation angulaire&nbsp;: 90&deg;
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Angular deviation: 90&deg;
-</p>
-</div></td>
+</td>
 <td>
-<p>Surface deviation: 50mm
+<p>D&eacute;viation de surface&nbsp;: 50 mm
+</p><p>D&eacute;viation angulaire&nbsp;: 30&deg;
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Angular deviation: 30&deg;
-</p>
-</div></td>
+</td>
 <td>
-<p>Surface deviation: 50mm
+<p>D&eacute;viation de surface&nbsp;: 50 mm
+</p><p>D&eacute;viation angulaire&nbsp;: 5&deg;
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Angular deviation: 5&deg;
+</td></tr></tbody></table>
+<p>La r&eacute;duction de la d&eacute;viation angulaire a une influence significative sur l'aspect du maillage, limitant les angles vifs lors de la repr&eacute;sentation du contour de la face. Si elle permet d'augmenter la fid&eacute;lit&eacute; du maillage par rapport &agrave; la forme d'origine, elle ne fournit pas de valeur absolue pour la d&eacute;viation maximale tol&eacute;r&eacute;e entre les deux.
+</p><p><span id="Surface_deviation"></span>
 </p>
-</div></td></tr></tbody></table>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Reducing angular deviation has a significant influence on the aspect of the mesh, limiting sharp angles when representing the face contour. If it allows increasing the fidelity of the mesh relative to the original shape, it does not provide an absolute value for the maximum deviation tolerated between the two.
+<h2><span id="D.C3.A9viation_de_surface"></span><span class="mw-headline" id="D&eacute;viation_de_surface">D&eacute;viation de surface</span></h2>
+<p>Pour ce faire, l'option <b>d&eacute;viation de surface</b> est plus appropri&eacute;e. Elle permet de sp&eacute;cifier la d&eacute;viation maximale que le maillage peut pr&eacute;senter par rapport &agrave; la forme d'origine. Revenons &agrave; notre surface circulaire pour comprendre son influence.
 </p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<h2><span class="mw-headline" id="Surface_deviation">Surface deviation</span></h2>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>To do so, <b>surface deviation</b> is a better pick. It allows specifying the maximum deviation the mesh should be present compared to the original shape. Let&rsquo;s get back to our circular surface to understand its influence.
-</p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
 <table>
 <tbody><tr>
-<th width="25%"><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-90_vignette.png&amp;filetimestamp=20251027005700&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-90_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
+<th width="25%"><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-90_vignette.png&amp;filetimestamp=20251027005700&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-90_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>rien</figcaption></figure>
 </th>
-<th width="25%"><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_10-90_vignette.png&amp;filetimestamp=20251027010509&amp;.html" class="mw-file-description"><img src="../File/Cercle_10-90_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
+<th width="25%"><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_10-90_vignette.png&amp;filetimestamp=20251027010509&amp;.html" class="mw-file-description"><img src="../File/Cercle_10-90_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>rien</figcaption></figure>
 </th>
-<th width="25%"><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_1-90_vignette.png&amp;filetimestamp=20251027010542&amp;.html" class="mw-file-description"><img src="../File/Cercle_1-90_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
+<th width="25%"><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_1-90_vignette.png&amp;filetimestamp=20251027010542&amp;.html" class="mw-file-description"><img src="../File/Cercle_1-90_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>rien</figcaption></figure>
 </th>
-<th width="25%"><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_01-90_vignette.png&amp;filetimestamp=20251027010615&amp;.html" class="mw-file-description"><img src="../File/Cercle_01-90_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
+<th width="25%"><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_01-90_vignette.png&amp;filetimestamp=20251027010615&amp;.html" class="mw-file-description"><img src="../File/Cercle_01-90_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>rien</figcaption></figure>
 </th></tr>
 <tr>
-<td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-90_detail_vignette.png&amp;filetimestamp=20251027010010&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-90_detail_vignette.png" decoding="async" width="181" height="144" class="mw-file-element" data-file-width="181" data-file-height="144"></a><figcaption></figcaption></figure>
+<td><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-90_detail_vignette.png&amp;filetimestamp=20251027010010&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-90_detail_vignette.png" decoding="async" width="181" height="144" class="mw-file-element" data-file-width="181" data-file-height="144"></a><figcaption>rien</figcaption></figure>
 </td>
-<td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_10-90_detail_vignette.png&amp;filetimestamp=20251027010706&amp;.html" class="mw-file-description"><img src="../File/Cercle_10-90_detail_vignette.png" decoding="async" width="181" height="134" class="mw-file-element" data-file-width="181" data-file-height="134"></a><figcaption></figcaption></figure>
+<td><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_10-90_detail_vignette.png&amp;filetimestamp=20251027010706&amp;.html" class="mw-file-description"><img src="../File/Cercle_10-90_detail_vignette.png" decoding="async" width="181" height="134" class="mw-file-element" data-file-width="181" data-file-height="134"></a><figcaption>rien</figcaption></figure>
 </td>
-<td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_1-90_detail_vignette.png&amp;filetimestamp=20251027010741&amp;.html" class="mw-file-description"><img src="../File/Cercle_1-90_detail_vignette.png" decoding="async" width="181" height="134" class="mw-file-element" data-file-width="181" data-file-height="134"></a><figcaption></figcaption></figure>
+<td><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_1-90_detail_vignette.png&amp;filetimestamp=20251027010741&amp;.html" class="mw-file-description"><img src="../File/Cercle_1-90_detail_vignette.png" decoding="async" width="181" height="134" class="mw-file-element" data-file-width="181" data-file-height="134"></a><figcaption>rien</figcaption></figure>
 </td>
-<td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_01-90_detail_vignette.png&amp;filetimestamp=20251027010809&amp;.html" class="mw-file-description"><img src="../File/Cercle_01-90_detail_vignette.png" decoding="async" width="181" height="134" class="mw-file-element" data-file-width="181" data-file-height="134"></a><figcaption></figcaption></figure>
+<td><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_01-90_detail_vignette.png&amp;filetimestamp=20251027010809&amp;.html" class="mw-file-description"><img src="../File/Cercle_01-90_detail_vignette.png" decoding="async" width="181" height="134" class="mw-file-element" data-file-width="181" data-file-height="134"></a><figcaption>rien</figcaption></figure>
 </td></tr>
 <tr>
 <td>
-<p>Surface deviation: 50mm
+<p>D&eacute;viation de surface&nbsp;: 50 mm
+</p><p>D&eacute;viation angulaire&nbsp;: 90&deg;
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Angular deviation: 90&deg;
-</p>
-</div></td>
+</td>
 <td>
-<p>Surface deviation: 10mm
+<p>D&eacute;viation de surface&nbsp;: 10 mm
+</p><p>D&eacute;viation angulaire&nbsp;: 90&deg;
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Angular deviation: 90&deg;
-</p>
-</div></td>
+</td>
 <td>
-<p>Surface deviation: 1mm
+<p>D&eacute;viation de surface&nbsp;: 1 mm
+</p><p>D&eacute;viation angulaire&nbsp;: 90&deg;
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Angular deviation: 90&deg;
-</p>
-</div></td>
+</td>
 <td>
-<p>Surface deviation: 0.1mm
+<p>D&eacute;viation de surface&nbsp;: 0.1 mm
+</p><p>D&eacute;viation angulaire&nbsp;: 90&deg;
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Angular deviation: 90&deg;
+</td></tr></tbody></table>
+<p>L'influence de la d&eacute;viation de surface est clairement visible et facilement compr&eacute;hensible dans notre exemple, &eacute;tant donn&eacute; sa nature absolue. Elle est particuli&egrave;rement visible pr&egrave;s du bord&nbsp;: les valeurs &eacute;lev&eacute;es (50 mm - 10 mm) n'ont aucun impact, tandis que de nombreux triangles sont ajout&eacute;s pour garantir la tol&eacute;rance de 0,1 mm.
+</p><p><span id="Combined_influence_of_angular_and_surface_deviation"></span>
 </p>
-</div></td></tr></tbody></table>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>The influence of surface deviation is clearly visible and easily understandable in our example, given its absolute nature. It is particularly visible close to the edge: high values (50mm - 10mm) have no impact, whereas many triangles are added to ensure the 0,1mm tolerance.
+<h2><span id="Influence_combin.C3.A9e_des_d.C3.A9viations_angulaire_et_de_surface"></span><span class="mw-headline" id="Influence_combin&eacute;e_des_d&eacute;viations_angulaire_et_de_surface">Influence combin&eacute;e des d&eacute;viations angulaire et de surface</span></h2>
+<p>La diminution de la d&eacute;viation angulaire ou de la d&eacute;viation de surface a un impact similaire sur le maillage. Cette redondance peut entra&icirc;ner un comportement ind&eacute;sirable lorsque de mauvaises combinaisons de param&egrave;tres sont utilis&eacute;es&nbsp;: l'exemple suivant montre la g&eacute;n&eacute;ration de triangles inutiles et de forme &eacute;trange lorsque la d&eacute;viation angulaire et la d&eacute;viation de surface sont toutes deux r&eacute;gl&eacute;es sur des valeurs faibles.
 </p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<h2><span class="mw-headline" id="Combined_influence_of_angular_and_surface_deviation">Combined influence of angular and surface deviation</span></h2>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Decreasing either angular deviation or surface deviation has a similar impact on the mesh. This redundancy can lead to undesired behavior when bad parameter combinations are used: the following example shows the generation of unnecessary, oddly shaped triangles when both angular and surface deviation are set to low values.
-</p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
 <table>
 <tbody><tr>
-<th width="25%"><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_10-30_vignette.png&amp;filetimestamp=20251027022334&amp;.html" class="mw-file-description"><img src="../File/Cercle_10-30_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
+<th width="25%"><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_10-30_vignette.png&amp;filetimestamp=20251027022334&amp;.html" class="mw-file-description"><img src="../File/Cercle_10-30_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>rien</figcaption></figure>
 </th>
-<th width="25%"><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_3-7_vignette.png&amp;filetimestamp=20251027022410&amp;.html" class="mw-file-description"><img src="../File/Cercle_3-7_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
+<th width="25%"><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_3-7_vignette.png&amp;filetimestamp=20251027022410&amp;.html" class="mw-file-description"><img src="../File/Cercle_3-7_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>rien</figcaption></figure>
 </th>
-<th width="25%"><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_1-5_vignette.png&amp;filetimestamp=20251027022440&amp;.html" class="mw-file-description"><img src="../File/Cercle_1-5_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
+<th width="25%"><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_1-5_vignette.png&amp;filetimestamp=20251027022440&amp;.html" class="mw-file-description"><img src="../File/Cercle_1-5_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>rien</figcaption></figure>
 </th>
-<th width="25%"><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_01-1_vignette.png&amp;filetimestamp=20251027022520&amp;.html" class="mw-file-description"><img src="../File/Cercle_01-1_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
+<th width="25%"><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_01-1_vignette.png&amp;filetimestamp=20251027022520&amp;.html" class="mw-file-description"><img src="../File/Cercle_01-1_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>rien</figcaption></figure>
 </th></tr>
 <tr>
-<td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-90_detail_vignette.png&amp;filetimestamp=20251027010010&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-90_detail_vignette.png" decoding="async" width="181" height="144" class="mw-file-element" data-file-width="181" data-file-height="144"></a><figcaption></figcaption></figure>
+<td><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_50-90_detail_vignette.png&amp;filetimestamp=20251027010010&amp;.html" class="mw-file-description"><img src="../File/Cercle_50-90_detail_vignette.png" decoding="async" width="181" height="144" class="mw-file-element" data-file-width="181" data-file-height="144"></a><figcaption>rien</figcaption></figure>
 </td>
-<td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_10-90_detail_vignette.png&amp;filetimestamp=20251027010706&amp;.html" class="mw-file-description"><img src="../File/Cercle_10-90_detail_vignette.png" decoding="async" width="181" height="134" class="mw-file-element" data-file-width="181" data-file-height="134"></a><figcaption></figcaption></figure>
+<td><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_10-90_detail_vignette.png&amp;filetimestamp=20251027010706&amp;.html" class="mw-file-description"><img src="../File/Cercle_10-90_detail_vignette.png" decoding="async" width="181" height="134" class="mw-file-element" data-file-width="181" data-file-height="134"></a><figcaption>rien</figcaption></figure>
 </td>
-<td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_1-90_detail_vignette.png&amp;filetimestamp=20251027010741&amp;.html" class="mw-file-description"><img src="../File/Cercle_1-90_detail_vignette.png" decoding="async" width="181" height="134" class="mw-file-element" data-file-width="181" data-file-height="134"></a><figcaption></figcaption></figure>
+<td><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_1-90_detail_vignette.png&amp;filetimestamp=20251027010741&amp;.html" class="mw-file-description"><img src="../File/Cercle_1-90_detail_vignette.png" decoding="async" width="181" height="134" class="mw-file-element" data-file-width="181" data-file-height="134"></a><figcaption>rien</figcaption></figure>
 </td>
-<td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_01-90_detail_vignette.png&amp;filetimestamp=20251027010809&amp;.html" class="mw-file-description"><img src="../File/Cercle_01-90_detail_vignette.png" decoding="async" width="181" height="134" class="mw-file-element" data-file-width="181" data-file-height="134"></a><figcaption></figcaption></figure>
+<td><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Cercle_01-90_detail_vignette.png&amp;filetimestamp=20251027010809&amp;.html" class="mw-file-description"><img src="../File/Cercle_01-90_detail_vignette.png" decoding="async" width="181" height="134" class="mw-file-element" data-file-width="181" data-file-height="134"></a><figcaption>rien</figcaption></figure>
 </td></tr>
 <tr>
 <td>
-<p>Surface deviation: 10mm
+<p>D&eacute;viation de surface&nbsp;: 10 mm
+</p><p>D&eacute;viation angulaire&nbsp;: 30&deg;
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Angular deviation: 30&deg;
-</p>
-</div></td>
+</td>
 <td>
-<p>Surface deviation: 3mm
+<p>D&eacute;viation de surface&nbsp;: 3 mm
+</p><p>D&eacute;viation angulaire&nbsp;: 7&deg;
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Angular deviation: 7&deg;
-</p>
-</div></td>
+</td>
 <td>
-<p>Surface deviation: 1mm
+<p>D&eacute;viation de surface&nbsp;: 1 mm
+</p><p>D&eacute;viation angulaire&nbsp;: 5&deg;
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Angular deviation: 5&deg;
-</p>
-</div></td>
+</td>
 <td>
-<p>Surface deviation: 0.1mm
+<p>D&eacute;viation de surface&nbsp;: 0.1 mm
+</p><p>D&eacute;viation angulaire&nbsp;: 1&deg;
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Angular deviation: 1&deg;
+</td></tr></tbody></table>
+<p><span id="First_synthesis"></span>
 </p>
-</div></td></tr></tbody></table>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<h2><span class="mw-headline" id="First_synthesis">First synthesis</span></h2>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>The above examples show that it is possible, using angular and surface deviation, to obtain meshes within the requested tolerance of the original shape and achieve the desired smoothness when representing curves. They also show the importance of an adequate setting and that simply setting low values may not yield the best meshes.
+<h2><span id="Premi.C3.A8re_synth.C3.A8se"></span><span class="mw-headline" id="Premi&egrave;re_synth&egrave;se">Premi&egrave;re synth&egrave;se</span></h2>
+<p>Les exemples ci-dessus montrent qu'il est possible, en utilisant la d&eacute;viation angulaire et la d&eacute;viation de surface, d'obtenir des maillages dans les limites de tol&eacute;rance requises par la forme d'origine et d'obtenir la fluidit&eacute; souhait&eacute;e lors de la repr&eacute;sentation des courbes. Ils montrent &eacute;galement l'importance d'un r&eacute;glage ad&eacute;quat et que le simple fait de d&eacute;finir des valeurs faibles ne permet pas n&eacute;cessairement d'obtenir les meilleurs maillages.
+</p><p><span id="The_devil_is_in_the_details"></span>
 </p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<h2><span class="mw-headline" id="The_devil_is_in_the_details">The devil is in the details</span></h2>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>While our circular shape provided a good understanding of the influence of the parameters on mesh generation, it is unfortunately too simplistic compared to real-life meshing challenges. A common case is the presence of fine details on bigger shapes. Let&rsquo;s add a detail to our circular shape: a smaller circular edge at the top.
+<h2><span id="Le_diable_est_dans_les_d.C3.A9tails"></span><span class="mw-headline" id="Le_diable_est_dans_les_d&eacute;tails">Le diable est dans les d&eacute;tails</span></h2>
+<p>Bien que notre forme circulaire ait permis de bien comprendre l'influence des param&egrave;tres sur la g&eacute;n&eacute;ration de maillages, elle est malheureusement trop simpliste par rapport aux d&eacute;fis r&eacute;els du maillage. Un cas courant est la pr&eacute;sence de d&eacute;tails fins sur des formes plus grandes. Ajoutons un d&eacute;tail &agrave; notre forme circulaire&nbsp;: une ar&ecirc;te circulaire plus petite en haut.
 </p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
 <table>
 <tbody><tr>
-<th><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_orig_vignette.png&amp;filetimestamp=20251027022756&amp;.html" class="mw-file-description"><img alt="BRep circular face (blue) with a circular detail at the top" src="../File/Detail_orig_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>BRep circular face (blue) with a circular detail at the top</figcaption></figure>
+<th><figure class="mw-default-size" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_orig_vignette.png&amp;filetimestamp=20251027022756&amp;.html" class="mw-file-description"><img alt="Face circulaire du B-rep (bleue) avec un d&eacute;tail circulaire en haut" src="../File/Detail_orig_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption>Face circulaire du B-rep (bleue) avec un d&eacute;tail circulaire en haut</figcaption></figure>
 </th>
-<th><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_orig_detail_vignette.png&amp;filetimestamp=20251027022844&amp;.html" class="mw-file-description"><img alt="Close view of the circular detail" src="../File/Detail_orig_detail_vignette.png" decoding="async" width="181" height="75" class="mw-file-element" data-file-width="181" data-file-height="75"></a><figcaption>Close view of the circular detail</figcaption></figure>
+<th><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_orig_detail_vignette.png&amp;filetimestamp=20251027022844&amp;.html" class="mw-file-description"><img alt="Vue du d&eacute;tail circulaire" src="../File/Detail_orig_detail_vignette.png" decoding="async" width="181" height="75" class="mw-file-element" data-file-width="181" data-file-height="75"></a><figcaption>Vue du d&eacute;tail circulaire</figcaption></figure>
 </th></tr></tbody></table>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
 <table>
 <tbody><tr>
 <th width="25%">
-<p>Angular deviation /
+<p>D&eacute;viation angulaire /
+</p><p>D&eacute;viation de surface
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Surface deviation
-</p>
-</div></th>
+</th>
 <th width="25%">90&deg;
 </th>
 <th width="25%">30&deg;
@@ -270,7 +184,7 @@
 <th width="25%">5&deg;
 </th></tr>
 <tr>
-<td>5mm
+<td>5 mm
 </td>
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_5-90_vignette.png&amp;filetimestamp=20251027023000&amp;.html" class="mw-file-description"><img src="../File/Detail_5-90_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
 </td>
@@ -279,7 +193,7 @@
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_5-5_vignette.png&amp;filetimestamp=20251027023110&amp;.html" class="mw-file-description"><img src="../File/Detail_5-5_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
 </td></tr>
 <tr>
-<td>Nb of triangles
+<td>Nombre de triangles
 </td>
 <td>10
 </td>
@@ -288,7 +202,7 @@
 <td>149
 </td></tr>
 <tr>
-<td>1mm
+<td>1 mm
 </td>
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_1-90_vignette.png&amp;filetimestamp=20251027023154&amp;.html" class="mw-file-description"><img src="../File/Detail_1-90_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
 </td>
@@ -297,7 +211,7 @@
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_1-5_vignette.png&amp;filetimestamp=20251027023318&amp;.html" class="mw-file-description"><img src="../File/Detail_1-5_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
 </td></tr>
 <tr>
-<td>Nb of triangles
+<td>Nombre de triangles
 </td>
 <td>18
 </td>
@@ -315,7 +229,7 @@
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_01-5_vignette.png&amp;filetimestamp=20251027023507&amp;.html" class="mw-file-description"><img src="../File/Detail_01-5_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
 </td></tr>
 <tr>
-<td>Nb of triangles
+<td>Nombre de triangles
 </td>
 <td>53
 </td>
@@ -323,18 +237,13 @@
 </td>
 <td>207
 </td></tr></tbody></table>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
 <table>
 <tbody><tr>
 <th width="25%">
-<p>Angular deviation /
+<p>D&eacute;viation angulaire /
+</p><p>D&eacute;viation de surface
 </p>
-
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Surface deviation
-</p>
-</div></th>
+</th>
 <th width="25%">90&deg;
 </th>
 <th width="25%">30&deg;
@@ -342,7 +251,7 @@
 <th width="25%">5&deg;
 </th></tr>
 <tr>
-<td>5mm
+<td>5 mm
 </td>
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_5-90_detail_vignette.png&amp;filetimestamp=20251027023625&amp;.html" class="mw-file-description"><img src="../File/Detail_5-90_detail_vignette.png" decoding="async" width="181" height="74" class="mw-file-element" data-file-width="181" data-file-height="74"></a><figcaption></figcaption></figure>
 </td>
@@ -351,7 +260,7 @@
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_5-5_detail_vignette.png&amp;filetimestamp=20251027023730&amp;.html" class="mw-file-description"><img src="../File/Detail_5-5_detail_vignette.png" decoding="async" width="181" height="74" class="mw-file-element" data-file-width="181" data-file-height="74"></a><figcaption></figcaption></figure>
 </td></tr>
 <tr>
-<td>Nb of triangles
+<td>Nombre de triangles
 </td>
 <td>10
 </td>
@@ -360,7 +269,7 @@
 <td>149
 </td></tr>
 <tr>
-<td>1mm
+<td>1 mm
 </td>
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_1-90_detail_vignette.png&amp;filetimestamp=20251027024946&amp;.html" class="mw-file-description"><img src="../File/Detail_1-90_detail_vignette.png" decoding="async" width="181" height="74" class="mw-file-element" data-file-width="181" data-file-height="74"></a><figcaption></figcaption></figure>
 </td>
@@ -369,7 +278,7 @@
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_1-5_detail_vignette.png&amp;filetimestamp=20251027025054&amp;.html" class="mw-file-description"><img src="../File/Detail_1-5_detail_vignette.png" decoding="async" width="181" height="74" class="mw-file-element" data-file-width="181" data-file-height="74"></a><figcaption></figcaption></figure>
 </td></tr>
 <tr>
-<td>Nb of triangles
+<td>Nombre de triangles
 </td>
 <td>18
 </td>
@@ -387,7 +296,7 @@
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_01-5_detail_vignette.png&amp;filetimestamp=20251027025315&amp;.html" class="mw-file-description"><img src="../File/Detail_01-5_detail_vignette.png" decoding="async" width="181" height="74" class="mw-file-element" data-file-width="181" data-file-height="74"></a><figcaption></figcaption></figure>
 </td></tr>
 <tr>
-<td>Nb of triangles
+<td>Nombre de triangles
 </td>
 <td>53
 </td>
@@ -395,35 +304,25 @@
 </td>
 <td>207
 </td></tr></tbody></table>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Lowering angular deviation results in a rapid increase in fidelity between the mesh and the original shape. This is done at the expense of rapidly increasing the number of triangles. On the other hand, lowering the surface deviation allows generating meshes that just meet a requested tolerance, with as many triangles as needed, but the smoothness of the curve representation may be crude.
+<p>La r&eacute;duction de la d&eacute;viation angulaire entra&icirc;ne une augmentation rapide de la fid&eacute;lit&eacute; entre le maillage et la forme d'origine. Cela se fait au d&eacute;triment d'une augmentation rapide du nombre de triangles. D'autre part, la r&eacute;duction de la d&eacute;viation de surface permet de g&eacute;n&eacute;rer des maillages qui r&eacute;pondent juste &agrave; la tol&eacute;rance requise, avec autant de triangles que n&eacute;cessaire, mais la fluidit&eacute; de la repr&eacute;sentation des courbes peut &ecirc;tre grossi&egrave;re.
+</p><p>Une fois encore, on peut noter la redondance entre les influences respectives de la d&eacute;viation angulaire et de la d&eacute;viation de surface, et constater qu'une certaine convergence est obtenue en termes de fid&eacute;lit&eacute; du maillage, m&ecirc;me lorsque davantage de triangles sont ajout&eacute;s, en particulier lorsque la d&eacute;viation angulaire est r&eacute;duite. Cela souligne une fois de plus qu'il vaut mieux trouver un bon r&eacute;glage plut&ocirc;t que de simplement choisir une valeur de param&egrave;tre faible.
+</p><p><span id="Hidden_parameter_example"></span>
 </p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>Again, one may note the redundancy between the respective influences of angular and surface deviation, and that some sort of convergence is achieved regarding mesh fidelity, even as more triangles are added, particularly when lowering angular deviation. This underlines once again that finding a good setting is better than simply choosing a low parameter value.
+<h2><span id="Exemple_de_param.C3.A8tres_cach.C3.A9s"></span><span class="mw-headline" id="Exemple_de_param&egrave;tres_cach&eacute;s">Exemple de param&egrave;tres cach&eacute;s</span></h2>
+<p>Des valeurs &eacute;lev&eacute;es de d&eacute;viations de surface et angulaires n'entra&icirc;nent pas la suppression des d&eacute;tails au sommet de notre forme lors de la mod&eacute;lisation du maillage. Il s'agit d'un exemple de l'effet des op&eacute;rations et param&egrave;tres cach&eacute;s dans les algorithmes de maillage&nbsp;: certains types d'ar&ecirc;tes, notamment les ar&ecirc;tes circulaires, ont une limite inf&eacute;rieure de points pour leur repr&eacute;sentation en polyligne. Dans ce cas, le minimum de 4 points donnera lieu &agrave; au moins trois segments dans la polyligne. Cela peut &ecirc;tre mis en &eacute;vidence en maillant une forme similaire, mais au lieu d'une courbe circulaire, une spline a &eacute;t&eacute; utilis&eacute;e pour mod&eacute;liser le d&eacute;tail au sommet. Le nombre minimal de points ne s'applique alors pas, et le d&eacute;tail est totalement inhib&eacute; lorsque des valeurs &eacute;lev&eacute;es de d&eacute;viation de surface sont utilis&eacute;es.
 </p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<h2><span class="mw-headline" id="Hidden_parameter_example">Hidden parameter example</span></h2>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>High values of surface and angular deviations do not lead to the suppression of detail at the top of our shape during mesh modeling. This is an example of the effect of hidden operations and parameters within the meshing algorithms: particular types of edges, and circular edges, among others, have a lower limit of points for their polyline representation. In this case, the minimum of 4 points will result in at least three segments within the polyline. This can be highlighted by meshing a similar shape, but instead of a circular curve, a spline has been used to model the detail at the top. The minimal number of points then does not apply, and the detail is totally inhibited when high values of surface deviation are used.
-</p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
 <table>
 <tbody><tr>
-<th>Geometrical nature of the detail
+<th>Nature g&eacute;om&eacute;trique du d&eacute;tail
 </th>
-<th>The shape
+<th>Forme
 </th>
-<th>The mesh
+<th>Maillage
 </th>
-<th>A close view
+<th>Vue rapproch&eacute;e
 </th></tr>
 <tr>
-<td>Arc of circle
+<td>Arc de cercle
 </td>
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_orig_vignette.png&amp;filetimestamp=20251027022756&amp;.html" class="mw-file-description"><img src="../File/Detail_orig_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
 </td>
@@ -432,7 +331,7 @@
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_50-90_detail_vignette.png&amp;filetimestamp=20251027025618&amp;.html" class="mw-file-description"><img src="../File/Detail_50-90_detail_vignette.png" decoding="async" width="181" height="88" class="mw-file-element" data-file-width="181" data-file-height="88"></a><figcaption></figcaption></figure>
 </td></tr>
 <tr>
-<td>Spline curve
+<td>Courbe spline
 </td>
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=DetailBS_orig_vignette.png&amp;filetimestamp=20251027025704&amp;.html" class="mw-file-description"><img src="../File/DetailBS_orig_vignette.png" decoding="async" width="181" height="181" class="mw-file-element" data-file-width="181" data-file-height="181"></a><figcaption></figcaption></figure>
 </td>
@@ -440,34 +339,24 @@
 </td>
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=DetailBS_50-90_detail_vignette.png&amp;filetimestamp=20251027025804&amp;.html" class="mw-file-description"><img src="../File/DetailBS_50-90_detail_vignette.png" decoding="async" width="181" height="88" class="mw-file-element" data-file-width="181" data-file-height="88"></a><figcaption></figcaption></figure>
 </td></tr></tbody></table>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<h2><span class="mw-headline" id="Second_synthesis">Second synthesis</span></h2>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>These examples, including details within larger shapes, which are very common in real life, show that adapting the discretization precision to the size of the entities to be meshed can lead to better trade-offs between mesh precision and complexity. Sometimes it can even be mandatory, for instance, when performing automated meshing operations, where a user cannot intervene to set up the surface deviation based on the shape size.
+<p><span id="Second_synthesis"></span>
 </p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<h2><span class="mw-headline" id="Relative_surface_deviation">Relative surface deviation</span></h2>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
-<p>A solution is to set the surface deviation as a function of the edge length, which is achieved using the <b>relative surface deviation parameter</b>. The principle is to scale the acceptable tolerance between the mesh and the original shape as a function of the shape's size. For instance, a value of 0.1 will lead to a surface deviation of 10cm on a 1m edge, and a 1m surface deviation on 10m edge. Let&rsquo;s take a look on the results on our test shape.
+<h2><span id="Deuxi.C3.A8me_synth.C3.A8se"></span><span class="mw-headline" id="Deuxi&egrave;me_synth&egrave;se">Deuxi&egrave;me synth&egrave;se</span></h2>
+<p>Ces exemples, qui incluent des d&eacute;tails dans des formes plus grandes, tr&egrave;s courants dans la vie r&eacute;elle, montrent que l'adaptation de la pr&eacute;cision de discr&eacute;tisation &agrave; la taille des entit&eacute;s &agrave; mailler peut permettre d'obtenir un meilleur compromis entre la pr&eacute;cision et la complexit&eacute; du maillage. Cela peut m&ecirc;me parfois s'av&eacute;rer obligatoire, par exemple lors d'op&eacute;rations de maillage automatis&eacute;es, o&ugrave; l'utilisateur ne peut pas intervenir pour d&eacute;finir la d&eacute;viation de surface en fonction de la taille de la forme.
+</p><p><span id="Relative_surface_deviation"></span>
 </p>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span id="D.C3.A9viation_relative_de_surface"></span><span class="mw-headline" id="D&eacute;viation_relative_de_surface">D&eacute;viation relative de surface</span></h2>
+<p>Une solution consiste &agrave; d&eacute;finir la d&eacute;viation de surface en fonction de la longueur des ar&ecirc;tes, ce qui est possible gr&acirc;ce au param&egrave;tre &laquo;&nbsp;d&eacute;viation relative de surface&nbsp;&raquo;. Le principe consiste &agrave; mettre &agrave; l'&eacute;chelle la tol&eacute;rance acceptable entre le maillage et la forme d'origine en fonction de la taille de la forme. Par exemple, une valeur de 0.1 entra&icirc;nera une d&eacute;viation de surface de 10 cm sur une ar&ecirc;te de 1 m et une d&eacute;viation de surface de 1 m sur une ar&ecirc;te de 10 m. Examinons les r&eacute;sultats obtenus sur notre forme test.
+</p>
 <table>
 <tbody><tr>
-<th><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=MeshAlgosnParamsRSD_462p192.png&amp;filetimestamp=20251027025917&amp;.html" class="mw-file-description"><img alt="Relative surface deviation parameters" src="../File/MeshAlgosnParamsRSD_462p192.png" decoding="async" width="300" height="125" class="mw-file-element" data-file-width="462" data-file-height="192"></a><figcaption>Relative surface deviation parameters</figcaption></figure>
+<th><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=MeshAlgosnParamsRSD_462p192.png&amp;filetimestamp=20251027025917&amp;.html" class="mw-file-description"><img alt="Param&egrave;tres de la d&eacute;viation relative de surface" src="../File/MeshAlgosnParamsRSD_462p192.png" decoding="async" width="300" height="125" class="mw-file-element" data-file-width="462" data-file-height="192"></a><figcaption>Param&egrave;tres de la d&eacute;viation relative de surface</figcaption></figure>
 </th></tr></tbody></table>
-</div>
-<div lang="en" dir="ltr" class="mw-content-ltr">
 <table>
 <tbody><tr>
 <th width="25%">
-<p>Surface deviation (relative)
+<p>D&eacute;viation de surface (relative)
 </p>
-
 <div lang="en" dir="ltr" class="mw-content-ltr">
 <p>&amp; Angular deviation
 </p>
@@ -496,7 +385,7 @@
 </td>
 <td><figure class="mw-default-size mw-halign-none" typeof="mw:File/Thumb"><a href="../index.php?title=Detail_r_001-30_3_vignette.png&amp;filetimestamp=20251027030321&amp;.html" class="mw-file-description"><img src="../File/Detail_r_001-30_3_vignette.png" decoding="async" width="181" height="125" class="mw-file-element" data-file-width="181" data-file-height="125"></a><figcaption></figcaption></figure>
 </td></tr></tbody></table>
-</div>
+
 <div lang="en" dir="ltr" class="mw-content-ltr">
 <p>The evolution of the surface deviation parameter (which is now a relative parameter, so the &lsquo;mm&rsquo; unit when setting it in FreeCAD may be confusing) applies the same way to the discretization of both the long and short edges. The side effect of using the relative surface deviation is that it does not guarantee an absolute maximum deviation between the mesh and the original shape.
 </p>
@@ -722,13 +611,13 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20251111141413
+Cached time: 20251111145855
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.260 seconds
-Real time usage: 0.434 seconds
-Preprocessor visited node count: 280/1000000
+CPU time usage: 0.241 seconds
+Real time usage: 0.317 seconds
+Preprocessor visited node count: 238/1000000
 Post&#8208;expand include size: 11539/2097152 bytes
 Template argument size: 3993/2097152 bytes
 Highest expansion depth: 5/100
@@ -738,15 +627,15 @@ Unstrip post&#8208;expand size: 826/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   19.083      1 -total
- 48.68%    9.289      1 Template:Mesh_Tools_navi/fr
- 22.70%    4.331      1 Template:MenuCommand
- 21.97%    4.192      2 Template:Navigation_menu_2
- 14.51%    2.769      1 Template:Userdocnavi/fr
- 10.88%    2.077      1 Template:TOCright
+100.00%   12.074      1 -total
+ 41.92%    5.061      1 Template:Mesh_Tools_navi/fr
+ 27.43%    3.312      1 Template:Userdocnavi/fr
+ 22.78%    2.750      2 Template:Navigation_menu_2
+ 18.30%    2.209      1 Template:TOCright
+  8.57%    1.035      1 Template:MenuCommand
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:399810-0!canonical and timestamp 20251111141412 and revision id 1687567. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:399810-0!canonical and timestamp 20251111145855 and revision id 1687694. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="../site.js"></script>
