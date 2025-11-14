@@ -1,0 +1,279 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Drawing API example/de</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="de" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-Drawing+API+example&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="de" dir="ltr">Deutsch</span></li>
+<li><a href="../Drawing_API_example.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="Drawing API example (100% translated)" lang="en" dir="ltr">English</a></li>
+<li><a href="../fr/Drawing_API_example.html" class="mw-pt-progress mw-pt-progress--complete" title="Exemple d'interface de programmation pour dessin (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../it/Drawing_API_example.html" class="mw-pt-progress mw-pt-progress--low" title="Esempi di API Drawing (3% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="../pl/Drawing_API_example.html" class="mw-pt-progress mw-pt-progress--low" title="Skrypty w &#346;rodowisku Kre&#347;lenie (3% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../ro/Drawing_API_example.html" class="mw-pt-progress mw-pt-progress--low" title="Drawing API example/ro (11% translated)" lang="ro" dir="ltr">rom&acirc;n&#259;</a></li></ul></div>
+<p><span id="Introduction"></span>
+</p>
+<meta property="mw:PageProp/toc">
+<h2><span class="mw-headline" id="Einleitung">Einleitung</span></h2>
+<p>Der Arbeitsablauf f&uuml;r die grafische Benutzerschnittstelle f&uuml;r den <a href="../Drawing_Workbench.html" title="Drawing Workbench">Arbeitsbereich Drawing</a> ist begrenzt, daher ist die Skript-API interessanter.
+</p><p><span id="Simple_example"></span>
+</p>
+<h2><span class="mw-headline" id="Einfaches_Beispiel">Einfaches Beispiel</span></h2>
+<p>Zuallererst braucht man das Part- und das Drawing-Modul:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span><span class="o">,</span> <span class="nn">Part</span><span class="o">,</span> <span class="nn">Drawing</span>
+</pre></div>
+<p>Man erstellt ein kleines Beispiel-Teil
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">Part</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">makeBox</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">makeCylinder</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">makeBox</span><span class="p">(</span><span class="mi">90</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">makeBox</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">85</span><span class="p">,</span><span class="mi">100</span><span class="p">)))</span>
+</pre></div>
+<p>Direkte Projektion. Das G0 bedeutet harte Kante, der G1 ist dauernde Tangente.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">Shape</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Shape</span><span class="o">.</span><span class="n">Shape</span>
+<span class="p">[</span><span class="n">visibleG0</span><span class="p">,</span><span class="n">visibleG1</span><span class="p">,</span><span class="n">hiddenG0</span><span class="p">,</span><span class="n">hiddenG1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Drawing</span><span class="o">.</span><span class="n">project</span><span class="p">(</span><span class="n">Shape</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">"visible edges:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">visibleG0</span><span class="o">.</span><span class="n">Edges</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">"hidden edges:"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">hiddenG0</span><span class="o">.</span><span class="n">Edges</span><span class="p">)</span>
+</pre></div>
+<p>Alles wird auf der Z-Ebene projiziert:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">print</span> <span class="s2">"Bnd Box shape: X="</span><span class="p">,</span><span class="n">Shape</span><span class="o">.</span><span class="n">BoundBox</span><span class="o">.</span><span class="n">XLength</span><span class="p">,</span><span class="s2">" Y="</span><span class="p">,</span><span class="n">Shape</span><span class="o">.</span><span class="n">BoundBox</span><span class="o">.</span><span class="n">YLength</span><span class="p">,</span><span class="s2">" Z="</span><span class="p">,</span><span class="n">Shape</span><span class="o">.</span><span class="n">BoundBox</span><span class="o">.</span><span class="n">ZLength</span>
+<span class="nb">print</span> <span class="s2">"Bnd Box project: X="</span><span class="p">,</span><span class="n">visibleG0</span><span class="o">.</span><span class="n">BoundBox</span><span class="o">.</span><span class="n">XLength</span><span class="p">,</span><span class="s2">" Y="</span><span class="p">,</span><span class="n">visibleG0</span><span class="o">.</span><span class="n">BoundBox</span><span class="o">.</span><span class="n">YLength</span><span class="p">,</span><span class="s2">" Z="</span><span class="p">,</span><span class="n">visibleG0</span><span class="o">.</span><span class="n">BoundBox</span><span class="o">.</span><span class="n">ZLength</span>
+</pre></div>
+<p>Anderer Projektions-Vektor
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="p">[</span><span class="n">visibleG0</span><span class="p">,</span><span class="n">visibleG1</span><span class="p">,</span><span class="n">hiddenG0</span><span class="p">,</span><span class="n">hiddenG1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Drawing</span><span class="o">.</span><span class="n">project</span><span class="p">(</span><span class="n">Shape</span><span class="p">,</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+<p>Projekt zu SVG
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">resultSVG</span> <span class="o">=</span> <span class="n">Drawing</span><span class="o">.</span><span class="n">projectToSVG</span><span class="p">(</span><span class="n">Shape</span><span class="p">,</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+<span class="nb">print</span> <span class="n">resultSVG</span>
+</pre></div>
+<p><span id="Parametric_example"></span>
+</p>
+<h2><span class="mw-headline" id="Parametrisches_Beispiel">Parametrisches Beispiel</span></h2>
+<p>Den K&ouml;rper erstellen
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span>
+<span class="kn">import</span> <span class="nn">Part</span>
+<span class="kn">import</span> <span class="nn">Drawing</span>
+
+<span class="c1"># Create three boxes and a cylinder</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::Box"</span><span class="p">,</span><span class="s2">"Box"</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box</span><span class="o">.</span><span class="n">Length</span><span class="o">=</span><span class="mf">100.00</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box</span><span class="o">.</span><span class="n">Width</span><span class="o">=</span><span class="mf">100.00</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box</span><span class="o">.</span><span class="n">Height</span><span class="o">=</span><span class="mf">100.00</span>
+
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::Box"</span><span class="p">,</span><span class="s2">"Box1"</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box1</span><span class="o">.</span><span class="n">Length</span><span class="o">=</span><span class="mf">90.00</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box1</span><span class="o">.</span><span class="n">Width</span><span class="o">=</span><span class="mf">40.00</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box1</span><span class="o">.</span><span class="n">Height</span><span class="o">=</span><span class="mf">100.00</span>
+
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::Box"</span><span class="p">,</span><span class="s2">"Box2"</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box2</span><span class="o">.</span><span class="n">Length</span><span class="o">=</span><span class="mf">20.00</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box2</span><span class="o">.</span><span class="n">Width</span><span class="o">=</span><span class="mf">85.00</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box2</span><span class="o">.</span><span class="n">Height</span><span class="o">=</span><span class="mf">100.00</span>
+
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::Cylinder"</span><span class="p">,</span><span class="s2">"Cylinder"</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Cylinder</span><span class="o">.</span><span class="n">Radius</span><span class="o">=</span><span class="mf">80.00</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Cylinder</span><span class="o">.</span><span class="n">Height</span><span class="o">=</span><span class="mf">100.00</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Cylinder</span><span class="o">.</span><span class="n">Angle</span><span class="o">=</span><span class="mf">360.00</span>
+<span class="c1"># Fuse two boxes and the cylinder</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::Fuse"</span><span class="p">,</span><span class="s2">"Fusion"</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Fusion</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Cylinder</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Fusion</span><span class="o">.</span><span class="n">Tool</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box1</span>
+
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::Fuse"</span><span class="p">,</span><span class="s2">"Fusion1"</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Fusion1</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box2</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Fusion1</span><span class="o">.</span><span class="n">Tool</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Fusion</span>
+<span class="c1"># Cut the fused shapes from the first box</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::Cut"</span><span class="p">,</span><span class="s2">"Shape"</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Shape</span><span class="o">.</span><span class="n">Base</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box</span> 
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Shape</span><span class="o">.</span><span class="n">Tool</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Fusion1</span>
+<span class="c1"># Hide all the intermediate shapes </span>
+<span class="n">Gui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box</span><span class="o">.</span><span class="n">Visibility</span><span class="o">=</span><span class="kc">False</span>
+<span class="n">Gui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box1</span><span class="o">.</span><span class="n">Visibility</span><span class="o">=</span><span class="kc">False</span>
+<span class="n">Gui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Box2</span><span class="o">.</span><span class="n">Visibility</span><span class="o">=</span><span class="kc">False</span>
+<span class="n">Gui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Cylinder</span><span class="o">.</span><span class="n">Visibility</span><span class="o">=</span><span class="kc">False</span>
+<span class="n">Gui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Fusion</span><span class="o">.</span><span class="n">Visibility</span><span class="o">=</span><span class="kc">False</span>
+<span class="n">Gui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Fusion1</span><span class="o">.</span><span class="n">Visibility</span><span class="o">=</span><span class="kc">False</span>
+</pre></div>
+<p>Ein Seitenobjekt einf&uuml;gen und eine Schablone zuweisen
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'Drawing::FeaturePage'</span><span class="p">,</span><span class="s1">'Page'</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Page</span><span class="o">.</span><span class="n">Template</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">getResourceDir</span><span class="p">()</span><span class="o">+</span><span class="s1">'Mod/Drawing/Templates/A3_Landscape.svg'</span>
+</pre></div>
+<p>Eine Sicht auf das "Shape"-Objekt erstellen, die Position und Gr&ouml;&szlig;e festlegen und es einer Seite zuweisen
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'Drawing::FeatureViewPart'</span><span class="p">,</span><span class="s1">'View'</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span><span class="o">.</span><span class="n">Source</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Shape</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span><span class="o">.</span><span class="n">Direction</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Page</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span><span class="p">)</span>
+</pre></div>
+<p>Eine zweite Ansicht auf demselben Objekt erstellen, aber dieses Mal wird die Ansicht um 90&deg; gedreht.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'Drawing::FeatureViewPart'</span><span class="p">,</span><span class="s1">'ViewRot'</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewRot</span><span class="o">.</span><span class="n">Source</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Shape</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewRot</span><span class="o">.</span><span class="n">Direction</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewRot</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="mf">290.0</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewRot</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="mf">30.0</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewRot</span><span class="o">.</span><span class="n">Scale</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewRot</span><span class="o">.</span><span class="n">Rotation</span> <span class="o">=</span> <span class="mf">90.0</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Page</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewRot</span><span class="p">)</span>
+</pre></div>
+<p>Eine dritte Sicht auf das gleiche Objekt erstellen, aber mit einer isometrischen Ansichts-Richtung. Die verborgenen Linien sind auch aktiviert.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'Drawing::FeatureViewPart'</span><span class="p">,</span><span class="s1">'ViewIso'</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewIso</span><span class="o">.</span><span class="n">Source</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Shape</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewIso</span><span class="o">.</span><span class="n">Direction</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewIso</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="mf">335.0</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewIso</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="mf">140.0</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewIso</span><span class="o">.</span><span class="n">ShowHiddenLines</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Page</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewIso</span><span class="p">)</span>
+</pre></div>
+<p>Etwas &auml;ndern und aktualisieren. Der Aktualisierungsprozess &auml;ndert die Ansicht und die Seite.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="mf">30.0</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="mf">30.0</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span><span class="o">.</span><span class="n">Scale</span> <span class="o">=</span> <span class="mf">1.5</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+</pre></div>
+<p><span id="Accessing_the_bits_and_pieces"></span>
+</p>
+<h3><span class="mw-headline" id="Zugriff_auf_die_Bits_und_Teile">Zugriff auf die Bits und Teile</span></h3>
+<p>Das SVG-Fragment einer einzelnen Ansicht holen
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">ViewSVG</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">View</span><span class="o">.</span><span class="n">ViewResult</span>
+<span class="nb">print</span> <span class="n">ViewSVG</span>
+</pre></div>
+<p>Die gesamte Ergebnisseite abrufen (es handelt sich um eine Datei im tempor&auml;ren Verzeichnis des Dokuments, nur Leserechte).
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">print</span> <span class="s2">"Resulting SVG document: "</span><span class="p">,</span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Page</span><span class="o">.</span><span class="n">PageResult</span>
+<span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Page</span><span class="o">.</span><span class="n">PageResult</span><span class="p">,</span><span class="s2">"r"</span><span class="p">)</span>
+<span class="nb">print</span> <span class="s2">"Result page is "</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()),</span><span class="s2">" lines long"</span>
+</pre></div>
+<p>Wichtig: Die Datei freigeben!
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">del</span> <span class="n">file</span>
+</pre></div>
+<p><br>
+Eine Ansicht mit eigenem Inhalt einf&uuml;gen:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s1">'Drawing::FeatureView'</span><span class="p">,</span><span class="s1">'ViewSelf'</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewSelf</span><span class="o">.</span><span class="n">ViewResult</span> <span class="o">=</span> <span class="s2">"""&lt;g id="ViewSelf"</span>
+<span class="s2">  stroke="rgb(0, 0, 0)"</span>
+<span class="s2">  stroke-width="0.35"</span>
+<span class="s2">  stroke-linecap="butt"</span>
+<span class="s2">  stroke-linejoin="miter"</span>
+<span class="s2">  transform="translate(30,30)"</span>
+<span class="s2">  fill="#00cc00"</span>
+<span class="s2">  &gt;</span>
+
+<span class="s2">  &lt;ellipse cx="40" cy="40" rx="30" ry="15"/&gt;</span>
+<span class="s2">  &lt;/g&gt;"""</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">Page</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ViewSelf</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+
+<span class="k">del</span> <span class="n">ViewSVG</span>
+</pre></div>
+<p>Das f&uuml;hrt zu folgendem Ergebnis:
+</p><p><span class="mw-default-size" typeof="mw:File"><a href="../index.php?title=DrawingScriptResult.jpg&amp;filetimestamp=20090830115745&amp;.html" class="mw-file-description"><img src="../File/DrawingScriptResult.jpg" decoding="async" width="1280" height="770" class="mw-file-element" data-file-width="1280" data-file-height="770"></a></span>
+</p><p><span id="General_dimensioning_and_tolerancing"></span>
+</p>
+<h2><span id="Allgemeine_Bema.C3.9Fung_und_Toleranzen"></span><span class="mw-headline" id="Allgemeine_Bema&szlig;ung_und_Toleranzen">Allgemeine Bema&szlig;ung und Toleranzen</span></h2>
+<p><i>See also:</i> <a href="../Drawing_Dimensioning_Addon.html" title="Drawing Dimensioning Addon">Drawing Dimensioning Addon</a>
+</p><p>Die Zeichnungsma&szlig;e und Toleranzen befinden sich noch in der Entwicklung, aber mit etwas Aufwand k&ouml;nnen bereits einige grundlegende Funktionen benutzt werden.
+</p><p>Zuerst muss das Python-Modul gdtsvg von hier heruntergeladen werden (ACHTUNG: Dies kann jederzeit nicht mehr funktionieren!): 
+</p><p><a rel="nofollow" class="external free" href="https://github.com/jcc242/FreeCAD">https://github.com/jcc242/FreeCAD</a>
+</p><p>Um einen Feature-Kontrollrahmen zu erhalten, versucht man Folgendes:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">gdtsvg</span> <span class="k">as</span> <span class="nn">g</span> <span class="c1"># Import the module, I like to give it an easy handle</span>
+<span class="n">ourFrame</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">ControlFrame</span><span class="p">(</span><span class="s2">"0"</span><span class="p">,</span><span class="s2">"0"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">Perpendicularity</span><span class="p">(),</span> <span class="s2">".5"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">Diameter</span><span class="p">(),</span> <span class="n">g</span><span class="o">.</span><span class="n">ModifyingSymbols</span><span class="p">(</span><span class="s2">"M"</span><span class="p">),</span> <span class="s2">"A"</span><span class="p">,</span>  
+           <span class="n">g</span><span class="o">.</span><span class="n">ModifyingSymbols</span><span class="p">(</span><span class="s2">"F"</span><span class="p">),</span> <span class="s2">"B"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">ModifyingSymbols</span><span class="p">(</span><span class="s2">"L"</span><span class="p">),</span> <span class="s2">"C"</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">ModifyingSymbols</span><span class="p">(</span><span class="s2">"I"</span><span class="p">))</span>
+</pre></div>
+<p>Hier findet man eine gute &Uuml;bersicht &uuml;ber den Inhalt eines Feature Control Frame: <a rel="nofollow" class="external free" href="http://www.cadblog.net/adding-geometric-tolerances.htm">http://www.cadblog.net/adding-geometric-tolerances.htm</a>
+</p><p>Die an den Steuerungsrahmen zu &uuml;bergebenden Parameter sind: 
+</p>
+<ol><li>X-Koordinate im SVG-Koordinatensystem (Typ String)</li>
+<li>Y-Koordinate im SVG-Koordinatensystem (Typ String)</li>
+<li>Das gew&uuml;nschte geometrische Merkmalssymbol (Tupel, SVG-String als erstes, Breite des Symbols als zweites, H&ouml;he des Symbols als drittes)</li>
+<li>Die Toleranz (Typ String)</li>
+<li>(optional) Das Durchmessersymbol (Tupel, SVG-String als erstes, Breite des Symbols als zweites, H&ouml;he des Symbols als drittes)</li>
+<li>(optional) Das bedingungsmodifizierende Material (Tupel, SVG-String als erstes, Breite des Symbols als zweites, H&ouml;he des Symbols als drittes)</li>
+<li>(optional) Die erste Bezugsgr&ouml;&szlig;e (Typ String)</li>
+<li>(optional) Die modifizierende Bedingung der ersten Angabe (Tupel, SVG-Zeichenfolge als erstes, Breite des Symbols als zweites, H&ouml;he des Symbols als drittes)</li>
+<li>(optional) Die zweite Angabe (Typ: Zeichenfolge)</li>
+<li>(optional) Die modifizierende Bedingung der zweiten Angabe (Tupel, SVG-Zeichenfolge als erstes, Breite des Symbols als zweites, H&ouml;he des Symbols als drittes)</li>
+<li>(optional) Die dritte Angabe (Typ: Zeichenfolge)</li>
+<li>(optional) Die Materialbedingung des dritten Datums (Tupel, SVG-Zeichenfolge als erstes, Breite des Symbols als zweites, H&ouml;he des Symbols als drittes)</li></ol>
+<p>Die Funktion ControlFrame gibt einen Typ zur&uuml;ck, der Folgendes enth&auml;lt: (SVG-Zeichenfolge, Gesamtbreite des Steuerungsrahmens, Gesamth&ouml;he des Steuerungsrahmens)<b></b>
+</p><p>Um eine Bemassung zu erhalten, probiert man Folgendes aus:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">gdtsvg</span>
+<span class="n">ourDimension</span> <span class="o">=</span> <span class="n">linearDimension</span><span class="p">(</span><span class="n">point1</span><span class="p">,</span> <span class="n">point2</span><span class="p">,</span> <span class="n">textpoint</span><span class="p">,</span> <span class="n">dimensiontext</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="n">getStyle</span><span class="p">(</span><span class="s2">"visible"</span><span class="p">),</span> 
+               <span class="n">arrowstyle</span><span class="o">=</span><span class="n">getStyle</span><span class="p">(</span><span class="s2">"filled"</span><span class="p">),</span> <span class="n">textstyle</span><span class="o">=</span><span class="n">getStyle</span><span class="p">(</span><span class="s2">"text"</span><span class="p">)</span>
+</pre></div>
+<p>Eingaben f&uuml;r lineare Bema&szlig;ungen sind:
+</p>
+<ol><li>point1, ein (x,y)-Tupel mit SVG-Koordinaten, dies ist einer der Punkte, zwischen denen Sie bema&szlig;en m&ouml;chten.</li>
+<li>point2, ein (x,y)-Tupel mit SVG-Koordinaten, dies ist der zweite Punkt, zwischen dem Sie bema&szlig;en m&ouml;chten.</li>
+<li>textpoint, ein (x,y)-Tupel mit SVG-Koordinaten, hier wird der Text Ihrer Bema&szlig;ung angezeigt</li>
+<li>dimensiontext, eine Zeichenfolge mit dem Text, den die Bema&szlig;ung anzeigen soll</li>
+<li>linestyle, eine Zeichenfolge mit SVG-Stilen (d. h. CSS), wobei die Funktion getStyle verwendet wird, um eine voreingestellte Zeichenfolge abzurufen, mit der das Aussehen der Linien gestaltet wird</li>
+<li>arrowstyle, eine Zeichenfolge mit SVG-Stilen (d. h. CSS-Stilen), wobei die Funktion getStyle verwendet wird, um eine voreingestellte Zeichenfolge abzurufen, mit der das Aussehen der Pfeile gestaltet wird</li>
+<li>textstyle, eine Zeichenfolge mit SVG-Stilen (d. h. CSS-Stilen), wobei die Funktion getStyle verwendet wird, um eine voreingestellte Zeichenfolge abzurufen, mit der das Aussehen des Textes gestaltet wird</li></ol>
+<p>Mit diesen beiden kann man wie oben beschrieben vorgehen, um sie auf der Zeichnungsseite anzuzeigen. Dieses Modul ist sehr fehlerhaft und kann jederzeit ausfallen. Fehlermeldungen sind vorerst auf der GitHub-Seite willkommen, oder man wendet sich an jcc242 in den Foren, wenn man einen Fehler an anderer Stelle melden m&ouml;chte.
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=Power_user_hub.png&amp;filetimestamp=20200511213015&amp;.html" class="mw-file-description"><img src="../File/Power_user_hub.png" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="128" data-file-height="128"></a></span> <a href="../de/Power_users_hub.html" title="Power users hub/de">Power user documentation</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b>FreeCAD scripting:</b> <a href="../de/Python.html" title="Python/de">Python</a>, <a href="../de/Introduction_to_Python.html" title="Introduction to Python/de">Introduction to Python</a>, <a href="../de/Python_scripting_tutorial.html" title="Python scripting tutorial/de">Python scripting tutorial</a>, <a href="../de/FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/de">FreeCAD Scripting Basics</a></li></ul>
+<hr>
+<ul><li><b>Modules:</b> <a href="../de/Builtin_modules.html" title="Builtin modules/de">Builtin modules</a>, <a href="../de/Units.html" title="Units/de">Units</a>, <a href="../de/Quantity.html" title="Quantity/de">Quantity</a></li>
+<li><b>Workbenches:</b> <a href="../de/Workbench_creation.html" title="Workbench creation/de">Workbench creation</a>, <a href="../de/Gui_Command.html" title="Gui Command/de">Gui Commands</a>, <a href="../de/Command.html" title="Command/de">Commands</a>, <a href="../de/Installing_more_workbenches.html" title="Installing more workbenches/de">Installing more workbenches</a></li>
+<li><b>Meshes and Parts:</b> <a href="../de/Mesh_Scripting.html" title="Mesh Scripting/de">Mesh Scripting</a>, <a href="../de/Topological_data_scripting.html" title="Topological data scripting/de">Topological data scripting</a>, <a href="../de/Mesh_to_Part.html" title="Mesh to Part/de">Mesh to Part</a>, <a href="../de/PythonOCC.html" title="PythonOCC/de">PythonOCC</a></li></ul>
+<hr>
+<ul><li><b>Parametric objects:</b> <a href="../de/Scripted_objects.html" title="Scripted objects/de">Scripted objects</a>, <a href="../de/Viewprovider.html" title="Viewprovider/de">Viewproviders</a> <small>(<a href="../de/Custom_icon_in_tree_view.html" title="Custom icon in tree view/de">Custom icon in tree view</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="../de/Scenegraph.html" title="Scenegraph/de">Coin (Inventor) scenegraph</a>, <a href="../de/Pivy.html" title="Pivy/de">Pivy</a></li>
+<li><b>Graphical interface:</b> <a href="../de/Interface_creation.html" title="Interface creation/de">Interface creation</a>, <a href="../de/Dialog_creation.html" title="Dialog creation/de">Interface creation completely in Python</a> <small>(<a href="../de/Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets/de">1</a>, <a href="../de/Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files/de">2</a>, <a href="../de/Dialog_creation_setting_colors.html" title="Dialog creation setting colors/de">3</a>, <a href="../de/Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF/de">4</a>, <a href="../de/PySide_usage_snippets.html" title="PySide usage snippets/de">5</a>)</small>, <a href="../de/PySide.html" title="PySide/de">PySide</a>, PySide examples <a href="../de/PySide_Beginner_Examples.html" title="PySide Beginner Examples/de">beginner</a>, <a href="../de/PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/de">intermediate</a>, <a href="../de/PySide_Advanced_Examples.html" title="PySide Advanced Examples/de">advanced</a></li>
+<li><b>Macros:</b> <a href="../de/Macros.html" title="Macros/de">Macros</a>, <a href="../de/How_to_install_macros.html" title="How to install macros/de">How to install macros</a></li>
+<li><b>Embedding:</b> <a href="../de/Embedding_FreeCAD.html" title="Embedding FreeCAD/de">Embedding FreeCAD</a>, <a href="../de/Embedding_FreeCADGui.html" title="Embedding FreeCADGui/de">Embedding FreeCADGui</a></li></ul>
+<hr>
+<ul><li><b>Other:</b> <a href="../de/Expressions.html" title="Expressions/de">Expressions</a>, <a href="../de/Code_snippets.html" title="Code snippets/de">Code snippets</a>, <a href="../de/Line_drawing_function.html" title="Line drawing function/de">Line drawing function</a>, <a href="../de/FreeCAD_vector_math_library.html" title="FreeCAD vector math library/de">FreeCAD vector math library</a> <small>(deprecated)</small></li></ul>
+<hr>
+<ul><li><b>Hubs:</b> <a href="../de/User_hub.html" title="User hub/de">User hub</a>, <a href="../de/Power_users_hub.html" title="Power users hub/de">Power users hub</a>, <a href="../de/Developer_hub.html" title="Developer hub/de">Developer hub</a></li></ul></div>
+    </div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><a href="../de/Drawing_Workbench.html" title="Drawing Workbench/de">Drawing-Arbeitsbereich</a> (ersetzt durch <a href="../de/TechDraw_Workbench.html" title="TechDraw Workbench/de">TechDraw-Arbeitsbereich</a>)
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b>Werkzeuge:</b> <a href="../de/Drawing_Open_SVG.html" title="Drawing Open SVG/de">&Ouml;ffne SVG</a>, <a href="../de/Drawing_Landscape_A3.html" title="Drawing Landscape A3/de">Neue Zeichnung einf&uuml;gen</a>, <a href="../de/Drawing_View.html" title="Drawing View/de">Ansicht</a>, <a href="../de/Drawing_Annotation.html" title="Drawing Annotation/de">Notiz</a>, <a href="../de/Drawing_Clip.html" title="Drawing Clip/de">Ausschnitt</a>, <a href="../de/Drawing_Openbrowser.html" title="Drawing Openbrowser/de">Browser-Ansicht &ouml;ffnen</a>, <a href="../de/Drawing_Orthoviews.html" title="Drawing Orthoviews/de">Orthografische Ansichten einf&uuml;gen</a>, <a href="../index.php?title=Drawing_Symbol/de&amp;action=edit&amp;redlink=1.html" class="new" title="Drawing Symbol/de (page does not exist)">Symbol</a>, <a href="../de/Draft_Drawing.html" title="Draft Drawing/de">Draft Drawing</a>, <a href="../index.php?title=Drawing_SpreadsheetView/de&amp;action=edit&amp;redlink=1.html" class="new" title="Drawing SpreadsheetView/de (page does not exist)">Tabellenansicht</a>, <a href="../index.php?title=Drawing_Save/de&amp;action=edit&amp;redlink=1.html" class="new" title="Drawing Save/de (page does not exist)">Seite exportieren</a>, <a href="../de/Drawing_ProjectShape.html" title="Drawing ProjectShape/de">Fl&auml;che projizieren</a></li></ul>
+<hr>
+<ul><li><b>Zus&auml;tzlich:</b> <a href="../de/Drawing_Dimensioning_Addon.html" title="Drawing Dimensioning Addon/de">Drawing Dimensioning Addon/de</a>; <a href="../index.php?title=Drawing_Documentation/de&amp;action=edit&amp;redlink=1.html" class="new" title="Drawing Documentation/de (page does not exist)">Drawing programming documentation</a>, <a class="mw-selflink selflink">Drawing API example/de</a></li></ul></div>
+    </div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20251114130005
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show&#8208;toc]
+CPU time usage: 0.158 seconds
+Real time usage: 2.369 seconds
+Preprocessor visited node count: 337/1000000
+Post&#8208;expand include size: 10975/2097152 bytes
+Template argument size: 7784/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 18/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 32624/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00% 2191.847      1 -total
+ 98.89% 2167.537     18 Template:Code
+  0.41%    8.991      1 Template:Drawing_Tools_navi/de
+  0.35%    7.777      1 Template:Powerdocnavi/de
+  0.12%    2.625      1 Template:Emphasis
+  0.10%    2.235      2 Template:Navigation_menu_2
+  0.06%    1.233      1 Template:Clear
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:400518-0!canonical and timestamp 20251114130005 and revision id 1690081. Rendering was triggered because: api-parse
+ -->
+</div>
+</div><script src="../site.js"></script>
