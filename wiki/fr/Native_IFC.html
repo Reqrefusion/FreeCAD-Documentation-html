@@ -20,7 +20,7 @@
 </p><p>Bien que FreeCAD prenne en charge depuis longtemps l'ouverture et l'enregistrement de fichiers IFC via l'atelier Arch, il le faisait, comme la plupart des autres applications BIM, en traduisant dans les deux sens entre le format IFC des fichiers et le mod&egrave;le de donn&eacute;es interne de FreeCAD. Cela signifie deux traductions, une &agrave; l'ouverture et une autre &agrave; l'enregistrement, ce qui entra&icirc;ne une perte de donn&eacute;es et une r&eacute;&eacute;criture compl&egrave;te du fichier &agrave; chaque fois. Il n'est donc pas adapt&eacute; aux <a rel="nofollow" class="external text" href="https://fr.wikipedia.org/wiki/Gestion_de_versions">syst&egrave;mes de contr&ocirc;le des versions</a> tel que <a rel="nofollow" class="external text" href="https://fr.wikipedia.org/wiki/Git">Git</a>, et il est tr&egrave;s difficile de localiser les modifications.
 </p><p>IFC natif signifie que le fichier IFC est lui-m&ecirc;me la structure de donn&eacute;es dans FreeCAD. Lorsque vous ouvrez un fichier IFC dans FreeCAD, ce que vous voyez &agrave; l'&eacute;cran est un rendu direct du contenu du fichier IFC. Tout ce que vous modifiez modifiera directement le fichier IFC. Si vous ouvrez un fichier, que vous modifiez un &eacute;l&eacute;ment et que vous enregistrez le fichier, la seule chose qui aura chang&eacute; dans le fichier sera la ligne concernant cet &eacute;l&eacute;ment. Le reste du fichier sera 100% identique &agrave; ce qu'il &eacute;tait avant la sauvegarde. Pas de perte de donn&eacute;es et des modifications tr&egrave;s identifiables.
 </p><p>L'id&eacute;e d'IFC natifs elle-m&ecirc;me vient de <a rel="nofollow" class="external text" href="https://github.com/brunopostle/ifcmerge/blob/main/docs/whitepaper.rst">cet article de Bruno Postle</a>. Elle est fortement inspir&eacute;e par <a rel="nofollow" class="external text" href="https://blenderbim.org/">BlenderBIM</a> et essaie autant que possible d'utiliser les m&ecirc;mes concepts et de r&eacute;utiliser le code. L'objectif final est d'offrir dans FreeCAD le m&ecirc;me niveau de fonctionnalit&eacute; et de performance que dans BlenderBIM, et d'&ecirc;tre le plus en amont possible d'<a rel="nofollow" class="external text" href="https://ifcopenshell.org/">IfcOpenShell</a>, le moteur IFC commun utilis&eacute; par les deux applications. Il a commenc&eacute; comme un <a rel="nofollow" class="external text" href="https://github.com/yorikvanhavre/FreeCAD-NativeIFC">projet s&eacute;par&eacute; de Yorik</a>
-</p><p>Travailler avec des fichiers IFC natifs dans FreeCAD est simple&nbsp;: ouvrez un fichier IFC existant ou cr&eacute;ez un nouveau projet en utilisant l'outil <a href="../fr/BIM_Project.html" title="BIM Project/fr">Projet</a> de l'<a href="../fr/BIM_Workbench.html" title="BIM Workbench/fr">atelier BIM</a>. Cr&eacute;ez de nouveaux objets &agrave; l'aide de n'importe quel atelier ou outil de FreeCAD. Ajoutez ces objets &agrave; votre projet IFC en les faisant glisser dans la structure du projet. Enregistrez le fichier et vous avez termin&eacute;.
+</p><p>Travailler avec des fichiers IFC natifs dans FreeCAD est simple&nbsp;: ouvrez un fichier IFC existant ou cr&eacute;ez un nouveau projet en utilisant l'outil <a href="../fr/BIM_Project.html" title="BIM Project/fr">Projet IFC</a> de l'<a href="../fr/BIM_Workbench.html" title="BIM Workbench/fr">atelier BIM</a>. Cr&eacute;ez de nouveaux objets &agrave; l'aide de n'importe quel atelier ou outil de FreeCAD. Ajoutez ces objets &agrave; votre projet IFC en les faisant glisser dans la structure du projet. Enregistrez le fichier et vous avez termin&eacute;.
 </p><p>Lire ci-dessous pour plus de d&eacute;tails.
 </p><p><span id="Locked_and_unlocked_modes"></span>
 </p>
@@ -44,14 +44,14 @@
 </p><p><span id="IFC_objects_vs_BIM_objects"></span>
 </p>
 <h2><span class="mw-headline" id="Objets_IFC_versus_objets_BIM">Objets IFC versus objets BIM</span></h2>
-<p>Lorsqu'un objet BIM ou tout autre objet FreeCAD est li&eacute; &agrave; un <a href="../fr/BIM_Project.html" title="BIM Project/fr">projet</a> IFC natif, il devient un objet IFC. Lier un objet &agrave; un projet IFC natif se fait simplement en faisant glisser, dans l'arborescence, l'objet sur le projet ou sur tout objet faisant d&eacute;j&agrave; partie de ce projet, par exemple un b&acirc;timent ou un &eacute;tage.
+<p>Lorsqu'un objet BIM ou tout autre objet FreeCAD est li&eacute; &agrave; un <a href="../fr/BIM_Project.html" title="BIM Project/fr">projet IFC</a> natif, il devient un objet IFC. Lier un objet &agrave; un projet IFC natif se fait simplement en faisant glisser, dans l'arborescence, l'objet sur le projet ou sur tout objet faisant d&eacute;j&agrave; partie de ce projet, par exemple un b&acirc;timent ou un &eacute;tage.
 </p><p>Une fois qu'un objet est devenu un objet IFC, il est enti&egrave;rement contr&ocirc;l&eacute; par les donn&eacute;es IFC. Il perd son ancien objet param&eacute;trique FreeCAD et peut perdre toutes les propri&eacute;t&eacute;s et caract&eacute;ristiques param&eacute;triques qui ne sont pas prises en charge par le format IFC. L'objectif est de rendre tout cela transparent &agrave; l'avenir et de conserver les m&ecirc;mes possibilit&eacute;s d'&eacute;dition pour les objets IFC et non IFC.
 </p>
 <h2><span class="mw-headline" id="Ouvrir_et_importer_des_fichiers_IFC">Ouvrir et importer des fichiers IFC</span></h2>
 <p>Deux options s'offrent &agrave; vous&nbsp;: ouvrir ou importer. 
 </p>
 <ul><li>Si vous ouvrez, un nouveau document sera cr&eacute;&eacute; et vous serez automatiquement en <b>mode verrouill&eacute;</b>.</li>
-<li>Si vous importez, un objet IFC natif <a href="../fr/BIM_Project.html" title="BIM Project/fr">projet</a> sera ajout&eacute; au document en cours mais vous pourrez toujours cr&eacute;er des objets non-IFC en dehors de ce projet. Vous serez toujours en <i>mode d&eacute;verrouill&eacute;</i></li></ul>
+<li>Si vous importez, un <a href="../fr/BIM_Project.html" title="BIM Project/fr">projet IFC</a> natif sera ajout&eacute; au document en cours mais vous pourrez toujours cr&eacute;er des objets non-IFC en dehors de ce projet. Vous serez toujours en <i>mode d&eacute;verrouill&eacute;</i></li></ul>
 <p>Pour ouvrir un fichier IFC, utilisez le menu <i>Fichier &rarr; Ouvrir</i> et s&eacute;lectionnez un fichier IFC. Pour importer un fichier IFC, utilisez le menu <i>Fichier &rarr; Importer</i> et s&eacute;lectionnez un fichier IFC.
 </p><p>Pour maximiser la vitesse d'importation initiale, l'ouverture ou l'importation de fichiers IFC ne rendra par d&eacute;faut que l'objet de niveau sup&eacute;rieur (g&eacute;n&eacute;ralement un site) dans FreeCAD. Pour d&eacute;velopper le contenu de cet objet, vous devez double-cliquer dessus dans l'arborescence (voir ci-dessous).
 </p><p>L'importation ou l'ouverture d'un fichier IFC ne n&eacute;cessite le r&eacute;glage d'aucune option. Cependant, certaines valeurs par d&eacute;faut peuvent &ecirc;tre modifi&eacute;es dans le menu <i>&Eacute;dition &rarr; Pr&eacute;f&eacute;rences &rarr; BIM &rarr; IFC natifs</i>.
@@ -66,7 +66,7 @@
 <li>Appuyez sur le bouton <span typeof="mw:File"><a href="../index.php?title=IFC.svg&amp;filetimestamp=20240608122339&amp;.html" class="mw-file-description"><img src="../File/IFC.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../index.php?title=BIM_ToggleNativeIFC/fr&amp;action=edit&amp;redlink=1.html" class="new" title="BIM ToggleNativeIFC/fr (page does not exist)">Verrouiller les IFC</a> dans la barre d'&eacute;tat pour verrouiller le document.</li></ol>
 <p><b>En mode d&eacute;verrouill&eacute;&nbsp;:</b>
 </p>
-<ol><li>Appuyez sur le bouton <span typeof="mw:File"><a href="../index.php?title=BIM_Project.svg&amp;filetimestamp=20240608171931&amp;.html" class="mw-file-description"><img src="../File/BIM_Project.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../fr/BIM_Project.html" title="BIM Project/fr">Projet</a> pour cr&eacute;er un projet IFC natif dans le document FreeCAD en cours. Vous pouvez en avoir plusieurs dans le m&ecirc;me document FreeCAD.</li></ol>
+<ol><li>Appuyez sur le bouton <span typeof="mw:File"><a href="../index.php?title=BIM_Project.svg&amp;filetimestamp=20240608171931&amp;.html" class="mw-file-description"><img src="../File/BIM_Project.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../fr/BIM_Project.html" title="BIM Project/fr">Cr&eacute;er un projet IFC</a> pour cr&eacute;er un projet IFC natif dans le document FreeCAD en cours. Vous pouvez en avoir plusieurs dans le m&ecirc;me document FreeCAD.</li></ol>
 <p><span id="Saving_and_exporting_IFC_files"></span>
 </p>
 <h2><span class="mw-headline" id="Enregistrer_et_exporter_des_fichiers_IFC">Enregistrer et exporter des fichiers IFC</span></h2>
@@ -74,7 +74,7 @@
 </p><p>Les projets IFC natif, qu'ils soient en mode verrouill&eacute; ou d&eacute;verrouill&eacute;, ont toujours un fichier IFC attach&eacute;. Il n'est plus n&eacute;cessaire d'exporter quoi que ce soit, il suffit d'enregistrer ce fichier IFC. La mani&egrave;re d'enregistrer le contenu IFC diff&egrave;re selon le mode&nbsp;:
 </p>
 <ul><li>Lorsque vous travaillez en <b>mode verrouill&eacute;'<i>, tout ce qui se passe dans votre document FreeCAD est sauvegard&eacute; dans le fichier IFC. Il n'est plus n&eacute;cessaire de sauvegarder le fichier FreeCAD, et les entr&eacute;es de menu </i></b><i>Fichier -&gt; Enregistrer</i> et <i>Fichier &rarr; Enregistrer sous</i> sont remplac&eacute;s par <i>Fichier &rarr; Enregistrer le fichier IFC</i> et <i>Fichier &rarr; Enregistrer le fichier IFC sous...</i>. L'enregistrement du fichier IFC est tout ce qui est n&eacute;cessaire, il n'y a plus de fichier .FCStd.</li></ul>
-<ul><li>Lorsque vous travaillez en <b>mode d&eacute;verrouill&eacute;</b>, chaque objet du <a href="../fr/BIM_Project.html" title="BIM Project/fr">projet</a> IFC de votre document est attach&eacute; &agrave; un fichier IFC distinct. Un objet projet garde la trace des modifications et son ic&ocirc;ne affichera un point rouge lorsqu'il contient des modifications non enregistr&eacute;es. En sauvegardant votre document FreeCAD, vous sauvegarderez &eacute;galement tous les fichiers IFC attach&eacute;s aux projets IFC trouv&eacute;s dans le document.</li></ul>
+<ul><li>Lorsque vous travaillez en <b>mode d&eacute;verrouill&eacute;</b>, chaque objet du <a href="../fr/BIM_Project.html" title="BIM Project/fr">projet IFC</a> de votre document est attach&eacute; &agrave; un fichier IFC distinct. Un objet projet garde la trace des modifications et son ic&ocirc;ne affichera un point rouge lorsqu'il contient des modifications non enregistr&eacute;es. En sauvegardant votre document FreeCAD, vous sauvegarderez &eacute;galement tous les fichiers IFC attach&eacute;s aux projets IFC trouv&eacute;s dans le document.</li></ul>
 <p>En mode d&eacute;verrouill&eacute;, vous pouvez &eacute;galement enregistrer manuellement les fichiers joints en cliquant avec le bouton droit de la souris sur le projet et en choisissant <i>IFC &rarr; Enregistrer</i>.
 </p><p><span id="Expanding_file_contents"></span>
 </p>
@@ -178,12 +178,12 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20251115125654
+Cached time: 20251115130750
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.077 seconds
-Real time usage: 0.096 seconds
+CPU time usage: 0.081 seconds
+Real time usage: 0.102 seconds
 Preprocessor visited node count: 361/1000000
 Post&#8208;expand include size: 24194/2097152 bytes
 Template argument size: 9884/2097152 bytes
@@ -194,14 +194,14 @@ Unstrip post&#8208;expand size: 1298/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   21.065      1 -total
- 61.91%   13.042      1 Template:BIM_Tools_navi/fr
- 38.46%    8.102      2 Template:Navigation_menu_2
- 17.77%    3.743      2 Template:Docnav/fr
- 17.28%    3.640      1 Template:Userdocnavi/fr
+100.00%   17.202      1 -total
+ 54.10%    9.306      1 Template:BIM_Tools_navi/fr
+ 36.38%    6.258      2 Template:Navigation_menu_2
+ 22.79%    3.920      1 Template:Userdocnavi/fr
+ 20.43%    3.514      2 Template:Docnav/fr
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:353105-0!canonical and timestamp 20251115125654 and revision id 1691572. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:353105-0!canonical and timestamp 20251115130749 and revision id 1691599. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="../site.js"></script>
