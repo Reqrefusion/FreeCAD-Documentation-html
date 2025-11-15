@@ -1,0 +1,122 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">FeaturePython methods/en</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-FeaturePython+methods&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
+<li><a href="../de/FeaturePython_methods.html" class="mw-pt-progress mw-pt-progress--med" title="FeaturePython Methoden (50% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="../FeaturePython_methods.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="FeaturePython methods (100% translated)" lang="en" dir="ltr">English</a></li>
+<li><a href="../fr/FeaturePython_methods.html" class="mw-pt-progress mw-pt-progress--med" title="M&eacute;thodes FeaturePython (62% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../it/FeaturePython_methods.html" class="mw-pt-progress mw-pt-progress--med" title="Metodi FeaturePython (62% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="../pl/FeaturePython_methods.html" class="mw-pt-progress mw-pt-progress--med" title="Metody FeaturePython (62% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../ru/FeaturePython_methods.html" class="mw-pt-progress mw-pt-progress--med" title="&#1052;&#1077;&#1090;&#1086;&#1076;&#1099; &#1082;&#1083;&#1072;&#1089;&#1089;&#1072; FeaturePython (56% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>This page serves as a reference for the available overridable methods on <a href="../Create_a_FeaturePython_object_part_I.html" title="Create a FeaturePython object part I">Create a FeaturePython object part I</a> or <a href="../Scripted_objects.html" title="Scripted objects">Scripted objects</a>.
+</p>
+<h2><span class="mw-headline" id="Primary_reference">Primary reference</span></h2>
+<p>The below methods account for ~99% of the use-cases power-users may have for Python proxy classes.
+</p>
+<table class="wikitable" cellpadding="5px" width="100%">
+<tbody><tr>
+<td style="width:25%"><code>execute(self, obj)</code>
+</td>
+<td style="width:25%">Called during document recomputes
+</td>
+<td style="width:50%">Do not call <code>recompute()</code> from this method (or any method called from <code>execute()</code>) as this causes a nested recompute.
+</td></tr>
+<tr>
+<td><code>onBeforeChange(self, obj, prop)</code>
+</td>
+<td>Called before a property value is changed
+</td>
+<td><code>prop</code> is the name of the property to be changed, not the property object itself. Property changes cannot be cancelled.  Previous / next property values are not simultaneously available for comparison.
+</td></tr>
+<tr>
+<td><code>onChanged(self, obj, prop)</code>
+</td>
+<td>Called after a property is changed
+</td>
+<td><code>prop</code> is the name of the property to be changed, not the property object itself.
+</td></tr>
+<tr>
+<td><code>onDocumentRestored(self, obj)</code>
+</td>
+<td>Called after a document is restored or a FeaturePython object is copied.
+</td>
+<td>Occasionally, references to the FeaturePython object from the class, or the class from the FeaturePython object may be broken, as the class <code>__init__()</code> method is not called when the object is reconstructed. Adding <code>self.Object = obj</code> or <code>obj.Proxy = self</code> often solves these issues.
+</td></tr></tbody></table>
+<p>It is not uncommon to encounter a situation where the Python callbacks are not being triggered as they should. Beginners in this area can rest assured that the FeaturePython callback system is not fragile or broken. Invariably when callbacks fail to run it is because a reference is lost or undefined in the underlying code. If, however, callbacks appear to be breaking with no explanation, providing object/proxy references in the <code>onDocumentRestored()</code> callback (as noted in the first table above) may alleviate these problems. Until you are comfortable with the callback system, it may be useful to add print statements in each callback to print messages to the console during development.
+</p>
+<h2><span class="mw-headline" id="Additional_methods">Additional methods</span></h2>
+<p>The below methods are for <b>advanced</b> usage of Python proxy classes and you won't have a need for them  most of the time.
+</p>
+<ul><li>mustExecute</li>
+<li>getViewProviderName</li>
+<li>getSubObject</li>
+<li>getSubObjects</li>
+<li>getLinkedObject</li>
+<li>hasChildElement</li>
+<li>isElementVisible</li>
+<li>canLinkProperties</li>
+<li>allowDuplicateLabel</li>
+<li>redirectSubName</li>
+<li>canLoadPartial</li>
+<li>onBeforeChangeLabel</li></ul>
+<h2><span class="mw-headline" id="Determining_available_Python_methods">Determining available Python methods</span></h2>
+<p>Within the <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/blob/76e74294894bbce46d006e149315c6274d206278/src/App/FeaturePython.h#L161-L351">FeaturePython Template Class</a> exists various <code>imp-&gt;&lt;method name&gt;()</code> calls.
+</p><p>Each of these correspond to an available bound Python method.
+</p><p>For example, <code>imp-&gt;execute()</code> <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/blob/76e74294894bbce46d006e149315c6274d206278/src/App/FeaturePython.h#L193">on line 193</a> means the <code>execute</code> method is available.
+</p><p>Note, <code>getPyObject()</code> and <code>init()</code> are special-cases and don't follow the above heuristic.
+</p>
+<h2><span class="mw-headline" id="See_also">See also</span></h2>
+<ul><li><a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/blob/76e74294894bbce46d006e149315c6274d206278/src/App/FeaturePython.h#L44-L86">FreeCAD GitHub: FeaturePython.h - public API</a></li>
+<li><a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/blob/76e74294894bbce46d006e149315c6274d206278/src/App/FeaturePython.h#L167">FreeCAD GitHub: FeaturePythonT template class</a></li>
+<li><a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?f=22&amp;t=49194">FreeCAD Forum Discussion: Scripted Objects Complete Method Reference</a></li></ul>
+<p><br>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=Power_user_hub.png&amp;filetimestamp=20200511213015&amp;.html" class="mw-file-description"><img src="../File/Power_user_hub.png" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="128" data-file-height="128"></a></span> <a href="../en/Power_users_hub.html" title="Power users hub/en">Power user documentation</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b>FreeCAD scripting:</b> <a href="../en/Python.html" title="Python/en">Python</a>, <a href="../en/Introduction_to_Python.html" title="Introduction to Python/en">Introduction to Python</a>, <a href="../en/Python_scripting_tutorial.html" title="Python scripting tutorial/en">Python scripting tutorial</a>, <a href="../en/FreeCAD_Scripting_Basics.html" title="FreeCAD Scripting Basics/en">FreeCAD Scripting Basics</a></li></ul>
+<hr>
+<ul><li><b>Modules:</b> <a href="../en/Builtin_modules.html" title="Builtin modules/en">Builtin modules</a>, <a href="../en/Units.html" title="Units/en">Units</a>, <a href="../en/Quantity.html" title="Quantity/en">Quantity</a></li>
+<li><b>Workbenches:</b> <a href="../en/Workbench_creation.html" title="Workbench creation/en">Workbench creation</a>, <a href="../en/Gui_Command.html" title="Gui Command/en">Gui Commands</a>, <a href="../en/Command.html" title="Command/en">Commands</a>, <a href="../en/Installing_more_workbenches.html" title="Installing more workbenches/en">Installing more workbenches</a></li>
+<li><b>Meshes and Parts:</b> <a href="../en/Mesh_Scripting.html" title="Mesh Scripting/en">Mesh Scripting</a>, <a href="../en/Topological_data_scripting.html" title="Topological data scripting/en">Topological data scripting</a>, <a href="../en/Mesh_to_Part.html" title="Mesh to Part/en">Mesh to Part</a>, <a href="../en/PythonOCC.html" title="PythonOCC/en">PythonOCC</a></li></ul>
+<hr>
+<ul><li><b>Parametric objects:</b> <a href="../en/Scripted_objects.html" title="Scripted objects/en">Scripted objects</a>, <a href="../en/Viewprovider.html" title="Viewprovider/en">Viewproviders</a> <small>(<a href="../en/Custom_icon_in_tree_view.html" title="Custom icon in tree view/en">Custom icon in tree view</a>)</small></li>
+<li><b>Scenegraph:</b> <a href="../en/Scenegraph.html" title="Scenegraph/en">Coin (Inventor) scenegraph</a>, <a href="../en/Pivy.html" title="Pivy/en">Pivy</a></li>
+<li><b>Graphical interface:</b> <a href="../en/Interface_creation.html" title="Interface creation/en">Interface creation</a>, <a href="../en/Dialog_creation.html" title="Dialog creation/en">Interface creation completely in Python</a> <small>(<a href="../en/Dialog_creation_with_various_widgets.html" title="Dialog creation with various widgets/en">1</a>, <a href="../en/Dialog_creation_reading_and_writing_files.html" title="Dialog creation reading and writing files/en">2</a>, <a href="../en/Dialog_creation_setting_colors.html" title="Dialog creation setting colors/en">3</a>, <a href="../en/Dialog_creation_image_and_animated_GIF.html" title="Dialog creation image and animated GIF/en">4</a>, <a href="../en/PySide_usage_snippets.html" title="PySide usage snippets/en">5</a>)</small>, <a href="../en/PySide.html" title="PySide/en">PySide</a>, PySide examples <a href="../en/PySide_Beginner_Examples.html" title="PySide Beginner Examples/en">beginner</a>, <a href="../en/PySide_Intermediate_Examples.html" title="PySide Intermediate Examples/en">intermediate</a>, <a href="../en/PySide_Advanced_Examples.html" title="PySide Advanced Examples/en">advanced</a></li>
+<li><b>Macros:</b> <a href="../en/Macros.html" title="Macros/en">Macros</a>, <a href="../en/How_to_install_macros.html" title="How to install macros/en">How to install macros</a></li>
+<li><b>Embedding:</b> <a href="../en/Embedding_FreeCAD.html" title="Embedding FreeCAD/en">Embedding FreeCAD</a>, <a href="../en/Embedding_FreeCADGui.html" title="Embedding FreeCADGui/en">Embedding FreeCADGui</a></li></ul>
+<hr>
+<ul><li><b>Other:</b> <a href="../en/Expressions.html" title="Expressions/en">Expressions</a>, <a href="../en/Code_snippets.html" title="Code snippets/en">Code snippets</a>, <a href="../en/Line_drawing_function.html" title="Line drawing function/en">Line drawing function</a>, <a href="../en/FreeCAD_vector_math_library.html" title="FreeCAD vector math library/en">FreeCAD vector math library</a> <small>(deprecated)</small></li></ul>
+<hr>
+<ul><li><b>Hubs:</b> <a href="../en/User_hub.html" title="User hub/en">User hub</a>, <a href="../en/Power_users_hub.html" title="Power users hub/en">Power users hub</a>, <a href="../en/Developer_hub.html" title="Developer hub/en">Developer hub</a></li></ul></div>
+    </div></div>
+<div style="clear:both"></div>
+<!-- 
+NewPP limit report
+Cached time: 20251115095354
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show&#8208;toc]
+CPU time usage: 0.039 seconds
+Real time usage: 0.061 seconds
+Preprocessor visited node count: 167/1000000
+Post&#8208;expand include size: 6707/2097152 bytes
+Template argument size: 2416/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 1435/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   15.294      1 -total
+ 69.50%   10.629      1 Template:Powerdocnavi/en
+ 14.69%    2.246      1 Template:Navigation_menu_2
+ 10.11%    1.546     12 Template:Incode
+  7.64%    1.169      1 Template:Clear
+  7.25%    1.109      1 Template:TOCright
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:207974-0!canonical and timestamp 20251115095354 and revision id 1691129. Rendering was triggered because: edit-page
+ -->
+</div>
+</div><script src="../site.js"></script>
