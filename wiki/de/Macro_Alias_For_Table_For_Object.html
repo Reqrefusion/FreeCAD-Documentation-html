@@ -224,28 +224,28 @@ __Wiki__ = "https://wiki.freecad.org/Macro_Alias_For_Table_For_Object"
 
 import FreeCAD, FreeCADGui
 import re
-from PySide import QtGui, QtCore
+from PySide import QtGui, QtCore, QtWidgets
 
 addNumberIfOther=True
 
-class CheckBoxDialog(QtGui.QDialog):
+class CheckBoxDialog(QtWidgets.QDialog):
     def __init__(self, parent=None):
         super(CheckBoxDialog, self).__init__(parent)
 
         self.setWindowTitle("Macro FreeCAD")
 
-        self.createAliasForTableCheckBox = QtGui.QCheckBox("Alias creation")
+        self.createAliasForTableCheckBox = QtWidgets.QCheckBox("Alias creation")
         self.createAliasForTableCheckBox.setToolTip("Creates an alias in each selected cell" +
                 "\nbased on the first selected row and column" +
                 "\nThe aliases will be in the format 'LabelObject_property'")
-        self.tableToObjectCheckBox = QtGui.QCheckBox("Properties in objects based on aliases")
+        self.tableToObjectCheckBox = QtWidgets.QCheckBox("Properties in objects based on aliases")
         self.tableToObjectCheckBox.setToolTip("Automatically fills the properties of objects (body, sketch, ...)" +
                 "\nbased on aliases which must be in the format 'LabelObject_property'")
-        buttonBox = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        buttonBox = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         buttonBox.accepted.connect(self.accept)
         buttonBox.rejected.connect(self.reject)
 
-        layout = QtGui.QVBoxLayout()
+        layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.createAliasForTableCheckBox)
         layout.addWidget(self.tableToObjectCheckBox)
         layout.addWidget(buttonBox)
@@ -259,13 +259,13 @@ class CheckBoxDialog(QtGui.QDialog):
 
 def get_column(cell):
     column = ''.join([c for c in cell if not c.isdigit()])
-    return column 
-    
+    return column
+
 def get_row(cell):
     row = ''.join([c for c in cell if c.isdigit()])
     if row==''&nbsp;:
         row='1'
-    return int(row)  
+    return int(row)
 
 
 
@@ -277,7 +277,7 @@ def get_row(cell):
 separateur = " "      # typically put " " so blanks will be replaced by nouveauCaract
 nouveauCaract = ''    #Put for example "_" to have the separators replaced by "_". Put "" to have no separator
 majuscule = True      #set to True if you want  "Diametre du cercle" to be "DiametreDuCercle"
-changeTexteCellule = False  # the text will only be changed if changeCellText is True. 
+changeTexteCellule = False  # the text will only be changed if changeCellText is True.
                           # This does not change anything for the allias itself
 premierCaractereEnMinuscule = False # Force the first character to be in lower case
 
@@ -299,7 +299,7 @@ def traitementChaineSource(chaineSource, separateur, nouveauCaract, majuscule):
 
         def remplaceCartatParEquivalent(caractere):
         # replaces a character with its equivalent if it exists
-            caracResult = caractere   
+            caracResult = caractere
             for couple in caracEquivalents:
                 if (couple[0] == caractere):
                     caracResult = couple[1]
@@ -312,32 +312,32 @@ def traitementChaineSource(chaineSource, separateur, nouveauCaract, majuscule):
             a = remplaceCartatParEquivalent(caract)
             motResult = motResult.replace(caract, a)
         return motResult
-        
+
 
     chaineResult = ''
     first = True
     carctDeSeparation = ''
-    for mots in chaineSource.split(separateur): 
+    for mots in chaineSource.split(separateur):
         mots = remplaceCararcDansMot(mots)
         if (not (first)):
-            carctDeSeparation = nouveauCaract 
+            carctDeSeparation = nouveauCaract
             if (majuscule):
                 chaineResult = chaineResult + nouveauCaract + mots[:1].upper() + mots[1:]
-                # We use "[:1]" instead of "[0]", 
+                # We use "[:1]" instead of "[0]",
                 # for no crash in case of an empty string (which happens if the cell is empty)
         else:
             chaineResult = chaineResult + nouveauCaract + mots
-        first=False    
+        first=False
     if premierCaractereEnMinuscule&nbsp;:
         chaineResult = chaineResult[:1].lower() + chaineResult[1:]
     return chaineResult
 
 
 def create_alias_for_table_cells_Selected():
-    mySpreadsheet = Gui.ActiveDocument.ActiveView.getSheet()    
-    aw = Gui.getMainWindow().centralWidget().activeSubWindow() # Store the active window      
+    mySpreadsheet = Gui.ActiveDocument.ActiveView.getSheet()
+    aw = Gui.getMainWindow().centralWidget().activeSubWindow() # Store the active window
     # To get list of all selected cells
-    sel_items = aw.widget().findChild(QtGui.QTableView).selectedIndexes() 
+    sel_items = aw.widget().findChild(QtGui.QTableView).selectedIndexes()
 
     getCellName = lambda r,c:'{}{}{}'.format(chr(c//26 + 64) if c//26 &gt; 0 else '', chr(c%26 + 65), r + 1)
 
@@ -348,9 +348,9 @@ def create_alias_for_table_cells_Selected():
         if  (sel_items[0].column()!=item.column() and sel_items[0].row()!=item.row())&nbsp;:
             cellName=getCellName(item.row(), item.column())
             firstcellName=getCellName(sel_items[0].row(), sel_items[0].column())
-            
+
             cellTextLine=get_column(firstcellName)+str(get_row(cellName))
-            cellTextColumn=get_column(cellName)+ str(get_row(firstcellName)) 
+            cellTextColumn=get_column(cellName)+ str(get_row(firstcellName))
             try&nbsp;:
                 textLine = mySpreadsheet.get(cellTextLine)
                 textColumn = mySpreadsheet.get(cellTextColumn)
@@ -368,7 +368,7 @@ def create_alias_for_table_cells_Selected():
                             mySpreadsheet.setAlias(cellName, textAlias)
                         else:
                             mySpreadsheet.setAlias(cellName, textAlias + '_' + str(i-1))
-                            startIndexForTextAlias=i+1    
+                            startIndexForTextAlias=i+1
                         break  # Arr&ecirc;te la boucle si aucune exception n'est lev&eacute;e
                     except:
                         continue  # Passe &agrave; l'it&eacute;ration suivante si une exception est lev&eacute;e
@@ -380,7 +380,7 @@ def create_alias_for_table_cells_Selected():
 # The dictionary is used to convert what you put in the top line to match
 # what needs to be put in the expression. For example, if you have &ldquo;posx&rdquo; in the
 # first line of your selection, in the expression, for the property part, there will be
-# "Placement.Base.x" 
+# "Placement.Base.x"
 dico={
         "posx"&nbsp;: "Placement.Base.x",
         "posy"&nbsp;: "Placement.Base.y",
@@ -391,17 +391,17 @@ dico={
         "angle": "Placement.Rotation.Angle",
         "ang": "Placement.Rotation.Angle",
         "axisx": "Placement.Rotation.Axis.x",
-        "axisy": "Placement.Rotation.Axis.y",       
-        "axisz": "Placement.Rotation.Axis.z", 
+        "axisy": "Placement.Rotation.Axis.y",
+        "axisz": "Placement.Rotation.Axis.z",
         "axeX": "Placement.Rotation.Axis.x",
-        "axeY": "Placement.Rotation.Axis.y",       
-        "axeZ": "Placement.Rotation.Axis.z", 
+        "axeY": "Placement.Rotation.Axis.y",
+        "axeZ": "Placement.Rotation.Axis.z",
         "attachementX"&nbsp;: "AttachmentOffset.Base.x",
         "attachementY"&nbsp;: "AttachmentOffset.Base.y",
         "attachementZ"&nbsp;: "AttachmentOffset.Base.z",
         "attachementAngle"&nbsp;: "AttachmentOffset.Rotation.Angle",
         "attachementAxisX"&nbsp;: "AttachmentOffset.Rotation.Axis.x",
-        "attachementAxisY"&nbsp;: "AttachmentOffset.Rotation.Axis.y",        
+        "attachementAxisY"&nbsp;: "AttachmentOffset.Rotation.Axis.y",
         "attachementAxisZ"&nbsp;: "AttachmentOffset.Rotation.Axis.z",
         "Length"&nbsp;: "Length",
         "Length2"&nbsp;: "Length2",
@@ -412,18 +412,18 @@ dico={
         "Angle1"&nbsp;: "Angle1",
         "Angle2"&nbsp;: "Angle2",
         "Angle3"&nbsp;: "Angle3",
-     }   
+     }
 
-  
+
 def set_constraint_expression(sketchLabel, constraint_name, expression):
     # Get all Sketches with this label
     findConstraint = False
     sketches = App.ActiveDocument.getObjectsByLabel(sketchLabel)
-    if len(sketches)&gt;1&nbsp;:
-        print("Warning, multiple sketches have the same label. " 
-            + " All these sketches will be processed. " 
-            + "This may cause problems if different sketches with the same label "
-            + "have constraints with the same name.")
+    if len(sketches) &gt; 1&nbsp;:
+        print("Warning, multiple sketches have the same label. "
+              " All these sketches will be processed. "
+              "This may cause problems if different sketches with the same label "
+              "have constraints with the same name.")
     # Go through all Sketches
 
     for sketch in sketches:
@@ -432,16 +432,16 @@ def set_constraint_expression(sketchLabel, constraint_name, expression):
         for i in range(sketch.ConstraintCount):
             # Get the constraint
             constraint = sketch.Constraints[i]
-            
+
             # Check if the constraint name matches the one we're looking for
             if constraint.Name == constraint_name:
                 # Modify the constraint value
-                sketch.setExpression('Constraints[' +  str(i)+ ']', expression)
+                sketch.setExpression(f'Constraints[{i}]', expression)
                 findConstraint=True
                 break
     return findConstraint
 
-  
+
 def set_property_based_on_alias(sheet,cell):
 
     # alias of the cell
@@ -449,7 +449,7 @@ def set_property_based_on_alias(sheet,cell):
     # Check if the alias is valid
     if sheet.getContents(cell)!=''&nbsp;:
         if alias is None:
-            print("The selected cell " + cell +  " does not have an alias.")
+            print(f"The selected cell {cell} does not have an alias.")
             return
 
     # Separate the alias into body name and property name
@@ -470,11 +470,11 @@ def set_property_based_on_alias(sheet,cell):
     except&nbsp;:
         try&nbsp;:
             if  obj.TypeId&nbsp;!= 'Sketcher::SketchObject'&nbsp;:
-                print ('property ' + property_name + ' not found in the dictionary. See at the top of the source code')
+                print (f'property {property_name} not found in the dictionary. See at the top of the source code')
         except&nbsp;:
             pass
 
-       
+
 
     if obj is None:
         print(f"There is no object named '{objLabel}' in the document.")
@@ -489,7 +489,7 @@ def set_property_based_on_alias(sheet,cell):
         findConstraint=set_constraint_expression(objLabel, property_name, expression)
         if findConstraint&nbsp;: # if not we continue to find a property
             return
-        
+
     if hasattr(obj, property_name.split('.')[0]): # Placement.Base.x -&gt; Placement
         obj.setExpression(property_name, expression)
     else:
@@ -505,18 +505,18 @@ def tableToObject()&nbsp;:
 
     # active cell
     #cell = Gui.activeView().currentIndex()
-    
-    aw = Gui.getMainWindow().centralWidget().activeSubWindow() # Store the active window      
+
+    aw = Gui.getMainWindow().centralWidget().activeSubWindow() # Store the active window
     # To get list of all selected cells
-    sel_items = aw.widget().findChild(QtGui.QTableView).selectedIndexes() 
+    sel_items = aw.widget().findChild(QtGui.QTableView).selectedIndexes()
     getCellName = lambda r,c:'{}{}{}'.format(chr(c//26 + 64) if c//26 &gt; 0 else '', chr(c%26 + 65), r + 1)
     for cell in sel_items: # The selected cells are scanned
         cellName=getCellName(cell.row(), cell.column())
 
         if str(sheet.getContents(cellName))!= ''&nbsp;:
             set_property_based_on_alias(sheet, cellName)
-            
-       
+
+
 
 
 
@@ -537,30 +537,30 @@ if __name__ == '__main__':
 </pre>
 <!-- 
 NewPP limit report
-Cached time: 20251023061119
+Cached time: 20251116110131
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.055 seconds
-Real time usage: 0.079 seconds
+CPU time usage: 0.072 seconds
+Real time usage: 0.092 seconds
 Preprocessor visited node count: 186/1000000
 Post&#8208;expand include size: 3463/2097152 bytes
 Template argument size: 2222/2097152 bytes
 Highest expansion depth: 7/100
 Expensive parser function count: 3/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 17154/5000000 bytes
+Unstrip post&#8208;expand size: 17029/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   14.718      1 -total
- 35.44%    5.216      1 Template:Macro/de
- 29.43%    4.332      1 Template:CodeDownload
- 18.24%    2.684      1 Template:Code
- 13.04%    1.919      6 Template:Incode
+100.00%   10.518      1 -total
+ 52.00%    5.469      1 Template:Macro/de
+ 15.78%    1.660      1 Template:CodeDownload
+ 14.92%    1.569      1 Template:Code
+ 12.21%    1.285      6 Template:Incode
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:396224-0!canonical and timestamp 20251023061119 and revision id 1674111. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:396224-0!canonical and timestamp 20251116110131 and revision id 1692966. Rendering was triggered because: api-parse
  -->
 </div>
 </div><script src="../site.js"></script>
