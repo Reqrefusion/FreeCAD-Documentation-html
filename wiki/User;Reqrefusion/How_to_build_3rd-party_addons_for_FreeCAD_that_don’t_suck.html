@@ -1,0 +1,72 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">User:Reqrefusion/How to build 3rd-party addons for FreeCAD that don’t suck</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><p>There&rsquo;s well over 200 various addons for FreeCAD available just in the official add-on manager.
+</p><p>Many more possibly flew under the radar or simply never have been shared with anybody. For some developers, creating an add-on is a way to test ideas and see if they resonate with a larger audience. For others, it&rsquo;s the first step towards contributing to FreeCAD itself. The add-on ecosystem is hugely important for the community at large.
+</p><p>But many great ideas die because the add-on implementation suffers from one or more common and avoidable mistakes:
+</p>
+<ul><li>Not designed to make contributions from other developers easy.</li>
+<li>Built with implementations of things that are core FreeCAD features.</li>
+<li>Not built with good software practices in mind, think modular code, unit tests, separation of UI and non-UI logic.</li></ul>
+<p>This isn&rsquo;t a criticism of the addon developers. Nobody is expert in everything for many open-source contributors, writing an Add-on is their first experience contributing to a large project. Over the last decade, I patched other people&rsquo;s add-ons and wrote some of my own. In this post, I&rsquo;d like to share what I think are best practices of developing 3rd-party add-ons for FreeCAD. There&rsquo;s a technical and a design aspect to this.
+</p>
+<meta property="mw:PageProp/toc">
+<h2><span class="mw-headline" id="Technical_advice">Technical advice</span></h2>
+<h3><span class="mw-headline" id="Design_the_UI_with_QT_Creator_and_use_the_.ui_files_directly.">Design the UI with QT Creator and use the .ui files directly.</span></h3>
+<p>There are several reasons why this is a great idea. First off, this makes the code simpler. Hundreds of lines of Qt code are replaced with a single line to load the .ui file like: <code>Form = FreeCADGui.PySideUic.loadUi(dialog.ui)</code> The UI logic becomes much cleaner and more testable.
+</p><p>Secondly, UI designers are used to working with visual tools. They can often improve the look and feel of a dialog or task panel quickly. Using the UI files directly rather than hand-coding Qt or converting the .ui file to python makes it much easier for UI designers to contribute. The wiki has <a rel="nofollow" class="external text" href="https://wiki.freecad.org/Manual:Creating_interface_tools">lots of information</a> about designing and using .ui files.
+</p>
+<h3><span class="mw-headline" id="Separate_the_UI_logic_from_the_application_logic.">Separate the UI logic from the application logic.</span></h3>
+<p>From the beginning, FreeCAD was designed to run without the GUI at all. It&rsquo;s amazing how much you can do with FreeCAD by calling it from external scripts. So it&rsquo;s really frustrating to find a great piece of addon functionality that won&rsquo;t work this way.
+</p><p>Ideally, the UI logic is separated from the rest of the application code. Designing software this way doesn&rsquo;t come naturally to amateur programmers but it isn&rsquo;t too difficult and is worth learning. Even a very simple addon or workbench should have at least two Python modules, one with the logic for managing the UI, getting input from the user, and displaying it. The second module does all the interesting stuff, and it should not import FreeCADGui.
+</p>
+<h3><span class="mw-headline" id="Stick_with_rules_of_thumb">Stick with rules of thumb</span></h3>
+<p>There are some very simple rules that help keep the code clean, readable, and testable. Like all heuristics, they aren&rsquo;t written in stone and there are times to ignore them. That said, take the time to understand why they exist.
+</p><p><b>No function longer than 200 lines of code.</b> There are various recommendations regarding the length of a function, but 200 LOC seems like a reasonable maximum. The general idea is that a function should do just one logical thing and could be explained in one sentence. This <a rel="nofollow" class="external text" href="https://stackoverflow.com/posts/475762/revisions">list of red flags</a> for when a function is too long should serve you well (thanks to Ryan Delucchi).
+</p><p><b>No module longer than 1K lines of code.</b> For pretty much the same reason &mdash; readability, maintainability etc. &mdash; Python modules shouldn&rsquo;t be too long. Keeping python modules short has a subtle effect on code organization. It naturally encourages better encapsulation and separation of concerns, two key concepts in software development.
+</p><p><b>Write pythonic code.</b> Unlike communities around other programming languages, the Python community, is very opinionated about code conventions. Adhering to these conventions makes Python code more readable and more efficient. Here is a <a rel="nofollow" class="external text" href="https://towardsdatascience.com/how-to-write-pythonic-code-208ec1513c49">very good overview</a> by Xiaoxu Gao of what makes code in Python &ldquo;pythonic&rdquo;.
+</p><p><b>Use Black formatting.</b> Code formatting is sometimes a contentious issue. Part of being &lsquo;pythonic&rsquo; is adhering to a community standard for formatting. The standard is formalized in <a rel="nofollow" class="external text" href="https://peps.python.org/pep-0008/">PEP 8</a> which asserts a number of code style conventions. Pycodestyle will check your code against those standards (and complain when you break them). <a rel="nofollow" class="external text" href="https://github.com/psf/black">Black</a> automatically reformats your Python code to comply with those conventions.
+</p><p><b>Write unit tests first.</b> Nobody likes writing unit tests but everyone likes having them. Regressions are easy to introduce and difficult to catch. Unit tests invert that by making regressions harder to introduce and easier to solve. They also have a subtle effect on how you program. When you have to write unit tests, you start to write more testable code. So write unit tests early on to stay on top of it.
+</p><p><b>Make UI translatable from day 1.</b> Popular addons tend to get translated into other languages. Designing an addon with localization in mind from the beginning means you free yourself from redesigning it later on to introduce UI translation support.
+</p><p><b>Make user-facing objects parametric.</b> If the addon adds document objects to the project and expects the user to interact with them after creation, the important attributes of the object should be exposed through properties. We&rsquo;ve seen good ideas implemented in such a way that if the user makes an error during the creation of an object, the only recourse is to delete the object and restart. If the creation of an object involves a task panel, double-clicking on the object in the tree should re-open the same task panel and allow the user to change settings. FreeCAD wiki has an <a rel="nofollow" class="external text" href="https://wiki.freecad.org/Create_a_FeaturePython_object_part_I">article</a> that explains how to write FeaturePython objects the right way.
+</p>
+<h3><span class="mw-headline" id="Be_on_the_lookout_for_things_that_belong_in_the_core">Be on the lookout for things that belong in the core</span></h3>
+<p>Occasionally features developed in a workbench really <i>should</i> exist in the core. A good example of that is the <a rel="nofollow" class="external text" href="https://github.com/shaise/FreeCAD_SheetMetal">Sheetmetal workbench</a>. There&rsquo;s an interesting bit of logic that unfolds a shape to produce a flattened version. The unfolder is computationally intense and would benefit from being implemented in C++ rather than Python. A powerful and efficient unfolder might also have utility in other workbenches.
+</p><p>It sure takes more time and effort to communicate with other developers, get these things written correctly and merged, but it makes addons simpler, faster, and more maintainable.
+</p><p>On the other hand, be on the lookout for things that already <i>are</i> in the core. Inexperienced developers often reinvent the wheel and do it poorly. Experienced developers communicate a lot. So when you design an addon, talk to your peers and discuss your design. It could very well be the case that something you need or already exists and works just right for you.
+</p>
+<h2><span class="mw-headline" id="Design_advice">Design advice</span></h2>
+<p>FreeCAD has the <a rel="nofollow" class="external text" href="https://freecad.github.io/DevelopersHandbook/stylebook/">beginnings of a style book</a>. While work on it is ongoing, here are some important considerations.
+</p><p><b>Don't make the user think.</b> In free and open-source software, the concepts of usability and discoverability are often overlooked. Do your best to design an addon with a straightforward workflow that gets users from A to Z in the least possible amount of time. Give the user a result with the minimal amount of input and let them revise and improve the result incrementally. A feature that requires the user to do many things exactly right before outputting anything at all is confusing and will be ignored by most users.
+</p><p><b>Chunking.</b> If there&rsquo;s one thing you can do to make your user-interface and workflow better it is to group controls together so users can process them efficiently.
+</p>
+<ul><li>Toolbars should have neither too many nor too few buttons. Seven, plus or minus two, is a guideline often invoked.</li>
+<li>The buttons should be grouped logically. Consider that the user may hide the toolbar or drag it to another part of the screen. Menus should use separators to make them easier to process.</li>
+<li>Dialogs should use group boxes, frames, and tabs to allow efficient recognition of controls.</li></ul>
+<p><b>Don&rsquo;t just gravitate to workbenches.</b> There seems to be a popular idea that a workbench is the right kind of addon for anything. And so there are some 3rd-party workbenches that should have been a non-workbench addon, an extension of an existing workbench, or even a core feature. But workbenches are destinations, if you build one, you should expect that people will park there for a while and will be unwilling to jump between workbenches all the time. So when you choose what type of an addon you are creating, think primarily of workflow and tasks.
+</p>
+<h2><span class="mw-headline" id="What_to_do_next">What to do next</span></h2>
+<p>If you are planning to write a new FreeCAD addon or improve one you have already created, I recommend paying close attention to the <a rel="nofollow" class="external text" href="https://freecad.github.io/DevelopersHandbook/">FreeCAD Developer Guide</a>. This is where the team formalizes both programming and design conventions, as well as provides actionable advice. If the guide is missing the information you need, I encourage you to <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/DevelopersHandbook/issues">file an issue</a> against the guide on GitHub.
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20251117190003
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show&#8208;toc]
+CPU time usage: 0.012 seconds
+Real time usage: 0.013 seconds
+Preprocessor visited node count: 21/1000000
+Post&#8208;expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:401911-0!canonical and timestamp 20251117190003 and revision id 1694342. Rendering was triggered because: api-parse
+ -->
+</div>
+</div><script src="../site.js"></script>
