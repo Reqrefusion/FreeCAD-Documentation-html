@@ -236,16 +236,18 @@ Editing the method and executing the cell can now be repeated as often as desire
 </p><p>See the example code in the Pyzo repository:
 </p><p><a rel="nofollow" class="external free" href="https://github.com/pyzo/pyzo/blob/main/pyzo/resources/code_examples/myRunner.py">https://github.com/pyzo/pyzo/blob/main/pyzo/resources/code_examples/myRunner.py</a>
 </p>
-<h3><span class="mw-headline" id="Debugging_Start-Up_of_FreeCAD_Modules">Debugging Start-Up of FreeCAD Modules</span></h3>
-<p>To debug the init script of a FreeCAD Mod, e.g. files such as <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Mod/Draft/Init.py</span> or <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Mod/Draft/InitGui.py</span> using breakpoints, we need to set a breakpoint in the code file. These init script files are not directly executed.
-</p><p>During startup, FreeCAD runs the Python scripts <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/App/FreeCADInit.py</span> and <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Gui/FreeCADGuiInit.py</span>, and each of these reads the corresponding init scripts (App and Gui) of the Mod and executes them as a string with the code contents:
+<h3><span class="mw-headline" id="Debugging_Start-Up_of_FreeCAD_Workbenches">Debugging Start-Up of FreeCAD Workbenches</span></h3>
+<p>Init scripts of a FreeCAD workbench, e.g. files such as <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Mod/Draft/Init.py</span> or <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Mod/Draft/InitGui.py</span> can be debugged using Pyzo like any other Python script, for example by placing breakpoints in these files.
+</p><p>But in older FreeCAD versions &lt; v1.0, such as v0.21.2, we need to apply a patch so that the Python interpreter knows the path of the executed init script. So, for older FreeCAD versions, follow the instructions in chapter <a href="#Extracting_Python_code_used_for_initializing_FreeCAD_modules">Extracting Python code used for initializing FreeCAD modules</a>.
+</p><p>We can now, for example, open <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Mod/Draft/Init.py</span> in Pyzo, set a breakpoint there in line 28 and start the FreeCAD shell in Pyzo. Execution will be interrupted at the breakpoint. We can switch the stack frames, view and manipulate variables and step/continue the code execution. To see and debug Python code from higher levels, i.e. from callers in the FreeCAD library, the corresponding Python code must be extracted before, as described in the following chapter.
 </p>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">InstallFile</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">exec</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-</pre></div>
-<p>The interpreter has no more information about the filepath of the executed code. To include the filepath, we need to patch the lines above. FreeCAD version 0.22 or newer <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/pull/10618">already contain this patch</a>.
-</p><p>This is not all. The scripts <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/App/FreeCADInit.py</span> and <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Gui/FreeCADGuiInit.py</span> are not individual files anymore but resource files in libraries in the distributed binary versions of FreeCAD. Therefore we will extract them into files and replace the data in the libraries with a short Python script that will call our new out-sourced scripts. So we could also open these new files and set breakpoints there.
-</p><p>The following code will extract the scripts from the libraries, patch them and place the caller code back in the libraries:
+<h3><span class="mw-headline" id="Extracting_Python_code_used_for_initializing_FreeCAD_workbenches">Extracting Python code used for initializing FreeCAD workbenches</span></h3>
+<p>During startup, FreeCAD executes the Python scripts <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/App/FreeCADInit.py</span> and <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Gui/FreeCADGuiInit.py</span> as a string inside a compiled C++ library, and each of these scripts reads the corresponding init scripts (App and Gui) of the workbench and executes them using the Python <code>exec</code> command.
+</p><p>The scripts <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/App/FreeCADInit.py</span> and <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">src/Gui/FreeCADGuiInit.py</span> are not individual files anymore but resource files in libraries in the distributed binary versions of FreeCAD.
+This makes it difficult to modify these scripts, and this makes it also difficult to debug that Python code.
+</p><p>But there is a work-around: The init scripts can be extracted to normal files which are then executed by the FreeCAD library.
+The extracted scripts can then be opened in Pyzo, modified and debugged like any other Python script.
+</p><p>The following code will extract the scripts from the libraries, and place the caller code back in the libraries. The start-up code for older FreeCAD versions &lt; v1.0 will also be <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/pull/10618">patched</a>, as mentioned in the previous chapter.
 </p>
 <div style="height:20em; overflow:auto; border: 1px solid #000">
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
@@ -253,8 +255,8 @@ Editing the method and executing the cell can now be repeated as often as desire
 <span class="kn">import</span> <span class="nn">shutil</span>
 
 
-<span class="n">lib_dirpath</span> <span class="o">=</span> <span class="s1">'/home/.../FreeCAD/usr/lib'</span> <span class="c1"># example for linux os</span>
-<span class="c1"># lib_dirpath = r'C:\ProgramData\FreeCAD\bin' # example for windows os</span>
+<span class="n">lib_dirpath</span> <span class="o">=</span> <span class="s1">'/home/.../FreeCAD/usr/lib'</span>  <span class="c1"># example for linux os</span>
+<span class="c1"># lib_dirpath = r'C:\ProgramData\FreeCAD\bin'  # example for windows os</span>
 
 <span class="n">restore_original_libs</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="c1"># restore_original_libs = True</span>
@@ -263,47 +265,51 @@ Editing the method and executing the cell can now be repeated as often as desire
 <span class="n">lib_dirpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">lib_dirpath</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">appgui</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'App'</span><span class="p">,</span> <span class="s1">'Gui'</span><span class="p">]:</span>
     <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">'linux'</span><span class="p">:</span>
-        <span class="n">fp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lib_dirpath</span><span class="p">,</span> <span class="s1">'libFreeCAD</span><span class="si">{}</span><span class="s1">.so'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">appgui</span><span class="p">))</span>
+        <span class="n">fp_lib</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lib_dirpath</span><span class="p">,</span> <span class="s1">'libFreeCAD</span><span class="si">{}</span><span class="s1">.so'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">appgui</span><span class="p">))</span>
     <span class="k">elif</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">'win32'</span><span class="p">:</span>
-        <span class="n">fp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lib_dirpath</span><span class="p">,</span> <span class="s1">'FreeCAD</span><span class="si">{}</span><span class="s1">.dll'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">appgui</span><span class="p">))</span>
+        <span class="n">fp_lib</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lib_dirpath</span><span class="p">,</span> <span class="s1">'FreeCAD</span><span class="si">{}</span><span class="s1">.dll'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">appgui</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-    <span class="n">fp_backup</span> <span class="o">=</span> <span class="n">fp</span> <span class="o">+</span> <span class="s1">'.orig'</span>
+    <span class="n">fp_backup</span> <span class="o">=</span> <span class="n">fp_lib</span> <span class="o">+</span> <span class="s1">'.orig'</span>
 
     <span class="k">if</span> <span class="n">restore_original_libs</span><span class="p">:</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">fp_backup</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">fp_backup</span><span class="p">,</span> <span class="n">fp_lib</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'restored library file:'</span><span class="p">,</span> <span class="n">fp_lib</span><span class="p">)</span>
         <span class="k">continue</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">fp_backup</span><span class="p">):</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">fp_backup</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">fp_lib</span><span class="p">,</span> <span class="n">fp_backup</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'created library backup file:'</span><span class="p">,</span> <span class="n">fp_backup</span><span class="p">)</span>
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp_backup</span><span class="p">,</span> <span class="s1">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
         <span class="n">dd</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">appgui</span> <span class="o">==</span> <span class="s1">'App'</span><span class="p">:</span>
-        <span class="n">needle</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\n</span><span class="s1"># FreeCAD init module</span><span class="se">\n</span><span class="s1">'</span>
-        <span class="n">fp_py</span> <span class="o">=</span> <span class="n">fp</span> <span class="o">+</span> <span class="s1">'.FreeCADInit.py'</span>
+        <span class="n">needle_cands</span> <span class="o">=</span> <span class="p">[</span><span class="sa">b</span><span class="s1">'</span><span class="se">\n</span><span class="s1"># FreeCAD init module</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\n</span><span class="s1"># FreeCAD init module - App</span><span class="se">\n</span><span class="s1">'</span><span class="p">]</span>
+        <span class="n">fp_py</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lib_dirpath</span><span class="p">,</span> <span class="s1">'..'</span><span class="p">,</span> <span class="s1">'FreeCADInit.py'</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">needle</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\n</span><span class="s1"># FreeCAD gui init module</span><span class="se">\n</span><span class="s1">'</span>
-        <span class="n">fp_py</span> <span class="o">=</span> <span class="n">fp</span> <span class="o">+</span> <span class="s1">'.FreeCADGuiInit.py'</span>
+        <span class="n">needle_cands</span> <span class="o">=</span> <span class="p">[</span><span class="sa">b</span><span class="s1">'</span><span class="se">\n</span><span class="s1"># FreeCAD gui init module</span><span class="se">\n</span><span class="s1">'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'</span><span class="se">\n</span><span class="s1"># FreeCAD init module - Gui</span><span class="se">\n</span><span class="s1">'</span><span class="p">]</span>
+        <span class="n">fp_py</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lib_dirpath</span><span class="p">,</span> <span class="s1">'..'</span><span class="p">,</span> <span class="s1">'FreeCADGuiInit.py'</span><span class="p">))</span>
 
-    <span class="n">i_needle</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">needle</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">dd</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">needle</span><span class="p">,</span> <span class="n">i_needle</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">needle</span> <span class="ow">in</span> <span class="n">needle_cands</span><span class="p">:</span>
+        <span class="c1"># try different needles because of differences in FreeCAD versions</span>
+        <span class="n">i_needle</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">needle</span><span class="p">)</span>
+        <span class="n">only_one_result</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">needle</span><span class="p">,</span> <span class="n">i_needle</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="n">i_needle</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">only_one_result</span><span class="p">:</span>
+            <span class="k">break</span>  <span class="c1"># found</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">'needle not found'</span><span class="p">)</span>
 
     <span class="n">i_start</span> <span class="o">=</span> <span class="n">i_needle</span> <span class="o">-</span> <span class="n">dd</span><span class="p">[:</span><span class="n">i_needle</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="sa">b</span><span class="s1">'</span><span class="se">\x00</span><span class="s1">'</span><span class="p">)</span>
     <span class="n">i_end</span> <span class="o">=</span> <span class="n">dd</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="sa">b</span><span class="s1">'</span><span class="se">\x00</span><span class="s1">'</span><span class="p">,</span> <span class="n">i_needle</span><span class="p">)</span>
 
     <span class="n">dd_code</span> <span class="o">=</span> <span class="n">dd</span><span class="p">[</span><span class="n">i_start</span><span class="p">:</span><span class="n">i_end</span><span class="p">]</span>
 
-    <span class="n">fp_py_orig</span> <span class="o">=</span> <span class="n">fp_py</span> <span class="o">+</span> <span class="s1">'.orig'</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp_py_orig</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
-        <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dd_code</span><span class="p">)</span>
-
     <span class="n">loader_code</span> <span class="o">=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
-        <span class="s1">'fp = '</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">fp_py</span><span class="p">),</span>
-        <span class="s1">'with open(fp, "rt", encoding="utf-8") as fd: source = fd.read()'</span><span class="p">,</span>
-        <span class="s1">'exec(compile(source, fp, "exec"))'</span><span class="p">,</span>
-        <span class="p">])</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">fp_py</span><span class="p">))</span>
+        <span class="s1">'fp_lib = '</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">fp_py</span><span class="p">),</span>
+        <span class="s1">'with open(fp_lib, "rt", encoding="utf-8") as fd: source = fd.read()'</span><span class="p">,</span>
+        <span class="s1">'exec(compile(source, fp_lib, "exec"))'</span><span class="p">,</span>
+    <span class="p">])</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">fp_py</span><span class="p">))</span>
 
     <span class="n">dd_code_new</span> <span class="o">=</span> <span class="n">loader_code</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">dd_code_new</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dd_code</span><span class="p">)</span>
@@ -312,34 +318,32 @@ Editing the method and executing the cell can now be repeated as often as desire
     <span class="n">dd_new</span> <span class="o">=</span> <span class="n">dd</span><span class="p">[:</span><span class="n">i_start</span><span class="p">]</span> <span class="o">+</span> <span class="n">dd_code_new</span> <span class="o">+</span> <span class="n">dd</span><span class="p">[</span><span class="n">i_end</span><span class="p">:]</span>
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">dd_new</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dd</span><span class="p">)</span>
 
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp_lib</span><span class="p">,</span> <span class="s1">'wb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
         <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dd_new</span><span class="p">)</span>
-
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'modified library file:'</span><span class="p">,</span> <span class="n">fp_lib</span><span class="p">)</span>
 
     <span class="n">tt_code</span> <span class="o">=</span> <span class="n">dd_code</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">'utf-8'</span><span class="p">)</span>
 
+    <span class="c1"># patch init code of older FreeCAD versions &lt; v1.0</span>
+    <span class="c1"># see https://github.com/FreeCAD/FreeCAD/pull/10618</span>
     <span class="n">needle</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">                with open(file=InstallFile, encoding="utf-8") as f:</span>
 <span class="s2">                    exec(f.read())</span>
 <span class="s2">    """</span>
-
     <span class="n">needle_patched</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">                with open(InstallFile, 'rt', encoding='utf-8') as f:</span>
 <span class="s2">                    exec(compile(f.read(), InstallFile, 'exec'))</span>
 <span class="s2">    """</span>
-
     <span class="k">if</span> <span class="n">needle</span> <span class="ow">in</span> <span class="n">tt_code</span><span class="p">:</span>
-        <span class="c1"># older FreeCAD versions &lt; 0.22 need to be patched</span>
         <span class="n">tt_code</span> <span class="o">=</span> <span class="n">tt_code</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">needle</span><span class="p">,</span> <span class="n">needle_patched</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">needle_patched</span> <span class="ow">in</span> <span class="n">tt_code</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'applied patch to code:'</span><span class="p">,</span> <span class="n">fp_py</span><span class="p">)</span>
+
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp_py</span><span class="p">,</span> <span class="s1">'wt'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">'utf-8'</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
         <span class="n">fd</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tt_code</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'extracted init code (that will be called from the lib) to file:'</span><span class="p">,</span> <span class="n">fp_py</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>We can now, for example, open <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">Mod/Draft/Init.py</span> in Pyzo, set a breakpoint there in line 26 and start the FreeCAD shell in Pyzo. Execution will be interrupted at the breakpoint. We can switch the stack frames, view and manipulate variables and step/continue the code execution.
-</p>
 <h2><span class="mw-headline" id="Pyzo_customizations_developed_by_FreeCAD_users">Pyzo customizations developed by FreeCAD users</span></h2>
 <h3><span class="mw-headline" id="Workspace2_by_TheMarkster_et_al.">Workspace2 by TheMarkster et al.</span></h3>
 <p><a rel="nofollow" class="external free" href="https://forum.freecad.org/viewtopic.php?p=720709#p720709">https://forum.freecad.org/viewtopic.php?p=720709#p720709</a>
@@ -381,29 +385,29 @@ Editing the method and executing the cell can now be repeated as often as desire
 <li><a href="Embedding_FreeCAD.html" title="Embedding FreeCAD">Embedding_FreeCAD</a></li></ul>
 <!-- 
 NewPP limit report
-Cached time: 20251220123217
+Cached time: 20251220140325
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.063 seconds
-Real time usage: 0.073 seconds
-Preprocessor visited node count: 456/1000000
-Post&#8208;expand include size: 3676/2097152 bytes
-Template argument size: 6087/2097152 bytes
+CPU time usage: 0.076 seconds
+Real time usage: 0.080 seconds
+Preprocessor visited node count: 453/1000000
+Post&#8208;expand include size: 3607/2097152 bytes
+Template argument size: 6665/2097152 bytes
 Highest expansion depth: 4/100
-Expensive parser function count: 8/100
+Expensive parser function count: 7/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 24819/5000000 bytes
+Unstrip post&#8208;expand size: 26606/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   10.729      1 -total
- 30.80%    3.304      8 Template:Code
- 23.84%    2.558     25 Template:Incode
- 18.32%    1.966     15 Template:FileName
+100.00%    9.246      1 -total
+ 31.15%    2.880      7 Template:Code
+ 23.92%    2.212     26 Template:Incode
+ 20.86%    1.929     15 Template:FileName
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:321825-0!canonical and timestamp 20251220123251 and revision id 1718575. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:321825-0!canonical and timestamp 20251220140525 and revision id 1718576. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
