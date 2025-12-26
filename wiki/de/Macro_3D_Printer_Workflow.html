@@ -1,8 +1,9 @@
 <link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Macro 3D Printer Workflow/de</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="de" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-Macro+3D+Printer+Workflow&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
-<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="de" dir="ltr">Deutsch</span></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--high" lang="de" dir="ltr">Deutsch</span></li>
 <li><a href="../Macro_3D_Printer_Workflow.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="Macro 3D Printer Workflow (100% translated)" lang="en" dir="ltr">English</a></li>
-<li><a href="../fr/Macro_3D_Printer_Workflow.html" class="mw-pt-progress mw-pt-progress--complete" title="Macro 3D Printer Workflow (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../fr/Macro_3D_Printer_Workflow.html" class="mw-pt-progress mw-pt-progress--high" title="Macro 3D Printer Workflow (96% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
 <li><a href="../pl/Macro_3D_Printer_Workflow.html" class="mw-pt-progress mw-pt-progress--low" title="Makrodefinicja: Przebieg pracy drukarki 3D (4% translated)" lang="pl" dir="ltr">polski</a></li></ul></div>
+<div class="mw-translate-fuzzy">
 <table class="fcinfobox wikitable ct" width="100%" style="float: right; width: 230px; margin-left: 10px;">
 <tbody><tr>
 <td class="ctTitle" style="font-weight: bold; font-size: 125%;">
@@ -73,6 +74,7 @@
 <td class="ctToc"><br><meta property="mw:PageProp/toc">
 </td></tr>
 </tbody></table>
+</div>
 <p><span id="Description"></span>
 </p>
 <h2><span class="mw-headline" id="Beschreibung">Beschreibung</span></h2>
@@ -134,7 +136,7 @@ Vielen Dank an Mario 52, David69 und Roy_043 f&uuml;r die Hilfe bei diesem Wiki.
 <p>Werkzeugleisten-Symbol <span class="mw-default-size" typeof="mw:File"><a href="../index.php?title=Macro_3D_Printer_Workflow.png&amp;filetimestamp=20230127220116&amp;.html" class="mw-file-description"><img src="../File/Macro_3D_Printer_Workflow.png" decoding="async" width="64" height="64" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span>
 </p>
 <h3><span class="mw-headline" id="Code">Code</span></h3>
-<p>ver 00.02 05/02/2023 by 2cv001 <b>3D_Printer_Workflow.FCMacro</b>
+<p>ver 00.03 2025/12/25 by 2cv001 <b>3D_Printer_Workflow.FCMacro</b>
 </p>
 <pre>#!/usr/bin/env python
 # -*- coding: utf-8 -*-
@@ -148,7 +150,7 @@ Vielen Dank an Mario 52, David69 und Roy_043 f&uuml;r die Hilfe bei diesem Wiki.
 # ==================================================================
 __author__ = "2cv001"
 __title__   = "Macro_3D_Printer_Workflow"
-__date__    = "2023/02/05"    #YYYY/MM/DD
+__date__    = "2025/12/25"    #YYYY/MM/DD
 __version__ = __date__
 __icon__    = "https://wiki.freecad.org/images/b/b4/Macro_3D_Printer_Workflow.png"
 __Wiki__    = "https://wiki.freecad.org/Macro_3D_Printer_Workflow"
@@ -179,9 +181,10 @@ Examples of applications:
 
 Tested on windows and Linux
 """
+
 import FreeCAD as App
 import Mesh
-from PySide2 import QtCore, QtWidgets
+from PySide import QtCore, QtWidgets
 import os, sys, subprocess
 import time
 import FreeCADGui as Gui
@@ -200,8 +203,7 @@ import FreeCADGui as Gui
 # but the larger the size of the stl file
 # the value must be between 0 and 1
 deviation=0.01
-doitLancerFichier=True # if True, it will be proposed to launch the stl file.
-                                 # otherwise put False
+doitLancerFichier=False # if True, it will be proposed to launch the stl otherwise put False
 
 # Automatic program launch,
 # Automation of the production line
@@ -212,20 +214,21 @@ delaiMax=10 # if the user enters a delay greater than this value,
 
 #To launch programs of your choice
 #------------------------------------------
-#Typically for example a home automation program, 
+#Typically for example a home automation program,
 #turn on your printer or/and a light etc.
 #Use the following syntax by adding after the line "# insert your lines here" a line
 #   with this syntax (important: align the [ with the others):
-#  [ ['command to execute', 'param 1', param 2, ] ,'.extension','question to ask', waiting time],
+#  [ ['command to execute', 'param 1', param 2, ] ,'.extension','question to ask', waiting time, checked by default]
 # Details of the syntax&nbsp;:
-#  'command to execute'&nbsp;: the command you want to execute. 
-#  'param 1, param 2,...'&nbsp;: if your program needs parameters. 
+#  'command to execute'&nbsp;: the command you want to execute.
+#  'param 1, param 2,...'&nbsp;: if your program needs parameters.
 #      These parameters will be taken into account only if extension=''.#
-#  'extension': if not empty then the first parameter will be replaced by the name of 
+#  'extension': if not empty then the first parameter will be replaced by the name of
 #      your FreeCAD file but with this extension.
 #  'question to ask': the question to display in the dialog box
 #  time_wait&nbsp;: optional&nbsp;: nb of seconds to wait after execution
 #      allows for example to wait for the printer to start before asking it to heat the plate
+#  'checked by default' False if you whant it unchecked by default
 
 #  Note in the examples below the double \ in place of \ (because the special characters
 #    must be preceded by an \ in python). Ditto for the apostrophe for example
@@ -240,15 +243,15 @@ Launching a program&nbsp;:
 [ ['calc.exe'                                         ] ,''    ,'Launch the calculator&nbsp;?'],
   to launche a program with a parameter (here&nbsp;: dessin.jpg)
 [ ['C:\\WINDOWS\\system32\\mspaint.exe','dessin.jpg'  ] ,''    ,'Launch  Paint&nbsp;?'          ],
-  to launche a program with an extension parameter. If for example, 
+  to launche a program with an extension parameter. If for example,
   the freecad project file name is 'mondessin.FCStd'
   and if you give '.stl' as extension, the program will be launched with as first parameter 'mondessin.stl'
-  Here cura will be launched with the file 'modessin.stl' loaded&nbsp;: 
+  Here cura will be launched with the file 'modessin.stl' loaded&nbsp;:
 [ ['C:\\Program Files\\Ultimaker Cura 4.8.0\\Cura.exe'] ,'.stl','Launch  Cura&nbsp;?'           ],
   to load an url in firefox. Here, to launch octopi in firefox.
 [ ['C:\\Program Files\\Mozilla Firefox\\firefox.exe','https://octopi.local'],'','Launch Octoprint&nbsp;?'],
     On linux:
-[ [   'firefox','https://octopi.local'                ] , ''   ,'Launch Octoprint&nbsp;?'      ], 
+[ [   'firefox','https://octopi.local'                ] , ''   ,'Launch Octoprint&nbsp;?'      ],
 
 Launching a web page (here, a php script)&nbsp;:
 -----------------------------------------
@@ -257,9 +260,9 @@ Launching an url using https but insecure
 [ ['curl','https://pidomotique/connecte.php,'--insecure'] , ''   ,'Connect the printer&nbsp;?'],
 And if we want a delay of 10 seconds before the following program is executed:&nbsp;:
 [ ['curl','https://pidomotique/connecte.php,'--insecure'] , ''   ,'Connect the printer&nbsp;?',10],
-Example of printer control via octoprint (f you have it...): 
+Example of printer control via octoprint (f you have it...):
    send a G-code (see https://marlinfw.org/meta/gcode/ for others G-codes)
-   here&nbsp;: temperature setting of the plate 
+   here&nbsp;: temperature setting of the plate
 - Replace the XXX after X-Api-Key: by your API key (found in the octoprint parameters)
 - Replace http://octopi.local by the url with which you access octoprint
 - Change the value 050 in "M140 S050". S050 indicates that you need to heat to 50&deg;.
@@ -284,8 +287,6 @@ commandes=[
   [  ['curl','https://pijeedom/core/api/jeeApi.php?apikey=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx&amp;type=cmd&amp;id=4048','--insecure'  ] , ''   ,'Heat the bed&nbsp;?'],
   [  ['C:\\Program Files\\Mozilla Firefox\\firefox.exe','https://octopi'],'','Launch Octoprint&nbsp;?'],
 
-
-
            ]
 
 
@@ -298,6 +299,7 @@ indiceCommandeEtParam=0
 indiceExtFileNameParamCommandeALancer=1
 indiceTextAutreCommandeALancer=2
 indiceDelai=3
+indiceCheckedCommandeAlancer=4
 
 # UI Class definitions
 class BoiteDialogueSTLGuiClass(QtWidgets.QDialog):
@@ -316,17 +318,25 @@ class BoiteDialogueSTLGuiClass(QtWidgets.QDialog):
         self.checkboxGenererSTL = QtWidgets.QCheckBox("Generate STL&nbsp;?", self)
         self.checkboxGenererSTL.setCheckState(QtCore.Qt.Checked)
         lay.addWidget(self.checkboxGenererSTL, 0, 0)
-        if doitLancerFichier&nbsp;:
-            self.checkboxLancerSTL = QtWidgets.QCheckBox("Launch the slicer&nbsp;?", self)
-            self.checkboxLancerSTL.setCheckState(QtCore.Qt.Checked)
-            lay.addWidget(self.checkboxLancerSTL, 2, 0)
+
+        self.checkboxLancerSTL = QtWidgets.QCheckBox("Launch the slicer&nbsp;?", self)
+        self.checkboxLancerSTL.setCheckState(QtCore.Qt.Checked)
+        lay.addWidget(self.checkboxLancerSTL, 2, 0)
+
+        if not doitLancerFichier&nbsp;:
+          self.checkboxLancerSTL.setVisible(False)
+          self.checkboxLancerSTL.setCheckState(QtCore.Qt.Unchecked)
 
         for posLigne, cmd in enumerate(commandes, start=3):
            textCommande=cmd[indiceTextAutreCommandeALancer]
            self.checkboxTextCommande = QtWidgets.QCheckBox(textCommande, self)
            # storing this checkbox in a table&nbsp;:
            self.tabCheckboxTextCommandes.append(self.checkboxTextCommande)
-           self.checkboxTextCommande.setCheckState(QtCore.Qt.Checked)
+           try&nbsp;:
+               caseChecked=cmd[indiceCheckedCommandeAlancer]
+           except&nbsp;:
+               caseChecked=True
+           self.checkboxTextCommande.setCheckState(QtCore.Qt.Checked if caseChecked else QtCore.Qt.Unchecked)
            lay.addWidget(self.checkboxTextCommande, posLigne, 0)
 
         # numeric input field
@@ -358,8 +368,8 @@ class BoiteDialogueSTLGuiClass(QtWidgets.QDialog):
 #===============
 def octopi(api,commande,urlOctopi,apiKey)&nbsp;:
     """
-    Function that returns the parameter to pass to subprocess.Popen if you 
-    want to run an octopi API. Not used here. But for memory purposes 
+    Function that returns the parameter to pass to subprocess.Popen if you
+    want to run an octopi API. Not used here. But for memory purposes
     and a future evolution
 
     Arguments&nbsp;:
@@ -565,9 +575,8 @@ def lanceCommmandes(commandesAlancer,fileStlName,formBoiteDialogueSTL):
                    # We add a parameter to put our file name
                    # with our extension.
                    commandeEtParam.append('')
-                commandeEtParam[1]=   os.path.splitext(fileStlName)[0]+  extFileNameParamCommandeALancer
+                commandeEtParam[1]= os.path.splitext(fileStlName)[0]+ extFileNameParamCommandeALancer
             subprocess.Popen(commandeEtParam,close_fds=True)
-            print(commandeEtParam)
             time.sleep(delai)# Pause time (seconds)
 
 
@@ -612,7 +621,7 @@ def run(objs=Gui.Selection.getSelection(), dev=deviation):
 
 # Dialog box of what we want to do
     formBoiteDialogueSTL=BoiteDialogueSTLGuiClass(mw)
-    if not formBoiteDialogueSTL.exec_()&nbsp;:
+    if not formBoiteDialogueSTL.exec()&nbsp;:
         return
     dev=formBoiteDialogueSTL.precision.value()
     # we memorize the selected solids and their deviation,
@@ -629,7 +638,6 @@ def run(objs=Gui.Selection.getSelection(), dev=deviation):
     #The solids in dictionaryOriginDeviation are passed as parameters
     if formBoiteDialogueSTL.checkboxGenererSTL.isChecked():
        Mesh.export(list(dictionnaireOrigineDeviation.keys()), fileStlName)
-       print('Export done')
     # restitution of the original property deviation for all solids&nbsp;:
     restitueDeviation(dictionnaireOrigineDeviation)
     recalcul(dictionnaireOrigineDeviation)
@@ -647,29 +655,29 @@ if __name__ == '__main__':
 </pre>
 <!-- 
 NewPP limit report
-Cached time: 20251122132155
+Cached time: 20251226204123
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.067 seconds
-Real time usage: 0.115 seconds
-Preprocessor visited node count: 141/1000000
+CPU time usage: 0.031 seconds
+Real time usage: 0.040 seconds
+Preprocessor visited node count: 142/1000000
 Post&#8208;expand include size: 4097/2097152 bytes
 Template argument size: 968/2097152 bytes
 Highest expansion depth: 5/100
 Expensive parser function count: 0/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 21936/5000000 bytes
+Unstrip post&#8208;expand size: 22207/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%    9.848      1 -total
- 60.16%    5.925      1 Template:Macro/de
- 23.87%    2.351      2 Template:Caption
- 12.32%    1.213      1 Template:Button
+100.00%    5.885      1 -total
+ 54.55%    3.210      1 Template:Macro/de
+ 25.96%    1.528      2 Template:Caption
+ 15.92%    0.937      1 Template:Button
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:392072-0!canonical and timestamp 20251122132155 and revision id 1700350. Rendering was triggered because: api-parse
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:392072-0!canonical and timestamp 20251226204123 and revision id 1720459. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="../site.js"></script>
