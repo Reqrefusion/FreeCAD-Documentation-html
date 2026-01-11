@@ -37,43 +37,6 @@
 </pre></div>
 <p>However, please notice that packages provided by many Linux repositories tend to be old, and may not contain the latest developments in the software. If you want to be sure you are using the newest software, use a <a href="Conda.html" title="Conda">Conda</a>-based distribution of FreeCAD, a pre-compiled IfcOpenShell distribution, or compile IfcOpenShell yourself.
 </p>
-<h3><span class="mw-headline" id="Using_a_pre-compiled_IfcOpenShell_package">Using a pre-compiled IfcOpenShell package</span></h3>
-<p>There is a special repository of the IfcOpenShell project that compiles regularly the IfcOpenShell libraries for various systems (Linux, Windows, MacOS), architectures (32-bit and 64-bit), and Python versions (2.7, 3.x). To use these pre-compiled libraries, you must pick the right version that matches your operating system, architecture, and the major and minor numbers for the <a href="Python.html" title="Python">Python</a> that is used with FreeCAD. This means that the first two numbers must match (Python 3.6 and 3.7 are considered distinct versions) while the third one (micro) does not matter (Python 3.6.5 and 3.6.12 are considered to be the same for compatibility purposes).
-</p>
-<ol><li>Head to the build repository <a rel="nofollow" class="external text" href="https://github.com/IfcOpenBot/IfcOpenShell">IfcOpenBot/IfcOpenShell</a>. This repository is not for development, it only contains a copy of the main repository as well as pre-compiled packages.</li>
-<li>As of this writing (2020), the master branch of the IfcOpenShell project does not contain the latest code, so we need to select the desired branch, for example, <code>v0.6.0</code>.</li>
-<li>Click on the commit number, which will take you to the list of commits for the branch, for example, <code>IfcOpenBot/IfcOpenShell/commits/v0.6.0</code>.</li>
-<li>Go back in the history until you find a commit that has a comment. This will indicate the moment when pre-compiled libraries were released.</li>
-<li>Click on the commit. You will see a comment by IfcOpenBot showing a table of combinations of operating system, architecture, and Python version. Choose the right link for "Python" to match your <a href="Std_About.html" title="Std About">version of FreeCAD</a>. The "Blender", "IfcConvert", and "IfcGeomServer" packages are not needed for FreeCAD usage.</li>
-<li>The downloaded package needs to be extracted, and the extracted directory needs to be placed in the Python search path in order to find the new modules.</li></ol>
-<p><i>Note:</i> the following examples assume a Debian/Ubuntu based system, but the general procedure should work for other operating systems.
-</p>
-<dl><dd><ul><li>Unzipping the downloaded package creates an <code>ifcopenshell/</code> folder.</li></ul></dd></dl>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">unzip</span> <span class="n">ifcopenshell</span><span class="o">-</span><span class="n">python</span><span class="o">-</span><span class="mi">36</span><span class="o">-</span><span class="n">v0</span><span class="mf">.6.0</span><span class="o">-</span><span class="mi">4</span><span class="n">baec57</span><span class="o">-</span><span class="n">linux64</span><span class="o">.</span><span class="n">zip</span>
-</pre></div>
-<dl><dd><ul><li>The search path can be found by inspecting the <code>sys.path</code> variable in the <a href="Python_console.html" class="mw-redirect" title="Python console">Python console</a>.</li></ul></dd></dl>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
-</pre></div>
-<dl><dd><ul><li>If you'd like to install the IfcOpenShell library only for your user, and not affect system directories, you should place the extracted <code>ifcopenshell/</code> folder in your own user's home directory.</li></ul></dd></dl>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">mv</span> <span class="o">-</span><span class="n">t</span> <span class="err">$</span><span class="n">HOME</span><span class="o">/.</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.6</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span> <span class="n">ifcopenshell</span><span class="o">/</span>
-</pre></div>
-<dl><dd><ul><li>If you'd like to install the IfcOpenShell library system-wide, you typically need superuser privileges to write to system directories; this is usually a <code>site-packages/</code> directory, or a <code>dist-packages/</code> directory for Debian/Ubuntu distributions.</li></ul></dd></dl>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">sudo</span> <span class="n">mv</span> <span class="o">-</span><span class="n">t</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span> <span class="n">ifcopenshell</span><span class="o">/</span>
-</pre></div>
-<p>If the directory is correctly moved, test that the <code>ifcopenshell</code> module is accessible from the <a href="Python_console.html" class="mw-redirect" title="Python console">Python console</a>.
-</p>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">&gt;&gt;&gt;</span> <span class="kn">import</span> <span class="nn">ifcopenshell</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">ifcopenshell</span><span class="o">.</span><span class="n">version</span><span class="p">)</span>
-<span class="mf">0.6.0</span><span class="n">b0</span>
-<span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">ifcopenshell</span><span class="o">.</span><span class="n">__path__</span><span class="p">)</span>
-<span class="p">[</span><span class="s1">'/home/user/.local/lib/python3.6/site-packages/ifcopenshell'</span><span class="p">]</span>
-</pre></div>
-<p>To remove the installed library, just remove the corresponding directory with all modules inside.
-</p>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="err">$</span><span class="n">HOME</span><span class="o">/.</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.6</span><span class="o">/</span><span class="n">site</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">ifcopenshell</span><span class="o">/</span>
-<span class="n">sudo</span> <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">lib</span><span class="o">/</span><span class="n">python3</span><span class="mf">.6</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">packages</span><span class="o">/</span><span class="n">ifcopenshell</span><span class="o">/</span>
-</pre></div>
 <h2><span class="mw-headline" id="Compiling">Compiling</span></h2>
 <p>Compiling IfcOpenShell is recommended only for advanced users. The process is similar to <a href="Compile_on_Linux.html" title="Compile on Linux">compiling FreeCAD on Linux</a>, so if you have done this already, then you may already have the necessary requisites like the <a href="OpenCASCADE.html" title="OpenCASCADE">OpenCASCADE's</a> development files. The process uses the CMake configuration tool to produce a custom <code>Makefile</code> for use with the Make tool.
 </p><p>The general instructions are outlined in the <a rel="nofollow" class="external text" href="https://github.com/IfcOpenShell/IfcOpenShell">IfcOpenShell repository</a>, and are as follows:
@@ -391,34 +354,34 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260111212644
+Cached time: 20260111212959
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.153 seconds
-Real time usage: 0.211 seconds
-Preprocessor visited node count: 1613/1000000
-Post&#8208;expand include size: 36509/2097152 bytes
-Template argument size: 18166/2097152 bytes
+CPU time usage: 0.150 seconds
+Real time usage: 0.180 seconds
+Preprocessor visited node count: 1457/1000000
+Post&#8208;expand include size: 35762/2097152 bytes
+Template argument size: 17552/2097152 bytes
 Highest expansion depth: 5/100
-Expensive parser function count: 44/100
+Expensive parser function count: 38/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 36061/5000000 bytes
+Unstrip post&#8208;expand size: 31733/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   52.743      1 -total
- 42.81%   22.581     44 Template:Code
- 16.82%    8.872      1 Template:BIM_Tools_navi
- 13.48%    7.109      3 Template:Navigation_menu_2
- 10.12%    5.337      1 Template:FEM_Tools_navi
-  6.83%    3.604     65 Template:Incode
-  4.14%    2.186      1 Template:Userdocnavi
-  3.47%    1.829      2 Template:Emphasis
-  2.82%    1.485      1 Template:TOCright
+100.00%   28.862      1 -total
+ 29.10%    8.400     38 Template:Code
+ 23.68%    6.834      1 Template:BIM_Tools_navi
+ 23.08%    6.661      3 Template:Navigation_menu_2
+  9.62%    2.775      1 Template:FEM_Tools_navi
+  7.80%    2.251     57 Template:Incode
+  6.89%    1.988      1 Template:Userdocnavi
+  4.27%    1.232      1 Template:TOCright
+  2.50%    0.721      1 Template:Emphasis
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:185057-0!canonical and timestamp 20260111212649 and revision id 1736466. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:185057-0!canonical and timestamp 20260111213027 and revision id 1736475. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
