@@ -1,17 +1,18 @@
 <link href="site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Package Metadata</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="index.php?title=Special;Translate&amp;group=page-Package+Metadata&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
-<li><a href="de/Package_Metadata.html" class="mw-pt-progress mw-pt-progress--high" title="Package Metadata (97% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="de/Package_Metadata.html" class="mw-pt-progress mw-pt-progress--complete" title="Package Metadata (100% translated)" lang="de" dir="ltr">Deutsch</a></li>
 <li><span class="mw-pt-languages-ui mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="en" dir="ltr">English</span></li>
-<li><a href="fr/Package_Metadata.html" class="mw-pt-progress mw-pt-progress--high" title="M&eacute;tadonn&eacute;es du package (97% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="fr/Package_Metadata.html" class="mw-pt-progress mw-pt-progress--complete" title="M&eacute;tadonn&eacute;es du package (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
 <li><a href="it/Package_Metadata.html" class="mw-pt-progress mw-pt-progress--med" title="Pacchetto Metadata (20% translated)" lang="it" dir="ltr">italiano</a></li>
-<li><a href="pl/Package_Metadata.html" class="mw-pt-progress mw-pt-progress--high" title="Metadane pakietu (97% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="pl/Package_Metadata.html" class="mw-pt-progress mw-pt-progress--complete" title="Metadane pakietu (100% translated)" lang="pl" dir="ltr">polski</a></li>
 <li><a href="ru/Package_Metadata.html" class="mw-pt-progress mw-pt-progress--med" title="&#1052;&#1077;&#1090;&#1072;&#1076;&#1072;&#1085;&#1085;&#1099;&#1077; &#1076;&#1083;&#1103; &#1086;&#1087;&#1080;&#1089;&#1072;&#1085;&#1080;&#1103; &#1055;&#1072;&#1082;&#1077;&#1090;&#1086;&#1074; &#1076;&#1086;&#1087;&#1086;&#1083;&#1085;&#1077;&#1085;&#1080;&#1081; (39% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li></ul></div>
 <div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
 <h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
-<p>Beginning in FreeCAD version 0.20, external addons (workbenches, macros, preference packs, bundles<sup><a href="Release_notes_1.1.html" title="Release notes 1.1">introduced in 1.1</a></sup>, and generic "other" collections of tools<sup><a href="Release_notes_1.1.html" title="Release notes 1.1">introduced in 1.1</a></sup>) may be distributed with a metadata file describing the contents of the package. If the file "package.xml" is present it is read by FreeCAD and its contents used in various parts of the user interface. It is currently optional for workbenches and macros, and required for preference packs. This page documents the format of that metadata file. The format (and the contents of this Wiki page) are based on <a rel="nofollow" class="external text" href="https://ros.org/reps/rep-0149.html">REP 149</a>.
+<p>Beginning in FreeCAD <code>v0.20</code> addons should be distributed with a manifest file describing their contents. FreeCAD uses this metadata to determine what resources to load and what dependencies to install upon other things. It also provides information used to display your addon in the Addon Manager.
 </p>
 <h2><span class="mw-headline" id="Overall_file_format">Overall file format</span></h2>
-<p>This document currently describes file format version 1. 
-</p><p>The metadata file must be a valid, well-formed XML 1.0 document. It must be called "package.xml", and must exist in the base directory of each of the software package's displayed branches (as specified by the <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD-addons/blob/master/AddonCatalog.json">FreeCAD-addons AddonCatalog.json file</a>) in its git repository. Each branch is expected to contain an independent package.xml file that pertains specifically to that branch (e.g. a "development" branch should specify a version number that makes it clear it is a development branch, etc.). All understood XML tags are in lowercase, but unrecognized tags are <b>not</b> an error. Most tags are optional, and some only apply to certain types of package contents (for example, only Workbenches currently provide a "classname" element). Unneeded or unrecognized elements are ignored.
+<p>This document currently describes file format version 1.
+</p><p>The original format and contents of this page were based on <a rel="nofollow" class="external text" href="https://ros.org/reps/rep-0149.html">REP 149</a>.
+</p><p>The metadata file must be a valid, well-formed XML 1.0 document. It must be called <code>package.xml</code> , and must exist in the base directory of each of the software package's displayed branches (as specified by the <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD-addons/blob/master/AddonCatalog.json">FreeCAD-addons AddonCatalog.json file</a>) in its git repository. Each branch is expected to contain an independent package.xml file that pertains specifically to that branch (e.g. a "development" branch should specify a version number that makes it clear it is a development branch, etc.). All understood XML tags are in lowercase, but unrecognized tags are <b>not</b> an error. Most tags are optional, and some only apply to certain types of package contents (for example, only Workbenches currently provide a "classname" element). Unneeded or unrecognized elements are ignored.
 </p><p>Any file path specified in package.xml must use the slash ("/") as the directory separator: on systems that expect a different separator during execution (e.g. Windows) FreeCAD will automatically convert to the correct separator.
 </p>
 <h2><span class="mw-headline" id="Content_elements">Content elements</span></h2>
@@ -355,34 +356,33 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260111213418
+Cached time: 20260117085719
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.087 seconds
-Real time usage: 0.188 seconds
-Preprocessor visited node count: 640/1000000
-Post&#8208;expand include size: 7217/2097152 bytes
-Template argument size: 2557/2097152 bytes
+CPU time usage: 0.079 seconds
+Real time usage: 0.094 seconds
+Preprocessor visited node count: 626/1000000
+Post&#8208;expand include size: 7117/2097152 bytes
+Template argument size: 2545/2097152 bytes
 Highest expansion depth: 5/100
 Expensive parser function count: 1/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 8144/5000000 bytes
+Unstrip post&#8208;expand size: 8159/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   40.493      1 -total
- 27.79%   11.255      1 Template:Powerdocnavi
- 16.15%    6.538      1 Template:Code
- 14.98%    6.067      3 Template:Version
- 11.88%    4.809      1 Template:Navigation_menu_2
- 10.84%    4.390      2 Template:VersionNote
-  9.13%    3.695      1 Template:MenuCommand
-  6.11%    2.476     37 Template:Incode
-  4.08%    1.652      1 Template:TOCright
+100.00%   12.633      1 -total
+ 27.26%    3.444      1 Template:Powerdocnavi
+ 16.77%    2.119     37 Template:Incode
+ 14.04%    1.774      1 Template:Navigation_menu_2
+ 11.34%    1.433      1 Template:Code
+  9.31%    1.176      3 Template:Version
+  8.40%    1.061      1 Template:TOCright
+  8.26%    1.044      1 Template:MenuCommand
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:236741-0!canonical and timestamp 20260111213418 and revision id 1736486. Rendering was triggered because: api-parse
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:236741-0!canonical and timestamp 20260117085758 and revision id 1739364. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
