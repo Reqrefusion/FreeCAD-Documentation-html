@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileNotice: Part of the Offline Wiki addon.
+
 import os
 import re
 import requests
