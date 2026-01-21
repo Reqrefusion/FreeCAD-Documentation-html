@@ -1,4 +1,8 @@
 <?php
+
+// SPDX-License-Identifier: GPL-2.1-or-later
+// SPDX-FileNotice: Part of the Offline Wiki addon.
+
 date_default_timezone_set('UTC');  // Set timezone to UTC
 
 $enableCronJob = true; // Set to false to disable cron-style polling
