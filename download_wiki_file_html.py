@@ -1,10 +1,13 @@
+# SPDX-License-Identifier: GPL-2.0-or-later
+# SPDX-FileNotice: Part of the Offline Wiki addon.
+
 import os
 import re
 import requests
 import json
 from datetime import datetime
 from bs4 import BeautifulSoup
-import random 
+import random
 
 # API URL
 wiki_url = "https://wiki.freecad.org/api.php"
@@ -34,12 +37,12 @@ def sanitize_name(name):
 
 def remove_first_segment(text, delimiter):
     parts = text.split(delimiter)
-    return delimiter.join(parts[1:]) 
+    return delimiter.join(parts[1:])
 
 def create_file_path(title):
     """Creates the correct file path based on the page title and language."""
     parts = [part for part in title.split('/') if part]
-    
+
     # If the title has multiple parts and the last part is in language codes, check the language code
     if len(parts) > 1 and parts[-1] in language_codes:
         language_code = parts[-1]  # Last part is the language code
@@ -63,7 +66,7 @@ def create_file_path(title):
 def download_css_js():
     """Downloads and saves all CSS and JS files."""
     os.makedirs(output_dir, exist_ok=True)
-    
+
     # Download the CSS file
     css_file = os.path.join(output_dir, "site.css")
     if not os.path.exists(css_file):
@@ -73,7 +76,7 @@ def download_css_js():
             css_content += requests.get(url).text + "\n"
         with open(css_file, 'w', encoding='utf-8') as f:
             f.write(css_content)
-    
+
     # Download the JS file
     js_file = os.path.join(output_dir, "site.js")
     if not os.path.exists(js_file):
@@ -150,11 +153,11 @@ def process_page(page):
         "format": "json"
     }
     response = requests.get(wiki_url, params=content_params)
-    
+
     if response.status_code != 200:
         print(f"Error: Could not download {page_title}. HTTP Code: {response.status_code}")
         return
-    
+
     data = response.json()
     html_content = data.get('parse', {}).get('text', {}).get('*', '')
 
