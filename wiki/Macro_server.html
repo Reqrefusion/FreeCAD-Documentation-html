@@ -70,17 +70,14 @@ server
 <p>Useful tool for FreeCAD automatization. The aim is for a small, versatile, 'top level'-only program.
 </p><p>Remote FreeCAD management, no actual model editing (for such goal, see Extensions).
 </p><p>You need client to send commands to this server. Included is simple python command line utility as reference implementation.
-</p><p>Don't forget to set ROOT path to server's stdin/stdout files - both in client AND in server before running it (variable ROOT at start of both files).
-</p>
-<h2><span class="mw-headline" id="Usage">Usage</span></h2>
-<p>This allows you to globally (but still in server's space not FreeCAD itself) select&nbsp;:
+</p><p>This allows you to globally (but still in server's space not FreeCAD itself) select&nbsp;:
 </p>
 <ul><li>document</li>
 <li>object</li>
 <li>spreadsheet</li>
 <li>path (mainly for export)</li></ul>
 <p><br>
-</p><p>Subsequent operations may require document/object/spreadsheet/path
+Subsequent operations may require document/object/spreadsheet/path
 </p><p>(most of those arguments are optional)
 </p>
 <ul><li>given value is used first</li>
@@ -101,72 +98,103 @@ server
 <ul><li>get cell value</li>
 <li>set cell value</li>
 <li>recompute (needed after setting cells)</li>
-<li>export</li></ul><p>
-Command format&nbsp;:</p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>&lt;one-letter-mod&gt;&lt;name&gt; &lt;data string&gt;
+<li>export</li></ul>
+<h2><span class="mw-headline" id="Usage">Usage</span></h2>
+<h3><span class="mw-headline" id="Server">Server</span></h3>
+<p>You start server by running macro. You can stop it the same way. Macro, therefore, acts as mere switch button and real magic happens elsewhere.
+</p>
+<h3><span class="mw-headline" id="Client">Client</span></h3>
+<p>Included client script accepts command in form of command line arguments. Each argument is one command.
+</p><p>e.g.: ./freecad-ctl.py 'dMy_document_1' C '!B1 123' C
+</p>
+<h3><span class="mw-headline" id="Note">Note</span></h3>
+<p>Don't forget to set ROOT path to server's stdin/stdout files - both in client AND in server before running it (variable ROOT at start of both files).
+</p>
+<h3><span class="mw-headline" id="Communication_protocol">Communication protocol</span></h3>
+<p>Informations are exchanged thru two files. From server's POV one is input, the other output. From client's POV server's input is its output and vice versa.
+</p><p>Every command returns some response.
+</p>
+<h4><span class="mw-headline" id="Command_format">Command format</span></h4>
+<div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>&lt;one-letter-mod&gt;&lt;name&gt; &lt;data string&gt;
 </pre></div><p>e.g.:</p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>!B1 123
 </pre></div><p>where&nbsp;:
-</p><ul><li><b>!</b>&nbsp;is mod</li>
+</p><ul><li><b>!</b>&nbsp;is mod/command</li>
 <li><b>B1</b>&nbsp;is name</li>
-<li><b>123</b> is string value</li></ul>
+<li><b>123</b> is string value (can be another name or just value; depends on situation)</li></ul>
 <p>this sets cell B1 (in global or active document and spreadsheet) to value 123
 </p>
-<h2><span class="mw-headline" id="Commands">Commands</span></h2>
-<p><b>D</b> - get list of open documents
-</p><p><b>O[&lt;document&gt;]</b> - get list of objects
-</p><p><b>C[&lt;document&gt;] [&lt;spreadsheet&gt;]</b> - get list of cells
-</p><p><br>
-</p><p><b>d&lt;document&gt;</b> - select document
-</p><p><b>s[&lt;document&gt;] &lt;spreadsheet&gt;</b> - select spreadsheet
-</p><p><b>o[&lt;document&gt;] &lt;object-name&gt;</b> - select object
-</p><p><b>p &lt;file-path&gt;</b> - select/set path
-</p><p><br>
-</p><p><b>@&lt;cell-id&gt; [&lt;spreadsheet&gt;]</b> - get cell value
-</p><p><b>!&lt;cell-id&gt; &lt;value&gt;</b>&nbsp;- set cell value
-</p><p><br>
-</p><p><b>r[&lt;document&gt;]</b> - recompute document
-</p><p><b>e[&lt;object&gt;] [&lt;file-path&gt;]</b> - export selected object
+<h4><span class="mw-headline" id="Commands">Commands</span></h4>
+<p><i>D</i> - get list of open documents
+</p><p><i>O[&lt;document&gt;]</i> - get list of objects
+</p><p><i>C[&lt;document&gt;] [&lt;spreadsheet&gt;]</i> - get list of cells
+</p><p><i>d&lt;document&gt;</i> - select document
+</p><p><i>s[&lt;document&gt;] &lt;spreadsheet&gt;</i> - select spreadsheet
+</p><p><i>o[&lt;document&gt;] &lt;object-name&gt;</i> - select object
+</p><p><i>p &lt;file-path&gt;</i> - select/set path
+</p><p><i>@&lt;cell-id&gt; [&lt;spreadsheet&gt;]</i> - get cell value
+</p><p><i>!&lt;cell-id&gt; &lt;value&gt;</i>&nbsp;- set cell value
+</p><p><i>r[&lt;document&gt;]</i> - recompute document
+</p><p><i>e[&lt;object&gt;] [&lt;file-path&gt;]</i> - export selected object
 </p>
-<h2><span class="mw-headline" id="Extensions">Extensions</span></h2>
-<p>In case more functionality is required, beyond scope of this server, additions can be easily made.
-</p>
-<h2><span class="mw-headline" id="Examples">Examples</span></h2><p>
-Select document My_document_0</p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>dMy_document_0
-</pre></div><p>Get list of objects from 'My_document_1'</p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>OMy_document_1
-</pre></div><p>Get list of objects from 'My_document_0'</p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>O
-</pre></div><p>Unselect document</p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>d
-</pre></div><p>Get list of objects from FreeCAD's active document</p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>O
+<h4><span class="mw-headline" id="Examples">Examples</span></h4><p>
+Select document <b>My_document_0</b></p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>dMy_document_0
 </pre></div>
 <p><br>
 </p><p>
-Get list of cells from 'My_document_0' (default spreadsheet)</p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>CMy_document_0
-</pre></div><p>Get list of cells from 'My_document_0' ('My_spreadsheet')</p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>CMy_document_0 My_spreadsheet
+Get list of objects from <b>My_document_1</b></p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>OMy_document_1
 </pre></div>
+<p><br>
+</p><p>
+Get list of objects from <b>My_document_0</b></p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>O
+</pre></div>
+<p><br>
+</p><p>
+Unselect document</p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>d
+</pre></div>
+<p><br>
+</p><p>
+Get list of objects from FreeCAD's active document</p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>O
+</pre></div><p>
+Get list of cells from <b>My_document_0</b> (default spreadsheet)</p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>CMy_document_0
+</pre></div>
+<p><br>
+</p><p>
+Get list of cells from <b>My_spreadsheet</b> in <b>My_document_0</b></p><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>CMy_document_0 My_spreadsheet
+</pre></div>
+<h2><span class="mw-headline" id="Extensions">Extensions</span></h2>
+<p>In case more functionality is required, beyond scope of this server, additions can be easily made.
+</p><p>Every command must return some response.
+</p>
 <h2><span class="mw-headline" id="Code">Code</span></h2>
-<h3><span class="mw-headline" id="server_macro">server macro</span></h3>
-<h3><span class="mw-headline" id="client_script">client script</span></h3>
+<h3><span class="mw-headline" id="server_macro">server macro</span></h3><p>
+server.FCMacro</p><div class="mw-highlight mw-highlight-lang-python3 mw-content-ltr mw-highlight-lines" dir="ltr"><pre><span></span><span class="linenos" data-line="1"></span><span class="c1">#</span>
+</pre></div>
+<h3><span class="mw-headline" id="client_script">client script</span></h3><p>
+freecad-ctl.py</p><div class="mw-highlight mw-highlight-lang-python3 mw-content-ltr mw-highlight-lines" dir="ltr"><pre><span></span><span class="linenos" data-line="1"></span><span class="c1">#</span>
+</pre></div>
 <!-- 
 NewPP limit report
-Cached time: 20260123132930
+Cached time: 20260123210633
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.020 seconds
-Real time usage: 0.028 seconds
-Preprocessor visited node count: 141/1000000
+CPU time usage: 0.050 seconds
+Real time usage: 1.337 seconds
+Preprocessor visited node count: 164/1000000
 Post&#8208;expand include size: 2239/2097152 bytes
 Template argument size: 323/2097152 bytes
 Highest expansion depth: 7/100
-Expensive parser function count: 11/100
+Expensive parser function count: 13/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 1547/5000000 bytes
+Unstrip post&#8208;expand size: 2033/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%    4.475      1 Template:Macro
-100.00%    4.475      1 -total
+100.00%    4.972      1 Template:Macro
+100.00%    4.972      1 -total
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:412380-0!canonical and timestamp 20260123132945 and revision id 1742884. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:412380-0!canonical and timestamp 20260123210651 and revision id 1743134. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
