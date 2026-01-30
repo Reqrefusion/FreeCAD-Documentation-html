@@ -648,153 +648,154 @@ else:
 	del(FreeCAD.server)
 
 	print('#I&nbsp;: server&nbsp;: stopped')</pre>
-<h3><span class="mw-headline" id="client_script">client script</span></h3><p>
-freecad-ctl.py</p><div class="mw-highlight mw-highlight-lang-python3 mw-content-ltr mw-highlight-lines" dir="ltr"><pre><span></span><span class="linenos" data-line="1"></span><span class="ch">#!/usr/bin/python3</span>
-<span class="linenos" data-line="2"></span>
-<span class="linenos" data-line="3"></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="linenos" data-line="4"></span><span class="kn">import</span> <span class="nn">time</span>
-<span class="linenos" data-line="5"></span>
-<span class="linenos" data-line="6"></span>
-<span class="linenos" data-line="7"></span><span class="c1"># Location of the input/output files</span>
-<span class="linenos" data-line="8"></span><span class="n">ROOT</span> <span class="o">=</span> <span class="s1">'c:/tmp'</span>
-<span class="linenos" data-line="9"></span>
-<span class="linenos" data-line="10"></span>
-<span class="linenos" data-line="11"></span><span class="c1">## --- brcko lib start --- ##</span>
-<span class="linenos" data-line="12"></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span><span class="nn">os</span>
-<span class="linenos" data-line="13"></span>
-<span class="linenos" data-line="14"></span><span class="n">stdin</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="linenos" data-line="15"></span><span class="n">stdinpos</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="linenos" data-line="16"></span><span class="n">stdout</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="linenos" data-line="17"></span>
-<span class="linenos" data-line="18"></span><span class="k">def</span> <span class="nf">addstdin</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="linenos" data-line="19"></span>	<span class="k">global</span> <span class="n">stdin</span><span class="p">,</span><span class="n">stdinpos</span>
-<span class="linenos" data-line="20"></span>	<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="linenos" data-line="21"></span>		<span class="n">pos</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="22"></span>	<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="23"></span>		<span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="linenos" data-line="24"></span>	<span class="n">stdin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="25"></span>	<span class="n">stdinpos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
-<span class="linenos" data-line="26"></span>
-<span class="linenos" data-line="27"></span><span class="k">def</span> <span class="nf">addstdout</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="linenos" data-line="28"></span>	<span class="k">global</span> <span class="n">stdout</span>
-<span class="linenos" data-line="29"></span>	<span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="30"></span>
-<span class="linenos" data-line="31"></span>
-<span class="linenos" data-line="32"></span><span class="k">def</span> <span class="nf">getstdin</span><span class="p">():</span>
-<span class="linenos" data-line="33"></span>	<span class="k">global</span> <span class="n">stdin</span><span class="p">,</span><span class="n">stdinpos</span>
-<span class="linenos" data-line="34"></span>
-<span class="linenos" data-line="35"></span>	<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="linenos" data-line="36"></span>	<span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stdin</span><span class="p">):</span>
-<span class="linenos" data-line="37"></span>
-<span class="linenos" data-line="38"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span> <span class="k">continue</span>
-<span class="linenos" data-line="39"></span>
-<span class="linenos" data-line="40"></span>		<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="41"></span>		<span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">stdinpos</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-<span class="linenos" data-line="42"></span>		<span class="n">_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="linenos" data-line="43"></span>		<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="linenos" data-line="44"></span>
-<span class="linenos" data-line="45"></span>		<span class="c1"># Line-buffered</span>
-<span class="linenos" data-line="46"></span>		<span class="n">_i</span> <span class="o">=</span> <span class="n">_data</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="linenos" data-line="47"></span>		<span class="n">_data</span> <span class="o">=</span> <span class="n">_data</span><span class="p">[:</span><span class="n">_i</span><span class="p">]</span>
-<span class="linenos" data-line="48"></span>
-<span class="linenos" data-line="49"></span>		<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_data</span><span class="p">)</span>
-<span class="linenos" data-line="50"></span>		<span class="n">stdinpos</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">_i</span>
-<span class="linenos" data-line="51"></span>
-<span class="linenos" data-line="52"></span>	<span class="k">return</span> <span class="n">data</span>
-<span class="linenos" data-line="53"></span>
-<span class="linenos" data-line="54"></span><span class="k">def</span> <span class="nf">putstdout</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="linenos" data-line="55"></span>	<span class="k">global</span> <span class="n">stdout</span>
-<span class="linenos" data-line="56"></span>
-<span class="linenos" data-line="57"></span>	<span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stdout</span><span class="p">):</span> <span class="k">return</span>
-<span class="linenos" data-line="58"></span>	<span class="n">path</span> <span class="o">=</span> <span class="n">stdout</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-<span class="linenos" data-line="59"></span>
-<span class="linenos" data-line="60"></span>	<span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="s1">'-'</span><span class="p">:</span>
-<span class="linenos" data-line="61"></span>		<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="linenos" data-line="62"></span>	<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="63"></span>		<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s1">'a'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
-<span class="linenos" data-line="64"></span>		<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="linenos" data-line="65"></span>		<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="linenos" data-line="66"></span>
-<span class="linenos" data-line="67"></span><span class="c1">## --- brcko lib end --- ##</span>
-<span class="linenos" data-line="68"></span>
-<span class="linenos" data-line="69"></span>
-<span class="linenos" data-line="70"></span><span class="c1"># Process command line arguments</span>
-<span class="linenos" data-line="71"></span>
-<span class="linenos" data-line="72"></span><span class="n">cmd</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="73"></span>
-<span class="linenos" data-line="74"></span><span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-<span class="linenos" data-line="75"></span>	<span class="c1"># Use command line arguments to build command script</span>
-<span class="linenos" data-line="76"></span>	
-<span class="linenos" data-line="77"></span>	<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
-<span class="linenos" data-line="78"></span>		<span class="k">if</span> <span class="n">a</span> <span class="o">==</span> <span class="s1">'-'</span><span class="p">:</span>
-<span class="linenos" data-line="79"></span>			<span class="c1"># Read list of commands from (real) stdin</span>
-<span class="linenos" data-line="80"></span>			<span class="n">cmd</span> <span class="o">+</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">read</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'</span><span class="se">\r</span><span class="s1">'</span><span class="p">,</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
-<span class="linenos" data-line="81"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="82"></span>			<span class="n">cmd</span> <span class="o">+=</span> <span class="n">a</span>
-<span class="linenos" data-line="83"></span>		<span class="n">cmd</span> <span class="o">+=</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="84"></span><span class="c1">#else:</span>
-<span class="linenos" data-line="85"></span>	<span class="c1"># Default&nbsp;: get document list</span>
-<span class="linenos" data-line="86"></span>
-<span class="linenos" data-line="87"></span><span class="c1">#	cmd = 'D\n'</span>
-<span class="linenos" data-line="88"></span>
-<span class="linenos" data-line="89"></span>
-<span class="linenos" data-line="90"></span><span class="c1"># Setup brcko lib</span>
-<span class="linenos" data-line="91"></span><span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">ROOT</span><span class="p">)</span>
-<span class="linenos" data-line="92"></span><span class="c1"># in &lt;-&gt; out</span>
-<span class="linenos" data-line="93"></span><span class="c1"># out &lt;-&gt; in</span>
-<span class="linenos" data-line="94"></span><span class="n">addstdin</span><span class="p">(</span><span class="s1">'</span><span class="si">%s</span><span class="s1">/server.stdout'</span> <span class="o">%</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="95"></span><span class="n">addstdout</span><span class="p">(</span><span class="s1">'</span><span class="si">%s</span><span class="s1">/server.stdin'</span> <span class="o">%</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="96"></span>
-<span class="linenos" data-line="97"></span>
-<span class="linenos" data-line="98"></span><span class="c1"># Send command script</span>
-<span class="linenos" data-line="99"></span><span class="k">if</span> <span class="n">cmd</span><span class="p">:</span>
-<span class="linenos" data-line="100"></span>	<span class="n">putstdout</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
-<span class="linenos" data-line="101"></span>
-<span class="linenos" data-line="102"></span><span class="k">try</span><span class="p">:</span>
-<span class="linenos" data-line="103"></span>
-<span class="linenos" data-line="104"></span>	<span class="c1"># Wait for response (indicated by file size change / file creation)</span>
-<span class="linenos" data-line="105"></span>	<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">stdin</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-<span class="linenos" data-line="106"></span>		<span class="k">while</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">stdin</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-<span class="linenos" data-line="107"></span>			<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">.1</span><span class="p">)</span>
-<span class="linenos" data-line="108"></span>	<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="109"></span>		<span class="n">sz</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">stdin</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="linenos" data-line="110"></span>		<span class="k">while</span> <span class="n">sz</span> <span class="o">==</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">stdin</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-<span class="linenos" data-line="111"></span>			<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">.1</span><span class="p">)</span>
-<span class="linenos" data-line="112"></span>
-<span class="linenos" data-line="113"></span>	<span class="c1"># Just to be sure write ended</span>
-<span class="linenos" data-line="114"></span>	<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">.5</span><span class="p">)</span>
-<span class="linenos" data-line="115"></span>
-<span class="linenos" data-line="116"></span><span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-<span class="linenos" data-line="117"></span>	<span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
-<span class="linenos" data-line="118"></span>
-<span class="linenos" data-line="119"></span><span class="c1"># Print response</span>
-<span class="linenos" data-line="120"></span><span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">getstdin</span><span class="p">():</span>
-<span class="linenos" data-line="121"></span>	<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</pre></div>
+<h3><span class="mw-headline" id="client_script">client script</span></h3>
+<p>freecad-ctl.py
+</p>
+<pre>#!/usr/bin/python3
+
+import os
+import time
+
+
+# Location of the input/output files
+ROOT = 'c:/tmp'
+
+
+## --- brcko lib start --- ##
+import sys,os
+
+stdin = []
+stdinpos = []
+stdout = []
+
+def addstdin(path):
+	global stdin,stdinpos
+	if os.path.exists(path):
+		pos = os.path.getsize(path)
+	else:
+		pos = 0
+	stdin.append(path)
+	stdinpos.append(pos)
+
+def addstdout(path):
+	global stdout
+	stdout.append(path)
+
+
+def getstdin():
+	global stdin,stdinpos
+
+	data = []
+	for i,path in enumerate(stdin):
+
+		if not os.path.exists(path): continue
+
+		f = open(path)
+		f.seek(stdinpos[i])
+		_data = f.read()
+		f.close()
+
+		# Line-buffered
+		_i = _data.rfind('\n') + 1
+		_data = _data[:_i]
+
+		data.append(_data)
+		stdinpos[i] += _i
+
+	return data
+
+def putstdout(data,i=0):
+	global stdout
+
+	if i &gt;= len(stdout): return
+	path = stdout[i]
+
+	if path == '-':
+		sys.stdout.write(data)
+	else:
+		f = open(path,'a', encoding="utf-8", newline='\n')
+		f.write(data)
+		f.close()
+
+## --- brcko lib end --- ##
+
+
+# Process command line arguments
+
+cmd = ''
+
+if len(sys.argv) &gt; 1:
+	# Use command line arguments to build command script
+	
+	for a in sys.argv[1:]:
+		if a == '-':
+			# Read list of commands from (real) stdin
+			cmd + sys.stdin.read().replace('\r','\n')
+		else:
+			cmd += a
+		cmd += '\n'
+#else:
+	# Default&nbsp;: get document list
+
+#	cmd = 'D\n'
+
+
+# Setup brcko lib
+path = os.path.abspath(ROOT)
+# in &lt;-&gt; out
+# out &lt;-&gt; in
+addstdin('%s/server.stdout' %path)
+addstdout('%s/server.stdin' %path)
+
+
+# Send command script
+if cmd:
+	putstdout(cmd)
+
+try:
+
+	# Wait for response (indicated by file size change / file creation)
+	if not os.path.exists(stdin[0]):
+		while not os.path.exists(stdin[0]):
+			time.sleep(.1)
+	else:
+		sz = os.path.getsize(stdin[0])
+		while sz == os.path.getsize(stdin[0]):
+			time.sleep(.1)
+
+	# Just to be sure write ended
+	time.sleep(.5)
+
+except KeyboardInterrupt:
+	sys.exit()
+
+# Print response
+for data in getstdin():
+	print(data)</pre>
 <!-- 
 NewPP limit report
-Cached time: 20260130155213
+Cached time: 20260130155305
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.037 seconds
-Real time usage: 0.043 seconds
-Preprocessor visited node count: 175/1000000
-Post&#8208;expand include size: 1726/2097152 bytes
-Template argument size: 8175/2097152 bytes
+CPU time usage: 0.022 seconds
+Real time usage: 0.026 seconds
+Preprocessor visited node count: 179/1000000
+Post&#8208;expand include size: 1788/2097152 bytes
+Template argument size: 10084/2097152 bytes
 Highest expansion depth: 5/100
-Expensive parser function count: 12/100
+Expensive parser function count: 11/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 27505/5000000 bytes
+Unstrip post&#8208;expand size: 12011/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%    8.472      1 -total
- 37.27%    3.158      1 Template:MacroCode
- 36.91%    3.127      1 Template:Macro
+100.00%    6.640      1 -total
+ 40.66%    2.700      1 Template:Macro
+ 30.34%    2.015      2 Template:MacroCode
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:412380-0!canonical and timestamp 20260130155217 and revision id 1746049. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:412380-0!canonical and timestamp 20260130155315 and revision id 1746050. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
