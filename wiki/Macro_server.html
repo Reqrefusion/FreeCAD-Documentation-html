@@ -171,482 +171,483 @@ Export <b>Object_0</b> to selected path</p><div class="mw-highlight mw-highlight
 </p><p>Every command must return some response.
 </p>
 <h2><span class="mw-headline" id="Script">Script</span></h2>
-<h3><span class="mw-headline" id="server_macro">server macro</span></h3><p>
-server.FCMacro</p><div class="mw-highlight mw-highlight-lang-python3 mw-content-ltr mw-highlight-lines" dir="ltr"><pre><span></span><span class="linenos" data-line="1"></span><span class="kn">import</span> <span class="nn">FreeCAD</span>
-<span class="linenos" data-line="2"></span>
-<span class="linenos" data-line="3"></span><span class="c1"># Location of the input/output files</span>
-<span class="linenos" data-line="4"></span><span class="n">ROOT</span> <span class="o">=</span> <span class="s1">'c:/tmp'</span>
-<span class="linenos" data-line="5"></span>
-<span class="linenos" data-line="6"></span>
-<span class="linenos" data-line="7"></span><span class="k">if</span> <span class="s1">'server'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">FreeCAD</span><span class="p">):</span>
-<span class="linenos" data-line="8"></span>	<span class="c1"># Server not running - we will start it then</span>
-<span class="linenos" data-line="9"></span>	
-<span class="linenos" data-line="10"></span>	<span class="kn">import</span> <span class="nn">os</span>
-<span class="linenos" data-line="11"></span>	<span class="kn">from</span> <span class="nn">threading</span> <span class="kn">import</span> <span class="n">Event</span><span class="p">,</span><span class="n">Thread</span>
-<span class="linenos" data-line="12"></span>	<span class="kn">import</span> <span class="nn">Mesh</span>
-<span class="linenos" data-line="13"></span>	<span class="kn">import</span> <span class="nn">time</span>
-<span class="linenos" data-line="14"></span>
-<span class="linenos" data-line="15"></span><span class="c1">## --- brcko lib start --- ##</span>
-<span class="linenos" data-line="16"></span>	<span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span><span class="nn">os</span>
-<span class="linenos" data-line="17"></span>
-<span class="linenos" data-line="18"></span>	<span class="n">stdin</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="linenos" data-line="19"></span>	<span class="n">stdinpos</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="linenos" data-line="20"></span>	<span class="n">stdout</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="linenos" data-line="21"></span>
-<span class="linenos" data-line="22"></span>	<span class="k">def</span> <span class="nf">addstdin</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="linenos" data-line="23"></span>		<span class="k">global</span> <span class="n">stdin</span><span class="p">,</span><span class="n">stdinpos</span>
-<span class="linenos" data-line="24"></span>		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="linenos" data-line="25"></span>			<span class="n">pos</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="26"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="27"></span>			<span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="linenos" data-line="28"></span>		<span class="n">stdin</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="29"></span>		<span class="n">stdinpos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
-<span class="linenos" data-line="30"></span>
-<span class="linenos" data-line="31"></span>	<span class="k">def</span> <span class="nf">addstdout</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="linenos" data-line="32"></span>		<span class="k">global</span> <span class="n">stdout</span>
-<span class="linenos" data-line="33"></span>		<span class="n">stdout</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="34"></span>
-<span class="linenos" data-line="35"></span>
-<span class="linenos" data-line="36"></span>	<span class="k">def</span> <span class="nf">getstdin</span><span class="p">():</span>
-<span class="linenos" data-line="37"></span>		<span class="k">global</span> <span class="n">stdin</span><span class="p">,</span><span class="n">stdinpos</span>
-<span class="linenos" data-line="38"></span>
-<span class="linenos" data-line="39"></span>		<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="linenos" data-line="40"></span>		<span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stdin</span><span class="p">):</span>
-<span class="linenos" data-line="41"></span>
-<span class="linenos" data-line="42"></span>			<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span> <span class="k">continue</span>
-<span class="linenos" data-line="43"></span>
-<span class="linenos" data-line="44"></span>			<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="45"></span>			<span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="n">stdinpos</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
-<span class="linenos" data-line="46"></span>			<span class="n">_data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="linenos" data-line="47"></span>			<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="linenos" data-line="48"></span>
-<span class="linenos" data-line="49"></span>			<span class="c1"># Line-buffered</span>
-<span class="linenos" data-line="50"></span>			<span class="n">_i</span> <span class="o">=</span> <span class="n">_data</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-<span class="linenos" data-line="51"></span>			<span class="n">_data</span> <span class="o">=</span> <span class="n">_data</span><span class="p">[:</span><span class="n">_i</span><span class="p">]</span>
-<span class="linenos" data-line="52"></span>
-<span class="linenos" data-line="53"></span>			<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_data</span><span class="p">)</span>
-<span class="linenos" data-line="54"></span>			<span class="n">stdinpos</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">_i</span>
-<span class="linenos" data-line="55"></span>
-<span class="linenos" data-line="56"></span>		<span class="k">return</span> <span class="n">data</span>
-<span class="linenos" data-line="57"></span>
-<span class="linenos" data-line="58"></span>	<span class="k">def</span> <span class="nf">putstdout</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="linenos" data-line="59"></span>		<span class="k">global</span> <span class="n">stdout</span>
-<span class="linenos" data-line="60"></span>
-<span class="linenos" data-line="61"></span>		<span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stdout</span><span class="p">):</span> <span class="k">return</span>
-<span class="linenos" data-line="62"></span>		<span class="n">path</span> <span class="o">=</span> <span class="n">stdout</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-<span class="linenos" data-line="63"></span>
-<span class="linenos" data-line="64"></span>		<span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="s1">'-'</span><span class="p">:</span>
-<span class="linenos" data-line="65"></span>			<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="linenos" data-line="66"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="67"></span>			<span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s1">'a'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
-<span class="linenos" data-line="68"></span>			<span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="linenos" data-line="69"></span>			<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="linenos" data-line="70"></span>
-<span class="linenos" data-line="71"></span><span class="c1">## --- brcko lib end --- ##</span>
-<span class="linenos" data-line="72"></span>
-<span class="linenos" data-line="73"></span>
-<span class="linenos" data-line="74"></span>	<span class="n">_cb_d</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="linenos" data-line="75"></span>	<span class="nb">id</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="linenos" data-line="76"></span>	<span class="n">path</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="77"></span>	<span class="n">_id</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="linenos" data-line="78"></span>	<span class="n">_doc</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="linenos" data-line="79"></span>	<span class="n">_ss</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="linenos" data-line="80"></span>	<span class="n">_obj</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="linenos" data-line="81"></span>	<span class="n">_path</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="linenos" data-line="82"></span>
-<span class="linenos" data-line="83"></span>
-<span class="linenos" data-line="84"></span><span class="c1">## --- utils start --- ##</span>
-<span class="linenos" data-line="85"></span>
-<span class="linenos" data-line="86"></span>	<span class="k">def</span> <span class="nf">getDoc</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="linenos" data-line="87"></span><span class="w">		</span><span class="sd">'''Get document'''</span>
-<span class="linenos" data-line="88"></span>		<span class="k">global</span> <span class="n">_doc</span>
-<span class="linenos" data-line="89"></span>		
-<span class="linenos" data-line="90"></span>		<span class="k">if</span> <span class="n">n</span><span class="p">:</span>
-<span class="linenos" data-line="91"></span>			<span class="k">try</span><span class="p">:</span>
-<span class="linenos" data-line="92"></span>				<span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">getDocument</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="linenos" data-line="93"></span>			<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
-<span class="linenos" data-line="94"></span>				<span class="k">return</span> <span class="mi">0</span>
-<span class="linenos" data-line="95"></span>		<span class="k">elif</span> <span class="n">_doc</span><span class="p">:</span>
-<span class="linenos" data-line="96"></span>			<span class="n">doc</span> <span class="o">=</span> <span class="n">_doc</span>
-<span class="linenos" data-line="97"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="98"></span>			<span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span>
-<span class="linenos" data-line="99"></span>
-<span class="linenos" data-line="100"></span>		<span class="k">return</span> <span class="n">doc</span>
-<span class="linenos" data-line="101"></span>
-<span class="linenos" data-line="102"></span>	<span class="k">def</span> <span class="nf">getSS</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="linenos" data-line="103"></span><span class="w">		</span><span class="sd">'''Get spreadsheet'''</span>
-<span class="linenos" data-line="104"></span>		<span class="k">global</span> <span class="n">_ss</span>
-<span class="linenos" data-line="105"></span>
-<span class="linenos" data-line="106"></span>		<span class="n">doc</span> <span class="o">=</span> <span class="n">getDoc</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="linenos" data-line="107"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="p">:</span> <span class="k">return</span> <span class="mi">0</span>
-<span class="linenos" data-line="108"></span>
-<span class="linenos" data-line="109"></span>		<span class="k">if</span> <span class="n">s</span><span class="p">:</span>
-<span class="linenos" data-line="110"></span>			<span class="n">ss</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-<span class="linenos" data-line="111"></span>		<span class="k">elif</span> <span class="n">_ss</span><span class="p">:</span>
-<span class="linenos" data-line="112"></span>			<span class="n">ss</span> <span class="o">=</span> <span class="n">_ss</span>
-<span class="linenos" data-line="113"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="114"></span>			<span class="n">ss</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s1">'Spreadsheet'</span><span class="p">)</span>
-<span class="linenos" data-line="115"></span>
-<span class="linenos" data-line="116"></span>		<span class="k">return</span> <span class="n">ss</span>
-<span class="linenos" data-line="117"></span>
-<span class="linenos" data-line="118"></span>	<span class="k">def</span> <span class="nf">getObj</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="linenos" data-line="119"></span><span class="w">		</span><span class="sd">'''Get object'''</span>
-<span class="linenos" data-line="120"></span>		<span class="k">global</span> <span class="n">_obj</span>
-<span class="linenos" data-line="121"></span>
-<span class="linenos" data-line="122"></span>		<span class="n">doc</span> <span class="o">=</span> <span class="n">getDoc</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="linenos" data-line="123"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="p">:</span> <span class="k">return</span> <span class="mi">0</span>
-<span class="linenos" data-line="124"></span>
-<span class="linenos" data-line="125"></span>		<span class="k">if</span> <span class="n">s</span><span class="p">:</span>
-<span class="linenos" data-line="126"></span>			<span class="n">obj</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-<span class="linenos" data-line="127"></span>		<span class="k">elif</span> <span class="n">_obj</span><span class="p">:</span>
-<span class="linenos" data-line="128"></span>			<span class="n">obj</span> <span class="o">=</span> <span class="n">_obj</span>
-<span class="linenos" data-line="129"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="130"></span>			<span class="n">obj</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">ActiveObject</span>
-<span class="linenos" data-line="131"></span>
-<span class="linenos" data-line="132"></span>		<span class="k">return</span> <span class="n">obj</span>
-<span class="linenos" data-line="133"></span>
-<span class="linenos" data-line="134"></span>	<span class="k">def</span> <span class="nf">getPath</span><span class="p">(</span><span class="n">s</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">default_fn</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="linenos" data-line="135"></span><span class="w">		</span><span class="sd">'''Get file path (for export mainly)'''</span>
-<span class="linenos" data-line="136"></span>		<span class="k">global</span> <span class="n">_path</span><span class="p">,</span><span class="n">ROOT</span>
-<span class="linenos" data-line="137"></span>
-<span class="linenos" data-line="138"></span>		<span class="n">path</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="139"></span>
-<span class="linenos" data-line="140"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">default_fn</span><span class="p">:</span>
-<span class="linenos" data-line="141"></span>			<span class="n">default_fn</span><span class="o">=</span><span class="s1">'file'</span>
-<span class="linenos" data-line="142"></span>
-<span class="linenos" data-line="143"></span>		<span class="k">if</span> <span class="n">s</span><span class="p">:</span>
-<span class="linenos" data-line="144"></span>			<span class="n">path</span> <span class="o">=</span> <span class="n">s</span>
-<span class="linenos" data-line="145"></span>		<span class="k">elif</span> <span class="n">_path</span><span class="p">:</span>
-<span class="linenos" data-line="146"></span>			<span class="n">path</span> <span class="o">=</span> <span class="n">_path</span>
-<span class="linenos" data-line="147"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="148"></span>			<span class="n">path</span> <span class="o">=</span> <span class="n">ROOT</span>
-<span class="linenos" data-line="149"></span>
-<span class="linenos" data-line="150"></span>		<span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'</span><span class="se">\\</span><span class="s1">'</span><span class="p">,</span><span class="s1">'/'</span><span class="p">)</span><span class="c1"># make it objectively right&nbsp;;)</span>
-<span class="linenos" data-line="151"></span>		
-<span class="linenos" data-line="152"></span>		<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-<span class="linenos" data-line="153"></span>			<span class="n">path</span> <span class="o">=</span> <span class="n">path</span> <span class="o">+</span> <span class="s1">'/'</span> <span class="o">+</span> <span class="n">default_fn</span>
-<span class="linenos" data-line="154"></span>		<span class="k">if</span> <span class="s1">'.'</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-<span class="linenos" data-line="155"></span>			<span class="n">path</span> <span class="o">+=</span> <span class="s1">'.stl'</span>
-<span class="linenos" data-line="156"></span>
-<span class="linenos" data-line="157"></span>		<span class="k">return</span> <span class="n">path</span>
-<span class="linenos" data-line="158"></span>
-<span class="linenos" data-line="159"></span>	<span class="k">def</span> <span class="nf">dlgln</span><span class="p">(</span><span class="n">ln</span><span class="p">):</span>
-<span class="linenos" data-line="160"></span>		<span class="n">m</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="161"></span>		<span class="n">n</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="162"></span>		<span class="n">s</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="163"></span>
-<span class="linenos" data-line="164"></span>		<span class="n">m</span> <span class="o">=</span> <span class="n">ln</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="linenos" data-line="165"></span>		<span class="n">ln</span> <span class="o">=</span> <span class="n">ln</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-<span class="linenos" data-line="166"></span>
-<span class="linenos" data-line="167"></span>		<span class="k">if</span> <span class="n">ln</span><span class="p">:</span>
-<span class="linenos" data-line="168"></span>
-<span class="linenos" data-line="169"></span>			<span class="k">if</span> <span class="n">ln</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">' '</span><span class="p">:</span>
-<span class="linenos" data-line="170"></span>				<span class="n">s</span> <span class="o">=</span> <span class="n">ln</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-<span class="linenos" data-line="171"></span>			<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="172"></span>				<span class="k">if</span> <span class="s1">' '</span> <span class="ow">in</span> <span class="n">ln</span><span class="p">:</span>
-<span class="linenos" data-line="173"></span>					<span class="n">n</span><span class="p">,</span><span class="n">s</span> <span class="o">=</span> <span class="n">ln</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">' '</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="linenos" data-line="174"></span>				<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="175"></span>					<span class="n">n</span> <span class="o">=</span> <span class="n">ln</span>
-<span class="linenos" data-line="176"></span>		
-<span class="linenos" data-line="177"></span>		<span class="k">return</span> <span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span>
-<span class="linenos" data-line="178"></span>
-<span class="linenos" data-line="179"></span>	<span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">fc</span><span class="p">):</span>
-<span class="linenos" data-line="180"></span><span class="w">		</span><span class="sd">'''Register command function with respective m-code'''</span>
-<span class="linenos" data-line="181"></span>		<span class="k">global</span> <span class="n">_cb_d</span>
-<span class="linenos" data-line="182"></span>		<span class="n">_cb_d</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">=</span> <span class="n">fc</span>
-<span class="linenos" data-line="183"></span>
-<span class="linenos" data-line="184"></span><span class="c1">## --- utils end --- ##</span>
-<span class="linenos" data-line="185"></span>
-<span class="linenos" data-line="186"></span>
-<span class="linenos" data-line="187"></span><span class="c1">## --- thread function start --- ##</span>
-<span class="linenos" data-line="188"></span>
-<span class="linenos" data-line="189"></span>	<span class="k">def</span> <span class="nf">_th</span><span class="p">(</span><span class="n">qe</span><span class="p">,</span><span class="nb">id</span><span class="p">):</span>
-<span class="linenos" data-line="190"></span>		<span class="k">global</span> <span class="n">_cb_d</span><span class="p">,</span><span class="n">_id</span>
-<span class="linenos" data-line="191"></span>		
-<span class="linenos" data-line="192"></span>		<span class="k">while</span> <span class="ow">not</span> <span class="n">qe</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
-<span class="linenos" data-line="193"></span>			<span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">getstdin</span><span class="p">():</span>
-<span class="linenos" data-line="194"></span>				<span class="k">for</span> <span class="n">ln</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">):</span>
-<span class="linenos" data-line="195"></span>					<span class="k">if</span> <span class="ow">not</span> <span class="n">ln</span><span class="p">:</span> <span class="k">continue</span>
-<span class="linenos" data-line="196"></span>					<span class="nb">print</span><span class="p">(</span><span class="s1">'#D&nbsp;: server&nbsp;: got input&nbsp;:'</span><span class="p">,</span><span class="n">ln</span><span class="p">)</span>
-<span class="linenos" data-line="197"></span>					<span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span> <span class="o">=</span> <span class="n">dlgln</span><span class="p">(</span><span class="n">ln</span><span class="p">)</span>
-<span class="linenos" data-line="198"></span>					<span class="k">if</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">_cb_d</span><span class="p">:</span>
-<span class="linenos" data-line="199"></span>						<span class="k">if</span> <span class="ow">not</span> <span class="n">_id</span> <span class="ow">or</span> <span class="n">_id</span> <span class="o">==</span> <span class="nb">id</span> <span class="ow">or</span> <span class="n">_cb_d</span><span class="p">[</span><span class="n">m</span><span class="p">]</span> <span class="o">==</span> <span class="n">fc_selectId</span><span class="p">:</span>
-<span class="linenos" data-line="200"></span>							<span class="c1"># Only process commands if&nbsp;:</span>
-<span class="linenos" data-line="201"></span>							<span class="c1">#  id is empty</span>
-<span class="linenos" data-line="202"></span>							<span class="c1">#  id equals this instance's id</span>
-<span class="linenos" data-line="203"></span>							<span class="c1">#  we are about to execute selectId command</span>
-<span class="linenos" data-line="204"></span>							<span class="n">_cb_d</span><span class="p">[</span><span class="n">m</span><span class="p">](</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">)</span>
-<span class="linenos" data-line="205"></span>					<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="206"></span>						<span class="nb">print</span><span class="p">(</span><span class="s1">'#E&nbsp;: server&nbsp;: unknown command&nbsp;:'</span><span class="p">,</span><span class="n">m</span><span class="p">)</span>
-<span class="linenos" data-line="207"></span>			<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-<span class="linenos" data-line="208"></span>
-<span class="linenos" data-line="209"></span><span class="c1">## --- thread function end --- ##</span>
-<span class="linenos" data-line="210"></span>
-<span class="linenos" data-line="211"></span>
-<span class="linenos" data-line="212"></span><span class="c1">## --- stdlib start --- ##</span>
-<span class="linenos" data-line="213"></span>	
-<span class="linenos" data-line="214"></span>	<span class="k">def</span> <span class="nf">fc_getId</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="215"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">'i</span><span class="si">%s</span><span class="se">\n</span><span class="s1">'</span> <span class="o">%</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">server</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="linenos" data-line="216"></span>		<span class="c1">#resp += '#I&nbsp;: server&nbsp;: fc_getId&nbsp;: done\n'</span>
-<span class="linenos" data-line="217"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="218"></span>	
-<span class="linenos" data-line="219"></span>	<span class="k">def</span> <span class="nf">fc_docList</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="220"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="221"></span>		
-<span class="linenos" data-line="222"></span>		<span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">_</span> <span class="ow">in</span> <span class="n">App</span><span class="o">.</span><span class="n">listDocuments</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<span class="linenos" data-line="223"></span>			<span class="n">resp</span> <span class="o">+=</span> <span class="s1">'d</span><span class="si">%s</span><span class="se">\n</span><span class="s1">'</span> <span class="o">%</span> <span class="n">k</span>
-<span class="linenos" data-line="224"></span>		
-<span class="linenos" data-line="225"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="p">:</span>
-<span class="linenos" data-line="226"></span>			<span class="n">resp</span> <span class="o">+=</span> <span class="s1">'#I&nbsp;: server&nbsp;: fc_docList&nbsp;: empty</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="227"></span>		
-<span class="linenos" data-line="228"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="229"></span>
-<span class="linenos" data-line="230"></span>	<span class="k">def</span> <span class="nf">fc_objList</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="231"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="232"></span>		<span class="n">doc</span> <span class="o">=</span> <span class="n">getDoc</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="linenos" data-line="233"></span>		
-<span class="linenos" data-line="234"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="p">:</span>
-<span class="linenos" data-line="235"></span>			<span class="n">resp</span> <span class="o">+=</span> <span class="s1">'#E&nbsp;: server&nbsp;: fc_objList&nbsp;: no doc</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="236"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="237"></span>		
-<span class="linenos" data-line="238"></span>			<span class="k">for</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">doc</span><span class="o">.</span><span class="n">Objects</span><span class="p">:</span>
-<span class="linenos" data-line="239"></span>				<span class="n">resp</span> <span class="o">+=</span> <span class="s1">'o</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="se">\n</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">Label</span><span class="p">)</span>
-<span class="linenos" data-line="240"></span>			
-<span class="linenos" data-line="241"></span>			<span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="p">:</span>
-<span class="linenos" data-line="242"></span>				<span class="n">resp</span> <span class="o">+=</span> <span class="s1">'#I&nbsp;: server&nbsp;: fc_objList&nbsp;: empty</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="243"></span>		
-<span class="linenos" data-line="244"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="245"></span>
-<span class="linenos" data-line="246"></span>	<span class="k">def</span> <span class="nf">fc_cellsList</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="247"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="248"></span>		<span class="n">ss</span> <span class="o">=</span> <span class="n">getSS</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
-<span class="linenos" data-line="249"></span>
-<span class="linenos" data-line="250"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">ss</span><span class="p">:</span>
-<span class="linenos" data-line="251"></span>			<span class="n">resp</span> <span class="o">+=</span> <span class="s1">'#E&nbsp;: server&nbsp;: fc_cellsList&nbsp;: no sheet</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="252"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="253"></span>
-<span class="linenos" data-line="254"></span>			<span class="c1"># Build list of non-empty cells</span>
-<span class="linenos" data-line="255"></span>			<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">ss</span><span class="o">.</span><span class="n">getNonEmptyCells</span><span class="p">():</span>
-<span class="linenos" data-line="256"></span>				<span class="n">v</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
-<span class="linenos" data-line="257"></span>				<span class="n">resp</span> <span class="o">+=</span> <span class="s1">'c</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="se">\n</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span>
-<span class="linenos" data-line="258"></span>			
-<span class="linenos" data-line="259"></span>			<span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="p">:</span>
-<span class="linenos" data-line="260"></span>				<span class="n">resp</span> <span class="o">+=</span> <span class="s1">'#I&nbsp;: server&nbsp;: fc_cellsList&nbsp;: empty</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="261"></span>		
-<span class="linenos" data-line="262"></span>		<span class="c1"># Sends it</span>
-<span class="linenos" data-line="263"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="264"></span>	
-<span class="linenos" data-line="265"></span>
-<span class="linenos" data-line="266"></span>	<span class="k">def</span> <span class="nf">fc_selectId</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="267"></span>		<span class="k">global</span> <span class="n">_id</span>
-<span class="linenos" data-line="268"></span>		
-<span class="linenos" data-line="269"></span>		<span class="n">_id</span> <span class="o">=</span> <span class="n">n</span>
-<span class="linenos" data-line="270"></span>		
-<span class="linenos" data-line="271"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="s1">'#I&nbsp;: server&nbsp;: fc_selectId&nbsp;: done</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
-<span class="linenos" data-line="272"></span>		
-<span class="linenos" data-line="273"></span>	<span class="k">def</span> <span class="nf">fc_selectDoc</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="274"></span>		<span class="k">global</span> <span class="n">_doc</span>
-<span class="linenos" data-line="275"></span>		
-<span class="linenos" data-line="276"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="277"></span>
-<span class="linenos" data-line="278"></span>		<span class="k">if</span> <span class="n">n</span><span class="p">:</span>
-<span class="linenos" data-line="279"></span>			<span class="k">try</span><span class="p">:</span>
-<span class="linenos" data-line="280"></span>				<span class="n">_doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">getDocument</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="linenos" data-line="281"></span>			<span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
-<span class="linenos" data-line="282"></span>				<span class="n">resp</span> <span class="o">=</span> <span class="s1">'#E&nbsp;: server&nbsp;: fc_selectDoc&nbsp;: no doc</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="283"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="284"></span>			<span class="n">_doc</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="linenos" data-line="285"></span>		
-<span class="linenos" data-line="286"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="p">:</span>
-<span class="linenos" data-line="287"></span>			<span class="n">resp</span> <span class="o">=</span> <span class="s1">'#I&nbsp;: server&nbsp;: fc_selectDoc&nbsp;: done</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="288"></span>
-<span class="linenos" data-line="289"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="290"></span>	
-<span class="linenos" data-line="291"></span>	<span class="k">def</span> <span class="nf">fc_selectSpreadsheet</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="292"></span>		<span class="k">global</span> <span class="n">_ss</span>
-<span class="linenos" data-line="293"></span>
-<span class="linenos" data-line="294"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="295"></span>		<span class="n">doc</span> <span class="o">=</span> <span class="n">getDoc</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="linenos" data-line="296"></span>
-<span class="linenos" data-line="297"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="p">:</span>
-<span class="linenos" data-line="298"></span>			<span class="n">resp</span> <span class="o">+=</span> <span class="s1">'#E&nbsp;: server&nbsp;: fc_selectSpreadsheet&nbsp;: no doc</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="299"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="300"></span>		
-<span class="linenos" data-line="301"></span>			<span class="k">if</span> <span class="n">s</span><span class="p">:</span>
-<span class="linenos" data-line="302"></span>				<span class="n">_ss</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-<span class="linenos" data-line="303"></span>			<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="304"></span>				<span class="n">_ss</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="linenos" data-line="305"></span>			
-<span class="linenos" data-line="306"></span>			<span class="n">resp</span> <span class="o">=</span> <span class="s1">'#I&nbsp;: server&nbsp;: fc_selectSpreadsheet&nbsp;: done</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="307"></span>
-<span class="linenos" data-line="308"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="309"></span>	
-<span class="linenos" data-line="310"></span>	<span class="k">def</span> <span class="nf">fc_selectObj</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="311"></span>		<span class="k">global</span> <span class="n">_obj</span>
-<span class="linenos" data-line="312"></span>
-<span class="linenos" data-line="313"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="314"></span>		<span class="n">doc</span> <span class="o">=</span> <span class="n">getDoc</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="linenos" data-line="315"></span>
-<span class="linenos" data-line="316"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">doc</span><span class="p">:</span>
-<span class="linenos" data-line="317"></span>			<span class="n">resp</span> <span class="o">+=</span> <span class="s1">'#E&nbsp;: server&nbsp;: fc_selectObj&nbsp;: no doc</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="318"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="319"></span>
-<span class="linenos" data-line="320"></span>			<span class="k">if</span> <span class="n">s</span><span class="p">:</span>
-<span class="linenos" data-line="321"></span>				<span class="n">_obj</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-<span class="linenos" data-line="322"></span>			<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="323"></span>				<span class="n">_obj</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="linenos" data-line="324"></span>			
-<span class="linenos" data-line="325"></span>			<span class="k">if</span> <span class="ow">not</span> <span class="n">resp</span><span class="p">:</span>
-<span class="linenos" data-line="326"></span>				<span class="n">resp</span> <span class="o">=</span> <span class="s1">'#I&nbsp;: server&nbsp;: fc_selectObj&nbsp;: done</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="327"></span>	
-<span class="linenos" data-line="328"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="329"></span>
-<span class="linenos" data-line="330"></span>	<span class="k">def</span> <span class="nf">fc_selectPath</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="331"></span>		<span class="k">global</span> <span class="n">_path</span>
-<span class="linenos" data-line="332"></span>
-<span class="linenos" data-line="333"></span>		<span class="k">if</span> <span class="n">s</span><span class="p">:</span>
-<span class="linenos" data-line="334"></span>			<span class="n">_path</span> <span class="o">=</span> <span class="n">s</span>
-<span class="linenos" data-line="335"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="336"></span>			<span class="n">_path</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="linenos" data-line="337"></span>	
-<span class="linenos" data-line="338"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="s1">'#I&nbsp;: server&nbsp;: fc_selectPath&nbsp;: done</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
-<span class="linenos" data-line="339"></span>
-<span class="linenos" data-line="340"></span>	
-<span class="linenos" data-line="341"></span>	<span class="k">def</span> <span class="nf">fc_getCell</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="342"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="343"></span>		<span class="n">ss</span> <span class="o">=</span> <span class="n">getSS</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
-<span class="linenos" data-line="344"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">ss</span><span class="p">:</span>
-<span class="linenos" data-line="345"></span>			<span class="n">resp</span> <span class="o">=</span> <span class="s1">'#E&nbsp;: server&nbsp;: fc_getCell&nbsp;: no sheet</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="346"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="347"></span>		
-<span class="linenos" data-line="348"></span>			<span class="k">try</span><span class="p">:</span>
-<span class="linenos" data-line="349"></span>				<span class="n">v</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="linenos" data-line="350"></span>				<span class="n">resp</span> <span class="o">=</span> <span class="s1">'c</span><span class="si">%s</span><span class="s1"> </span><span class="si">%d</span><span class="se">\n</span><span class="s1">'</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
-<span class="linenos" data-line="351"></span>			<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-<span class="linenos" data-line="352"></span>				<span class="n">resp</span> <span class="o">=</span> <span class="s1">'#E&nbsp;: server&nbsp;: fc_getCell&nbsp;: no cell</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="353"></span>				
-<span class="linenos" data-line="354"></span>		<span class="c1">#resp += '#I&nbsp;: server&nbsp;: fc_getCell&nbsp;: done\n'</span>
-<span class="linenos" data-line="355"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="356"></span>	
-<span class="linenos" data-line="357"></span>	<span class="k">def</span> <span class="nf">fc_setCell</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="358"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="359"></span>		<span class="n">ss</span> <span class="o">=</span> <span class="n">getSS</span><span class="p">()</span>
-<span class="linenos" data-line="360"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">ss</span><span class="p">:</span>
-<span class="linenos" data-line="361"></span>			<span class="n">resp</span> <span class="o">=</span> <span class="s1">'#E&nbsp;: server&nbsp;: fc_setCell&nbsp;: no sheet</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="362"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="363"></span>			<span class="n">v</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">)</span>
-<span class="linenos" data-line="364"></span>			<span class="n">resp</span> <span class="o">=</span> <span class="s1">'#I&nbsp;: server&nbsp;: fc_setCell&nbsp;: done</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="365"></span>	
-<span class="linenos" data-line="366"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="367"></span>
-<span class="linenos" data-line="368"></span>	
-<span class="linenos" data-line="369"></span>	<span class="k">def</span> <span class="nf">fc_recompute</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="370"></span>		<span class="n">getDoc</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
-<span class="linenos" data-line="371"></span>		
-<span class="linenos" data-line="372"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="s1">'#I&nbsp;: server&nbsp;: fc_recompute&nbsp;: done</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
-<span class="linenos" data-line="373"></span>
-<span class="linenos" data-line="374"></span>	<span class="k">def</span> <span class="nf">fc_export</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="375"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="376"></span>		<span class="n">obj</span> <span class="o">=</span> <span class="n">getObj</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-<span class="linenos" data-line="377"></span>		<span class="n">path</span> <span class="o">=</span> <span class="n">getPath</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">Label</span><span class="p">)</span>
-<span class="linenos" data-line="378"></span>
-<span class="linenos" data-line="379"></span>		<span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="p">:</span>
-<span class="linenos" data-line="380"></span>			<span class="n">resp</span> <span class="o">=</span> <span class="s1">'#E&nbsp;: server&nbsp;: fc_export&nbsp;: no object</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="381"></span>		<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="382"></span>			
-<span class="linenos" data-line="383"></span>			<span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="p">:</span>
-<span class="linenos" data-line="384"></span>				<span class="n">resp</span> <span class="o">=</span> <span class="s1">'#E&nbsp;: server&nbsp;: fc_export&nbsp;: no path</span><span class="se">\n</span><span class="s1">'</span>
-<span class="linenos" data-line="385"></span>			<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="386"></span>			
-<span class="linenos" data-line="387"></span>				<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Mesh</span><span class="p">,</span> <span class="s2">"exportOptions"</span><span class="p">):</span>
-<span class="linenos" data-line="388"></span>					<span class="n">options</span> <span class="o">=</span> <span class="n">Mesh</span><span class="o">.</span><span class="n">exportOptions</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="389"></span>					<span class="n">Mesh</span><span class="o">.</span><span class="n">export</span><span class="p">([</span><span class="n">obj</span><span class="p">],</span> <span class="n">path</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
-<span class="linenos" data-line="390"></span>				<span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="391"></span>					<span class="n">Mesh</span><span class="o">.</span><span class="n">export</span><span class="p">([</span><span class="n">obj</span><span class="p">],</span> <span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="392"></span>				
-<span class="linenos" data-line="393"></span>				<span class="n">resp</span> <span class="o">+=</span> <span class="s1">'#I&nbsp;: server&nbsp;: fc_export&nbsp;: done&nbsp;: </span><span class="si">%s</span><span class="se">\n</span><span class="s1">'</span> <span class="o">%</span> <span class="n">path</span>
-<span class="linenos" data-line="394"></span>
-<span class="linenos" data-line="395"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="396"></span>
-<span class="linenos" data-line="397"></span>
-<span class="linenos" data-line="398"></span>	<span class="k">def</span> <span class="nf">fc_</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="399"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="400"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="401"></span>
-<span class="linenos" data-line="402"></span>	<span class="k">def</span> <span class="nf">fc_</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="403"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="404"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="405"></span>
-<span class="linenos" data-line="406"></span>	<span class="k">def</span> <span class="nf">fc_</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
-<span class="linenos" data-line="407"></span>		<span class="n">resp</span> <span class="o">=</span> <span class="s1">''</span>
-<span class="linenos" data-line="408"></span>		<span class="n">putstdout</span><span class="p">(</span><span class="n">resp</span><span class="p">)</span>
-<span class="linenos" data-line="409"></span>
-<span class="linenos" data-line="410"></span><span class="c1">## --- stdlib end --- ##</span>
-<span class="linenos" data-line="411"></span>
-<span class="linenos" data-line="412"></span>
-<span class="linenos" data-line="413"></span><span class="c1">## --- Extensions start --- ##</span>
-<span class="linenos" data-line="414"></span><span class="c1">## --- Extensions end --- ##</span>
-<span class="linenos" data-line="415"></span>
-<span class="linenos" data-line="416"></span>
-<span class="linenos" data-line="417"></span>	<span class="c1"># Register all command functions with their codes</span>
-<span class="linenos" data-line="418"></span>	
-<span class="linenos" data-line="419"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'I'</span><span class="p">,</span> <span class="n">fc_getId</span><span class="p">)</span>
-<span class="linenos" data-line="420"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'D'</span><span class="p">,</span> <span class="n">fc_docList</span><span class="p">)</span>
-<span class="linenos" data-line="421"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'O'</span><span class="p">,</span> <span class="n">fc_objList</span><span class="p">)</span>
-<span class="linenos" data-line="422"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'C'</span><span class="p">,</span> <span class="n">fc_cellsList</span><span class="p">)</span>
-<span class="linenos" data-line="423"></span>
-<span class="linenos" data-line="424"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'i'</span><span class="p">,</span> <span class="n">fc_selectId</span><span class="p">)</span>
-<span class="linenos" data-line="425"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'d'</span><span class="p">,</span> <span class="n">fc_selectDoc</span><span class="p">)</span>
-<span class="linenos" data-line="426"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'s'</span><span class="p">,</span> <span class="n">fc_selectSpreadsheet</span><span class="p">)</span>
-<span class="linenos" data-line="427"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'o'</span><span class="p">,</span> <span class="n">fc_selectObj</span><span class="p">)</span>
-<span class="linenos" data-line="428"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'p'</span><span class="p">,</span> <span class="n">fc_selectPath</span><span class="p">)</span>
-<span class="linenos" data-line="429"></span>	
-<span class="linenos" data-line="430"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'@'</span><span class="p">,</span> <span class="n">fc_getCell</span><span class="p">)</span>
-<span class="linenos" data-line="431"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'!'</span><span class="p">,</span> <span class="n">fc_setCell</span><span class="p">)</span>
-<span class="linenos" data-line="432"></span>	
-<span class="linenos" data-line="433"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'r'</span><span class="p">,</span> <span class="n">fc_recompute</span><span class="p">)</span>
-<span class="linenos" data-line="434"></span>	<span class="n">register</span><span class="p">(</span><span class="s1">'e'</span><span class="p">,</span> <span class="n">fc_export</span><span class="p">)</span>
-<span class="linenos" data-line="435"></span>	
-<span class="linenos" data-line="436"></span>	<span class="c1">#register('', fc_)</span>
-<span class="linenos" data-line="437"></span>
-<span class="linenos" data-line="438"></span>
-<span class="linenos" data-line="439"></span><span class="c1">## --- Extensions registration start --- ##</span>
-<span class="linenos" data-line="440"></span>
-<span class="linenos" data-line="441"></span>	<span class="c1">#register('', fc_)</span>
-<span class="linenos" data-line="442"></span>
-<span class="linenos" data-line="443"></span><span class="c1">## --- Extensions registration end --- ##</span>
-<span class="linenos" data-line="444"></span>
-<span class="linenos" data-line="445"></span>
-<span class="linenos" data-line="446"></span>	<span class="c1"># Setup brcko lib</span>
-<span class="linenos" data-line="447"></span>	<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">ROOT</span><span class="p">)</span>
-<span class="linenos" data-line="448"></span>	<span class="c1"># in &lt;-&gt; in</span>
-<span class="linenos" data-line="449"></span>	<span class="c1"># out &lt;-&gt; out</span>
-<span class="linenos" data-line="450"></span>	<span class="n">addstdin</span><span class="p">(</span><span class="s1">'</span><span class="si">%s</span><span class="s1">/server.stdin'</span> <span class="o">%</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="451"></span>	<span class="n">addstdout</span><span class="p">(</span><span class="s1">'</span><span class="si">%s</span><span class="s1">/server.stdout'</span> <span class="o">%</span><span class="n">path</span><span class="p">)</span>
-<span class="linenos" data-line="452"></span>
-<span class="linenos" data-line="453"></span>
-<span class="linenos" data-line="454"></span>	<span class="c1"># Little bit of flexing O:)</span>
-<span class="linenos" data-line="455"></span>	<span class="n">genid</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">seed</span><span class="p">,</span><span class="n">lvl</span><span class="p">:</span> <span class="s1">'QWERTYUIOPASDFGHJKLZXCVBNM'</span><span class="p">[</span><span class="n">seed</span><span class="o">%</span><span class="mi">26</span><span class="p">]</span><span class="o">+</span><span class="n">genid</span><span class="p">((</span><span class="n">seed</span><span class="o">*</span><span class="mi">12345</span><span class="p">)</span><span class="o">%</span><span class="mi">56789</span><span class="p">,</span><span class="n">lvl</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">lvl</span><span class="o">&gt;</span><span class="mi">0</span> <span class="k">else</span> <span class="s1">''</span>
-<span class="linenos" data-line="456"></span>	<span class="nb">id</span> <span class="o">=</span> <span class="n">genid</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">*</span><span class="mi">1000</span><span class="p">),</span><span class="mi">8</span><span class="p">)</span>
-<span class="linenos" data-line="457"></span>	
-<span class="linenos" data-line="458"></span>	<span class="n">qe</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
-<span class="linenos" data-line="459"></span>	<span class="n">th</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">_th</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">qe</span><span class="p">,</span><span class="nb">id</span><span class="p">))</span>
-<span class="linenos" data-line="460"></span>
-<span class="linenos" data-line="461"></span>	<span class="n">FreeCAD</span><span class="o">.</span><span class="n">server</span> <span class="o">=</span> <span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">qe</span><span class="p">,</span><span class="n">th</span><span class="p">)</span>
-<span class="linenos" data-line="462"></span>	<span class="n">th</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="linenos" data-line="463"></span>
-<span class="linenos" data-line="464"></span>	<span class="nb">print</span><span class="p">(</span><span class="s1">'#I&nbsp;: server&nbsp;: started&nbsp;:'</span><span class="p">,</span><span class="nb">id</span><span class="p">)</span>
-<span class="linenos" data-line="465"></span>
-<span class="linenos" data-line="466"></span><span class="k">else</span><span class="p">:</span>
-<span class="linenos" data-line="467"></span>	<span class="c1"># Server is running - let's stop it now</span>
-<span class="linenos" data-line="468"></span>	
-<span class="linenos" data-line="469"></span>	<span class="p">(</span><span class="nb">id</span><span class="p">,</span><span class="n">qe</span><span class="p">,</span><span class="n">th</span><span class="p">)</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">server</span>
-<span class="linenos" data-line="470"></span>
-<span class="linenos" data-line="471"></span>	<span class="n">qe</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-<span class="linenos" data-line="472"></span>	<span class="k">del</span><span class="p">(</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">server</span><span class="p">)</span>
-<span class="linenos" data-line="473"></span>
-<span class="linenos" data-line="474"></span>	<span class="nb">print</span><span class="p">(</span><span class="s1">'#I&nbsp;: server&nbsp;: stopped'</span><span class="p">)</span>
-</pre></div>
+<h3><span class="mw-headline" id="server_macro">server macro</span></h3>
+<p>server.FCMacro
+</p>
+<pre>import FreeCAD
+
+# Location of the input/output files
+ROOT = 'c:/tmp'
+
+
+if 'server' not in dir(FreeCAD):
+	# Server not running - we will start it then
+	
+	import os
+	from threading import Event,Thread
+	import Mesh
+	import time
+
+## --- brcko lib start --- ##
+	import sys,os
+
+	stdin = []
+	stdinpos = []
+	stdout = []
+
+	def addstdin(path):
+		global stdin,stdinpos
+		if os.path.exists(path):
+			pos = os.path.getsize(path)
+		else:
+			pos = 0
+		stdin.append(path)
+		stdinpos.append(pos)
+
+	def addstdout(path):
+		global stdout
+		stdout.append(path)
+
+
+	def getstdin():
+		global stdin,stdinpos
+
+		data = []
+		for i,path in enumerate(stdin):
+
+			if not os.path.exists(path): continue
+
+			f = open(path)
+			f.seek(stdinpos[i])
+			_data = f.read()
+			f.close()
+
+			# Line-buffered
+			_i = _data.rfind('\n') + 1
+			_data = _data[:_i]
+
+			data.append(_data)
+			stdinpos[i] += _i
+
+		return data
+
+	def putstdout(data,i=0):
+		global stdout
+
+		if i &gt;= len(stdout): return
+		path = stdout[i]
+
+		if path == '-':
+			sys.stdout.write(data)
+		else:
+			f = open(path,'a', encoding="utf-8", newline='\n')
+			f.write(data)
+			f.close()
+
+## --- brcko lib end --- ##
+
+
+	_cb_d = {}
+	id = 0
+	path = ''
+	_id = 0
+	_doc = 0
+	_ss = 0
+	_obj = 0
+	_path = 0
+
+
+## --- utils start --- ##
+
+	def getDoc(n=0):
+		'''Get document'''
+		global _doc
+		
+		if n:
+			try:
+				doc = App.getDocument(n)
+			except NameError:
+				return 0
+		elif _doc:
+			doc = _doc
+		else:
+			doc = App.ActiveDocument
+
+		return doc
+
+	def getSS(s=0,n=0):
+		'''Get spreadsheet'''
+		global _ss
+
+		doc = getDoc(n)
+		if not doc: return 0
+
+		if s:
+			ss = doc.getObject(s)
+		elif _ss:
+			ss = _ss
+		else:
+			ss = doc.getObject('Spreadsheet')
+
+		return ss
+
+	def getObj(s=0,n=0):
+		'''Get object'''
+		global _obj
+
+		doc = getDoc(n)
+		if not doc: return 0
+
+		if s:
+			obj = doc.getObject(s)
+		elif _obj:
+			obj = _obj
+		else:
+			obj = doc.ActiveObject
+
+		return obj
+
+	def getPath(s=0, default_fn=0):
+		'''Get file path (for export mainly)'''
+		global _path,ROOT
+
+		path = ''
+
+		if not default_fn:
+			default_fn='file'
+
+		if s:
+			path = s
+		elif _path:
+			path = _path
+		else:
+			path = ROOT
+
+		path = path.replace('\\','/')# make it objectively right&nbsp;;)
+		
+		if os.path.isdir(path):
+			path = path + '/' + default_fn
+		if '.' not in path.split('/')[-1]:
+			path += '.stl'
+
+		return path
+
+	def dlgln(ln):
+		m = ''
+		n = ''
+		s = ''
+
+		m = ln[0]
+		ln = ln[1:]
+
+		if ln:
+
+			if ln[0] == ' ':
+				s = ln[1:]
+			else:
+				if ' ' in ln:
+					n,s = ln.split(' ',1)
+				else:
+					n = ln
+		
+		return m,n,s
+
+	def register(m, fc):
+		'''Register command function with respective m-code'''
+		global _cb_d
+		_cb_d[m] = fc
+
+## --- utils end --- ##
+
+
+## --- thread function start --- ##
+
+	def _th(qe,id):
+		global _cb_d,_id
+		
+		while not qe.is_set():
+			for data in getstdin():
+				for ln in data.split('\n'):
+					if not ln: continue
+					print('#D&nbsp;: server&nbsp;: got input&nbsp;:',ln)
+					m,n,s = dlgln(ln)
+					if m in _cb_d:
+						if not _id or _id == id or _cb_d[m] == fc_selectId:
+							# Only process commands if&nbsp;:
+							#  id is empty
+							#  id equals this instance's id
+							#  we are about to execute selectId command
+							_cb_d[m](m,n,s)
+					else:
+						print('#E&nbsp;: server&nbsp;: unknown command&nbsp;:',m)
+			time.sleep(1)
+
+## --- thread function end --- ##
+
+
+## --- stdlib start --- ##
+	
+	def fc_getId(m,n,s):
+		resp = 'i%s\n'&nbsp;% FreeCAD.server[0]
+		#resp += '#I&nbsp;: server&nbsp;: fc_getId&nbsp;: done\n'
+		putstdout(resp)
+	
+	def fc_docList(m,n,s):
+		resp = ''
+		
+		for k,_ in App.listDocuments().items():
+			resp += 'd%s\n'&nbsp;% k
+		
+		if not resp:
+			resp += '#I&nbsp;: server&nbsp;: fc_docList&nbsp;: empty\n'
+		
+		putstdout(resp)
+
+	def fc_objList(m,n,s):
+		resp = ''
+		doc = getDoc(n)
+		
+		if not doc:
+			resp += '#E&nbsp;: server&nbsp;: fc_objList&nbsp;: no doc\n'
+		else:
+		
+			for obj in doc.Objects:
+				resp += 'o%s %s\n'&nbsp;% (obj.Name, obj.Label)
+			
+			if not resp:
+				resp += '#I&nbsp;: server&nbsp;: fc_objList&nbsp;: empty\n'
+		
+		putstdout(resp)
+
+	def fc_cellsList(m,n,s):
+		resp = ''
+		ss = getSS(s,n)
+
+		if not ss:
+			resp += '#E&nbsp;: server&nbsp;: fc_cellsList&nbsp;: no sheet\n'
+		else:
+
+			# Build list of non-empty cells
+			for k in ss.getNonEmptyCells():
+				v = ss.get(k)
+				resp += 'c%s %s\n'&nbsp;% (k,v)
+			
+			if not resp:
+				resp += '#I&nbsp;: server&nbsp;: fc_cellsList&nbsp;: empty\n'
+		
+		# Sends it
+		putstdout(resp)
+	
+
+	def fc_selectId(m,n,s):
+		global _id
+		
+		_id = n
+		
+		putstdout('#I&nbsp;: server&nbsp;: fc_selectId&nbsp;: done\n')
+		
+	def fc_selectDoc(m,n,s):
+		global _doc
+		
+		resp = ''
+
+		if n:
+			try:
+				_doc = App.getDocument(n)
+			except NameError:
+				resp = '#E&nbsp;: server&nbsp;: fc_selectDoc&nbsp;: no doc\n'
+		else:
+			_doc = 0
+		
+		if not resp:
+			resp = '#I&nbsp;: server&nbsp;: fc_selectDoc&nbsp;: done\n'
+
+		putstdout(resp)
+	
+	def fc_selectSpreadsheet(m,n,s):
+		global _ss
+
+		resp = ''
+		doc = getDoc(n)
+
+		if not doc:
+			resp += '#E&nbsp;: server&nbsp;: fc_selectSpreadsheet&nbsp;: no doc\n'
+		else:
+		
+			if s:
+				_ss = doc.getObject(s)
+			else:
+				_ss = 0
+			
+			resp = '#I&nbsp;: server&nbsp;: fc_selectSpreadsheet&nbsp;: done\n'
+
+		putstdout(resp)
+	
+	def fc_selectObj(m,n,s):
+		global _obj
+
+		resp = ''
+		doc = getDoc(n)
+
+		if not doc:
+			resp += '#E&nbsp;: server&nbsp;: fc_selectObj&nbsp;: no doc\n'
+		else:
+
+			if s:
+				_obj = doc.getObject(s)
+			else:
+				_obj = 0
+			
+			if not resp:
+				resp = '#I&nbsp;: server&nbsp;: fc_selectObj&nbsp;: done\n'
+	
+		putstdout(resp)
+
+	def fc_selectPath(m,n,s):
+		global _path
+
+		if s:
+			_path = s
+		else:
+			_path = 0
+	
+		putstdout('#I&nbsp;: server&nbsp;: fc_selectPath&nbsp;: done\n')
+
+	
+	def fc_getCell(m,n,s):
+		resp = ''
+		ss = getSS(s)
+		if not ss:
+			resp = '#E&nbsp;: server&nbsp;: fc_getCell&nbsp;: no sheet\n'
+		else:
+		
+			try:
+				v = ss.get(n)
+				resp = 'c%s %d\n'&nbsp;% (n, v)
+			except ValueError:
+				resp = '#E&nbsp;: server&nbsp;: fc_getCell&nbsp;: no cell\n'
+				
+		#resp += '#I&nbsp;: server&nbsp;: fc_getCell&nbsp;: done\n'
+		putstdout(resp)
+	
+	def fc_setCell(m,n,s):
+		resp = ''
+		ss = getSS()
+		if not ss:
+			resp = '#E&nbsp;: server&nbsp;: fc_setCell&nbsp;: no sheet\n'
+		else:
+			v = ss.set(n,s)
+			resp = '#I&nbsp;: server&nbsp;: fc_setCell&nbsp;: done\n'
+	
+		putstdout(resp)
+
+	
+	def fc_recompute(m,n,s):
+		getDoc(n).recompute()
+		
+		putstdout('#I&nbsp;: server&nbsp;: fc_recompute&nbsp;: done\n')
+
+	def fc_export(m,n,s):
+		resp = ''
+		obj = getObj(n)
+		path = getPath(s, obj.Label)
+
+		if not obj:
+			resp = '#E&nbsp;: server&nbsp;: fc_export&nbsp;: no object\n'
+		else:
+			
+			if not path:
+				resp = '#E&nbsp;: server&nbsp;: fc_export&nbsp;: no path\n'
+			else:
+			
+				if hasattr(Mesh, "exportOptions"):
+					options = Mesh.exportOptions(path)
+					Mesh.export([obj], path, options)
+				else:
+					Mesh.export([obj], path)
+				
+				resp += '#I&nbsp;: server&nbsp;: fc_export&nbsp;: done&nbsp;: %s\n'&nbsp;% path
+
+		putstdout(resp)
+
+
+	def fc_(m,n,s):
+		resp = ''
+		putstdout(resp)
+
+	def fc_(m,n,s):
+		resp = ''
+		putstdout(resp)
+
+	def fc_(m,n,s):
+		resp = ''
+		putstdout(resp)
+
+## --- stdlib end --- ##
+
+
+## --- Extensions start --- ##
+## --- Extensions end --- ##
+
+
+	# Register all command functions with their codes
+	
+	register('I', fc_getId)
+	register('D', fc_docList)
+	register('O', fc_objList)
+	register('C', fc_cellsList)
+
+	register('i', fc_selectId)
+	register('d', fc_selectDoc)
+	register('s', fc_selectSpreadsheet)
+	register('o', fc_selectObj)
+	register('p', fc_selectPath)
+	
+	register('@', fc_getCell)
+	register('!', fc_setCell)
+	
+	register('r', fc_recompute)
+	register('e', fc_export)
+	
+	#register('', fc_)
+
+
+## --- Extensions registration start --- ##
+
+	#register('', fc_)
+
+## --- Extensions registration end --- ##
+
+
+	# Setup brcko lib
+	path = os.path.abspath(ROOT)
+	# in &lt;-&gt; in
+	# out &lt;-&gt; out
+	addstdin('%s/server.stdin' %path)
+	addstdout('%s/server.stdout' %path)
+
+
+	# Little bit of flexing O:)
+	genid = lambda seed,lvl: 'QWERTYUIOPASDFGHJKLZXCVBNM'[seed%26]+genid((seed*12345)%56789,lvl-1) if lvl&gt;0 else ''
+	id = genid(int(time.time()*1000),8)
+	
+	qe = Event()
+	th = Thread(target=_th,args=(qe,id))
+
+	FreeCAD.server = (id,qe,th)
+	th.start()
+
+	print('#I&nbsp;: server&nbsp;: started&nbsp;:',id)
+
+else:
+	# Server is running - let's stop it now
+	
+	(id,qe,th) = FreeCAD.server
+
+	qe.set()
+	del(FreeCAD.server)
+
+	print('#I&nbsp;: server&nbsp;: stopped')</pre>
 <h3><span class="mw-headline" id="client_script">client script</span></h3><p>
 freecad-ctl.py</p><div class="mw-highlight mw-highlight-lang-python3 mw-content-ltr mw-highlight-lines" dir="ltr"><pre><span></span><span class="linenos" data-line="1"></span><span class="ch">#!/usr/bin/python3</span>
 <span class="linenos" data-line="2"></span>
@@ -772,27 +773,28 @@ freecad-ctl.py</p><div class="mw-highlight mw-highlight-lang-python3 mw-content-
 </pre></div>
 <!-- 
 NewPP limit report
-Cached time: 20260130154409
+Cached time: 20260130155213
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.099 seconds
-Real time usage: 0.102 seconds
-Preprocessor visited node count: 171/1000000
-Post&#8208;expand include size: 1664/2097152 bytes
-Template argument size: 253/2097152 bytes
+CPU time usage: 0.037 seconds
+Real time usage: 0.043 seconds
+Preprocessor visited node count: 175/1000000
+Post&#8208;expand include size: 1726/2097152 bytes
+Template argument size: 8175/2097152 bytes
 Highest expansion depth: 5/100
-Expensive parser function count: 13/100
+Expensive parser function count: 12/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 88285/5000000 bytes
+Unstrip post&#8208;expand size: 27505/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%    2.444      1 Template:Macro
-100.00%    2.444      1 -total
+100.00%    8.472      1 -total
+ 37.27%    3.158      1 Template:MacroCode
+ 36.91%    3.127      1 Template:Macro
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:412380-0!canonical and timestamp 20260130154413 and revision id 1746048. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:412380-0!canonical and timestamp 20260130155217 and revision id 1746049. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
