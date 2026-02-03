@@ -1,0 +1,185 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">CAM Postprocessor Customization/en</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-CAM+Postprocessor+Customization&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
+<li><a href="../de/CAM_Postprocessor_Customization.html" class="mw-pt-progress mw-pt-progress--high" title="CAM Postprozessor-Anpassung (85% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="../CAM_Postprocessor_Customization.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="CAM Postprocessor Customization (100% translated)" lang="en" dir="ltr">English</a></li>
+<li><a href="../es/CAM_Postprocessor_Customization.html" class="mw-pt-progress mw-pt-progress--med" title="Trayectoria Personalizaci&oacute;n del Postprocesador (44% translated)" lang="es" dir="ltr">espa&ntilde;ol</a></li>
+<li><a href="../fr/CAM_Postprocessor_Customization.html" class="mw-pt-progress mw-pt-progress--high" title="CAM Personnaliser le post-processeur (85% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../it/CAM_Postprocessor_Customization.html" class="mw-pt-progress mw-pt-progress--med" title="Path Personalizzare il Postprocessore (44% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="../pl/CAM_Postprocessor_Customization.html" class="mw-pt-progress mw-pt-progress--high" title="CAM: Dostosowywanie przetwarzania ko&#324;cowego (85% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../pt-br/CAM_Postprocessor_Customization.html" class="mw-pt-progress mw-pt-progress--low" title="Personaliza&ccedil;&atilde;o de p&oacute;s-processador (0% translated)" lang="pt-BR" dir="ltr">portugu&ecirc;s do Brasil</a></li>
+<li><a href="../ru/CAM_Postprocessor_Customization.html" class="mw-pt-progress mw-pt-progress--low" title="CAM Postprocessor Customization/ru (5% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li></ul></div>
+<div class="warning-box">
+<p>This documentation is not finished. Please help and contribute documentation.
+</p><p><a href="../GuiCommand_model.html" title="GuiCommand model">GuiCommand model</a> explains how commands should be documented. Browse <a href="../Category;UnfinishedDocu.html" title="Category:UnfinishedDocu">Category:UnfinishedDocu</a> to see more incomplete pages like this one. See <a href="../Category;Command_Reference.html" title="Category:Command Reference">Category:Command Reference</a> for all commands.
+</p><p>See <a href="../WikiPages.html" title="WikiPages">WikiPages</a> to learn about editing the wiki pages, and go to <a href="../Help_FreeCAD.html" title="Help FreeCAD">Help FreeCAD</a> to learn about other ways in which you can contribute.
+</p>
+</div>
+<div class="docnav">
+    <div><span class="mw-default-size" typeof="mw:File"><span><img src="../File/Arrow-left.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <a href="../CAM_SetupSheet.html" title="CAM SetupSheet">SetupSheet</a></div>
+    <div><a href="../CAM_fourth_axis.html" title="CAM fourth axis">Fourth axis</a>
+ <span class="mw-default-size" typeof="mw:File"><span><img src="../File/Arrow-right.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span></div>
+    <div><a href="../CAM_Workbench.html" title="CAM Workbench">CAM</a>
+ <span class="mw-default-size" typeof="mw:File"><span><img src="../File/Workbench_CAM.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span></div>
+</div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>FreeCAD uses as internal representation for the generated paths, so called G-codes. They can describe such things as: speed and feed rates, stopping the motor etc... But the most important thing is the movements they describe. These movements are rather simple: They can be straight lines or they can be circular arcs. More sophisticated curves such as B-splines are already approximated by FreeCAD's <span typeof="mw:File"><a href="../index.php?title=Workbench_CAM.svg&amp;filetimestamp=20240316105021&amp;.html" class="mw-file-description"><img src="../File/Workbench_CAM.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../CAM_Workbench.html" title="CAM Workbench">CAM Workbench</a>.
+</p>
+<h2><span class="mw-headline" id="What_the_postprocessor_can_do_for_you">What the postprocessor can do for you</span></h2>
+<p>Many mills use G-codes as well to control the milling process. They may look almost like the internal codes, but there may be some differences:
+</p>
+<ul><li>the machine can have a special startup sequence</li>
+<li>it can have a special stop sequence</li>
+<li>arcs can be defined with a relative or an absolute center</li>
+<li>it may require line numbers in a certain format</li>
+<li>it can used so called canned cycles for predefined subprocesses such as drilling</li>
+<li>you might prefer your G-code output in either metric or imperial units.</li>
+<li>it might be useful to perform a set of moves prior to calling for a tool change to make the action easier for the operator</li>
+<li>you might wish to include comments for readability or suppress them to keep the program small</li>
+<li>you might wish to include a custom header to identify or document the program for future reference.</li>
+<li>...</li></ul>
+<p>Furthermore there are other languages to control a mill, such as HPGL, DXF, or others.
+</p><p>The postprocessor is a program which translates the internal codes into a complete file, that can be uploaded to your machine.
+</p>
+<h2><span class="mw-headline" id="Preparation_for_writing_your_own_postprocessor">Preparation for writing your own postprocessor</span></h2>
+<p>You may start with a very simple model showing how your machine reads straight lines and arcs. Prepare it with any program suitable for your machine.
+</p><p>A file for such paths starting at (0,0,0) and going towards Y would be helpful. Make sure it is the tool itself moving along this path, i.e. no tool radius compensation must be applied.
+</p><p><span class="mw-default-size" typeof="mw:File"><a href="../index.php?title=Path_PostProcessorSketch.png&amp;filetimestamp=20200212095551&amp;.html" class="mw-file-description"><img src="../File/Path_PostProcessorSketch.png" decoding="async" width="319" height="282" class="mw-file-element" data-file-width="319" data-file-height="282"></a></span>
+</p><p>The path in FreeCAD would look like this. Please note the small blue arrow, it indicates the starting direction. For a very first go you may provide only one level in the XY-plane.
+</p><p><span class="mw-default-size" typeof="mw:File"><a href="../index.php?title=Path_PostProcessorModel.png&amp;filetimestamp=20200212101622&amp;.html" class="mw-file-description"><img src="../File/Path_PostProcessorModel.png" decoding="async" width="361" height="317" class="mw-file-element" data-file-width="361" data-file-height="317"></a></span>
+</p><p>You can then have a look at the file and compare it to the output of existing postprocessors such as <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">linux_cnc_post.py</span> or <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">grbl_post.py</span> and try yourself to adapt them or you upload your to the <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewforum.php?f=15">Path/CAM forum</a> to get some help.
+</p>
+<h2><span class="mw-headline" id="Naming_convention">Naming convention</span></h2>
+<p>The postprocessor can be placed in your FreeCAD macro directory. For a prefix <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">&lt;filename&gt;</span> the postprocessor should get the name <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">&lt;filename&gt;_post.py</span>. Please note that the postfix and extension, <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">_post.py</span>, have to be lower case.
+</p><p>The new name should be reflected at the head of the parser arguments list in the <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">&lt;filename&gt;_post.py</span> file, e.g.:
+</p>
+<div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>parser = argparse.ArgumentParser(prog="grbl", add_help=False)
+</pre></div>
+<p>If you are testing, place it in your macro directory. If it functions well, please consider providing it for others to benefit (post it to the FreeCAD Path/CAM forum) so that it can be included in the FreeCAD distribution going forward.
+</p>
+<h2><span class="mw-headline" id="Other_existing_postprocessors">Other existing postprocessors</span></h2>
+<p>For comparison you may look at the postprocessors which come with your FreeCAD installation. They are located under the directory &lt;path_to_your_FreeCAD_distro&gt;/Mod/CAM/Path/Post/scripts. Widely used are the <a rel="nofollow" class="external text" href="http://linuxcnc.org/">linuxcnc</a> and the <a rel="nofollow" class="external text" href="https://github.com/grbl/grbl">grbl</a> postprocessors. Studying their code can give helpful insights.
+</p>
+<h2><span class="mw-headline" id="Programming_your_own_postprocessor">Programming your own postprocessor</span></h2>
+<p>This post discusses some internals from the linuxcnc postprocessors. The same strucure is used in other postprocessors as well.
+</p><p>Looking at linux_cnc_post.py, you'll see the export function (as of 0.19.20514 it's at line 156)
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">export</span><span class="p">(</span><span class="n">objectslist</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">argstring</span><span class="p">):</span>
+    <span class="c1"># pylint: disable=global-statement</span>
+    <span class="o">...</span>
+    <span class="n">gcode</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="o">...</span>
+    <span class="o">...</span>
+</pre></div>
+<p>it collects step by step in the variable "gcode" the processed G-codes and handles the overall exporting of post-processable objects (operations, tools, jobs ,etc).
+Export handles the high level stuff like comments and coolant but any objects that have multiple CAM commands (tool changes and operations) it delegates to the parse function (as of 0.19.20514 it's at line 288).
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">pathobj</span><span class="p">):</span>
+    <span class="o">...</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="s2">""</span>
+    <span class="n">lastcommand</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="o">...</span>
+    <span class="o">...</span>
+</pre></div>
+<p>Similarly to the "export" function collects parse the G-codes in the variable "out". In the variable "command" the commands as seen in the CAM workbench's "inspect G-code" function are stored and can be investigated for further processing.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">pathobj</span><span class="o">.</span><span class="n">Path</span><span class="o">.</span><span class="n">Commands</span><span class="p">:</span>
+
+            <span class="n">command</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">Name</span>
+</pre></div>
+<p>It recognizes the different G, M, F, S, and other G-codes. By remembering the last command in the variable "lastcommand" it can suppress subsequent repetitions of modal commands.
+</p><p>Both parse and export are just formatting strings and concatenating them together into what will be the final output.
+</p><p>You'll see that both functions also call the "linenumber()" function. If the user wants line numbers, the linenumber function returns the string to stick in to the appropriate spot, otherwise it returns an empty string so nothing is added.
+</p>
+<h2><span class="mw-headline" id="Adding_a_custom_post-processor">Adding a custom post-processor</span></h2>
+<p>1. <b>Access the Macro Path</b>:  
+</p><p>Go to the menu <b>Edit &rarr; Preferences &rarr; Python &rarr; Macro</b>. Note the path listed in the <i>Macro Path</i> field (e.g., <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">/home/user/snap/freecad/common</span>).
+</p><p>2. <b>Copy the Post-Processor File</b>:
+</p><p>Place your file (e.g., <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">new_post.py</span>) <b>directly</b> into the <i>Macro Path</i> folder noted in the previous step (e.g., <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">/home/user/snap/freecad/common/new_post.py</span>)
+</p>
+<h3><span class="mw-headline" id="Notes">Notes</span></h3>
+<ul><li>Ensure the file has the necessary read/write permissions.</li>
+<li>Restart FreeCAD to apply the changes.</li></ul>
+<h2><span class="mw-headline" id="Related">Related</span></h2>
+<ul><li><span typeof="mw:File"><a href="../index.php?title=CAM_Post.svg&amp;filetimestamp=20240316111427&amp;.html" class="mw-file-description"><img src="../File/CAM_Post.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../CAM_Post.html" title="CAM Post">CAM PostProcess</a></li></ul>
+<p><br>
+</p>
+<div class="docnav">
+    <div><span class="mw-default-size" typeof="mw:File"><span><img src="../File/Arrow-left.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <a href="../CAM_SetupSheet.html" title="CAM SetupSheet">SetupSheet</a></div>
+    <div><a href="../CAM_fourth_axis.html" title="CAM fourth axis">Fourth axis</a>
+ <span class="mw-default-size" typeof="mw:File"><span><img src="../File/Arrow-right.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span></div>
+    <div><a href="../CAM_Workbench.html" title="CAM Workbench">CAM</a>
+ <span class="mw-default-size" typeof="mw:File"><span><img src="../File/Workbench_CAM.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span></div>
+</div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=Workbench_CAM.svg&amp;filetimestamp=20240316105021&amp;.html" class="mw-file-description"><img src="../File/Workbench_CAM.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../en/CAM_Workbench.html" title="CAM Workbench/en">CAM</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b>Project Commands:</b> <a href="../en/CAM_Job.html" title="CAM Job/en">New Job</a>, <a href="../en/CAM_Post.html" title="CAM Post/en">Post Process</a>, <a href="../en/CAM_Sanity.html" title="CAM Sanity/en">Sanity Check</a>, <a href="../en/CAM_ExportTemplate.html" title="CAM ExportTemplate/en">Export Template</a></li></ul>
+<hr>
+<ul><li><b>Tool Commands:</b> <a href="../en/CAM_Inspect.html" title="CAM Inspect/en">Inspect Toolpath</a>, <a href="../en/CAM_Simulator.html" title="CAM Simulator/en">Legacy CAM Simulator</a>, <a href="../en/CAM_SimulatorGL.html" title="CAM SimulatorGL/en">CAM Simulator</a>, <a href="../en/CAM_SelectLoop.html" title="CAM SelectLoop/en">Finish Selecting Loop</a>, <a href="../en/CAM_OpActiveToggle.html" title="CAM OpActiveToggle/en">Toggle Operation</a>, <a href="../en/CAM_ToolBitLibraryOpen.html" title="CAM ToolBitLibraryOpen/en">ToolBit Library Manager</a>, <a href="../en/CAM_ToolBitDock.html" title="CAM ToolBitDock/en">Add toolbit&hellip;</a></li></ul>
+<hr>
+<ul><li><b>Basic Operations:</b> <a href="../en/CAM_Profile.html" title="CAM Profile/en">Profile</a>, <a href="../en/CAM_Pocket_Shape.html" title="CAM Pocket Shape/en">Pocket Shape</a>, <a href="../en/CAM_MillFace.html" title="CAM MillFace/en">Face</a>, <a href="../en/CAM_Helix.html" title="CAM Helix/en">Helix</a>, <a href="../en/CAM_Adaptive.html" title="CAM Adaptive/en">Adaptive</a>, <a href="../en/CAM_Slot.html" title="CAM Slot/en">Slot</a>, <a href="../en/CAM_Drilling.html" title="CAM Drilling/en">Drilling</a>, <a href="../index.php?title=CAM_Tapping/en&amp;action=edit&amp;redlink=1.html" class="new" title="CAM Tapping/en (page does not exist)">Tapping</a>, <a href="../en/CAM_Engrave.html" title="CAM Engrave/en">Engrave</a>, <a href="../en/CAM_Deburr.html" title="CAM Deburr/en">Deburr</a>, <a href="../en/CAM_Vcarve.html" title="CAM Vcarve/en">Vcarve</a></li></ul>
+<hr>
+<ul><li><b>3D Operations:</b> <a href="../en/CAM_Pocket3D.html" title="CAM Pocket3D/en">3D Pocket</a>, <a href="../en/CAM_Surface.html" title="CAM Surface/en">3D Surface</a>, <a href="../en/CAM_Waterline.html" title="CAM Waterline/en">Waterline</a></li></ul>
+<hr>
+<ul><li><b>CAM Dressup:</b> <a href="../index.php?title=CAM_DressupArray/en&amp;action=edit&amp;redlink=1.html" class="new" title="CAM DressupArray/en (page does not exist)">Array</a>, <a href="../en/CAM_DressupAxisMap.html" title="CAM DressupAxisMap/en">Axis Map</a>, <a href="../en/CAM_DressupPathBoundary.html" title="CAM DressupPathBoundary/en">Boundary</a>, <a href="../en/CAM_DressupDogbone.html" title="CAM DressupDogbone/en">Dogbone</a>, <a href="../en/CAM_DressupDragKnife.html" title="CAM DressupDragKnife/en">Drag Knife</a>, <a href="../en/CAM_DressupLeadInOut.html" title="CAM DressupLeadInOut/en">Lead In/Out</a>, <a href="../en/CAM_DressupRampEntry.html" title="CAM DressupRampEntry/en">Ramp Entry</a>, <a href="../en/CAM_DressupTag.html" title="CAM DressupTag/en">Tag</a>, <a href="../en/CAM_DressupZCorrect.html" title="CAM DressupZCorrect/en">Z Depth Correction</a></li></ul>
+<hr>
+<ul><li><b>Supplemental Commands:</b> <a href="../en/CAM_Comment.html" title="CAM Comment/en">Comment</a>, <a href="../en/CAM_Stop.html" title="CAM Stop/en">Stop</a>, <a href="../en/CAM_Custom.html" title="CAM Custom/en">Custom</a>, <a href="../en/CAM_Probe.html" title="CAM Probe/en">Probe</a>, <a href="../en/CAM_Shape.html" title="CAM Shape/en">Path From Shape TC</a></li></ul>
+<hr>
+<ul><li><b>CAM Modification:</b> <a href="../en/CAM_Copy.html" title="CAM Copy/en">Copy oOperation</a>, <a href="../en/CAM_Array.html" title="CAM Array/en">Array</a>, <a href="../en/CAM_SimpleCopy.html" title="CAM SimpleCopy/en">Simple Copy</a></li></ul>
+<hr>
+<ul><li><b>Specialty Operations:</b> <a href="../en/CAM_ThreadMilling.html" title="CAM ThreadMilling/en">Thread Milling</a></li></ul>
+<hr>
+<ul><li><b>Miscellaneous:</b> <a href="../en/CAM_Area.html" title="CAM Area/en">Area</a>, <a href="../en/CAM_Area_Workplane.html" title="CAM Area Workplane/en">Area Workplane</a></li></ul>
+<hr>
+<ul><li><b>ToolBit architecture:</b> <a href="../en/CAM_Tools.html" title="CAM Tools/en">Tools</a>, <a href="../en/CAM_ToolShape.html" title="CAM ToolShape/en">ToolShape</a>, <a href="../en/CAM_ToolBit.html" title="CAM ToolBit/en">ToolBit</a>, <a href="../en/CAM_ToolBit_Library.html" title="CAM ToolBit Library/en">ToolBit Library</a>, <a href="../en/CAM_ToolController.html" title="CAM ToolController/en">ToolController</a></li></ul>
+<hr>
+<ul><li><b>Additional:</b> <a href="../en/CAM_Preferences.html" title="CAM Preferences/en">Preferences</a>,  <a href="../en/CAM_scripting.html" title="CAM scripting/en">Scripting</a></li></ul></div>
+    </div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=User_hub.png&amp;filetimestamp=20190221145008&amp;.html" class="mw-file-description"><img src="../File/User_hub.png" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="../en/User_hub.html" title="User hub/en">User documentation</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b><a href="../en/Getting_started.html" title="Getting started/en">Getting started</a></b></li>
+<li><b>Installation:</b> <a href="../en/Download.html" title="Download/en">Download</a>, <a href="../en/Installing_on_Windows.html" title="Installing on Windows/en">Windows</a>, <a href="../en/Installing_on_Linux.html" title="Installing on Linux/en">Linux</a>, <a href="../en/Installing_on_Mac.html" title="Installing on Mac/en">Mac</a>, <a href="../en/Installing_additional_components.html" title="Installing additional components/en">Additional components</a>, <a href="../en/Compile_on_Docker.html" title="Compile on Docker/en">Docker</a>, <a href="../en/AppImage.html" title="AppImage/en">AppImage</a>, <a href="../en/Ubuntu_Snap.html" title="Ubuntu Snap/en">Ubuntu Snap</a></li>
+<li><b>Basics:</b> <a href="../en/About_FreeCAD.html" title="About FreeCAD/en">About FreeCAD</a>, <a href="../en/Interface.html" title="Interface/en">Interface</a>, <a href="../en/Mouse_navigation.html" title="Mouse navigation/en">Mouse navigation</a>, <a href="../en/Selection_methods.html" title="Selection methods/en">Selection methods</a>, <a href="../en/Object_name.html" title="Object name/en">Object name</a>, <a href="../en/Preferences_Editor.html" title="Preferences Editor/en">Preferences</a>, <a href="../en/Workbenches.html" title="Workbenches/en">Workbenches</a>, <a href="../en/Document_structure.html" title="Document structure/en">Document structure</a>, <a href="../en/Property.html" title="Property/en">Properties</a>, <a href="../en/Help_FreeCAD.html" title="Help FreeCAD/en">Help FreeCAD</a>, <a href="../en/Donate.html" title="Donate/en">Donate</a></li></ul>
+<hr>
+<ul><li><b>Help:</b> <a href="../en/Tutorials.html" title="Tutorials/en">Tutorials</a>, <a href="../en/Video_tutorials.html" title="Video tutorials/en">Video tutorials</a></li>
+<li><b><a href="../en/Workbenches.html" title="Workbenches/en">Workbenches</a>:</b> <a href="../en/Std_Base.html" title="Std Base/en">Std Base</a>, <a href="../en/Assembly_Workbench.html" title="Assembly Workbench/en">Assembly</a>, <a href="../en/BIM_Workbench.html" title="BIM Workbench/en">BIM</a>, <a href="../en/CAM_Workbench.html" title="CAM Workbench/en">CAM</a>, <a href="../en/Draft_Workbench.html" title="Draft Workbench/en">Draft</a>, <a href="../en/FEM_Workbench.html" title="FEM Workbench/en">FEM</a>, <a href="../en/Inspection_Workbench.html" title="Inspection Workbench/en">Inspection</a>, <a href="../en/Material_Workbench.html" title="Material Workbench/en">Material</a>, <a href="../en/Mesh_Workbench.html" title="Mesh Workbench/en">Mesh</a>, <a href="../en/OpenSCAD_Workbench.html" title="OpenSCAD Workbench/en">OpenSCAD</a>, <a href="../en/Part_Workbench.html" title="Part Workbench/en">Part</a>, <a href="../en/PartDesign_Workbench.html" title="PartDesign Workbench/en">PartDesign</a>, <a href="../en/Points_Workbench.html" title="Points Workbench/en">Points</a>, <a href="../en/Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/en">Reverse Engineering</a>, <a href="../en/Robot_Workbench.html" title="Robot Workbench/en">Robot</a>, <a href="../en/Sketcher_Workbench.html" title="Sketcher Workbench/en">Sketcher</a>, <a href="../en/Spreadsheet_Workbench.html" title="Spreadsheet Workbench/en">Spreadsheet</a>, <a href="../en/Surface_Workbench.html" title="Surface Workbench/en">Surface</a>, <a href="../en/TechDraw_Workbench.html" title="TechDraw Workbench/en">TechDraw</a>, <a href="../en/Testing.html" title="Testing/en">Test Framework</a></li></ul>
+<hr>
+<ul><li><b><a href="../en/Addon.html" title="Addon/en">Addons</a>:</b> <a href="../en/Std_AddonMgr.html" title="Std AddonMgr/en">Addon Manager</a>, <a href="../en/External_workbenches.html" title="External workbenches/en">External workbenches</a>, <a href="../en/Scripting_and_macros.html" title="Scripting and macros/en">Scripting and macros</a></li></ul>
+<hr>
+<ul><li><b>Hubs:</b> <a href="../en/User_hub.html" title="User hub/en">User hub</a>, <a href="../en/Power_users_hub.html" title="Power users hub/en">Power users hub</a>, <a href="../en/Developer_hub.html" title="Developer hub/en">Developer hub</a></li></ul></div>
+    </div></div>
+<!-- 
+NewPP limit report
+Cached time: 20260203202237
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show&#8208;toc]
+CPU time usage: 0.093 seconds
+Real time usage: 0.129 seconds
+Preprocessor visited node count: 373/1000000
+Post&#8208;expand include size: 15127/2097152 bytes
+Template argument size: 4979/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 4/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 3974/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   37.102      1 -total
+ 24.15%    8.960      1 Template:CAM_Tools_navi/en
+ 13.45%    4.990      1 Template:Userdocnavi/en
+ 13.35%    4.953      1 Template:UnfinishedDocu/en
+ 11.05%    4.098      2 Template:Navigation_menu_2
+ 10.77%    3.995      1 Template:MenuCommand
+ 10.14%    3.762      4 Template:Code
+  9.05%    3.360      9 Template:FileName
+  7.21%    2.674      2 Template:Docnav
+  4.83%    1.791      1 Template:TOCright
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:188304-0!canonical and timestamp 20260203202236 and revision id 1747267. Rendering was triggered because: edit-page
+ -->
+</div>
+</div><script src="../site.js"></script>
