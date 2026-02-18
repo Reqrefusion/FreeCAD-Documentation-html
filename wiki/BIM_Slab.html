@@ -5,12 +5,6 @@
 <li><a href="pl/BIM_Slab.html" class="mw-pt-progress mw-pt-progress--complete" title="BIM: P&#322;yta (100% translated)" lang="pl" dir="ltr">polski</a></li>
 <li><a href="pt-br/BIM_Slab.html" class="mw-pt-progress mw-pt-progress--med" title="BIM Slab/pt-br (20% translated)" lang="pt-BR" dir="ltr">portugu&ecirc;s do Brasil</a></li>
 <li><a href="ru/BIM_Slab.html" class="mw-pt-progress mw-pt-progress--low" title="BIM &#1055;&#1077;&#1088;&#1077;&#1082;&#1088;&#1099;&#1090;&#1080;&#1103; (Slab) (10% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li></ul></div>
-<div class="warning-box">
-<p>This documentation is not finished. Please help and contribute documentation.
-</p><p><a href="GuiCommand_model.html" title="GuiCommand model">GuiCommand model</a> explains how commands should be documented. Browse <a href="Category;UnfinishedDocu.html" title="Category:UnfinishedDocu">Category:UnfinishedDocu</a> to see more incomplete pages like this one. See <a href="Category;Command_Reference.html" title="Category:Command Reference">Category:Command Reference</a> for all commands.
-</p><p>See <a href="WikiPages.html" title="WikiPages">WikiPages</a> to learn about editing the wiki pages, and go to <a href="Help_FreeCAD.html" title="Help FreeCAD">Help FreeCAD</a> to learn about other ways in which you can contribute.
-</p>
-</div>
 <div class="docnav">
     <div><span class="mw-default-size" typeof="mw:File"><span><img src="File/Arrow-left.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <span class="mw-default-size" typeof="mw:File"><span><img src="File/BIM_Beam.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <a href="BIM_Beam.html" title="BIM Beam">Beam</a></div>
     <div><span class="mw-default-size" typeof="mw:File"><span><img src="File/BIM_Door.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <a href="BIM_Door.html" title="BIM Door">Door</a>
@@ -70,10 +64,31 @@
 <li>If you have not yet selected a planar object: select one (as prompted in the <a href="Report_View.html" title="Report View">Report View</a>).</li>
 <li>A new Slab object is created and the tool is finished.</li>
 <li>Optionally change some properties in the <a href="Property_View.html" title="Property View">Property View</a>.</li></ol>
+<h2><span class="mw-headline" id="Notes">Notes</span></h2>
+<ul><li><b>Wrapping behavior</b>: the tool "wraps" the selected object. If you select a sub-element (like a face in the 3D view), the tool identifies the parent object and uses that as the <span style="font-size:60%; padding-right:0.8em;">Data</span><b>Base</b>.</li>
+<li><b>Thickness</b>: to change the thickness of the slab, modify the <span style="font-size:60%; padding-right:0.8em;">Data</span><b>Height</b> property.</li>
+<li><b>Orientation</b>: To make the slab extrude upwards, change the <span style="font-size:60%; padding-right:0.8em;">Data</span><b>Normal</b> property to <code>(0, 0, 1)</code>.</li></ul>
 <h2><span class="mw-headline" id="Properties">Properties</span></h2>
 <p>A Slab object shares the common properties and behaviors of all <a href="Arch_Structure.html" title="Arch Structure">Arch Structures</a>. Its <span style="font-size:60%; padding-right:0.8em;">Data</span><b>IfcType</b> is preset to <code>Slab</code>.
-</p><p><br>
 </p>
+<h2><span class="mw-headline" id="Scripting">Scripting</span></h2>
+<p>The BIM Slab is created using the same Python function as Arch Structures:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span><span class="o">,</span> <span class="nn">Arch</span>
+
+<span class="c1"># Create a rectangle profile</span>
+<span class="kn">import</span> <span class="nn">Draft</span>
+<span class="n">rect</span> <span class="o">=</span> <span class="n">Draft</span><span class="o">.</span><span class="n">make_rectangle</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">3000</span><span class="p">)</span>
+<span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+
+<span class="c1"># Create a structure and define it as a slab</span>
+<span class="n">slab</span> <span class="o">=</span> <span class="n">Arch</span><span class="o">.</span><span class="n">makeStructure</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+<span class="n">slab</span><span class="o">.</span><span class="n">IfcType</span> <span class="o">=</span> <span class="s2">"Slab"</span>
+<span class="n">slab</span><span class="o">.</span><span class="n">Height</span> <span class="o">=</span> <span class="mi">150</span>  <span class="c1"># mm</span>
+<span class="n">slab</span><span class="o">.</span><span class="n">Normal</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Slab is extruded downwards</span>
+
+<span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+</pre></div>
 <div class="docnav">
     <div><span class="mw-default-size" typeof="mw:File"><span><img src="File/Arrow-left.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <span class="mw-default-size" typeof="mw:File"><span><img src="File/BIM_Beam.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <a href="BIM_Beam.html" title="BIM Beam">Beam</a></div>
     <div><span class="mw-default-size" typeof="mw:File"><span><img src="File/BIM_Door.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span> <a href="BIM_Door.html" title="BIM Door">Door</a>
@@ -123,35 +138,35 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260218174737
+Cached time: 20260218180110
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.119 seconds
-Real time usage: 0.155 seconds
-Preprocessor visited node count: 561/1000000
-Post&#8208;expand include size: 25865/2097152 bytes
-Template argument size: 10019/2097152 bytes
+CPU time usage: 0.116 seconds
+Real time usage: 0.227 seconds
+Preprocessor visited node count: 747/1000000
+Post&#8208;expand include size: 26106/2097152 bytes
+Template argument size: 10459/2097152 bytes
 Highest expansion depth: 7/100
-Expensive parser function count: 1/100
+Expensive parser function count: 2/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 1295/5000000 bytes
+Unstrip post&#8208;expand size: 3360/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   30.991      1 -total
- 34.18%   10.592      1 Template:BIM_Tools_navi
- 30.53%    9.460      2 Template:Navigation_menu_2
- 13.30%    4.123      1 Template:Userdocnavi
- 10.42%    3.230      2 Template:PropertyData
- 10.40%    3.224      1 Template:GuiCommand
-  8.81%    2.731      1 Template:Value
-  6.21%    1.924      2 Template:Docnav
-  5.75%    1.781      2 Template:Variable
-  5.15%    1.595      1 Template:Incode
+100.00%   53.227      1 -total
+ 29.40%   15.651      1 Template:BIM_Tools_navi
+ 23.68%   12.604      2 Template:Navigation_menu_2
+ 13.87%    7.381      5 Template:PropertyData
+ 12.58%    6.697      1 Template:GuiCommand
+ 10.15%    5.401      2 Template:Value
+  8.75%    4.658      1 Template:Userdocnavi
+  8.45%    4.498      1 Template:Code
+  8.33%    4.434      5 Template:Variable
+  6.14%    3.266      2 Template:Docnav
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:351009-0!canonical and timestamp 20260218174804 and revision id 1756176. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:351009-0!canonical and timestamp 20260218180133 and revision id 1756177. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
