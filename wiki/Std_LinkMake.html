@@ -96,21 +96,21 @@
 <li>Holding the <span class="key" style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #888888; border-radius: 0.3em; padding: 0px 5px 1px 5px; color:#202122;">Alt</span> key creates a Link; a pair of chain links is shown in the cursor.</li></ul>
 <p>For the <span class="key" style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #888888; border-radius: 0.3em; padding: 0px 5px 1px 5px; color:#202122;">Ctrl</span> and <span class="key" style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #888888; border-radius: 0.3em; padding: 0px 5px 1px 5px; color:#202122;">Alt</span> modifiers, dragging and dropping can also be done with a single document. That is, dragging an object and dropping it into the same document's name can be used to create multiple copies or multiple Links to it.
 </p>
-<h2><span class="mw-headline" id="Copy_on_Change">Copy on Change</span></h2>
-<p>The <b>Copy on Change</b> feature allows a Link to start as a lightweight reference and then fork into an independent object when specific modifications are made. This follows a "copy-on-write" philosophy, ensuring that variants only consume memory and file space when they actually diverge from the original  (see <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?p=532130#p532130">original announcement on the FreeCAD forum</a>).
+<h2><span class="mw-headline" id="Copy_on_change">Copy on change</span></h2>
+<p>The <b>Copy on change</b> feature allows a Link to start as a lightweight reference and then fork into an independent object when specific modifications are made. This follows a "copy-on-write" philosophy, ensuring that variants only consume memory and file space when they actually diverge from the original  (see <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?p=532130#p532130">original announcement on the FreeCAD forum</a>).
 </p>
 <h3><span class="mw-headline" id="Property_selection">Property selection</span></h3>
 <p>For this mechanism to work, specific properties on the <b>Source</b> object must be marked as eligible for copying. 
 </p>
-<ul><li>In the <b>Property Editor</b>, right-click a property and select <b>Status &rarr; Copy on Change</b>.</li>
+<ul><li>In the <b>Property Editor</b>, right-click a property and select <b>Status &rarr; CopyOnChange</b>.</li>
 <li>When this status is active, any Link pointing to this object will monitor that property for changes. The exact behavior is defined by the Link's <span style="font-size:60%; padding-right:0.8em;">Data</span><b>LinkCopyOnChange</b> property.</li></ul>
 <h3><span class="mw-headline" id="Workflow">Workflow</span></h3>
 <p>The behavior of the Link is controlled by its <span style="font-size:60%; padding-right:0.8em;">Data</span><b>LinkCopyOnChange</b> property:
 </p>
-<ul><li><b>Disabled (Default):</b> the Link acts as a pure proxy. Any change to a property (including those marked as "Copy on Change") is passed through to the original source object. It remains a lightweight reference. This relationship is still bidirectional at this point: changing a property on the Source object will also change it on the Link.</li>
+<ul><li><b>Disabled (Default):</b> the Link acts as a pure proxy. Any change to a property (including those marked as "CopyOnChange") is passed through to the original source object. It remains a lightweight reference. This relationship is still bidirectional at this point: changing a property on the Source object will also change it on the Link.</li>
 <li><b>Enabled:</b> this is a <b>latent monitoring state</b>.
 <ul><li>As long as only the <b>Source</b> is modified, the Link will track those changes and stay in sync.</li>
-<li>The moment a "Copy on Change" property is modified directly on the <b>Link</b>, the Link triggers a one-off <b>deep copy</b>, including the source object and its dependencies. It creates an internal, independent version of the source object with the new values. The connection to the Source has been severed, and the Link is no longer a lightweight reference. The Link&rsquo;s status automatically switches to <b>Owned</b>.</li></ul></li>
+<li>The moment a "CopyOnChange" property is modified directly on the <b>Link</b>, the Link triggers a one-off <b>deep copy</b>, including the source object and its dependencies. It creates an internal, independent version of the source object with the new values. The connection to the Source has been severed, and the Link is no longer a lightweight reference. The Link&rsquo;s status automatically switches to <b>Owned</b>.</li></ul></li>
 <li><b>Owned:</b> this indicates the Link has "taken ownership" of its data. It now possesses its own independent model and geometry. This state is generally set by the software once the deep copy has happened, but:
 <ul><li><b>Manual trigger:</b> the user can manually switch a Link from <code>Enabled</code> to <code>Owned</code> to force an immediate deep copy of the original model based on its current configuration.</li></ul></li>
 <li><b>Tracking:</b> a connected synchronization mode where the Link possesses its own copy but attempts to keep non-modified properties in sync with future edits made to the original.</li></ul>
@@ -118,7 +118,7 @@
 </p><p>The status of the <span style="font-size:60%; padding-right:0.8em;">Data</span><b>LinkCopyOnChange</b> property can be modified in the UI in two alternative ways:
 </p>
 <ul><li>Select the Link object to modify, either in the Tree View or the 3D View, then use the Property Editor to change its value.</li>
-<li>Right-click the Link object in the Tree View, and on its context menu, navigate to the <b>Copy On Change</b> submenu entry. There you can switch between (at this time) <code>Enabled</code> and <code>Tracking</code>.</li></ul>
+<li>Right-click the Link object in the Tree View, and on its context menu, navigate to the <b>Copy on Change</b> submenu entry. There you can switch between (at this time) <code>Enabled</code> and <code>Tracking</code>.</li></ul>
 <h3><span class="mw-headline" id="Setting_up_the_configurable_object">Setting up the configurable object</span></h3>
 <p>The user can control exactly which objects and dependencies to copy when making the variant:
 </p>
@@ -126,7 +126,7 @@
 <li>Select <b>Setup configurable object</b> context menu entry.</li>
 <li>A dialog will pop up to let you choose which object to copy, to potentially exclude dependent or non-relevant objects from the copy.</li></ol>
 <h3><span class="mw-headline" id="Shadowing_properties">Shadowing properties</span></h3>
-<p>If a Link needs to have a different value than its source for a specific property (even if "Copy on Change" is not used), a <b>manual override</b> can be performed, whereby the original property is shadowed by a replacement.
+<p>If a Link needs to have a different value than its source for a specific property (even if "CopyOnChange" is not used), a <b>manual override</b> can be performed, whereby the original property is shadowed by a replacement.
 </p><p>If a Link possesses a property with the <b>exact same name and type</b> as one on its source object, the Link will prefer its own local value and stop reading from the source. (see <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?p=429106#p429106">discussion on the FreeCAD forum</a>).
 </p><p><b>How to add an override in the UI:</b>
 </p>
@@ -397,15 +397,15 @@
 <div style="clear:both"></div>
 <!-- 
 NewPP limit report
-Cached time: 20260304041758
+Cached time: 20260307150118
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.275 seconds
-Real time usage: 0.303 seconds
+CPU time usage: 0.322 seconds
+Real time usage: 0.346 seconds
 Preprocessor visited node count: 6443/1000000
-Post&#8208;expand include size: 87671/2097152 bytes
-Template argument size: 21930/2097152 bytes
+Post&#8208;expand include size: 87669/2097152 bytes
+Template argument size: 21928/2097152 bytes
 Highest expansion depth: 7/100
 Expensive parser function count: 4/100
 Unstrip recursion depth: 0/20
@@ -413,19 +413,19 @@ Unstrip post&#8208;expand size: 9196/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   85.875      1 -total
- 31.05%   26.662     80 Template:Variable
- 28.01%   24.052     58 Template:PropertyData
- 11.12%    9.547     22 Template:PropertyView
-  9.12%    7.831      1 Template:Std_Base_navi
-  7.09%    6.092      2 Template:Navigation_menu_2
-  6.24%    5.355     41 Template:Value
-  5.05%    4.337      9 Template:TitleProperty
-  4.55%    3.909    103 Template:Incode
-  3.73%    3.199      3 Template:Code
+100.00%   85.240      1 -total
+ 32.62%   27.803     80 Template:Variable
+ 29.31%   24.983     58 Template:PropertyData
+ 11.57%    9.860     22 Template:PropertyView
+  8.88%    7.569      1 Template:Std_Base_navi
+  8.07%    6.883      2 Template:Navigation_menu_2
+  5.87%    5.000     41 Template:Value
+  5.54%    4.721    103 Template:Incode
+  3.95%    3.367      9 Template:TitleProperty
+  3.58%    3.053      1 Template:Userdocnavi
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:158106-0!canonical and timestamp 20260304041808 and revision id 1762314. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:158106-0!canonical and timestamp 20260307150159 and revision id 1762934. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
