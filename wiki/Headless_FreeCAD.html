@@ -1,8 +1,8 @@
 <link href="site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Headless FreeCAD</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="index.php?title=Special;Translate&amp;group=page-Headless+FreeCAD&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
-<li><a href="de/Headless_FreeCAD.html" class="mw-pt-progress mw-pt-progress--med" title="FreeCAD kopflos (20% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="de/Headless_FreeCAD.html" class="mw-pt-progress mw-pt-progress--complete" title="FreeCAD kopflos (100% translated)" lang="de" dir="ltr">Deutsch</a></li>
 <li><span class="mw-pt-languages-ui mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="en" dir="ltr">English</span></li>
-<li><a href="fr/Headless_FreeCAD.html" class="mw-pt-progress mw-pt-progress--med" title="FreeCAD sans GUI (28% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
-<li><a href="pl/Headless_FreeCAD.html" class="mw-pt-progress mw-pt-progress--high" title="FreeCAD bez GUI (82% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="fr/Headless_FreeCAD.html" class="mw-pt-progress mw-pt-progress--complete" title="FreeCAD sans GUI (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="pl/Headless_FreeCAD.html" class="mw-pt-progress mw-pt-progress--complete" title="FreeCAD bez GUI (100% translated)" lang="pl" dir="ltr">polski</a></li>
 <li><a href="ru/Headless_FreeCAD.html" class="mw-pt-progress mw-pt-progress--low" title="Headless (&#1073;&#1077;&#1079; &#1075;&#1088;&#1072;&#1092;&#1080;&#1095;&#1077;&#1089;&#1082;&#1086;&#1075;&#1086; &#1080;&#1085;&#1090;&#1077;&#1088;&#1092;&#1077;&#1081;&#1089;&#1072;) FreeCAD (5% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li>
 <li><a href="ja/Headless_FreeCAD.html" class="mw-pt-progress mw-pt-progress--low" title="&#12504;&#12483;&#12489;&#12524;&#12473;FreeCAD (7% translated)" lang="ja" dir="ltr">&#26085;&#26412;&#35486;</a></li></ul></div>
 <div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
@@ -48,6 +48,25 @@ The<span class="w"> </span>area<span class="w"> </span>of<span class="w"> </span
 </pre></div>
 <p>This is a very powerful feature that unlocks the full capabilities of FreeCAD for automation and integration tasks. For example, one could write a script that leverages both the FreeCAD and Blender APIs to programmatically import objects from a <code>.FCStd</code> file directly into a Blender scene.
 </p><p>Note that this mode is intended for using the FreeCAD API without a GUI. While some GUI-related modules can be imported, API usage that directly accesses or manipulates GUI components is very limited and generally not supported in a headless context.
+</p>
+<h4><span class="mw-headline" id="Additional_considerations_for_Workbench_modules_in_headless_mode">Additional considerations for Workbench modules in headless mode</span></h4>
+<p>When using FreeCAD as a Python library in a headless context (for example via a standard Python interpreter or <code>FreeCADCmd</code>), not all workbench modules are automatically available, even if the core FreeCAD modules can be imported successfully.
+</p><p>In particular, modules located in the <code>Mod/</code> directory (such as PartDesign or submodules of Part) may not be discoverable by Python unless their paths are explicitly added to <code>sys.path</code>. This can lead to situations where document objects are loaded as generic types (for example <code>GeoFeature</code>) instead of their specific types (for example <code>PartDesign::Body</code>), or where imports of workbench-related modules fail.
+</p><p>To ensure full functionality, it may be necessary to manually extend the Python search path to include the FreeCAD <code>Mod/</code> directory and, in some cases, specific subdirectories:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="c1"># Example paths (adjust to your installation)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"/usr/lib/freecad/Mod"</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"/usr/lib/freecad/Mod/Part"</span><span class="p">)</span>
+
+<span class="c1"># Workbench modules can now be imported</span>
+<span class="kn">import</span> <span class="nn">PartDesign</span>
+<span class="kn">from</span> <span class="nn">BOPTools</span> <span class="kn">import</span> <span class="n">BOPFeatures</span>
+</pre></div>
+<p>The exact paths depend on the platform and installation method.
+</p><p>This manual setup ensures that workbench modules are importable, document objects are reconstructed with their correct types, and additional Python utilities bundled with workbenches become available.
+</p><p>Note that the FreeCAD GUI environment performs this initialization automatically. In headless usage, however, this step must be handled explicitly by the user.
 </p><p>See <a href="Embedding_FreeCAD.html" title="Embedding FreeCAD">Embedding FreeCAD</a>.
 </p>
 <h3><span class="mw-headline" id="Via_shell_script">Via shell script</span></h3>
@@ -171,29 +190,29 @@ Box<span class="w"> </span>created<span class="w"> </span>and<span class="w"> </
 <li><a href="Start_up_and_Configuration.html#Running_FreeCAD_without_GUI_(headless)" title="Start up and Configuration">Start up and Configuration</a></li></ul>
 <!-- 
 NewPP limit report
-Cached time: 20250922200003
+Cached time: 20260319065126
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.097 seconds
-Real time usage: 0.443 seconds
-Preprocessor visited node count: 372/1000000
-Post&#8208;expand include size: 1536/2097152 bytes
-Template argument size: 3887/2097152 bytes
+CPU time usage: 0.086 seconds
+Real time usage: 0.290 seconds
+Preprocessor visited node count: 437/1000000
+Post&#8208;expand include size: 1752/2097152 bytes
+Template argument size: 4173/2097152 bytes
 Highest expansion depth: 4/100
-Expensive parser function count: 9/100
+Expensive parser function count: 10/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 17722/5000000 bytes
+Unstrip post&#8208;expand size: 18757/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%  344.686      1 -total
- 98.49%  339.493      9 Template:Code
-  0.51%    1.756     26 Template:Incode
-  0.33%    1.146      1 Template:TOCright
+100.00%  215.278      1 -total
+ 97.02%  208.865     10 Template:Code
+  1.09%    2.345     32 Template:Incode
+  0.64%    1.387      1 Template:TOCright
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:231411-0!canonical and timestamp 20250922200003 and revision id 1647585. Rendering was triggered because: api-parse
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:231411-0!canonical and timestamp 20260319065318 and revision id 1766667. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
