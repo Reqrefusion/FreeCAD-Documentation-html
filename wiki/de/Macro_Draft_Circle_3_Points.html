@@ -1,10 +1,11 @@
 <link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Macro Draft Circle 3 Points/de</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="de" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-Macro+Draft+Circle+3+Points&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
-<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="de" dir="ltr">Deutsch</span></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--high" lang="de" dir="ltr">Deutsch</span></li>
 <li><a href="../Macro_Draft_Circle_3_Points.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="Macro Draft Circle 3 Points (100% translated)" lang="en" dir="ltr">English</a></li>
-<li><a href="../fr/Macro_Draft_Circle_3_Points.html" class="mw-pt-progress mw-pt-progress--complete" title="Macro Draft Circle 3 Points (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
-<li><a href="../it/Macro_Draft_Circle_3_Points.html" class="mw-pt-progress mw-pt-progress--med" title="Macro Cerchio da 3 punti 2D (29% translated)" lang="it" dir="ltr">italiano</a></li>
-<li><a href="../pl/Macro_Draft_Circle_3_Points.html" class="mw-pt-progress mw-pt-progress--low" title="Makrodefinicja: Okr&#261;g na podstawie trzech punkt&oacute;w (6% translated)" lang="pl" dir="ltr">polski</a></li>
-<li><a href="../cs/Macro_Draft_Circle_3_Points.html" class="mw-pt-progress mw-pt-progress--med" title="Makro Nakresli kru&#382;nici ze 3 bod&#367; (29% translated)" lang="cs" dir="ltr">&#269;e&scaron;tina</a></li></ul></div>
+<li><a href="../fr/Macro_Draft_Circle_3_Points.html" class="mw-pt-progress mw-pt-progress--high" title="Macro Draft Circle 3 Points (93% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../it/Macro_Draft_Circle_3_Points.html" class="mw-pt-progress mw-pt-progress--high" title="Macro di Draft Cerchio da 3 punti 2D (93% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="../pl/Macro_Draft_Circle_3_Points.html" class="mw-pt-progress mw-pt-progress--low" title="Makrodefinicja: Okr&#261;g na podstawie trzech punkt&oacute;w (7% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../cs/Macro_Draft_Circle_3_Points.html" class="mw-pt-progress mw-pt-progress--med" title="Makro Nakresli kru&#382;nici ze 3 bod&#367; (21% translated)" lang="cs" dir="ltr">&#269;e&scaron;tina</a></li></ul></div>
+<div class="mw-translate-fuzzy">
 <table class="fcinfobox wikitable ct" width="100%" style="float: right; width: 230px; margin-left: 10px;">
 <tbody><tr>
 <td class="ctTitle" style="font-weight: bold; font-size: 125%;">
@@ -73,6 +74,7 @@ Draft Kreis aus drei Punkten
 <td class="ctToc"><br><meta property="mw:PageProp/toc">
 </td></tr>
 </tbody></table>
+</div>
 <p><span id="Description"></span>
 </p>
 <h2><span class="mw-headline" id="Beschreibung">Beschreibung</span></h2>
@@ -97,109 +99,11 @@ Wenn alle ausgew&auml;hlten Objekte die gleichen Z-Koordinaten haben (xy <b>Z5</
 </p><p><b>Draft_Circle_3_Points.FCMacro</b>
 </p>
 <pre># -*- coding: utf-8 -*-
-# cr&eacute;er un cercle &agrave; partir de 3 points s&eacute;lectionn&eacute;s sur le plan X,Y
-# 04/03/2013
-# la formule provient de
-# http://www-obs.univ-lyon1.fr/labo/fc/Ateliers_archives/ateliers_2005-06/cercle_3pts.pdf
-# lire la note dans le pdf, sur l'ordre de s&eacute;lection des points,
-# si la formule renvoie une erreur (exemple les 3 points dans le m&ecirc;me alignement)
-#
-import Draft, Part, FreeCAD, math, PartGui, FreeCADGui
-from math import sqrt, pi, sin, cos
-from FreeCAD import Base
-
-# prendre les objets s&eacute;lectionn&eacute;s
-sel = FreeCADGui.Selection.getSelection()
-i=0
-centreX=0
-centreY=0
-rayon=0
-# S'il y a 3 points s&eacute;lectionn&eacute;s alors..
-if len(sel)==3&nbsp;:
-	i=0
-	ta=[0,0,0,0,0,0,0,0,0]
-	for obj in sel:
-		x=(obj.Shape.BoundBox.Center)
-		ta[i+0]=(x.x)
-		ta[i+1]=(x.y)
-		ta[i+2]=(x.z)
-		i=i+3
-# Affectation des variables
-	x_point_1=ta[0]
-	y_point_1=ta[1]
-	z_point_1=ta[2]
-	
-	x_point_2=ta[3]
-	y_point_2=ta[4]
-	z_point_2=ta[5]
-	
-	x_point_3=ta[6]
-	y_point_3=ta[7]
-	z_point_3=ta[8]
-# Calcul des coordonn&eacute;es du centre du cercle	
-	centreX =((x_point_3**2-x_point_2**2+y_point_3**2-y_point_2**2)/(2*(y_point_3-y_point_2))-(x_point_2**2-x_point_1**2+y_point_2**2-y_point_1**2)/(2*(y_point_2-y_point_1)))/((x_point_3-x_point_2)/(y_point_3-y_point_2)-(x_point_2-x_point_1)/(y_point_2-y_point_1))
-	centreY =-(x_point_2-x_point_1)/(y_point_2-y_point_1)*centreX+(x_point_2**2-x_point_1**2+y_point_2**2-y_point_1**2)/(2*(y_point_2-y_point_1))
-	rayon =sqrt((x_point_1-centreX)**2+(y_point_1-centreY)**2)
-# D&eacute;finition de la coordonn&eacute;e Z
-# Si toutes les coordonn&eacute;es Z sont &eacute;gales le centreZ s'aligne &agrave; la coordonn&eacute;e Z
-	if z_point_1==z_point_2 and z_point_2==z_point_3:
-		centreZ=z_point_1
-	else:
-# Si une coordonn&eacute;e est diff&eacute;rente alors Z=0
-		centreZ=0
-# Cr&eacute;ation du cercle
-	pl=FreeCAD.Placement()
-	pl.Rotation.Q=(0.0,-0.0,-0.0,1.0)
-	pl.Base=FreeCAD.Vector(centreX,centreY,centreZ)
-	Draft.makeCircle((rayon),placement=pl,face=False,support=None)
-# Affiche le r&eacute;sultat dans la Vue rapport de FreeCAD
-	FreeCAD.Console.PrintMessage("Coordonn&eacute;e X&nbsp;: "+str(centreX)+"\r\n")
-	FreeCAD.Console.PrintMessage("Coordonn&eacute;e Y&nbsp;: "+str(centreY)+"\r\n")
-	FreeCAD.Console.PrintMessage("Coordonn&eacute;e Z&nbsp;: "+str(centreZ)+"\r\n")
-	FreeCAD.Console.PrintMessage("Rayon       &nbsp;: "+str(rayon  )+"\r\n")
-else:
-# Si la condition n'est pas remplie, recommencer
-	FreeCAD.Console.PrintError("S&eacute;lectionnez 3 points et recommencez\r\n")</pre>
-<p><span id="Improved_version"></span>
-</p>
-<h2><span class="mw-headline" id="Verbesserte_Version">Verbesserte Version</span></h2>
-<p>Zus&auml;tzlich zu den vorherigen Features wird dieses Beispiel verwendet, um einen orthogonalen Kreis an jeder Form in der Auswahl auszurichten und eine der Ebenen Plan <b>XY, YZ, XZ</b> auszuw&auml;hlen. <br>
-Der Kreis nimmt die Farbe der Achse unabh&auml;ngig von der aktuellen Farbe an und der Mittelpunkt des Kreises wird gezeichnet (Option O/N).
-</p>
-<center>
-<ul class="gallery mw-gallery-traditional">
-		<li class="gallerybox" style="width: 235px">
-			<div class="thumb" style="width: 230px; height: 130px;"><span typeof="mw:File"><a href="../index.php?title=Macro_Draft_Circle_3_Points02.png&amp;filetimestamp=20130316145250&amp;.html" class="mw-file-description" title="Cercle circonscrit sur 3 formes,"><img alt="Cercle circonscrit sur 3 formes," src="../File/Macro_Draft_Circle_3_Points02.png" decoding="async" width="133" height="100" class="mw-file-element" data-file-width="640" data-file-height="480"></a></span></div>
-			<div class="gallerytext">Cercle circonscrit sur 3 formes,</div>
-		</li>
-		<li class="gallerybox" style="width: 235px">
-			<div class="thumb" style="width: 230px; height: 130px;"><span typeof="mw:File"><a href="../index.php?title=Macro_Draft_Circle_3_Points03.png&amp;filetimestamp=20130316145336&amp;.html" class="mw-file-description" title="de mani&egrave;re orthogonale sur la forme choisie"><img alt="de mani&egrave;re orthogonale sur la forme choisie" src="../File/Macro_Draft_Circle_3_Points03.png" decoding="async" width="133" height="100" class="mw-file-element" data-file-width="640" data-file-height="480"></a></span></div>
-			<div class="gallerytext">de mani&egrave;re orthogonale sur la forme choisie</div>
-		</li>
-		<li class="gallerybox" style="width: 235px">
-			<div class="thumb" style="width: 230px; height: 130px;"><span typeof="mw:File"><a href="../index.php?title=Macro_Draft_Circle_3_Points04.png&amp;filetimestamp=20130316145419&amp;.html" class="mw-file-description"><img src="../File/Macro_Draft_Circle_3_Points04.png" decoding="async" width="133" height="100" class="mw-file-element" data-file-width="640" data-file-height="480"></a></span></div>
-			<div class="gallerytext"></div>
-		</li>
-		<li class="gallerybox" style="width: 235px">
-			<div class="thumb" style="width: 230px; height: 130px;"><span typeof="mw:File"><a href="../index.php?title=Macro_Draft_Circle_3_Points05.png&amp;filetimestamp=20130316145516&amp;.html" class="mw-file-description"><img src="../File/Macro_Draft_Circle_3_Points05.png" decoding="async" width="133" height="100" class="mw-file-element" data-file-width="640" data-file-height="480"></a></span></div>
-			<div class="gallerytext"></div>
-		</li>
-</ul>
-</center>
-<div style="clear:both"></div>
-<p>The settings to change.
-</p>
-<pre># Change the values here below
-			# mode by default vueChoix = 0 and alignerSur = 0
-	vueChoix=0	# choice of the top view = 1 XY, view Front = 2 ZX, Right view = 3 ZY
-	alignerSur=0	# Aligns the circle shaped the choice (1,2 or 3) or Z = 0
-	afficherPoint=1	# Displays the center point of the circle</pre>
-<pre># -*- coding: utf-8 -*-
-# cr&eacute;er un cercle &agrave; partir de 3 points s&eacute;l&eacute;ctionn&eacute;s
+# cr&eacute;er un cercle a partir de 3 points s&eacute;l&eacute;ctionn&eacute;s
 # avec comme options le cercle peut &ecirc;tre construit sur un plans au choix
-# &agrave; la coordonn&eacute;e d'une des trois formes s&eacute;lectionn&eacute;es au choix
+# aa la coordonn&eacute;e d'une des trois formes s&eacute;lectionn&eacute;es au choix
 # et cr&eacute;ation du point central O/N
-# 04/03/2013 , 07/09/2018 replace PyQt4 to PySide
+# 04/03/2013 , 07/09/2018 replace PyQt4 to PySide, 23/03/2026 convert in spaces
 # la formule provient de
 # http://www-obs.univ-lyon1.fr/labo/fc/Ateliers_archives/ateliers_2005-06/cercle_3pts.pdf
 # lire la note dans le pdf, sur l'ordre de s&eacute;lection des points,
@@ -213,19 +117,19 @@ from PySide import QtCore, QtGui
 def errorDialog(msg):
     # Create a simple dialog QMessageBox
     # The first argument indicates the icon used: one of QtGui.QMessageBox.{NoIcon, Information, Warning, Critical, Question} 
-	diag = QtGui.QMessageBox(QtGui.QMessageBox.Critical,u"Error Message",msg)
-	diag.setWindowModality(QtCore.Qt.ApplicationModal)
-	diag.exec_()
+    diag = QtGui.QMessageBox(QtGui.QMessageBox.Critical,u"Error Message",msg)
+    diag.setWindowModality(QtCore.Qt.ApplicationModal)
+    diag.exec_()
 
 def affiche(x,y,z,rayon,r,v,b,afficherPoint):
-	pl.Base=FreeCAD.Vector(x,y,z)
-	Draft.makeCircle((rayon),placement=pl,face=False,support=None)
-	FreeCADGui.activeDocument().activeObject().LineColor = (r,v,b)
-	if afficherPoint==1:
-		Draft.makePoint(x,y,z)
-	diag = QtGui.QMessageBox(QtGui.QMessageBox.Information,u"Coordinates",u"Coordinates X&nbsp;: "+str(x)+"\r\n"+u"Coordinates Y&nbsp;: "+str(y)+"\n"+u"Coordinates Z&nbsp;: "+str(z)+"\nRayon\t    &nbsp;: "+str(rayon))
-	diag.setWindowModality(QtCore.Qt.ApplicationModal)
-	diag.exec_()
+    pl.Base=FreeCAD.Vector(x,y,z)
+    Draft.makeCircle((rayon),placement=pl,face=False,support=None)
+    FreeCADGui.activeDocument().activeObject().LineColor = (r,v,b)
+    if afficherPoint==1:
+        Draft.makePoint(x,y,z)
+    diag = QtGui.QMessageBox(QtGui.QMessageBox.Information,u"Coordinates",u"Coordinates X&nbsp;: "+str(x)+"\r\n"+u"Coordinates Y&nbsp;: "+str(y)+"\n"+u"Coordinates Z&nbsp;: "+str(z)+"\nRayon\t    &nbsp;: "+str(rayon))
+    diag.setWindowModality(QtCore.Qt.ApplicationModal)
+    diag.exec_()
 
 # prendre les objets selectionnes
 sel = FreeCADGui.Selection.getSelection()
@@ -234,110 +138,110 @@ centreX=0;centreY=0;rayon=0
 
 # S'il y a 3 points s&eacute;lectionn&eacute;s alors..
 if len(sel)==3&nbsp;:
-	i=0
-	ta=[0,0,0,0,0,0,0,0,0]
-	for obj in sel:
-		x=(obj.Shape.BoundBox.Center)
-		ta[i+0]=(x.x)
-		ta[i+1]=(x.y)
-		ta[i+2]=(x.z)
-		i=i+3
+    i=0
+    ta=[0,0,0,0,0,0,0,0,0]
+    for obj in sel:
+        x=(obj.Shape.BoundBox.Center)
+        ta[i+0]=(x.x)
+        ta[i+1]=(x.y)
+        ta[i+2]=(x.z)
+        i=i+3
 # Change the values here below
-			# mode by default vueChoix = 0 and alignerSur = 0
-	vueChoix=0	# choice of the top view = 1 XY, view Front = 2 ZX, Right view = 3 ZY
-	alignerSur=0	# Aligns the circle shaped the choice (1,2 or 3) or Z = 0
-	afficherPoint=1	# Displays the center point of the circle
+            # mode by default vueChoix = 0 and alignerSur = 0
+    vueChoix=0  # choice of the top view = 1 XY, view Front = 2 ZX, Right view = 3 ZY
+    alignerSur=0    # Aligns the circle shaped the choice (1,2 or 3) or Z = 0
+    afficherPoint=1 # Displays the center point of the circle
 
     # Affectation des variables
-	if vueChoix==3:		# View of right ZY (Red)
- 	  	z_point_1=ta[0]
-		x_point_1=ta[1]
-		y_point_1=ta[2]
-	
-		z_point_2=ta[3]
-		x_point_2=ta[4]
-		y_point_2=ta[5]
-	
-		z_point_3=ta[6]
-		x_point_3=ta[7]
-		y_point_3=ta[8]
+    if vueChoix==3:     # View of right ZY (Red)
+        z_point_1=ta[0]
+        x_point_1=ta[1]
+        y_point_1=ta[2]
+    
+        z_point_2=ta[3]
+        x_point_2=ta[4]
+        y_point_2=ta[5]
+    
+        z_point_3=ta[6]
+        x_point_3=ta[7]
+        y_point_3=ta[8]
 
-	elif vueChoix==2:	# Front view ZX (Green)
- 	  	y_point_1=ta[0]
-		z_point_1=ta[1]
-		x_point_1=ta[2]
-	
-		y_point_2=ta[3]
-		z_point_2=ta[4]
-		x_point_2=ta[5]
-	
-		y_point_3=ta[6]
-		z_point_3=ta[7]
-		x_point_3=ta[8]
+    elif vueChoix==2:   # Front view ZX (Green)
+        y_point_1=ta[0]
+        z_point_1=ta[1]
+        x_point_1=ta[2]
+    
+        y_point_2=ta[3]
+        z_point_2=ta[4]
+        x_point_2=ta[5]
+    
+        y_point_3=ta[6]
+        z_point_3=ta[7]
+        x_point_3=ta[8]
 
-	else:			# Top view XY (blue)
- 	  	x_point_1=ta[0]
-		y_point_1=ta[1]
-		z_point_1=ta[2]
-	
-		x_point_2=ta[3]
-		y_point_2=ta[4]
-		z_point_2=ta[5]
-	
-		x_point_3=ta[6]
-		y_point_3=ta[7]
-		z_point_3=ta[8]
+    else:           # Top view XY (blue)
+        x_point_1=ta[0]
+        y_point_1=ta[1]
+        z_point_1=ta[2]
+    
+        x_point_2=ta[3]
+        y_point_2=ta[4]
+        z_point_2=ta[5]
+    
+        x_point_3=ta[6]
+        y_point_3=ta[7]
+        z_point_3=ta[8]
 
-    # Calculation of coordinates of the center of the circle	
-	try:
-		centreX =((x_point_3**2-x_point_2**2+y_point_3**2-y_point_2**2)/(2*(y_point_3-y_point_2))-(x_point_2**2-x_point_1**2+y_point_2**2-y_point_1**2)/(2*(y_point_2-y_point_1)))/((x_point_3-x_point_2)/(y_point_3-y_point_2)-(x_point_2-x_point_1)/(y_point_2-y_point_1))
-		centreY =-(x_point_2-x_point_1)/(y_point_2-y_point_1)*centreX+(x_point_2**2-x_point_1**2+y_point_2**2-y_point_1**2)/(2*(y_point_2-y_point_1))
-		rayon =sqrt((x_point_1-centreX)**2+(y_point_1-centreY)**2)
-	except:
-		errorDialog(u"Impossible calculation too aligned elements")
-	else:
-	#finally: sera TOUJOURS ex&eacute;cut&eacute;
-	   # Definition of the coordinate Z
-		centreZ=0
-	    # Cr&eacute;ation du cercle
-		pl=FreeCAD.Placement()
-		if vueChoix==1:	# Plan XY Dessus
-			pl.Rotation.Q=(0,0,0,1.0)
-			if alignerSur==1:	
-				affiche(centreX,centreY,z_point_1,rayon,0.0,0.0,1.0,afficherPoint)
-			elif alignerSur==2:
-				affiche(centreX,centreY,z_point_2,rayon,0.0,0.0,1.0,afficherPoint)
-			elif alignerSur==3:
-				affiche(centreX,centreY,z_point_3,rayon,0.0,0.0,1.0,afficherPoint)
-		elif vueChoix==2: # Plan XZ Face
-			pl.Rotation.Q=(1,0,0,1.0)
-			if alignerSur==1:	
-				affiche(centreY,z_point_1,centreX,rayon,0.0,1.0,0.0,afficherPoint)
-			elif alignerSur==2:
-				affiche(centreY,z_point_2,centreX,rayon,0.0,1.0,0.0,afficherPoint)
-			elif alignerSur==3:
-				affiche(centreY,z_point_3,centreX,rayon,0.0,1.0,0.0,afficherPoint)
-		elif vueChoix==3: # Plan YZ Droite
-			pl.Rotation.Q=(0,1,0,1.0)
-			if alignerSur==1:	
-				affiche(z_point_1,centreX,centreY,rayon,1.0,0.0,0.0,afficherPoint)
-			elif alignerSur==2:
-				affiche(z_point_2,centreX,centreY,rayon,1.0,0.0,0.0,afficherPoint)
-			elif alignerSur==3:
-				affiche(z_point_3,centreX,centreY,rayon,1.0,0.0,0.0,afficherPoint)
-		else:	# modifier pour avoir XYZ
-			# si les coordonn&eacute;es Z sont &eacute;gales alors le cercle s'aligne &agrave; Z
-			if z_point_1==z_point_2 and z_point_2==z_point_3:
-				centreZ=z_point_1
-				affiche(centreX,centreY,z_point_1,rayon,0.0,0.0,0.0,afficherPoint)
-			else:
-	        	# Si une coordonn&eacute;e est diff&eacute;rente alors Z=0
-				affiche(centreX,centreY,0,rayon,0.0,0.0,0.0,afficherPoint)
+    # Calculation of coordinates of the center of the circle    
+    try:
+        centreX =((x_point_3**2-x_point_2**2+y_point_3**2-y_point_2**2)/(2*(y_point_3-y_point_2))-(x_point_2**2-x_point_1**2+y_point_2**2-y_point_1**2)/(2*(y_point_2-y_point_1)))/((x_point_3-x_point_2)/(y_point_3-y_point_2)-(x_point_2-x_point_1)/(y_point_2-y_point_1))
+        centreY =-(x_point_2-x_point_1)/(y_point_2-y_point_1)*centreX+(x_point_2**2-x_point_1**2+y_point_2**2-y_point_1**2)/(2*(y_point_2-y_point_1))
+        rayon =sqrt((x_point_1-centreX)**2+(y_point_1-centreY)**2)
+    except:
+        errorDialog(u"Impossible calculation too aligned elements")
+    else:
+    #finally: sera TOUJOURS execute
+       # Definition of the coordinate Z
+        centreZ=0
+        # Cr&eacute;ation du cercle
+        pl=FreeCAD.Placement()
+        if vueChoix==1: # Plan XY Dessus
+            pl.Rotation.Q=(0,0,0,1.0)
+            if alignerSur==1:   
+                affiche(centreX,centreY,z_point_1,rayon,0.0,0.0,1.0,afficherPoint)
+            elif alignerSur==2:
+                affiche(centreX,centreY,z_point_2,rayon,0.0,0.0,1.0,afficherPoint)
+            elif alignerSur==3:
+                affiche(centreX,centreY,z_point_3,rayon,0.0,0.0,1.0,afficherPoint)
+        elif vueChoix==2: # Plan XZ Face
+            pl.Rotation.Q=(1,0,0,1.0)
+            if alignerSur==1:   
+                affiche(centreY,z_point_1,centreX,rayon,0.0,1.0,0.0,afficherPoint)
+            elif alignerSur==2:
+                affiche(centreY,z_point_2,centreX,rayon,0.0,1.0,0.0,afficherPoint)
+            elif alignerSur==3:
+                affiche(centreY,z_point_3,centreX,rayon,0.0,1.0,0.0,afficherPoint)
+        elif vueChoix==3: # Plan YZ Droite
+            pl.Rotation.Q=(0,1,0,1.0)
+            if alignerSur==1:   
+                affiche(z_point_1,centreX,centreY,rayon,1.0,0.0,0.0,afficherPoint)
+            elif alignerSur==2:
+                affiche(z_point_2,centreX,centreY,rayon,1.0,0.0,0.0,afficherPoint)
+            elif alignerSur==3:
+                affiche(z_point_3,centreX,centreY,rayon,1.0,0.0,0.0,afficherPoint)
+        else:   # modifier pour avoir XYZ
+            # si les coordonn&eacute;es Z sont &eacute;gales alors le cercle s'aligne &agrave; Z
+            if z_point_1==z_point_2 and z_point_2==z_point_3:
+                centreZ=z_point_1
+                affiche(centreX,centreY,z_point_1,rayon,0.0,0.0,0.0,afficherPoint)
+            else:
+                # Si une coordonn&eacute;e est diff&eacute;rente alors Z=0
+                affiche(centreX,centreY,0,rayon,0.0,0.0,0.0,afficherPoint)
 
 else:
     # Si la condition n'est pas remplie, recommencer
-	errorDialog(u"Select 3 points and repeat")
-	#FreeCAD.Console.PrintError("Select 3 points and repeatr\n")</pre>
+    errorDialog(u"Select 3 points and repeat")
+    #FreeCAD.Console.PrintError("Select 3 points and repeatr\n")</pre>
 <h2><span class="mw-headline" id="Anaglyphe">Anaglyphe</span></h2>
 <p>Hier eine Anaglyphenansicht, die es erm&ouml;glicht, zwei verschiedene Positionen der Ansicht zu sehen, indem eine Brille mit roten und Cyan-Filtern verwendet wird <span typeof="mw:File"><a href="../index.php?title=Anaglyph_Tango.png&amp;filetimestamp=20130318162904&amp;.html" class="mw-file-description"><img src="../File/Anaglyph_Tango.png" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="48" data-file-height="48"></a></span>. <br>
 Abwechselnd mit dem linken und dem rechten Auge sehen, um die Ansichten separat zu sehen.
@@ -355,30 +259,30 @@ Die Fomel kommt von <a rel="nofollow" class="external text" href="https://cral-p
 </p>
 <!-- 
 NewPP limit report
-Cached time: 20251021180040
+Cached time: 20260323192239
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.113 seconds
-Real time usage: 0.175 seconds
-Preprocessor visited node count: 160/1000000
-Post&#8208;expand include size: 2955/2097152 bytes
-Template argument size: 8392/2097152 bytes
+CPU time usage: 0.038 seconds
+Real time usage: 0.051 seconds
+Preprocessor visited node count: 123/1000000
+Post&#8208;expand include size: 2801/2097152 bytes
+Template argument size: 6391/2097152 bytes
 Highest expansion depth: 5/100
 Expensive parser function count: 0/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 12769/5000000 bytes
+Unstrip post&#8208;expand size: 7338/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   37.020      1 -total
-  8.56%    3.169      1 Template:Macro/de
-  4.70%    1.739      1 Template:Caption
-  4.16%    1.540      3 Template:MacroCode
-  3.39%    1.254      2 Template:Clear
+100.00%    8.974      1 -total
+ 43.61%    3.914      1 Template:Macro/de
+ 21.68%    1.946      1 Template:MacroCode
+ 16.58%    1.488      1 Template:Caption
+ 14.13%    1.268      1 Template:Clear
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:36768-0!canonical and timestamp 20251021180040 and revision id 1670535. Rendering was triggered because: api-parse
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:36768-0!canonical and timestamp 20260323192239 and revision id 1768156. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="../site.js"></script>
