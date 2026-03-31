@@ -182,7 +182,7 @@
 <li><a href="Part_Compound.html" title="Part Compound">Part Compound</a> - creates a compound object, making it possible to select individual parts,</li>
 <li><a href="Part_JoinConnect.html" title="Part JoinConnect">Part JoinConnect</a> - works like Part Fuse, merges the parts, making it impossible to select them individually,</li>
 <li><a href="Part_BooleanFragments.html" title="Part BooleanFragments">Part BooleanFragments</a> - works like Part Compound, making it possible to select individual parts.</li></ul>
-<p>It's important to mention that if the parts are exactly touching, a continuous mesh will be created on the boolean object and no constraints will be needed for the simulation (unless Part Compound is used and nodes aren't coincident or <a href="FEM_MeshGmshFromShape.html#Properties" title="FEM MeshGmshFromShape">Gmsh's <i>Coherence Mesh</i> property</a> is set to <code>false</code>). If there's even a small gap (or an intersection within a Part Compound) between the parts, the mesh won't be continuous and constraints like <a href="FEM_ConstraintTie.html" title="FEM ConstraintTie">tie</a> or <a href="FEM_ConstraintContact.html" title="FEM ConstraintContact">contact</a> will be needed. Running a frequency analysis is a good way to reveal if the mesh is continuous or not - if the parts are not connected, the first mode shapes with deformation visualized using <a href="FEM_PostFilterWarp.html" title="FEM PostFilterWarp">Warp filter</a> will show separation - the parts will "fly away".
+<p>It's important to mention that if the parts are exactly touching, a continuous mesh will be created on the boolean object and no constraints will be needed for the simulation (unless Part Compound is used and nodes aren't coincident or <a href="FEM_MeshGmshFromShape.html#Properties" title="FEM MeshGmshFromShape">Gmsh's <i>Coherence Mesh</i> property</a> / <a href="FEM_MeshNetgenFromShape.html#Properties_-_Refactored_Netgen" title="FEM MeshNetgenFromShape">Netgen's <i>Glue</i> property</a> is set to <code>false</code>). If there's even a small gap (or an intersection within a Part Compound) between the parts, the mesh won't be continuous and constraints like <a href="FEM_ConstraintTie.html" title="FEM ConstraintTie">tie</a> or <a href="FEM_ConstraintContact.html" title="FEM ConstraintContact">contact</a> will be needed. Running a frequency analysis is a good way to reveal if the mesh is continuous or not - if the parts are not connected, the first mode shapes with deformation visualized using <a href="FEM_PostFilterWarp.html" title="FEM PostFilterWarp">Warp filter</a> will show separation - the parts will "fly away".
 </p><p><span typeof="mw:File"><a href="index.php?title=FEM_modal_separation.JPG&amp;filetimestamp=20231228205154&amp;.html" class="mw-file-description"><img src="File/FEM_modal_separation.JPG" decoding="async" width="400" height="484" class="mw-file-element"></a></span>
 </p>
 <p style="text-align:left; font-style:italic; max-width:800px; box-sizing:border-box; margin-block:1em; margin-inline:clamp(1em, 6vw, 2em); padding-inline:clamp(0.75em, 4vw, 2em); word-break:normal; overflow-wrap:break-word;">The first mode shape of a frequency analysis visualized with the Warp filter - two cubes with a small initial gap were analyzed</p>
@@ -255,7 +255,7 @@ to element &hellip;
 <h2><span class="mw-headline" id="Negative_Jacobians">Negative Jacobians</span></h2>
 <p>If the above rules are followed (especially regarding geometry validity, defeaturing and element size selection), the mesh should be generated correctly. However, in some cases, the geometry can't be simplified too much, or the modeling procedure is appropriate but leads to small edges and faces anyway. Then meshing with second-order elements may fail due to negative Jacobians. The reason is that meshers have to follow the CAD model and put the mid-side nodes of second-order elements on the geometry. With more complex shapes, it may lead to elements being stretched so much that they become inverted. Jacobian is one of the most common mesh quality measures. It represents the element's deviation from the ideal shape. It becomes negative when the element turns inside out (becomes inverted) either due to large deformation during the analysis (not considered here) or because of the aforementioned meshing issues. Negative Jacobians in FreeCAD FEM might be reported by Gmsh or by CalculiX. Their locations in the mesh are highlighted when CalculiX analyses are submitted using the <a href="FEM_SolverRun.html" title="FEM SolverRun">Run solver calculations</a> button. The following tips can help eliminate them:
 </p>
-<ul><li>set the <i>Second Order Linear</i> property of the <a href="FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape">FEMMeshGmsh</a> object to <i>true</i> - this results in the mid-side nodes of second-order elements being just added in the middle of straight (initially) first-order element edges, without snapping them to the geometry and resolves the issue in most cases,</li>
+<ul><li>set the <i>Second Order Linear</i> property of the <a href="FEM_MeshGmshFromShape.html" title="FEM MeshGmshFromShape">FEMMeshGmsh</a> or <a href="FEM_MeshNetgenFromShape.html" title="FEM MeshNetgenFromShape">FEMMeshNetgen</a> object to <i>true</i> - this results in the mid-side nodes of second-order elements being just added in the middle of straight (initially) first-order element edges, without snapping them to the geometry and resolves the issue in most cases,</li>
 <li>use Netgen instead of Gmsh - Netgen is known to be less prone to negative Jacobian issues but also doesn't report them so the user may find out only when submitting the analysis,</li>
 <li>further reduce the element size,</li>
 <li>export the geometry, try meshing it in Gmsh or Netgen (NGSolve) GUI or other standalone mesher (like Salome_Meca) - those tools have additional features that can help get rid of negative Jacobians (for example, Gmsh has so-called "High-order tools"),</li>
@@ -326,13 +326,13 @@ to element &hellip;
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260331142026
+Cached time: 20260331142517
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.169 seconds
-Real time usage: 0.205 seconds
-Preprocessor visited node count: 1251/1000000
+CPU time usage: 0.142 seconds
+Real time usage: 0.160 seconds
+Preprocessor visited node count: 1253/1000000
 Post&#8208;expand include size: 32866/2097152 bytes
 Template argument size: 8690/2097152 bytes
 Highest expansion depth: 7/100
@@ -342,19 +342,19 @@ Unstrip post&#8208;expand size: 1895/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   30.351      1 -total
- 23.14%    7.023     10 Template:PropertyData
- 17.19%    5.217     11 Template:Variable
- 16.27%    4.937      1 Template:FEM_Tools_navi
- 13.65%    4.144      2 Template:Navigation_menu_2
- 10.40%    3.157     16 Template:Caption
-  9.19%    2.790      1 Template:Userdocnavi
-  8.05%    2.442      1 Template:TutorialInfo
-  8.01%    2.432      1 Template:PropertyView
-  6.31%    1.914      1 Template:FALSE
+100.00%   24.743      1 -total
+ 23.65%    5.853     10 Template:PropertyData
+ 18.39%    4.549      1 Template:FEM_Tools_navi
+ 18.18%    4.498     11 Template:Variable
+ 16.25%    4.021      2 Template:Navigation_menu_2
+  9.48%    2.345      1 Template:Userdocnavi
+  9.04%    2.236     16 Template:Caption
+  7.59%    1.878      1 Template:TutorialInfo
+  7.58%    1.876      1 Template:PropertyView
+  6.80%    1.682      2 Template:Code
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:330886-0!canonical and timestamp 20260331142043 and revision id 1773753. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:330886-0!canonical and timestamp 20260331142522 and revision id 1773755. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
