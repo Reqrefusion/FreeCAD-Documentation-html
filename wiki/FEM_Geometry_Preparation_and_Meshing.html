@@ -61,22 +61,29 @@
 <li>Surfaces - used for analyses with shell and 2D (plane stress/strain and axisymmetric) elements</li>
 <li>Solids - used for analyses with solid elements</li></ul>
 <h2><span class="mw-headline" id="Choice_of_the_type_of_geometry">Choice of the type of geometry</span></h2>
-<p>While most designs consist of solids, it's often highly recommended to use wires or surfaces for FEM if the structure allows for that:
+<p>While most designs consist of solids, it's often highly recommended to use wires or surfaces for FEM if the structure allows for that.
+</p><p>One should remember that beam, shell, plane stress/strain, and axisymmetric elements discussed below, if used in CalculiX, are not true elements of this kind (they don't use the classic element formulations known from literature and other software) - they are internally expanded to solids. Still, their use is recommended in the aforementioned cases, even in CalculiX.
 </p>
-<ul><li>if a part is slender (long and thin) and beam-like and has a regular cross-section of one of the currently supported beam section types (rectangular, circular or pipe) then it should be analyzed using beam elements (unless there are some specific forms of loading, response or unavoidable geometry details that invalidate this assumption). Basically, one should draw a centerline (some tips on how to extract it from existing solid geometry can be found in <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?t=81589">this forum thread</a> - in short, use <a href="Draft_Wire.html" title="Draft Wire">Draft Wire</a> or <a href="Draft_BSpline.html" title="Draft BSpline">Draft BSpline</a> with proper <a href="Draft_Workbench.html#Draft_snap_toolbar" title="Draft Workbench">snaps</a> and <a href="Draft_Line.html" title="Draft Line">lines</a> as supports) and apply <a href="FEM_ElementGeometry1D.html" title="FEM ElementGeometry1D">beam section</a> with optional <a href="FEM_ElementRotation1D.html" title="FEM ElementRotation1D">rotation</a>. There's no single rule dictating when beam elements can be used but it's often advised that the cross-section dimensions should be &lt; 1/10 of part's length for the beam assumption to be valid.</li></ul>
-<p><span typeof="mw:File"><a href="index.php?title=FEM_beam_model.JPG&amp;filetimestamp=20231228195452&amp;.html" class="mw-file-description"><img src="File/FEM_beam_model.JPG" decoding="async" width="600" height="233" class="mw-file-element"></a></span>
+<h3><span class="mw-headline" id="Beam_models">Beam models</span></h3>
+<p>If a part is slender (long and thin) and beam-like and has a regular cross-section of one of the currently supported beam section types (rectangular, circular, or pipe), then it should be analyzed using beam elements (unless there are some specific forms of loading, response, or unavoidable geometry details that invalidate this assumption). 
+</p><p>Basically, one should draw a centerline (some tips on how to extract it from existing solid geometry can be found in <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?t=81589">this forum thread</a> - in short, use <a href="Draft_Wire.html" title="Draft Wire">Draft Wire</a> or <a href="Draft_BSpline.html" title="Draft BSpline">Draft BSpline</a> with proper <a href="Draft_Workbench.html#Draft_snap_toolbar" title="Draft Workbench">snaps</a> and <a href="Draft_Line.html" title="Draft Line">lines</a> as supports) and apply <a href="FEM_ElementGeometry1D.html" title="FEM ElementGeometry1D">beam section</a> with optional <a href="FEM_ElementRotation1D.html" title="FEM ElementRotation1D">rotation</a>. 
+</p><p>There's no single rule dictating when beam elements can be used, but it's often advised that the cross-section dimensions should be &lt; 1/10 of the part's length for the beam assumption to be valid.
+</p><p><span typeof="mw:File"><a href="index.php?title=FEM_beam_model.JPG&amp;filetimestamp=20231228195452&amp;.html" class="mw-file-description"><img src="File/FEM_beam_model.JPG" decoding="async" width="600" height="233" class="mw-file-element"></a></span>
 </p>
 <p style="text-align:left; font-style:italic; max-width:800px; box-sizing:border-box; margin-block:1em; margin-inline:clamp(1em, 6vw, 2em); padding-inline:clamp(0.75em, 4vw, 2em); word-break:normal; overflow-wrap:break-word;">Slender part suitable for analysis with beam elements - centerline highlighted</p>
-<ul><li>if a part is thin-walled (such as sheet metal parts) then it should be analyzed using shell elements (unless accurate contact results are needed or some limitations of shell elements are encountered). This is very important and often overlooked. To obtain proper accuracy of results (especially when bending is involved), one needs a few elements (at least 3-5) in the thickness direction. In the case of thin-walled parts, this usually results in large meshes (especially when tetrahedrons are used since hexahedral elements can't be generated in FreeCAD) and large computational cost - high computer power requirements and long solving time. To obtain the geometry suitable for analysis with shell elements, one should draw a midsurface of the part (some tips on how to extract it from existing solid geometry can be found in <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?t=67505">this forum thread</a>, <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?t=71821">this one</a> and <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?t=81834">this one</a> - in short, apply <a href="PartDesign_SubShapeBinder.html" title="PartDesign SubShapeBinder">PartDesign SubShapeBinder</a> or <a href="Draft_Facebinder.html" title="Draft Facebinder">Draft Facebinder</a>, then <a href="Part_Offset.html" title="Part Offset">Part Offset</a> and finally use SubShapeBinder and <a href="Part_Extrude.html" title="Part Extrude">Extrude</a> to extend edges of the midsurfaces and thus close the gaps between them) and apply proper <a href="FEM_ElementGeometry2D.html" title="FEM ElementGeometry2D">thickness</a>. Again, there's no single rule but it's usually recommended that the thickness should be &lt; 1/10 of a typical global dimension (length/width) for the shell assumption to be valid.</li></ul>
-<p><span typeof="mw:File"><a href="index.php?title=FEM_shell_model.JPG&amp;filetimestamp=20231228195539&amp;.html" class="mw-file-description"><img src="File/FEM_shell_model.JPG" decoding="async" width="600" height="282" class="mw-file-element"></a></span>
+<h3><span class="mw-headline" id="Shell_models">Shell models</span></h3>
+<p>If a part is thin-walled (such as sheet metal parts), then it should be analyzed using shell elements (unless accurate contact results are needed or some limitations of shell elements are encountered). This is very important and often overlooked. To obtain proper accuracy of results (especially when bending is involved), one needs a few elements (at least 3-5) in the thickness direction. In the case of thin-walled parts, this usually results in large meshes (especially when tetrahedrons are used since hexahedral elements can't be generated in FreeCAD) and high computational cost - high computer power requirements and long solving time. 
+</p><p>To obtain the geometry suitable for analysis with shell elements, one should draw a midsurface of the part (some tips on how to extract it from existing solid geometry can be found in <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?t=67505">this forum thread</a>, <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?t=71821">this one</a> and <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?t=81834">this one</a> - in short, apply <a href="PartDesign_SubShapeBinder.html" title="PartDesign SubShapeBinder">PartDesign SubShapeBinder</a> or <a href="Draft_Facebinder.html" title="Draft Facebinder">Draft Facebinder</a>, then <a href="Part_Offset.html" title="Part Offset">Part Offset</a> and finally use SubShapeBinder and <a href="Part_Extrude.html" title="Part Extrude">Extrude</a> to extend edges of the midsurfaces and thus close the gaps between them) and apply proper <a href="FEM_ElementGeometry2D.html" title="FEM ElementGeometry2D">thickness</a>. 
+</p><p>Again, there's no single rule regarding the applicability of shell elements, but it's usually recommended that the thickness should be &lt; 1/10 of a typical global dimension (length/width) for the shell assumption to be valid.
+</p><p><span typeof="mw:File"><a href="index.php?title=FEM_shell_model.JPG&amp;filetimestamp=20231228195539&amp;.html" class="mw-file-description"><img src="File/FEM_shell_model.JPG" decoding="async" width="600" height="282" class="mw-file-element"></a></span>
 </p>
 <p style="text-align:left; font-style:italic; max-width:800px; box-sizing:border-box; margin-block:1em; margin-inline:clamp(1em, 6vw, 2em); padding-inline:clamp(0.75em, 4vw, 2em); word-break:normal; overflow-wrap:break-word;">Thin-walled part suitable for analysis with shell elements - midsurface highlighted</p>
-<ul><li>in some cases, 2D analyses are also possible and can be enabled by setting the <span style="font-size:60%; padding-right:0.8em;">Data</span><b>Model Space</b> property of the <a href="FEM_SolverCalculixCcxtools.html" title="FEM SolverCalculixCcxtools">CalculiX solver</a>:
-<ul><li>plane stress - for thin parts that can be simplified to flat surfaces representing the profile for extrusion (thickness is defined in the same way as for shells), are loaded and deform only in-plane and have zero stress in the out-of-plane direction.  Only two degrees of freedom are available - X and Y translation. Surfaces have to lie on the XY-plane in this case. This approach is quite common. For example, a thin plate subjected to tension can be analyzed this way.</li>
-<li>plane strain - for thick parts that can be simplified to flat surfaces representing the profile for extrusion (thickness is defined in the same way as for shells), are loaded and deform only in-plane and have zero strain in the out-of-plane directions.  Only two degrees of freedom are available - X and Y translation. Surfaces have to lie on the XY-plane in this case. This approach is not so common. For example, a long dam, wall or pipe subjected to uniform pressure at a whole length can be analyzed this way.</li>
-<li>axisymmetric - for parts that can be simplified to flat surfaces representing the profile of revolution (thickness is irrelevant here) and are loaded uniformly around the whole circumference.  Only two degrees of freedom are available - radial and axial translation. Surfaces have to lie on the XY-plane, on the right of the Y-axis. This approach is very common. For example, some pressure vessels, rubber mounts, bushings, gaskets, flanges and even bolted joints (treating the thread as axisymmetric) can be analyzed this way.</li></ul></li></ul>
-<p>One should remember that beam, shell, plane stress/strain and axisymmetric elements used in CalculiX are not true elements of this kind (they don't use the classic element formulations known from literature and other software) - they are internally expanded to solids. Still, their use is recommended in the aforementioned cases.
+<h3><span class="mw-headline" id="Planar_models">Planar models</span></h3>
+<p>In some cases, 2D analyses are also possible and can be enabled by setting the <span style="font-size:60%; padding-right:0.8em;">Data</span><b>Model Space</b> property of the <a href="FEM_SolverCalculixCcxtools.html" title="FEM SolverCalculixCcxtools">CalculiX solver</a>:
 </p>
+<ul><li><b>plane stress</b> - for thin parts that can be simplified to flat surfaces representing the profile for extrusion (thickness is defined in the same way as for shells), are loaded and deform only in-plane and have zero stress in the out-of-plane direction.  Only two degrees of freedom are available - X and Y translation. Surfaces have to lie on the XY-plane in this case. This approach is quite common. For example, a thin plate subjected to tension can be analyzed this way.</li>
+<li><b>plane strain</b> - for thick parts that can be simplified to flat surfaces representing the profile for extrusion (thickness is defined in the same way as for shells), are loaded and deform only in-plane and have zero strain in the out-of-plane directions.  Only two degrees of freedom are available - X and Y translation. Surfaces have to lie on the XY-plane in this case. This approach is not so common. For example, a long dam, wall, or pipe subjected to uniform pressure at the whole length can be analyzed this way.</li>
+<li><b>axisymmetric</b> - for parts that can be simplified to flat surfaces representing the profile of revolution (thickness is irrelevant here) and are loaded uniformly around the whole circumference.  Only two degrees of freedom are available - radial and axial translation. Surfaces have to lie on the XY-plane, on the right of the Y-axis. This approach is very common. For example, some pressure vessels, rubber mounts, bushings, gaskets, flanges, and even bolted joints (treating the thread as axisymmetric) can be analyzed this way.</li></ul>
 <h2><span class="mw-headline" id="Geometry_validity">Geometry validity</span></h2>
 <p>The geometry used for FEM has to be valid. Most importantly, there can't be any intersections. It's a common issue often occurring when assemblies are modeled without proper constraints between the parts. The <a href="Part_SectionCut.html" title="Part SectionCut">Part SectionCut</a> tool can help find such interferences between parts. Of course, <a href="Part_Fuse.html" title="Part Fuse">Part Fuse</a> may help resolve them if they are intentional. Other issues with the geometry (such as non-manifold geometries, redundant edges or faces and so on) also have to be fixed before proceeding to meshing. The <a href="Part_CheckGeometry.html" title="Part CheckGeometry">Part CheckGeometry</a> tool can be helpful but visual checks are also important. When preparing a simulation using solid elements and in doubt whether the part is really solid or just a closed shell, the aforementioned tools (Part SectionCut and <i>Shape Content</i> tab of the Part CheckGeometry tool output) may clarify this.
 </p>
@@ -326,13 +333,13 @@ to element &hellip;
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260331142517
+Cached time: 20260331185334
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.142 seconds
-Real time usage: 0.160 seconds
-Preprocessor visited node count: 1253/1000000
+CPU time usage: 0.160 seconds
+Real time usage: 0.309 seconds
+Preprocessor visited node count: 1262/1000000
 Post&#8208;expand include size: 32866/2097152 bytes
 Template argument size: 8690/2097152 bytes
 Highest expansion depth: 7/100
@@ -342,19 +349,19 @@ Unstrip post&#8208;expand size: 1895/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   24.743      1 -total
- 23.65%    5.853     10 Template:PropertyData
- 18.39%    4.549      1 Template:FEM_Tools_navi
- 18.18%    4.498     11 Template:Variable
- 16.25%    4.021      2 Template:Navigation_menu_2
-  9.48%    2.345      1 Template:Userdocnavi
-  9.04%    2.236     16 Template:Caption
-  7.59%    1.878      1 Template:TutorialInfo
-  7.58%    1.876      1 Template:PropertyView
-  6.80%    1.682      2 Template:Code
+100.00%   43.131      1 -total
+ 27.32%   11.782     10 Template:PropertyData
+ 22.73%    9.802     11 Template:Variable
+ 16.00%    6.903      1 Template:FEM_Tools_navi
+ 10.37%    4.474      2 Template:Navigation_menu_2
+  9.84%    4.244     16 Template:Caption
+  9.02%    3.890      2 Template:Code
+  8.63%    3.720      1 Template:TutorialInfo
+  7.69%    3.315      3 Template:Version
+  5.53%    2.385      1 Template:Userdocnavi
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:330886-0!canonical and timestamp 20260331142522 and revision id 1773755. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:330886-0!canonical and timestamp 20260331185341 and revision id 1773797. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
