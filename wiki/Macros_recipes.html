@@ -11,108 +11,7 @@
 <li><a href="ko/Macros_recipes.html" class="mw-pt-progress mw-pt-progress--low" title="&#47588;&#53356;&#47196; &#47112;&#49884;&#54588; (7% translated)" lang="ko" dir="ltr">&#54620;&#44397;&#50612;</a></li></ul></div>
 <div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
 <p>This page lists <a href="Macros.html" title="Macros">macros</a> that can add functionality to a FreeCAD installation.
-</p><p># -*- coding: utf-8 -*-
-</p><p>"""
-</p><p>FreeCAD Macro - Wood Chipper / Multi-Tooth Cutting Machine
-</p><p>Main Electric Motor + Gearbox + Cutting Heads + Feed Rollers
-</p><p>Dimensi dalam milimeter (mm)
-</p><p>"""
-</p><p>import FreeCAD
-</p><p>import Part
-</p><p>from FreeCAD import Base
-</p><p>import math
-</p><p># ============================================================================
-</p><p># FUNGSI BANTUAN
-</p><p># ============================================================================
-</p><p>def create_box(name, length, width, height, color=(0.7, 0.7, 0.7), pos=(0,0,0)):
-</p><p>&nbsp; &nbsp; """Membuat kotak dengan dimensi dan posisi tertentu"""
-</p><p>&nbsp; &nbsp; obj = FreeCAD.ActiveDocument.addObject("Part::Box", name)
-</p><p>&nbsp; &nbsp; obj.Length = length
-</p><p>&nbsp; &nbsp; obj.Width = width
-</p><p>&nbsp; &nbsp; obj.Height = height
-</p><p>&nbsp; &nbsp; obj.Placement.Base = FreeCAD.Vector(pos[0], pos[1], pos[2])
-</p><p>&nbsp; &nbsp; obj.ViewObject.ShapeColor = color
-</p><p>&nbsp; &nbsp; return obj
-</p><p>def create_cylinder(name, radius, height, color=(0.5, 0.5, 0.5), pos=(0,0,0), axis=(0,0,1)):
-</p><p>&nbsp; &nbsp; """Membuat silinder dengan radius, tinggi, dan posisi tertentu"""
-</p><p>&nbsp; &nbsp; obj = FreeCAD.ActiveDocument.addObject("Part::Cylinder", name)
-</p><p>&nbsp; &nbsp; obj.Radius = radius
-</p><p>&nbsp; &nbsp; obj.Height = height
-</p><p>&nbsp; &nbsp; obj.Placement.Base = FreeCAD.Vector(pos[0], pos[1], pos[2])
-</p><p>&nbsp; &nbsp; if axis == (0,0,1):
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; pass
-</p><p>&nbsp; &nbsp; elif axis == (1,0,0):
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; obj.Placement.Rotation = FreeCAD.Rotation(FreeCAD.Vector(0,0,1), FreeCAD.Vector(1,0,0))
-</p><p>&nbsp; &nbsp; elif axis == (0,1,0):
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; obj.Placement.Rotation = FreeCAD.Rotation(FreeCAD.Vector(0,0,1), FreeCAD.Vector(0,1,0))
-</p><p>&nbsp; &nbsp; obj.ViewObject.ShapeColor = color
-</p><p>&nbsp; &nbsp; return obj
-</p><p>def create_shaft(name, radius, length, color=(0.8, 0.6, 0.2), pos=(0,0,0), axis=(0,0,1)):
-</p><p>&nbsp; &nbsp; """Membuat poros silinder"""
-</p><p>&nbsp; &nbsp; return create_cylinder(name, radius, length, color, pos, axis)
-</p><p># ============================================================================
-</p><p># MEMBUAT DOKUMEN BARU
-</p><p># ============================================================================
-</p><p>if FreeCAD.ActiveDocument is None:
-</p><p>&nbsp; &nbsp; FreeCAD.newDocument("Wood_Chipper_Machine")
-</p><p>FreeCAD.ActiveDocument.recompute()
-</p><p># ============================================================================
-</p><p># KOMPONEN UTAMA
-</p><p># ============================================================================
-</p><p># 1. MAIN ELECTRIC MOTOR (450 x 300 x 300 mm)
-</p><p>motor = create_box("Main_Electric_Motor", 450, 300, 300, (0.6, 0.6, 0.8), (0, -150, 0))
-</p><p># 2. GEARBOX (300 x 250 x 250 mm)
-</p><p>gearbox = create_box("Gearbox", 300, 250, 250, (0.5, 0.5, 0.6), (450, -125, 25))
-</p><p># 3. POROS PENGHUBUNG MOTOR - GEARBOX (&Oslash;50 x 200 mm)
-</p><p>shaft_connect = create_shaft("Connector_Shaft", 25, 200, (0.8, 0.6, 0.2), (380, -25, 125), (1,0,0))
-</p><p># 4. MULTI-TOOTH CUTTING HEADS (&Oslash;400 x 800 mm)
-</p><p>cutting_head = create_cylinder("Cutting_Head", 200, 800, (0.7, 0.7, 0.7), (750, -400, 50), (0,1,0))
-</p><p># Tambahkan gigi potong (detail)
-</p><p>cutting_teeth = create_box("Cutting_Teeth_Detail", 50, 30, 30, (0.9, 0.7, 0.3), (780, -390, 200))
-</p><p>cutting_teeth2 = create_box("Cutting_Teeth_Detail2", 50, 30, 30, (0.9, 0.7, 0.3), (780, -390, 150))
-</p><p>cutting_teeth3 = create_box("Cutting_Teeth_Detail3", 50, 30, 30, (0.9, 0.7, 0.3), (780, -390, 100))
-</p><p># 5. POROS OUTPUT GEARBOX KE CUTTING HEAD (&Oslash;60 x 300 mm)
-</p><p>output_shaft = create_shaft("Output_Shaft", 30, 300, (0.8, 0.6, 0.2), (750, -30, 125), (1,0,0))
-</p><p># 6. FEED-THROUGH LOG (2000 x 500 x 200 mm - sebagai alas)
-</p><p>feed_table = create_box("Feed_Table", 2000, 500, 100, (0.5, 0.4, 0.3), (-600, -250, -100))
-</p><p>feed_table.ViewObject.Transparency = 50
-</p><p># 7. LOG MATERIAL (2000 x 400 x 200 mm)
-</p><p>log_material = create_box("Log_Material", 2000, 400, 200, (0.6, 0.4, 0.2), (-600, -200, 0))
-</p><p>log_material.ViewObject.Transparency = 30
-</p><p># 8. SIDE-FEED ELECTRIC MOTOR (300 x 200 x 200 mm)
-</p><p>side_motor = create_box("Side_Feed_Motor", 300, 200, 200, (0.6, 0.7, 0.5), (-800, -100, 50))
-</p><p># 9. LOG SUPPORT ROLLERS (4 buah, &Oslash;100 x 400 mm)
-</p><p>roller_positions = [-400, 100, 600, 1100]
-</p><p>for i, x_pos in enumerate(roller_positions):
-</p><p>&nbsp; &nbsp; roller = create_cylinder(f"Support_Roller_{i+1}", 50, 400, (0.7, 0.6, 0.6), (x_pos, -100, -50), (1,0,0))
-</p><p># 10. DUDUKAN ROLLER (rangka bawah)
-</p><p>roller_frame = create_box("Roller_Frame", 1800, 300, 50, (0.4, 0.4, 0.5), (-500, -150, -100))
-</p><p># ============================================================================
-</p><p># DETAIL TAMBAHAN
-</p><p># ============================================================================
-</p><p># Penutup gearbox detail
-</p><p>gearbox_cover = create_box("Gearbox_Cover", 320, 260, 20, (0.7, 0.2, 0.2), (440, -130, 260))
-</p><p># Pelindung cutting head
-</p><p>guard_cover = create_box("Safety_Guard", 400, 500, 10, (0.8, 0.8, 0.2), (670, -450, 300))
-</p><p>guard_cover.ViewObject.Transparency = 60
-</p><p># Indikator arah putaran (panah dekoratif)
-</p><p>arrow_indicator = create_box("Arrow_Indicator", 80, 30, 10, (0.2, 0.8, 0.2), (350, -50, 180))
-</p><p># ============================================================================
-</p><p># REKOMPUTE DAN TAMPILKAN
-</p><p># ============================================================================
-</p><p>FreeCAD.ActiveDocument.recompute()
-</p><p>FreeCAD.Gui.SendMsgToActiveView("ViewFit")
-</p><p>print("=" * 60)
-</p><p>print("MODEL 3D BERHASIL DIBUAT!")
-</p><p>print("Komponen yang dibuat:")
-</p><p>print("&nbsp; - Main Electric Motor (15 kW) - 450x300x300 mm")
-</p><p>print("&nbsp; - Gearbox dengan rasio 3.5:1 - 300x250x250 mm")
-</p><p>print("&nbsp; - Multi-Tooth Cutting Heads - &Oslash;400 x 800 mm")
-</p><p>print("&nbsp; - Feed-Through Table - 2000 mm panjang")
-</p><p>print("&nbsp; - Side-Feed Motor (3 kW)")
-</p><p>print("&nbsp; - 4x Support Rollers - &Oslash;100 mm")
-</p><p>print("=" * 60)
-</p><p>print("Gunakan mouse untuk rotasi/zoom tampilan 3D")
+</p><p>If you have written a macro and want to include it in one of the categories on this page, then go to <a href="Macro_documentation.html" title="Macro documentation">Macro documentation</a> to learn more about properly documenting a macro.
 </p>
 <h2><span class="mw-headline" id="Categories">Categories</span></h2>
 <div class="toccolours mw-collapsible mw-collapsed">
@@ -469,31 +368,31 @@
 <li>In the <b>Toolbars</b> tab, create a new toolbar, and add your macro, taking it from the <b>Macros</b> category.</li></ul>
 <!-- 
 NewPP limit report
-Cached time: 20260401132732
+Cached time: 20260401134118
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.620 seconds
-Real time usage: 0.949 seconds
-Preprocessor visited node count: 3473/1000000
+CPU time usage: 0.591 seconds
+Real time usage: 0.935 seconds
+Preprocessor visited node count: 3325/1000000
 Post&#8208;expand include size: 27389/2097152 bytes
 Template argument size: 14615/2097152 bytes
 Highest expansion depth: 3/100
 Expensive parser function count: 0/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 1987/5000000 bytes
+Unstrip post&#8208;expand size: 1957/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   30.510      1 -total
- 49.10%   14.979    221 Template:MacroLink
-  5.97%    1.822      6 Template:MenuCommand
-  4.31%    1.316      1 Template:TOCright
-  3.34%    1.020      3 Template:Button
-  2.88%    0.878      1 Template:Version
+100.00%   50.697      1 -total
+ 36.18%   18.341    221 Template:MacroLink
+ 11.38%    5.768      6 Template:MenuCommand
+  9.30%    4.715      1 Template:TOCright
+  8.95%    4.536      1 Template:Version
+  6.51%    3.300      3 Template:Button
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:695-0!canonical and timestamp 20260401132742 and revision id 1774036. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:695-0!canonical and timestamp 20260401134116 and revision id 1774051. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
