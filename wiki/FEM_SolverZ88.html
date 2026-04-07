@@ -60,7 +60,7 @@
 <ol><li>Setting analysis parameters</li>
 <li>Selecting working directory</li>
 <li>Running the Z88 solver</li></ol>
-<p><span style="font-size:small;"><a href="Release_notes_1.2.html" title="Release notes 1.2">introduced in 1.2</a></span>: The Z88 solver implementation has been completely refactored and this page has been updated accordingly.
+<p><span style="font-size:small;"><a href="Release_notes_1.2.html" title="Release notes 1.2">introduced in 1.2</a></span>: The Z88 solver implementation has been completely refactored, and this page has been updated accordingly.
 </p>
 <h2><span class="mw-headline" id="Installation">Installation</span></h2>
 <p>To use the Z88 solver, the open-source version of Z88 (Z88OS or Z88Adria) needs to be installed:
@@ -79,22 +79,29 @@
 <li>Select the <b>Analysis type</b>.</li>
 <li>Press the <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;">Write</span> button.</li>
 <li>Press the <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;">Run</span> button.</li></ol>
-<p>As a result you get an object called <i>Z88_xxx_results</i> (depending on the run simulation) in the <a href="Tree_View.html" title="Tree View">Tree View</a>. This is the same kind of result object one gets when running the <a href="FEM_SolverCalculixCcxtools.html" title="FEM SolverCalculixCcxtools">CalculiX solver</a>. Starting from this, you can visualize the results using <a href="FEM_PostPipelineFromResult.html" title="FEM PostPipelineFromResult">Post Pipeline</a> and <a href="FEM_Workbench.html#Menu:_Results" title="FEM Workbench">Clip Filters</a>.
+<p>As a result, you get an object called <i>Z88_xxx_results</i> (depending on the run simulation) in the <a href="Tree_View.html" title="Tree View">Tree View</a>. This is the same kind of result object one gets when running the <a href="FEM_SolverCalculixCcxtools.html" title="FEM SolverCalculixCcxtools">CalculiX solver</a>. Starting from this, you can visualize the results using <a href="FEM_PostPipelineFromResult.html" title="FEM PostPipelineFromResult">Post Pipeline</a> and <a href="FEM_Workbench.html#Menu:_Results" title="FEM Workbench">Clip Filters</a>.
 </p>
 <h2><span class="mw-headline" id="Supported_finite_element_types">Supported finite element types</span></h2>
 <p>The following types of finite elements are supported by the Z88 solver implementation:
 </p>
 <ul><li>2-node 3D truss,</li>
 <li>8-node and 20-node hexahedron,</li>
-<li>4-node nad 10-node tetrahedron,</li>
+<li>4-node and 10-node tetrahedron,</li>
 <li>6-node triangle and 8-node quadrangle - 3D shell and plate, 2D plane stress and axisymmetric formulations.</li></ul>
 <p>Linear triangles and quadrangles are not supported at all. Beam elements are not yet supported.
 </p>
+<h2><span class="mw-headline" id="Notes">Notes</span></h2>
+<ul><li>Pressure applied to edges of axisymmetric models must be given as in a corresponding 3D model, i.e. in units of force per unit area; the solver converts it to an equivalent force per unit length by multiplying the pressure by  <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mn>2</mn><mi>&pi;</mi><mi>R</mi></mstyle></mrow></math> (where R is the y-coordinate of the element's middle node).</li>
+<li>For plate elements, the degrees of freedom are in order: Z displacement and rotations <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>&theta;</mi><mrow data-mjx-texclass="ORD"><mi>x</mi></mrow></msub></mstyle></mrow></math> and <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>&theta;</mi><mrow data-mjx-texclass="ORD"><mi>y</mi></mrow></msub></mstyle></mrow></math> (in deg).</li>
+<li>A <b>test</b> analysis mode is available. It provides information about the solver parameters. This information is loaded into the text document object.</li></ul>
 <h2><span class="mw-headline" id="Limitations">Limitations</span></h2>
-<ul><li>Currently, only displacements (in mm), nodal forces and nodal moments are provided as contour map results. Stress values are loaded into the text document object.</li>
-<li>In multimaterial models, all materials must be explicitly assigned.</li></ul>
+<ul><li>Currently, only displacements (in mm), nodal forces, and nodal moments are provided as contour map results. Stress values are loaded into the text document object.</li>
+<li>The 3D truss elements require some additional considerations. In case of errors and missing results when using them, the following steps should be taken:
+<ul><li>make sure the structural member is meshed with only one such element (adjust the min and max element size to enforce that),</li>
+<li>apply displacement boundary condition to the whole member, constraining the lateral displacements,</li>
+<li>use the Cholesky solver.</li></ul></li></ul>
 <h2><span class="mw-headline" id="Preferences">Preferences</span></h2>
-<p>See the <a href="FEM_Preferences.html#Z88" title="FEM Preferences">Z88 preferences</a> for the possible solver settings such as the used solver method.
+<p>See the <a href="FEM_Preferences.html#Z88" title="FEM Preferences">Z88 preferences</a> for the possible solver settings, such as the used solver method.
 </p><p><br>
 </p>
 <div class="docnav">
@@ -141,35 +148,35 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260407140348
+Cached time: 20260407172739
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.118 seconds
-Real time usage: 0.145 seconds
-Preprocessor visited node count: 410/1000000
+CPU time usage: 0.112 seconds
+Real time usage: 0.174 seconds
+Preprocessor visited node count: 428/1000000
 Post&#8208;expand include size: 22974/2097152 bytes
 Template argument size: 8735/2097152 bytes
 Highest expansion depth: 6/100
 Expensive parser function count: 1/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 1788/5000000 bytes
+Unstrip post&#8208;expand size: 2492/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   20.688      1 -total
- 34.44%    7.124      1 Template:FEM_Tools_navi
- 25.25%    5.224      2 Template:Navigation_menu_2
- 17.76%    3.674      1 Template:GuiCommand
- 14.18%    2.933      1 Template:Userdocnavi
-  8.90%    1.842      2 Template:Docnav
-  5.86%    1.213      4 Template:KEY
-  4.93%    1.019      3 Template:FileName
-  4.91%    1.015      1 Template:Version
-  4.83%    1.000      2 Template:Button
+100.00%   37.606      1 -total
+ 22.66%    8.522      1 Template:FEM_Tools_navi
+ 15.39%    5.786      1 Template:GuiCommand
+ 15.15%    5.699      2 Template:Button
+ 13.54%    5.093      2 Template:Navigation_menu_2
+  9.10%    3.422      2 Template:Docnav
+  8.99%    3.382      1 Template:Userdocnavi
+  7.82%    2.942      2 Template:MenuCommand
+  6.65%    2.502      1 Template:Version
+  5.68%    2.137      4 Template:KEY
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:88606-0!canonical and timestamp 20260407140348 and revision id 1778545. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:88606-0!canonical and timestamp 20260407172737 and revision id 1778614. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
