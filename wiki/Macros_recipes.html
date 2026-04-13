@@ -15,13 +15,139 @@
 </p>
 <h2><span class="mw-headline" id="Categories">Categories</span></h2>
 <div class="toccolours mw-collapsible mw-collapsed">
-<h3><span class="mw-headline" id="3D_View_operations"><span typeof="mw:File"><a href="index.php?title=Part_CheckGeometry.svg&amp;filetimestamp=20240712183246&amp;.html" class="mw-file-description"><img src="File/Part_CheckGeometry.svg" decoding="async" width="32" height="32" class="mw-file-element"></a></span> 3D View operations</span></h3>
-<div class="mw-collapsible-content">
-<ul><li><span class="MacroLink"><span typeof="mw:File"><a href="index.php?title=Macro_Align_Face_Object_to_View.png&amp;filetimestamp=20190608114445&amp;.html" class="mw-file-description"><img src="File/Macro_Align_Face_Object_to_View.png" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="Macro_Align_Face_Object_to_View.html" title="Macro Align Face Object to View">Macro Align Face Object to View</a></span>: This macro aligns the current view to a selected face.</li></ul>
-<ul><li><span class="MacroLink"><span typeof="mw:File"><a href="index.php?title=Macro_Align_View_to_Face.png&amp;filetimestamp=20190607194033&amp;.html" class="mw-file-description"><img src="File/Macro_Align_View_to_Face.png" decoding="async" width="24" height="20" class="mw-file-element"></a></span> <a href="Macro_Align_View_to_Face.html" title="Macro Align View to Face">Macro Align View to Face</a></span>: This macro aligns the current view to a selected face.</li></ul>
-<ul><li><span class="MacroLink"><span typeof="mw:File"><a href="index.php?title=Macro_Copy3DViewToClipboard.png&amp;filetimestamp=20160914184618&amp;.html" class="mw-file-description"><img src="File/Macro_Copy3DViewToClipboard.png" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="Macro_Copy3DViewToClipboard.html" title="Macro Copy3DViewToClipboard">Macro Copy3DViewToClipboard</a></span>: Copy contents of 3DView resized 640, 480 px to clipboard.</li></ul>
-<ul><li><span class="MacroLink"><span typeof="mw:File"><a href="index.php?title=FCCamera_00.png&amp;filetimestamp=20150126142640&amp;.html" class="mw-file-description"><img src="File/FCCamera_00.png" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="Macro_FCCamera.html" title="Macro FCCamera">Macro FCCamera</a></span>: This macro can rotate the screen in a defined angle and the defined axis and creates a plane to face the screen to create a form in the specified plane positions the selected face facing the screen, to detect the position of the camera.</li></ul>
-<ul><li><span class="MacroLink"><span typeof="mw:File"><a href="index.php?title=Macro_Mouse_Cross.png&amp;filetimestamp=20190609105538&amp;.html" class="mw-file-description"><img src="File/Macro_Mouse_Cross.png" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="Macro_Mouse_Cross.html" title="Macro Mouse Cross">Macro Mouse Cross</a></span>: This small macro turns the arrow of the mouse in a precision cross.</li></ul>
+<p>==
+import FreeCAD as App
+import Part
+</p><p>doc = App.newDocument("Concept_Trolley")
+</p>
+<ol><li>-----------------------</li>
+<li>PARAMETERS (mm)</li>
+<li>-----------------------</li></ol>
+<p>LENGTH = 800
+WIDTH  = 600
+HEIGHT = 900
+PROFILE = 40
+</p><p>CASTER_DIA = 100
+CASTER_HEIGHT = 125
+</p><p>TOP_THICKNESS = 6
+MONITOR_POST_HEIGHT = 300
+</p>
+<ol><li>Drawer parameters</li></ol>
+<p>DRAWER_WIDTH  = LENGTH - 2*PROFILE - 80
+DRAWER_DEPTH  = WIDTH  - 2*PROFILE - 80
+DRAWER_HEIGHT = 120
+DRAWER_Z      = PROFILE + 460
+</p><p><br>
+def box(x, y, z, dx, dy, dz, name):
+</p>
+<pre>   shape = Part.makeBox(dx, dy, dz)
+   shape.translate(App.Vector(x, y, z))
+   obj = doc.addObject("Part::Feature", name)
+   obj.Shape = shape
+   return obj
+</pre>
+<p><br>
+</p>
+<ol><li>-----------------------</li>
+<li>FRAME</li>
+<li>-----------------------</li></ol>
+<ol><li>Bottom</li></ol>
+<p>box(0, 0, 0, LENGTH, PROFILE, PROFILE, "Bottom_Front")
+box(0, WIDTH-PROFILE, 0, LENGTH, PROFILE, PROFILE, "Bottom_Rear")
+box(0, PROFILE, 0, PROFILE, WIDTH-2*PROFILE, PROFILE, "Bottom_Left")
+box(LENGTH-PROFILE, PROFILE, 0, PROFILE, WIDTH-2*PROFILE, PROFILE, "Bottom_Right")
+</p>
+<ol><li>Vertical posts</li></ol>
+<p>box(0, 0, 0, PROFILE, PROFILE, HEIGHT, "Post_FL")
+box(LENGTH-PROFILE, 0, 0, PROFILE, PROFILE, HEIGHT, "Post_FR")
+box(0, WIDTH-PROFILE, 0, PROFILE, PROFILE, HEIGHT, "Post_RL")
+box(LENGTH-PROFILE, WIDTH-PROFILE, 0, PROFILE, PROFILE, HEIGHT, "Post_RR")
+</p>
+<ol><li>Top</li></ol>
+<p>box(0, 0, HEIGHT, LENGTH, PROFILE, PROFILE, "Top_Front")
+box(0, WIDTH-PROFILE, HEIGHT, LENGTH, PROFILE, PROFILE, "Top_Rear")
+box(0, PROFILE, HEIGHT, PROFILE, WIDTH-2*PROFILE, PROFILE, "Top_Left")
+box(LENGTH-PROFILE, PROFILE, HEIGHT, PROFILE, WIDTH-2*PROFILE, PROFILE, "Top_Right")
+</p>
+<ol><li>-----------------------</li>
+<li>TOP WORK PLATE</li>
+<li>-----------------------</li></ol>
+<p>box(10, 10, HEIGHT+PROFILE, LENGTH-20, WIDTH-20, TOP_THICKNESS, "Top_Plate")
+</p>
+<ol><li>-----------------------</li>
+<li>SIDE / REAR PANELS</li>
+<li>-----------------------</li></ol>
+<p>box(0, PROFILE, PROFILE, 3, WIDTH-2*PROFILE, HEIGHT-PROFILE, "Left_Panel")
+box(LENGTH-3, PROFILE, PROFILE, 3, WIDTH-2*PROFILE, HEIGHT-PROFILE, "Right_Panel")
+box(PROFILE, WIDTH-3, PROFILE, LENGTH-2*PROFILE, 3, HEIGHT-PROFILE, "Rear_Panel")
+</p>
+<ol><li>-----------------------</li>
+<li>LOWER CABINET BLOCK</li>
+<li>-----------------------</li></ol>
+<p>box(PROFILE+20, PROFILE+20, PROFILE,
+</p>
+<pre>   LENGTH-2*PROFILE-40,
+   WIDTH-2*PROFILE-40,
+   430, "Cabinet")
+</pre>
+<ol><li>-----------------------</li>
+<li>DRAWER MODULE (NEW)</li>
+<li>-----------------------</li></ol>
+<ol><li>Drawer housing</li></ol>
+<p>box(PROFILE+20, PROFILE+20, DRAWER_Z,
+</p>
+<pre>   DRAWER_WIDTH,
+   DRAWER_DEPTH,
+   DRAWER_HEIGHT,
+   "Drawer_Housing")
+</pre>
+<ol><li>Drawer slide (slightly extended)</li></ol>
+<p>box(PROFILE+20, PROFILE+10, DRAWER_Z+10,
+</p>
+<pre>   DRAWER_WIDTH-20,
+   DRAWER_DEPTH-40,
+   DRAWER_HEIGHT-20,
+   "Drawer_Box")
+</pre>
+<ol><li>Drawer front panel</li></ol>
+<p>box(PROFILE+10, PROFILE+10, DRAWER_Z,
+</p>
+<pre>   10,
+   DRAWER_DEPTH,
+   DRAWER_HEIGHT,
+   "Drawer_Front")
+</pre>
+<ol><li>-----------------------</li>
+<li>MONITOR STAND</li>
+<li>-----------------------</li></ol>
+<p>box(LENGTH/2-PROFILE/2, WIDTH/2-PROFILE/2,
+</p>
+<pre>   HEIGHT+PROFILE+TOP_THICKNESS,
+   PROFILE, PROFILE, MONITOR_POST_HEIGHT,
+   "Monitor_Post")
+</pre>
+<p>box(LENGTH/2-100, WIDTH/2-20,
+</p>
+<pre>   HEIGHT+PROFILE+TOP_THICKNESS+MONITOR_POST_HEIGHT,
+   200, 40, 8, "Monitor_Plate")
+</pre>
+<ol><li>-----------------------</li>
+<li>CASTERS</li>
+<li>-----------------------</li></ol>
+<p>def caster(x, y):
+</p>
+<pre>   cyl = Part.makeCylinder(CASTER_DIA/2, CASTER_HEIGHT)
+   cyl.translate(App.Vector(x, y, -CASTER_HEIGHT))
+   obj = doc.addObject("Part::Feature", "Caster")
+   obj.Shape = cyl
+</pre>
+<p>caster(PROFILE, PROFILE)
+caster(LENGTH-PROFILE, PROFILE)
+caster(PROFILE, WIDTH-PROFILE)
+caster(LENGTH-PROFILE, WIDTH-PROFILE)
+</p><p>doc.recompute()
+</p><p><br>
+</p>
 <ul><li><span class="MacroLink"><span typeof="mw:File"><a href="index.php?title=Macro_Rotate_View_view_90_Degrees.png&amp;filetimestamp=20190612132832&amp;.html" class="mw-file-description"><img src="File/Macro_Rotate_View_view_90_Degrees.png" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="Macro_Rotate_View.html" title="Macro Rotate View">Macro Rotate View</a></span>: This macro rotates the current view by 90&deg; to the left. Only works if you are in <span typeof="mw:File"><a href="Std_ViewTop.html" title="Std_ViewTop"><img alt="Std_ViewTop" src="File/View-top.svg" decoding="async" width="16" height="16" class="mw-file-element"></a></span> <a href="Std_ViewTop.html" title="Std ViewTop">XY (top)</a> view.</li></ul>
 <ul><li><span class="MacroLink"><span typeof="mw:File"><a href="index.php?title=Text_console_python.png&amp;filetimestamp=20190607121346&amp;.html" class="mw-file-description"><img src="File/Text_console_python.png" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="Macro_Rotate_View_Free.html" title="Macro Rotate View Free">Macro Rotate View Free</a></span>: This macro is used in the Python console and rotates the current view in the angle and plane given.</li></ul>
 <ul><li><span class="MacroLink"><span typeof="mw:File"><a href="index.php?title=Macro_Rotate_View_with_Y_pointing_upwards_.png&amp;filetimestamp=20190612140500&amp;.html" class="mw-file-description"><img src="File/Macro_Rotate_View_with_Y_pointing_upwards_.png" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="Macro_Rotate_ViewAxonometric.html" title="Macro Rotate ViewAxonometric">Macro Rotate ViewAxonometric</a></span>: This macro rotates the current view in View Axonometric.</li></ul>
@@ -30,7 +156,7 @@
 <ul><li><span class="MacroLink"><span typeof="mw:File"><a href="index.php?title=Macro_View_Rotation.png&amp;filetimestamp=20190607123811&amp;.html" class="mw-file-description"><img src="File/Macro_View_Rotation.png" decoding="async" width="24" height="25" class="mw-file-element"></a></span> <a href="Macro_View_Rotation.html" title="Macro View Rotation">Macro View Rotation</a></span>: Provides a GUI to permit rotation of view by precise amounts in all three directions.</li></ul>
 <ul><li><span class="MacroLink"><span typeof="mw:File"><a href="index.php?title=Zoom1_1.svg&amp;filetimestamp=20211110015917&amp;.html" class="mw-file-description"><img src="File/Zoom1_1.svg" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="Macro_Zoom1_1.html" title="Macro Zoom1 1">Macro Zoom 1:1</a></span>: 1:1 Zoom so objects appear their actual size on the screen.</li></ul>
 </div>
-</div>
+
 <div class="toccolours mw-collapsible mw-collapsed">
 <h3><span class="mw-headline" id="Animation"><span typeof="mw:File"><a href="index.php?title=Draft_FlipDimension.svg&amp;filetimestamp=20210319101635&amp;.html" class="mw-file-description"><img src="File/Draft_FlipDimension.svg" decoding="async" width="32" height="32" class="mw-file-element"></a></span> Animation</span></h3>
 <div class="mw-collapsible-content">
@@ -368,15 +494,15 @@
 <li>In the <b>Toolbars</b> tab, create a new toolbar, and add your macro, taking it from the <b>Macros</b> category.</li></ul>
 <!-- 
 NewPP limit report
-Cached time: 20260401134214
+Cached time: 20260413063613
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.452 seconds
-Real time usage: 0.571 seconds
-Preprocessor visited node count: 3325/1000000
-Post&#8208;expand include size: 27389/2097152 bytes
-Template argument size: 14615/2097152 bytes
+CPU time usage: 0.707 seconds
+Real time usage: 0.902 seconds
+Preprocessor visited node count: 3250/1000000
+Post&#8208;expand include size: 26773/2097152 bytes
+Template argument size: 14259/2097152 bytes
 Highest expansion depth: 3/100
 Expensive parser function count: 0/100
 Unstrip recursion depth: 0/20
@@ -384,15 +510,15 @@ Unstrip post&#8208;expand size: 1957/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   37.259      1 -total
- 35.30%   13.151    221 Template:MacroLink
- 12.21%    4.549      6 Template:MenuCommand
-  8.99%    3.351      1 Template:TOCright
-  8.55%    3.185      1 Template:Version
-  5.18%    1.931      3 Template:Button
+100.00%   37.333      1 -total
+ 45.64%   17.040    216 Template:MacroLink
+  8.55%    3.192      1 Template:Version
+  5.54%    2.070      6 Template:MenuCommand
+  4.75%    1.775      1 Template:TOCright
+  3.71%    1.386      3 Template:Button
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:695-0!canonical and timestamp 20260401134214 and revision id 1774051. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:695-0!canonical and timestamp 20260413063613 and revision id 1780626. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
