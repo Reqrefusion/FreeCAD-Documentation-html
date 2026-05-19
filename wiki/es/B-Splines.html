@@ -1,1186 +1,232 @@
-<link href="../site.css" rel="stylesheet" type="text/css"/>
-<div class="mw-page-container"><h1 class="firstHeading mw-first-heading" id="firstHeading"><span class="mw-page-title-main">B-Splines/es</span></h1><div class="mw-parser-output"><div class="mw-pt-languages noprint" dir="ltr" lang="en"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="../de\B-Splines.html" lang="de" title="B-Splines (80% translated)">Deutsch</a></li>
-<li><a class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" dir="ltr" href="../B-Splines.html" lang="en" title="B-Splines (100% translated)">English</a></li>
-<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--high" dir="ltr" lang="es">español</span></li>
-<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="../fr\B-Splines.html" lang="fr" title="B-splines (100% translated)">français</a></li>
-<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="../it\B-Splines.html" lang="it" title="B-Splines (5% translated)">italiano</a></li>
-<li><a class="mw-pt-progress mw-pt-progress--complete" dir="ltr" href="../pl\B-Splines.html" lang="pl" title="Krzywe złożone (100% translated)">polski</a></li>
-<li><a class="mw-pt-progress mw-pt-progress--stub" dir="ltr" href="../ru\B-Splines.html" lang="ru" title="B-Splines/ru (2% translated)">русский</a></li></ul></div>
-<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><div aria-labelledby="mw-toc-heading" class="toc" id="toc" role="navigation"><input class="toctogglecheckbox" id="toctogglecheckbox" role="button" style="display:none" type="checkbox"/><div class="toctitle" dir="ltr" lang="en"><h2 id="mw-toc-heading">Contents</h2><span class="toctogglespan"><label class="toctogglelabel" for="toctogglecheckbox"></label></span></div>
-<ul>
-<li class="toclevel-1 tocsection-1"><a href="#Motivación"><span class="tocnumber">1</span> <span class="toctext">Motivación</span></a></li>
-<li class="toclevel-1 tocsection-2"><a href="#Curvas_Bézier"><span class="tocnumber">2</span> <span class="toctext">Curvas Bézier</span></a>
-<ul>
-<li class="toclevel-2 tocsection-3"><a href="#Derivación"><span class="tocnumber">2.1</span> <span class="toctext">Derivación</span></a></li>
-<li class="toclevel-2 tocsection-4"><a href="#Reglas"><span class="tocnumber">2.2</span> <span class="toctext">Reglas</span></a></li>
-<li class="toclevel-2 tocsection-5"><a href="#Matemáticas"><span class="tocnumber">2.3</span> <span class="toctext">Matemáticas</span></a></li>
-</ul>
-</li>
-<li class="toclevel-1 tocsection-6"><a href="#B-Splines"><span class="tocnumber">3</span> <span class="toctext">B-Splines</span></a>
-<ul>
-<li class="toclevel-2 tocsection-7"><a href="#Básicos"><span class="tocnumber">3.1</span> <span class="toctext">Básicos</span></a>
-<ul>
-<li class="toclevel-3 tocsection-8"><a href="#Basis"><span class="tocnumber">3.1.1</span> <span class="toctext">Basis</span></a></li>
-<li class="toclevel-3 tocsection-9"><a href="#Knot_vector"><span class="tocnumber">3.1.2</span> <span class="toctext">Knot vector</span></a></li>
-</ul>
-</li>
-<li class="toclevel-2 tocsection-10"><a href="#B-splines_no-uniformes"><span class="tocnumber">3.2</span> <span class="toctext">B-splines no-uniformes</span></a></li>
-<li class="toclevel-2 tocsection-11"><a href="#Rational_B-splines"><span class="tocnumber">3.3</span> <span class="toctext">Rational B-splines</span></a></li>
-</ul>
-</li>
-<li class="toclevel-1 tocsection-12"><a href="#B-splines_en_FreeCAD"><span class="tocnumber">4</span> <span class="toctext">B-splines en FreeCAD</span></a>
-<ul>
-<li class="toclevel-2 tocsection-13"><a href="#Creación"><span class="tocnumber">4.1</span> <span class="toctext">Creación</span></a></li>
-<li class="toclevel-2 tocsection-14"><a href="#Cambio_de_grado"><span class="tocnumber">4.2</span> <span class="toctext">Cambio de grado</span></a></li>
-<li class="toclevel-2 tocsection-15"><a href="#Cambiar_la_multiplicidad_de_nudos"><span class="tocnumber">4.3</span> <span class="toctext">Cambiar la multiplicidad de nudos</span></a></li>
-<li class="toclevel-2 tocsection-16"><a href="#Cambiar_el_peso"><span class="tocnumber">4.4</span> <span class="toctext">Cambiar el peso</span></a></li>
-<li class="toclevel-2 tocsection-17"><a href="#Editing_Knots"><span class="tocnumber">4.5</span> <span class="toctext">Editing Knots</span></a></li>
-<li class="toclevel-2 tocsection-18"><a href="#Mostrar_Información"><span class="tocnumber">4.6</span> <span class="toctext">Mostrar Información</span></a></li>
-<li class="toclevel-2 tocsection-19"><a href="#Limitaciones"><span class="tocnumber">4.7</span> <span class="toctext">Limitaciones</span></a></li>
-</ul>
-</li>
-<li class="toclevel-1 tocsection-20"><a href="#Casos_típicos_de_uso"><span class="tocnumber">5</span> <span class="toctext">Casos típicos de uso</span></a>
-<ul>
-<li class="toclevel-2 tocsection-21"><a href="#Diseño"><span class="tocnumber">5.1</span> <span class="toctext">Diseño</span></a></li>
-<li class="toclevel-2 tocsection-22"><a href="#Continuidad_en_las_transiciones_geométricas"><span class="tocnumber">5.2</span> <span class="toctext">Continuidad en las transiciones geométricas</span></a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
-<p>Esta página describe cómo utilizar las B-splines en FreeCAD. También ofrece información sobre qué son las B-splines y para qué aplicaciones son útiles.
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">B-Splines/es</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="es" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-B-Splines&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
+<li><a href="../de/B-Splines.html" class="mw-pt-progress mw-pt-progress--high" title="B-Splines (99% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="../B-Splines.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="B-Splines (100% translated)" lang="en" dir="ltr">English</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--med" lang="es" dir="ltr">espa&ntilde;ol</span></li>
+<li><a href="../fr/B-Splines.html" class="mw-pt-progress mw-pt-progress--high" title="B-splines (99% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../it/B-Splines.html" class="mw-pt-progress mw-pt-progress--high" title="B-Splines (99% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="../pl/B-Splines.html" class="mw-pt-progress mw-pt-progress--high" title="Krzywe z&#322;o&#380;one (99% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../cs/B-Splines.html" class="mw-pt-progress mw-pt-progress--low" title="B-Spliny (2% translated)" lang="cs" dir="ltr">&#269;e&scaron;tina</a></li>
+<li><a href="../ru/B-Splines.html" class="mw-pt-progress mw-pt-progress--low" title="B-Splines/ru (2% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li></ul></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
+<p>Esta p&aacute;gina describe c&oacute;mo utilizar las B-splines en FreeCAD. Tambi&eacute;n ofrece informaci&oacute;n sobre qu&eacute; son las B-splines y para qu&eacute; aplicaciones son &uacute;tiles.
 </p><p><span id="Motivation"></span>
 </p>
-<h2><span id="Motivaci.C3.B3n"></span><span class="mw-headline" id="Motivación">Motivación</span></h2>
-<p>Si ya conoces las B-splines y su aplicación, puedes continuar directamente con la sección <a href="#B-splines_en_FreeCAD">B-splines en FreeCAD</a>.
-</p><p>Supongamos que quiere diseñar una pieza que debe producirse con una impresora 3D. La pieza debe tener un borde de esta manera:
-</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/B-splines_Motivation-start.png"><img decoding="async" height="291" src="../File/B-splines_Motivation-start.png" width="450"/></a></span>
-</p><p>Hay que imprimir la pieza en dirección de la parte inferior del boceto hacia la parte superior. Las estructuras de soporte externas pueden no ser una opción. Por lo tanto, tiene que añadir un soporte directamente a su pieza. ¿Qué opciones tiene?
+<h2><span id="Motivaci.C3.B3n"></span><span class="mw-headline" id="Motivaci&oacute;n">Motivaci&oacute;n</span></h2>
+<p>Si ya conoces las B-splines y su aplicaci&oacute;n, puedes continuar directamente con la secci&oacute;n <a href="#B-splines_en_FreeCAD">B-splines en FreeCAD</a>.
+</p><p>Supongamos que quiere dise&ntilde;ar una pieza que debe producirse con una impresora 3D. La pieza debe tener un borde de esta manera:
+</p><p><span typeof="mw:File"><a href="../index.php?title=B-splines_Motivation-start.png&amp;filetimestamp=20201112031157&amp;.html" class="mw-file-description"><img src="../File/B-splines_Motivation-start.png" decoding="async" width="450" height="291" class="mw-file-element"></a></span>
+</p><p>Hay que imprimir la pieza en direcci&oacute;n de la parte inferior del boceto hacia la parte superior. Las estructuras de soporte externas pueden no ser una opci&oacute;n. Por lo tanto, tiene que a&ntilde;adir un soporte directamente a su pieza. &iquest;Qu&eacute; opciones tiene?
 </p>
-<ul><li>Opción 1: se podría añadir una línea desde el punto (20, 0) hasta el punto (80, 40):</li></ul>
-<p><span typeof="mw:File"><a class="mw-file-description" href="../File/B-splines_Motivation-line.png"><img decoding="async" height="294" src="../File/B-splines_Motivation-line.png" width="450"/></a></span>
-</p><p>Sin embargo, esta solución necesita mucho volumen y, por tanto, peso y material.
+<ul><li>Opci&oacute;n 1: se podr&iacute;a a&ntilde;adir una l&iacute;nea desde el punto (20, 0) hasta el punto (80, 40):</li></ul>
+<p><span typeof="mw:File"><a href="../index.php?title=B-splines_Motivation-line.png&amp;filetimestamp=20201112032023&amp;.html" class="mw-file-description"><img src="../File/B-splines_Motivation-line.png" decoding="async" width="450" height="294" class="mw-file-element"></a></span>
+</p><p>Sin embargo, esta soluci&oacute;n necesita mucho volumen y, por tanto, peso y material.
 </p>
-<ul><li>Opción 2: puedes conectar los dos puntos con un arco de círculo. Para ahorrar volumen, el arco debe terminar tangencialmente en el punto (80,40). Entonces tu solución se ve así:</li></ul>
-<p><span typeof="mw:File"><a class="mw-file-description" href="../File/B-splines_Motivation-circle.png"><img decoding="async" height="295" src="../File/B-splines_Motivation-circle.png" width="450"/></a></span>
+<ul><li>Opci&oacute;n 2: puedes conectar los dos puntos con un arco de c&iacute;rculo. Para ahorrar volumen, el arco debe terminar tangencialmente en el punto (80,40). Entonces tu soluci&oacute;n se ve as&iacute;:</li></ul>
+<p><span typeof="mw:File"><a href="../index.php?title=B-splines_Motivation-circle.png&amp;filetimestamp=20201112032215&amp;.html" class="mw-file-description"><img src="../File/B-splines_Motivation-circle.png" decoding="async" width="450" height="295" class="mw-file-element"></a></span>
 </p><p>BIEN. Pero en el fondo no necesitas apoyo inmediato.
 </p>
-<ul><li>Opción 3: se podría ahorrar algo más de volumen si la conexión entre los 2 puntos es una curva que empieza tangencialmente en (0, 20) y termina tangencialmente en (80, 40):</li></ul>
-<p><span typeof="mw:File"><a class="mw-file-description" href="../File/B-splines_Motivation-bezier.png"><img decoding="async" height="290" src="../File/B-splines_Motivation-bezier.png" width="450"/></a></span>
-</p><p>Así, una curva con la que se puedan conectar dos puntos tangencialmente a un punto de referencia puede ser muy útil para las construcciones. Las curvas de Bézier ofrecen esta característica.
-</p><p><span id="Bézier_curves"></span>
+<ul><li>Opci&oacute;n 3: se podr&iacute;a ahorrar algo m&aacute;s de volumen si la conexi&oacute;n entre los 2 puntos es una curva que empieza tangencialmente en (0, 20) y termina tangencialmente en (80, 40):</li></ul>
+<p><span typeof="mw:File"><a href="../index.php?title=B-splines_Motivation-bezier.png&amp;filetimestamp=20210116032113&amp;.html" class="mw-file-description"><img src="../File/B-splines_Motivation-bezier.png" decoding="async" width="450" height="290" class="mw-file-element"></a></span>
+</p><p>As&iacute;, una curva con la que se puedan conectar dos puntos tangencialmente a un punto de referencia puede ser muy &uacute;til para las construcciones. Las curvas de B&eacute;zier ofrecen esta caracter&iacute;stica.
+</p><p><span id="B&eacute;zier_curves"></span>
 </p>
-<h2><span id="Curvas_B.C3.A9zier"></span><span class="mw-headline" id="Curvas_Bézier">Curvas Bézier</span></h2>
+<h2><span id="Curvas_B.C3.A9zier"></span><span class="mw-headline" id="Curvas_B&eacute;zier">Curvas B&eacute;zier</span></h2>
 <p><span id="Derivation"></span>
 </p>
-<h3><span id="Derivaci.C3.B3n"></span><span class="mw-headline" id="Derivación">Derivación</span></h3>
+<h3><span id="Derivaci.C3.B3n"></span><span class="mw-headline" id="Derivaci&oacute;n">Derivaci&oacute;n</span></h3>
 <div class="mw-translate-fuzzy">
-<p>Curvas de Bézier son polinomios que describen la conexión entre 2 puntos. El polinomio más sencillo que conecta 2 puntos es una recta (<span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle A*x^{1}+B}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>A</mi>
-<mo>∗<!-- ∗ --></mo>
-<msup>
-<mi>x</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>1</mn>
-</mrow>
-</msup>
-<mo>+</mo>
-<mi>B</mi>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle A*x^{1}+B}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle A*x^{1}+B}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/59ad13b69733eab9240e2178bd0a00ce514ba502" style="vertical-align: -0.505ex; width:10.926ex; height:2.843ex;"/></span>) por lo que también las curvas de Bézier lineales son lineales:
+<p>Curvas de B&eacute;zier son polinomios que describen la conexi&oacute;n entre 2 puntos. El polinomio m&aacute;s sencillo que conecta 2 puntos es una recta (<math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>A</mi><mo stretchy="false">*</mo><msup><mi>x</mi><mrow data-mjx-texclass="ORD"><mn>1</mn></mrow></msup><mo stretchy="false">+</mo><mi>B</mi></mstyle></mrow></math>) por lo que tambi&eacute;n las curvas de B&eacute;zier lineales son lineales:
 </p>
 </div>
-<p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Bezier_linear_anim.gif"><img decoding="async" height="120" src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Bezier_linear_anim.gif" width="70"/></a></span>
+<p><span class="mw-default-size" typeof="mw:File"><a href="../File/Bezier_linear_anim.gif" class="mw-file-description"><img src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Bezier_linear_anim.gif" decoding="async" width="70" height="120" class="mw-file-element"></a></span>
 </p>
-<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Animación 1: Curva de Bézier lineal.</p>
+<p style="text-align:left; font-style:italic; max-width:800px; box-sizing:border-box; margin-block:1em; margin-inline:clamp(1em, 6vw, 2em); padding-inline:clamp(0.75em, 4vw, 2em); word-break:normal; overflow-wrap:break-word;">Animaci&oacute;n 1: Curva de B&eacute;zier lineal.</p>
 <div class="mw-translate-fuzzy">
-<p>Sin embargo, un polinomio se vuelve primero útil cuando podemos controlarlo. Así que debe haber un punto entre los 2 puntos finales que nos permita definir cómo se conectan los puntos finales. Como en la opción 3 del ejemplo anterior, la curva es útil cuando comienza y termina tangencialmente a las líneas que cruzan los puntos finales. Y esta es una característica principal de las curvas Bézier. Así que vamos a añadir un punto de control entre los 2 puntos finales. La curva comenzará tangencialmente hacia este punto de control, lo que significa que es tangencial a la línea que podemos dibujar entre el punto inicial y el punto de control. Yendo hacia atrás desde el punto final, la curva también será tangente a la línea que podemos dibujar entre el punto de control y el punto final. La animación 2 muestra el aspecto de esta curva.
+<p>Sin embargo, un polinomio se vuelve primero &uacute;til cuando podemos controlarlo. As&iacute; que debe haber un punto entre los 2 puntos finales que nos permita definir c&oacute;mo se conectan los puntos finales. Como en la opci&oacute;n 3 del ejemplo anterior, la curva es &uacute;til cuando comienza y termina tangencialmente a las l&iacute;neas que cruzan los puntos finales. Y esta es una caracter&iacute;stica principal de las curvas B&eacute;zier. As&iacute; que vamos a a&ntilde;adir un punto de control entre los 2 puntos finales. La curva comenzar&aacute; tangencialmente hacia este punto de control, lo que significa que es tangencial a la l&iacute;nea que podemos dibujar entre el punto inicial y el punto de control. Yendo hacia atr&aacute;s desde el punto final, la curva tambi&eacute;n ser&aacute; tangente a la l&iacute;nea que podemos dibujar entre el punto de control y el punto final. La animaci&oacute;n 2 muestra el aspecto de esta curva.
 </p>
 </div>
-<p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Bezier_quadratic_anim.gif"><img decoding="async" height="120" src="https://upload.wikimedia.org/wikipedia/commons/3/35/Bezier_quadratic_anim.gif" width="190"/></a></span>
+<p><span class="mw-default-size" typeof="mw:File"><a href="../File/Bezier_quadratic_anim.gif" class="mw-file-description"><img src="https://upload.wikimedia.org/wikipedia/commons/3/35/Bezier_quadratic_anim.gif" decoding="async" width="190" height="120" class="mw-file-element"></a></span>
 </p>
 <div class="mw-translate-fuzzy">
-<p>{{Caption|Animación 2: Curva cuadrática de Bézier. P1 es el punto de control.}
+<p>{{Caption|Animaci&oacute;n 2: Curva cuadr&aacute;tica de B&eacute;zier. P1 es el punto de control.}
 </p>
 </div>
-<p>La animación aclara lo que es básicamente la curva: una transición de P0 a P2 al girar la línea P0-P1 para convertirse en la línea P1-P2. Por lo tanto, obtenemos la bonita característica de inicio/fin tangencial.
-</p><p>Una curva de este tipo sólo puede ser descrita por un polinomio cuadrático. (El número de vueltas a la izquierda/derecha + 1 es el orden necesario del polinomio. Un polinomio cuadrático tiene una sola vuelta, un polinomio cúbico tiene dos vueltas, y así sucesivamente). Por lo tanto, una curva de Bézier con un punto de control es una curva de Bézier cuadrática (de segundo orden).
-</p><p>Tener un solo punto de control a menudo no es suficiente. Tomemos el ejemplo de la motivación anterior. Allí, en la opción 3, terminamos la curva tangencialmente en la dirección x. ¿Pero cómo se pueden conectar los puntos (20, 0) y (80, 40) para que la curva termine tangencialmente en la dirección y? Para conseguirlo se necesita primero un giro a la derecha y luego a la izquierda, es decir, un polinomio cúbico (de tercer orden). Y eso significa que para una curva de Bézier necesitamos (o se puede decir que ganamos) un segundo punto de control. La animación 3 muestra una curva de Bézier cúbica.
-</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Bezier_cubic_anim.gif"><img decoding="async" height="120" src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Bezier_cubic_anim.gif" width="290"/></a></span>
+<p>La animaci&oacute;n aclara lo que es b&aacute;sicamente la curva: una transici&oacute;n de P0 a P2 al girar la l&iacute;nea P0-P1 para convertirse en la l&iacute;nea P1-P2. Por lo tanto, obtenemos la bonita caracter&iacute;stica de inicio/fin tangencial.
+</p><p>Una curva de este tipo s&oacute;lo puede ser descrita por un polinomio cuadr&aacute;tico. (El n&uacute;mero de vueltas a la izquierda/derecha + 1 es el orden necesario del polinomio. Un polinomio cuadr&aacute;tico tiene una sola vuelta, un polinomio c&uacute;bico tiene dos vueltas, y as&iacute; sucesivamente). Por lo tanto, una curva de B&eacute;zier con un punto de control es una curva de B&eacute;zier cuadr&aacute;tica (de segundo orden).
+</p><p>Tener un solo punto de control a menudo no es suficiente. Tomemos el ejemplo de la motivaci&oacute;n anterior. All&iacute;, en la opci&oacute;n 3, terminamos la curva tangencialmente en la direcci&oacute;n x. &iquest;Pero c&oacute;mo se pueden conectar los puntos (20, 0) y (80, 40) para que la curva termine tangencialmente en la direcci&oacute;n y? Para conseguirlo se necesita primero un giro a la derecha y luego a la izquierda, es decir, un polinomio c&uacute;bico (de tercer orden). Y eso significa que para una curva de B&eacute;zier necesitamos (o se puede decir que ganamos) un segundo punto de control. La animaci&oacute;n 3 muestra una curva de B&eacute;zier c&uacute;bica.
+</p><p><span class="mw-default-size" typeof="mw:File"><a href="../File/Bezier_cubic_anim.gif" class="mw-file-description"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Bezier_cubic_anim.gif" decoding="async" width="290" height="120" class="mw-file-element"></a></span>
 </p>
-<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">Animación 3: Curva cúbica de Bézier.</p>
-<p>Para responder a la pregunta, la solución con el final de la dirección y tangencial para el ejemplo es ésta:
-</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/B-splines_Motivation-cubic-bezier.png"><img decoding="async" height="289" src="../File/B-splines_Motivation-cubic-bezier.png" width="450"/></a></span>
+<p style="text-align:left; font-style:italic; max-width:800px; box-sizing:border-box; margin-block:1em; margin-inline:clamp(1em, 6vw, 2em); padding-inline:clamp(0.75em, 4vw, 2em); word-break:normal; overflow-wrap:break-word;">Animaci&oacute;n 3: Curva c&uacute;bica de B&eacute;zier.</p>
+<p>Para responder a la pregunta, la soluci&oacute;n con el final de la direcci&oacute;n y tangencial para el ejemplo es &eacute;sta:
+</p><p><span typeof="mw:File"><a href="../index.php?title=B-splines_Motivation-cubic-bezier.png&amp;filetimestamp=20210116042247&amp;.html" class="mw-file-description"><img src="../File/B-splines_Motivation-cubic-bezier.png" decoding="async" width="450" height="289" class="mw-file-element"></a></span>
 </p><p><span id="Rules"></span>
 </p>
 <h3><span class="mw-headline" id="Reglas">Reglas</span></h3>
 <div class="mw-translate-fuzzy">
-<p>En el texto anterior ya habrás notado algunas "reglas" para las curvas de Bézier:
+<p>En el texto anterior ya habr&aacute;s notado algunas "reglas" para las curvas de B&eacute;zier:
 </p>
-<ul><li>El grado del polinomio es también el grado de las curvas.</li>
-<li>Si necesitas <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle n}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>n</mi>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle n}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle n}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/a601995d55609f2d9f5e233e36fbe9ea26011b3b" style="vertical-align: -0.338ex; width:1.395ex; height:1.676ex;"/></span> vueltas, necesitas al menos una curva de Bézier de <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle n+1}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>n</mi>
-<mo>+</mo>
-<mn>1</mn>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle n+1}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle n+1}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/2a135e65a42f2d73cccbfc4569523996ca0036f1" style="vertical-align: -0.505ex; width:5.398ex; height:2.343ex;"/></span> grado.</li>
-<li>Una curva de Bézier siempre comienza tangencialmente a la línea entre el punto inicial y el primer punto de control (y termina tangencialmente a la línea entre el último punto de control y el punto final).</li></ul>
+<ul><li>El grado del polinomio es tambi&eacute;n el grado de las curvas.</li>
+<li>Si necesitas <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>n</mi></mstyle></mrow></math> vueltas, necesitas al menos una curva de B&eacute;zier de <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>n</mi><mo stretchy="false">+</mo><mn>1</mn></mstyle></mrow></math> grado.</li>
+<li>Una curva de B&eacute;zier siempre comienza tangencialmente a la l&iacute;nea entre el punto inicial y el primer punto de control (y termina tangencialmente a la l&iacute;nea entre el &uacute;ltimo punto de control y el punto final).</li></ul>
 </div>
 <p><span id="Math"></span>
 </p>
-<h3><span id="Matem.C3.A1ticas"></span><span class="mw-headline" id="Matemáticas">Matemáticas</span></h3>
-<p>Si estás interesado en entender las matemáticas de fondo, aquí tienes lo básico.
-</p><p>Una curva de Bézier se calcula con esta fórmula:
-</p><p><span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle \quad {\textrm {Bezier}}(n,t)=\sum _{i=0}^{n}\underbrace {\binom {n}{i}} _{\text{término polinómico}}\underbrace {\left(1-t\right)^{n-i}t^{i}} _{\text{término polinómico}}\;\underbrace {P_{i}} _{\text{coordenada de punto}}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mspace width="1em"></mspace>
-<mrow class="MJX-TeXAtom-ORD">
-<mrow class="MJX-TeXAtom-ORD">
-<mtext>Bezier</mtext>
-</mrow>
-</mrow>
-<mo stretchy="false">(</mo>
-<mi>n</mi>
-<mo>,</mo>
-<mi>t</mi>
-<mo stretchy="false">)</mo>
-<mo>=</mo>
-<munderover>
-<mo>∑<!-- ∑ --></mo>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>=</mo>
-<mn>0</mn>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>n</mi>
-</mrow>
-</munderover>
-<munder>
-<mrow class="MJX-TeXAtom-OP MJX-fixedlimits">
-<munder>
-<mrow>
-<mrow class="MJX-TeXAtom-OPEN">
-<mo maxsize="2.047em" minsize="2.047em">(</mo>
-</mrow>
-<mfrac linethickness="0">
-<mi>n</mi>
-<mi>i</mi>
-</mfrac>
-<mrow class="MJX-TeXAtom-CLOSE">
-<mo maxsize="2.047em" minsize="2.047em">)</mo>
-</mrow>
-</mrow>
-<mo>⏟<!-- ⏟ --></mo>
-</munder>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mtext>término polinómico</mtext>
-</mrow>
-</munder>
-<munder>
-<mrow class="MJX-TeXAtom-OP MJX-fixedlimits">
-<munder>
-<mrow>
-<msup>
-<mrow>
-<mo>(</mo>
-<mrow>
-<mn>1</mn>
-<mo>−<!-- − --></mo>
-<mi>t</mi>
-</mrow>
-<mo>)</mo>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>n</mi>
-<mo>−<!-- − --></mo>
-<mi>i</mi>
-</mrow>
-</msup>
-<msup>
-<mi>t</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-</mrow>
-</msup>
-</mrow>
-<mo>⏟<!-- ⏟ --></mo>
-</munder>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mtext>término polinómico</mtext>
-</mrow>
-</munder>
-<mspace width="thickmathspace"></mspace>
-<munder>
-<mrow class="MJX-TeXAtom-OP MJX-fixedlimits">
-<munder>
-<msub>
-<mi>P</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-</mrow>
-</msub>
-<mo>⏟<!-- ⏟ --></mo>
-</munder>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mtext>coordenada de punto</mtext>
-</mrow>
-</munder>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle \quad {\textrm {Bezier}}(n,t)=\sum _{i=0}^{n}\underbrace {\binom {n}{i}} _{\text{término polinómico}}\underbrace {\left(1-t\right)^{n-i}t^{i}} _{\text{término polinómico}}\;\underbrace {P_{i}} _{\text{coordenada de punto}}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle \quad {\textrm {Bezier}}(n,t)=\sum _{i=0}^{n}\underbrace {\binom {n}{i}} _{\text{término polinómico}}\underbrace {\left(1-t\right)^{n-i}t^{i}} _{\text{término polinómico}}\;\underbrace {P_{i}} _{\text{coordenada de punto}}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/a188afb4fd3df483a71974177803a5c3de24a136" style="vertical-align: -6.838ex; width:65.077ex; height:10.676ex;"/></span>
-</p><p><i>n</i> es por tanto el grado de la curva. Así, una curva de Bézier de grado <i>n</i> es un polígono de orden <i>n</i>. Los factores <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle P_{i}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>P</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-</mrow>
-</msub>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle P_{i}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle P_{i}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/3ba1396129f7be3c7f828a571b6649e6807d10d3" style="vertical-align: -0.671ex; width:2.292ex; height:2.509ex;"/></span> son, de hecho, las coordenadas de los puntos de control de las curvas de Bézier. Para una visualización, véase <a class="external text" href="https://pomax.github.io/bezierinfo/#control" rel="nofollow">Control de las curvaturas de Bézier</a>.
-</p><p>Si le interesa más, eche un vistazo a <a class="external text" href="https://pomax.github.io/bezierinfo/#explanation" rel="nofollow">Las matemáticas de las curvas de Bézier</a> con una derivación muy bien animada de las matemáticas de las curvas de Bézier.
+<h3><span id="Matem.C3.A1ticas"></span><span class="mw-headline" id="Matem&aacute;ticas">Matem&aacute;ticas</span></h3>
+<p>Si est&aacute;s interesado en entender las matem&aacute;ticas de fondo, aqu&iacute; tienes lo b&aacute;sico.
+</p><p>Una curva de B&eacute;zier se calcula con esta f&oacute;rmula:
+</p>
+<div class="mw-translate-fuzzy">
+<p><math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mspace width="1em"></mspace><mrow data-mjx-texclass="ORD"><mtext><mrow data-mjx-texclass="ORD">Bezier</mrow></mtext></mrow><mo stretchy="false">(</mo><mi>n</mi><mo>,</mo><mi>t</mi><mo stretchy="false">)</mo><mo stretchy="false">=</mo><mstyle displaystyle="true" scriptlevel="0"><munderover><mo stretchy="false">&sum;</mo><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo stretchy="false">=</mo><mn>0</mn></mrow></mrow><mrow data-mjx-texclass="ORD"><mi>n</mi></mrow></munderover></mstyle><munder><mrow data-mjx-texclass="OP"><munder><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="OPEN"><mo minsize="2.047em">(</mo></mrow><mfrac linethickness="0"><mrow data-mjx-texclass="ORD"><mi>n</mi></mrow><mrow data-mjx-texclass="ORD"><mi>i</mi></mrow></mfrac><mrow data-mjx-texclass="CLOSE"><mo minsize="2.047em">)</mo></mrow></mrow></mstyle></mrow><mo>&#9183;</mo></munder></mrow><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mtext>t&eacute;rmino polin&oacute;mico</mtext></mrow></mrow></munder><munder><mrow data-mjx-texclass="OP"><munder><mrow data-mjx-texclass="ORD"><msup><mrow data-mjx-texclass="INNER"><mo data-mjx-texclass="OPEN">(</mo><mn>1</mn><mo stretchy="false">&minus;</mo><mi>t</mi><mo data-mjx-texclass="CLOSE">)</mo></mrow><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>n</mi><mo stretchy="false">&minus;</mo><mi>i</mi></mrow></mrow></msup><msup><mi>t</mi><mrow data-mjx-texclass="ORD"><mi>i</mi></mrow></msup></mrow><mo>&#9183;</mo></munder></mrow><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mtext>t&eacute;rmino polin&oacute;mico</mtext></mrow></mrow></munder><mspace width="0.278em"></mspace><munder><mrow data-mjx-texclass="OP"><munder><msub><mi>P</mi><mrow data-mjx-texclass="ORD"><mi>i</mi></mrow></msub><mo>&#9183;</mo></munder></mrow><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mtext>coordenada de punto</mtext></mrow></mrow></munder></mstyle></mrow></math>
+</p>
+</div>
+<p><i>n</i> es por tanto el grado de la curva. As&iacute;, una curva de B&eacute;zier de grado <i>n</i> es un pol&iacute;gono de orden <i>n</i>. Los factores <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>P</mi><mrow data-mjx-texclass="ORD"><mi>i</mi></mrow></msub></mstyle></mrow></math> son, de hecho, las coordenadas de los puntos de control de las curvas de B&eacute;zier. Para una visualizaci&oacute;n, v&eacute;ase <a rel="nofollow" class="external text" href="https://pomax.github.io/bezierinfo/#control">Control de las curvaturas de B&eacute;zier</a>.
+</p><p>Si le interesa m&aacute;s, eche un vistazo a <a rel="nofollow" class="external text" href="https://pomax.github.io/bezierinfo/#explanation">Las matem&aacute;ticas de las curvas de B&eacute;zier</a> con una derivaci&oacute;n muy bien animada de las matem&aacute;ticas de las curvas de B&eacute;zier.
 </p>
 <h2><span class="mw-headline" id="B-Splines">B-Splines</span></h2>
 <p><span id="Basics"></span>
 </p>
-<h3><span id="B.C3.A1sicos"></span><span class="mw-headline" id="Básicos">Básicos</span></h3>
-<p><a class="external text" href="https://www.youtube.com/watch?v=bE1MrrqBAl8" rel="nofollow">Este vídeo</a> enumera al principio los problemas prácticos de las curvas de Bézier. Por ejemplo, que al añadir o cambiar un punto de control se modifica toda la curva. Estos problemas se pueden resolver uniendo varias curvas de Bézier. El resultado es un llamado spline, en particular un B-spline (spline de base). El vídeo también explica que una unión de curvas de Bézier cuadráticas forma un B-spline cuadrático uniforme y que una unión de curvas de Bézier cúbicas forma un B-spline cúbico uniforme.
-</p><p>De los vídeos podemos recoger "reglas" útiles para las B-splines:
+<h3><span id="B.C3.A1sicos"></span><span class="mw-headline" id="B&aacute;sicos">B&aacute;sicos</span></h3>
+<p><a rel="nofollow" class="external text" href="https://www.youtube.com/watch?v=bE1MrrqBAl8">Este v&iacute;deo</a> enumera al principio los problemas pr&aacute;cticos de las curvas de B&eacute;zier. Por ejemplo, que al a&ntilde;adir o cambiar un punto de control se modifica toda la curva. Estos problemas se pueden resolver uniendo varias curvas de B&eacute;zier. El resultado es un llamado spline, en particular un B-spline (spline de base). El v&iacute;deo tambi&eacute;n explica que una uni&oacute;n de curvas de B&eacute;zier cuadr&aacute;ticas forma un B-spline cuadr&aacute;tico uniforme y que una uni&oacute;n de curvas de B&eacute;zier c&uacute;bicas forma un B-spline c&uacute;bico uniforme.
+</p><p>De los v&iacute;deos podemos recoger "reglas" &uacute;tiles para las B-splines:
 </p>
-<ul><li>El primer y último punto de control es el punto final/inicial de la spline.</li>
-<li>Al igual que para las curvas de Bézier, las splines siempre comienzan tangencialmente a la línea entre el punto de inicio y el primer punto de control (y terminan tangencialmente a la línea entre el último punto de control y el punto final).</li>
-<li>Una unión de <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle S}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>S</mi>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle S}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle S}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/4611d85173cd3b508e67077d4a1252c9c05abca2" style="vertical-align: -0.338ex; width:1.499ex; height:2.176ex;"/></span> curvas de Bézier con el grado <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle D}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>D</mi>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle D}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle D}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/f34a0c600395e5d4345287e21fb26efd386990e6" style="vertical-align: -0.338ex; width:1.924ex; height:2.176ex;"/></span> tiene <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle S+D}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>S</mi>
-<mo>+</mo>
-<mi>D</mi>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle S+D}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle S+D}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/65a5d3f864247ec4ca8a4174e180fd0154651187" style="vertical-align: -0.505ex; width:6.264ex; height:2.343ex;"/></span> puntos de control.
-<ul><li>Dado que en la mayoría de los casos se trabaja con B-splines cúbicas podemos afirmar entonces que <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>N</mi>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle N}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle N}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/f5e3890c981ae85503089652feb48b191b57aae3" style="vertical-align: -0.338ex; width:2.064ex; height:2.176ex;"/></span> puntos de control conducen a <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N-3}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>N</mi>
-<mo>−<!-- − --></mo>
-<mn>3</mn>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle N-3}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle N-3}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/b849f72aa23caee22353feb5ea5c327854650fb0" style="vertical-align: -0.505ex; width:6.066ex; height:2.343ex;"/></span> segmentos de Bézier y a su vez <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N-4}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>N</mi>
-<mo>−<!-- − --></mo>
-<mn>4</mn>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle N-4}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle N-4}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/87f288cc09f331fd1fc0d38ce419af503fe8cd23" style="vertical-align: -0.505ex; width:6.066ex; height:2.343ex;"/></span> puntos de unión de segmentos.</li></ul></li>
-<li>Una B-spline de grado <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle D}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>D</mi>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle D}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle D}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/f34a0c600395e5d4345287e21fb26efd386990e6" style="vertical-align: -0.338ex; width:1.924ex; height:2.176ex;"/></span> ofrece en cada punto una derivada continua de orden <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle D-1}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>D</mi>
-<mo>−<!-- − --></mo>
-<mn>1</mn>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle D-1}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle D-1}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/a2882b444f937e7119403c8625aea8647b667747" style="vertical-align: -0.505ex; width:5.927ex; height:2.343ex;"/></span>.
-<ul><li>Para una B-spline cúbica esto significa que la curvatura (derivada de segundo orden) no cambia al viajar de un segmento al siguiente. Esta es una característica muy útil como veremos más adelante.</li></ul></li></ul>
+<ul><li>El primer y &uacute;ltimo punto de control es el punto final/inicial de la spline.</li>
+<li>Al igual que para las curvas de B&eacute;zier, las splines siempre comienzan tangencialmente a la l&iacute;nea entre el punto de inicio y el primer punto de control (y terminan tangencialmente a la l&iacute;nea entre el &uacute;ltimo punto de control y el punto final).</li>
+<li>Una uni&oacute;n de <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>S</mi></mstyle></mrow></math> curvas de B&eacute;zier con el grado <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>D</mi></mstyle></mrow></math> tiene <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>S</mi><mo stretchy="false">+</mo><mi>D</mi></mstyle></mrow></math> puntos de control.
+<ul><li>Dado que en la mayor&iacute;a de los casos se trabaja con B-splines c&uacute;bicas podemos afirmar entonces que <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>N</mi></mstyle></mrow></math> puntos de control conducen a <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>N</mi><mo stretchy="false">&minus;</mo><mn>3</mn></mstyle></mrow></math> segmentos de B&eacute;zier y a su vez <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>N</mi><mo stretchy="false">&minus;</mo><mn>4</mn></mstyle></mrow></math> puntos de uni&oacute;n de segmentos.</li></ul></li>
+<li>Una B-spline de grado <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>D</mi></mstyle></mrow></math> ofrece en cada punto una derivada continua de orden <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>D</mi><mo stretchy="false">&minus;</mo><mn>1</mn></mstyle></mrow></math>.
+<ul><li>Para una B-spline c&uacute;bica esto significa que la curvatura (derivada de segundo orden) no cambia al viajar de un segmento al siguiente. Esta es una caracter&iacute;stica muy &uacute;til como veremos m&aacute;s adelante.</li></ul></li></ul>
 <div class="mw-translate-fuzzy">
-<p>Si está interesado en más detalles sobre las propiedades de la B-Spline, eche un vistazo al vídeo <a class="external text" href="https://www.youtube.com/watch?v=xXJylM2S72s" rel="nofollow">MOOC Curvas 8.2: Propiedades de las curvas B-spline</a>.
+<p>Si est&aacute; interesado en m&aacute;s detalles sobre las propiedades de la B-Spline, eche un vistazo al v&iacute;deo <a rel="nofollow" class="external text" href="https://www.youtube.com/watch?v=xXJylM2S72s">MOOC Curvas 8.2: Propiedades de las curvas B-spline</a>.
 </p>
 </div>
 <h4><span class="mw-headline" id="Basis">Basis</span></h4>
 <p>Since we will only introduce the basics of B-spline, we don't go here into the details.
-</p><p>The basis constructs the spline. Looking at the definition of Bézier curves in section <a href="#Math">Math</a> we remember that a Bézier curve is a linear combination of polynomials with the x/y coordinate of each of the control points as a factor. These polynomials are called Bernstein polynomials.
-</p><p>As several Bézier curves are combined to form a spline, we get a set of  Bernstein polynomials forming the spline (they are the basis). As we want to overcome the mentioned limitations of Bézier curves, we don't geometrically combine the different Bernstein polynomials of the Bézier curves, but define Bernstein polynomials over the whole geometrical range of the spline. So we <b>don't combine</b> the Bézier curves with its Bernstein polynomials, which would be 
+</p><p>The basis constructs the spline. Looking at the definition of B&eacute;zier curves in section <a href="#Math">Math</a> we remember that a B&eacute;zier curve is a linear combination of polynomials with the x/y coordinate of each of the control points as a factor. These polynomials are called Bernstein polynomials.
+</p><p>As several B&eacute;zier curves are combined to form a spline, we get a set of  Bernstein polynomials forming the spline (they are the basis). As we want to overcome the mentioned limitations of B&eacute;zier curves, we don't geometrically combine the different Bernstein polynomials of the B&eacute;zier curves, but define Bernstein polynomials over the whole geometrical range of the spline. So we <b>don't combine</b> the B&eacute;zier curves with its Bernstein polynomials, which would be 
 </p>
-<dl><dd><span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle {\textrm {Bezier-combination}}={\begin{cases}\sum _{i=0}^{n}P_{i}\cdot B_{i,n}(t),&amp;0\leq t\leq 1\\\sum _{i=0}^{n}P_{i+n}\cdot B_{i,n}(t-1),&amp;1\leq t\leq 2\\\cdots \end{cases}}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mrow class="MJX-TeXAtom-ORD">
-<mrow class="MJX-TeXAtom-ORD">
-<mtext>Bezier-combination</mtext>
-</mrow>
-</mrow>
-<mo>=</mo>
-<mrow class="MJX-TeXAtom-ORD">
-<mrow>
-<mo>{</mo>
-<mtable columnalign="left left" columnspacing="1em" displaystyle="false" rowspacing=".2em">
-<mtr>
-<mtd>
-<munderover>
-<mo>∑<!-- ∑ --></mo>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>=</mo>
-<mn>0</mn>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>n</mi>
-</mrow>
-</munderover>
-<msub>
-<mi>P</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-</mrow>
-</msub>
-<mo>⋅<!-- ⋅ --></mo>
-<msub>
-<mi>B</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>,</mo>
-<mi>n</mi>
-</mrow>
-</msub>
-<mo stretchy="false">(</mo>
-<mi>t</mi>
-<mo stretchy="false">)</mo>
-<mo>,</mo>
-</mtd>
-<mtd>
-<mn>0</mn>
-<mo>≤<!-- ≤ --></mo>
-<mi>t</mi>
-<mo>≤<!-- ≤ --></mo>
-<mn>1</mn>
-</mtd>
-</mtr>
-<mtr>
-<mtd>
-<munderover>
-<mo>∑<!-- ∑ --></mo>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>=</mo>
-<mn>0</mn>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>n</mi>
-</mrow>
-</munderover>
-<msub>
-<mi>P</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>+</mo>
-<mi>n</mi>
-</mrow>
-</msub>
-<mo>⋅<!-- ⋅ --></mo>
-<msub>
-<mi>B</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>,</mo>
-<mi>n</mi>
-</mrow>
-</msub>
-<mo stretchy="false">(</mo>
-<mi>t</mi>
-<mo>−<!-- − --></mo>
-<mn>1</mn>
-<mo stretchy="false">)</mo>
-<mo>,</mo>
-</mtd>
-<mtd>
-<mn>1</mn>
-<mo>≤<!-- ≤ --></mo>
-<mi>t</mi>
-<mo>≤<!-- ≤ --></mo>
-<mn>2</mn>
-</mtd>
-</mtr>
-<mtr>
-<mtd>
-<mo>⋯<!-- ⋯ --></mo>
-</mtd>
-</mtr>
-</mtable>
-<mo fence="true" stretchy="true" symmetric="true"></mo>
-</mrow>
-</mrow>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle {\textrm {Bezier-combination}}={\begin{cases}\sum _{i=0}^{n}P_{i}\cdot B_{i,n}(t),&amp;0\leq t\leq 1\\\sum _{i=0}^{n}P_{i+n}\cdot B_{i,n}(t-1),&amp;1\leq t\leq 2\\\cdots \end{cases}}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle {\textrm {Bezier-combination}}={\begin{cases}\sum _{i=0}^{n}P_{i}\cdot B_{i,n}(t),&amp;0\leq t\leq 1\\\sum _{i=0}^{n}P_{i+n}\cdot B_{i,n}(t-1),&amp;1\leq t\leq 2\\\cdots \end{cases}}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/0817128ca14d76650df1a9b11bf766277965eb41" style="vertical-align: -3.838ex; width:60.49ex; height:8.843ex;"/></span></dd></dl>
-<p>whereas <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle B_{i,n}(t)}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>B</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>,</mo>
-<mi>n</mi>
-</mrow>
-</msub>
-<mo stretchy="false">(</mo>
-<mi>t</mi>
-<mo stretchy="false">)</mo>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle B_{i,n}(t)}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle B_{i,n}(t)}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/58fbcfe844c24961f0c5b6bd3fcc5f0bc64bffdf" style="vertical-align: -1.005ex; width:6.656ex; height:3.009ex;"/></span> is the i-th Bernstein polynomial with order <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle n}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>n</mi>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle n}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle n}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/a601995d55609f2d9f5e233e36fbe9ea26011b3b" style="vertical-align: -0.338ex; width:1.395ex; height:1.676ex;"/></span> and the coefficients <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle P_{i}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>P</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-</mrow>
-</msub>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle P_{i}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle P_{i}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/3ba1396129f7be3c7f828a571b6649e6807d10d3" style="vertical-align: -0.671ex; width:2.292ex; height:2.509ex;"/></span> are the point coordinates of the Bézier curve control points. But we use a <b>different set of functions</b> that are defined over the whole spline range:
+<dl><dd><math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mrow data-mjx-texclass="ORD"><mtext><mrow data-mjx-texclass="ORD">Bezier<mo stretchy="false">&minus;</mo>combination</mrow></mtext></mrow><mo stretchy="false">=</mo><mrow data-mjx-texclass="ORD"><mo data-mjx-texclass="OPEN">{</mo><mtable columnspacing="1em" rowspacing="4pt" columnalign="left left"><mtr><mtd><mstyle displaystyle="true" scriptlevel="0"><munderover><mo stretchy="false">&sum;</mo><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo stretchy="false">=</mo><mn>0</mn></mrow></mrow><mrow data-mjx-texclass="ORD"><mi>n</mi></mrow></munderover></mstyle><msub><mi>P</mi><mrow data-mjx-texclass="ORD"><mi>i</mi></mrow></msub><mo stretchy="false">&sdot;</mo><msub><mi>B</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>,</mo><mi>n</mi></mrow></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>,</mo></mtd><mtd><mn>0</mn><mo stretchy="false">&le;</mo><mi>t</mi><mo stretchy="false">&le;</mo><mn>1</mn></mtd></mtr><mtr><mtd><mstyle displaystyle="true" scriptlevel="0"><munderover><mo stretchy="false">&sum;</mo><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo stretchy="false">=</mo><mn>0</mn></mrow></mrow><mrow data-mjx-texclass="ORD"><mi>n</mi></mrow></munderover></mstyle><msub><mi>P</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo stretchy="false">+</mo><mi>n</mi></mrow></mrow></msub><mo stretchy="false">&sdot;</mo><msub><mi>B</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>,</mo><mi>n</mi></mrow></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">&minus;</mo><mn>1</mn><mo stretchy="false">)</mo><mo>,</mo></mtd><mtd><mn>1</mn><mo stretchy="false">&le;</mo><mi>t</mi><mo stretchy="false">&le;</mo><mn>2</mn></mtd></mtr><mtr><mtd><mo stretchy="false">&#8943;</mo></mtd></mtr></mtable></mrow></mstyle></mrow></math></dd></dl>
+<p>whereas <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>B</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>,</mo><mi>n</mi></mrow></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mstyle></mrow></math> is the i-th Bernstein polynomial with order <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>n</mi></mstyle></mrow></math> and the coefficients <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>P</mi><mrow data-mjx-texclass="ORD"><mi>i</mi></mrow></msub></mstyle></mrow></math> are the point coordinates of the B&eacute;zier curve control points. But we use a <b>different set of functions</b> that are defined over the whole spline range:
 </p>
-<dl><dd><span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle {\textrm {B-spline}}=\sum _{i=0}^{n}p_{i}\cdot N_{i,n}(t)}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mrow class="MJX-TeXAtom-ORD">
-<mrow class="MJX-TeXAtom-ORD">
-<mtext>B-spline</mtext>
-</mrow>
-</mrow>
-<mo>=</mo>
-<munderover>
-<mo>∑<!-- ∑ --></mo>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>=</mo>
-<mn>0</mn>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>n</mi>
-</mrow>
-</munderover>
-<msub>
-<mi>p</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-</mrow>
-</msub>
-<mo>⋅<!-- ⋅ --></mo>
-<msub>
-<mi>N</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>,</mo>
-<mi>n</mi>
-</mrow>
-</msub>
-<mo stretchy="false">(</mo>
-<mi>t</mi>
-<mo stretchy="false">)</mo>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle {\textrm {B-spline}}=\sum _{i=0}^{n}p_{i}\cdot N_{i,n}(t)}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle {\textrm {B-spline}}=\sum _{i=0}^{n}p_{i}\cdot N_{i,n}(t)}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/435d04ece09a2c6dd3f34a1b0f0ce44b389013a0" style="vertical-align: -3.005ex; width:25.495ex; height:6.843ex;"/></span>.</dd></dl>
-<p>Note that in general <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{i,n}(t)\neq B_{i,n}(t)}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>N</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>,</mo>
-<mi>n</mi>
-</mrow>
-</msub>
-<mo stretchy="false">(</mo>
-<mi>t</mi>
-<mo stretchy="false">)</mo>
-<mo>≠<!-- ≠ --></mo>
-<msub>
-<mi>B</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>,</mo>
-<mi>n</mi>
-</mrow>
-</msub>
-<mo stretchy="false">(</mo>
-<mi>t</mi>
-<mo stretchy="false">)</mo>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle N_{i,n}(t)\neq B_{i,n}(t)}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle N_{i,n}(t)\neq B_{i,n}(t)}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/219aeb22c0243b3301a5304d645e3cc84e086b37" style="vertical-align: -1.005ex; width:16.513ex; height:3.009ex;"/></span>, and the Bezier control points <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle \{P_{1},P_{2},\dots \}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mo fence="false" stretchy="false">{</mo>
-<msub>
-<mi>P</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>1</mn>
-</mrow>
-</msub>
-<mo>,</mo>
-<msub>
-<mi>P</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>2</mn>
-</mrow>
-</msub>
-<mo>,</mo>
-<mo>…<!-- … --></mo>
-<mo fence="false" stretchy="false">}</mo>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle \{P_{1},P_{2},\dots \}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle \{P_{1},P_{2},\dots \}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/fa3d6f309315c498fc08f5c8cff074c5a20118b2" style="vertical-align: -0.838ex; width:12.209ex; height:2.843ex;"/></span> are different from B-spline control points <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle \{p_{1},p_{2},\dots \}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mo fence="false" stretchy="false">{</mo>
-<msub>
-<mi>p</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>1</mn>
-</mrow>
-</msub>
-<mo>,</mo>
-<msub>
-<mi>p</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>2</mn>
-</mrow>
-</msub>
-<mo>,</mo>
-<mo>…<!-- … --></mo>
-<mo fence="false" stretchy="false">}</mo>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle \{p_{1},p_{2},\dots \}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle \{p_{1},p_{2},\dots \}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/413bbf4d6821f4a2aa6c81ea4ce35402c0646f8c" style="vertical-align: -0.838ex; width:11.563ex; height:2.843ex;"/></span>.
-</p><p>The different  <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{i,n}(t)}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>N</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>,</mo>
-<mi>n</mi>
-</mrow>
-</msub>
-<mo stretchy="false">(</mo>
-<mi>t</mi>
-<mo stretchy="false">)</mo>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle N_{i,n}(t)}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle N_{i,n}(t)}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/a0b8b1a68ff11368898059ae7901f1ce9c0dc59e" style="vertical-align: -1.005ex; width:6.758ex; height:3.009ex;"/></span> are defined piecewise where the interval of every piece is the interval of the Bézier piece.
-</p><p>When the lengths of all <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{i,n}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>N</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>,</mo>
-<mi>n</mi>
-</mrow>
-</msub>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle N_{i,n}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle N_{i,n}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/1bd501142b372d76ba33e36037e3cebf257b32b3" style="vertical-align: -1.005ex; width:4.109ex; height:2.843ex;"/></span> pieces is equal, we speak of a uniform spline. (In literature this is often denoted as equal travel time <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle t}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>t</mi>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle t}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle t}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/65658b7b223af9e1acc877d848888ecdb4466560" style="vertical-align: -0.338ex; width:0.84ex; height:2.009ex;"/></span> per piece.)
-</p><p>To understand how the <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle p_{i}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>p</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-</mrow>
-</msub>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle p_{i}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle p_{i}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/5bab39399bf5424f25d957cdc57c84a0622626d2" style="vertical-align: -0.671ex; margin-left: -0.089ex; width:2.059ex; height:2.009ex;"/></span> are the coordinates of the B-spline control points, see the first minute of <a class="external text" href="https://www.youtube.com/watch?v=dPPTCy4L4rY&amp;list=PL8bSwVy8_IcMvtI70tZoYesCS0hGVO5qd" rel="nofollow">this video</a>.
+<dl><dd><math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mrow data-mjx-texclass="ORD"><mtext><mrow data-mjx-texclass="ORD">B<mo stretchy="false">&minus;</mo>spline</mrow></mtext></mrow><mo stretchy="false">=</mo><mstyle displaystyle="true" scriptlevel="0"><munderover><mo stretchy="false">&sum;</mo><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo stretchy="false">=</mo><mn>0</mn></mrow></mrow><mrow data-mjx-texclass="ORD"><mi>n</mi></mrow></munderover></mstyle><msub><mi>p</mi><mrow data-mjx-texclass="ORD"><mi>i</mi></mrow></msub><mo stretchy="false">&sdot;</mo><msub><mi>N</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>,</mo><mi>n</mi></mrow></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mstyle></mrow></math>.</dd></dl>
+<p>Note that in general <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>N</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>,</mo><mi>n</mi></mrow></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo stretchy="false">&ne;</mo><msub><mi>B</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>,</mo><mi>n</mi></mrow></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mstyle></mrow></math>, and the Bezier control points <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mo fence="false" stretchy="false">{</mo><msub><mi>P</mi><mrow data-mjx-texclass="ORD"><mn>1</mn></mrow></msub><mo>,</mo><msub><mi>P</mi><mrow data-mjx-texclass="ORD"><mn>2</mn></mrow></msub><mo>,</mo><mo>&hellip;</mo><mo fence="false" stretchy="false">}</mo></mstyle></mrow></math> are different from B-spline control points <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mo fence="false" stretchy="false">{</mo><msub><mi>p</mi><mrow data-mjx-texclass="ORD"><mn>1</mn></mrow></msub><mo>,</mo><msub><mi>p</mi><mrow data-mjx-texclass="ORD"><mn>2</mn></mrow></msub><mo>,</mo><mo>&hellip;</mo><mo fence="false" stretchy="false">}</mo></mstyle></mrow></math>.
+</p><p>The different  <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>N</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>,</mo><mi>n</mi></mrow></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mstyle></mrow></math> are defined piecewise where the interval of every piece is the interval of the B&eacute;zier piece.
+</p><p>When the lengths of all <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>N</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>,</mo><mi>n</mi></mrow></mrow></msub></mstyle></mrow></math> pieces is equal, we speak of a uniform spline. (In literature this is often denoted as equal travel time <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>t</mi></mstyle></mrow></math> per piece.)
+</p><p>To understand how the <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>p</mi><mrow data-mjx-texclass="ORD"><mi>i</mi></mrow></msub></mstyle></mrow></math> are the coordinates of the B-spline control points, see the first minute of <a rel="nofollow" class="external text" href="https://www.youtube.com/watch?v=dPPTCy4L4rY&amp;list=PL8bSwVy8_IcMvtI70tZoYesCS0hGVO5qd">this video</a>.
 </p>
 <h4><span class="mw-headline" id="Knot_vector">Knot vector</span></h4>
-<p>As derived above, B-splines are created out of <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{i,n}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>N</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>,</mo>
-<mi>n</mi>
-</mrow>
-</msub>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle N_{i,n}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle N_{i,n}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/1bd501142b372d76ba33e36037e3cebf257b32b3" style="vertical-align: -1.005ex; width:4.109ex; height:2.843ex;"/></span> piecewise polynomials with continuity up to a certain derivative between the pieces. The endpoints of the piece's definition interval are called knots. For a spline defined over <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle k}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>k</mi>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle k}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle k}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/c3c9a2c7b599b37105512c5d570edc034056dd40" style="vertical-align: -0.338ex; width:1.211ex; height:2.176ex;"/></span> pieces, there are <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle k+1}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>k</mi>
-<mo>+</mo>
-<mn>1</mn>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle k+1}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle k+1}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/552a558062ed4c0486297b5b5531c5ee044dbd9b" style="vertical-align: -0.505ex; width:5.214ex; height:2.343ex;"/></span> knots given by the so-called <i>knot vector</i>:<br/><span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle \{t_{0},t_{1},t_{2},\dots ,t_{k}\}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mo fence="false" stretchy="false">{</mo>
-<msub>
-<mi>t</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>0</mn>
-</mrow>
-</msub>
-<mo>,</mo>
-<msub>
-<mi>t</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>1</mn>
-</mrow>
-</msub>
-<mo>,</mo>
-<msub>
-<mi>t</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>2</mn>
-</mrow>
-</msub>
-<mo>,</mo>
-<mo>…<!-- … --></mo>
-<mo>,</mo>
-<msub>
-<mi>t</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>k</mi>
-</mrow>
-</msub>
-<mo fence="false" stretchy="false">}</mo>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle \{t_{0},t_{1},t_{2},\dots ,t_{k}\}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle \{t_{0},t_{1},t_{2},\dots ,t_{k}\}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/c114653d9cad33ebf60eb5e159a884f89526f9b1" style="vertical-align: -0.838ex; width:17.181ex; height:2.843ex;"/></span> whereas <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle t_{0}&lt;t_{1}&lt;t_{2}&lt;\dots &lt;t_{k}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>t</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>0</mn>
-</mrow>
-</msub>
-<mo>&lt;</mo>
-<msub>
-<mi>t</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>1</mn>
-</mrow>
-</msub>
-<mo>&lt;</mo>
-<msub>
-<mi>t</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>2</mn>
-</mrow>
-</msub>
-<mo>&lt;</mo>
-<mo>⋯<!-- ⋯ --></mo>
-<mo>&lt;</mo>
-<msub>
-<mi>t</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>k</mi>
-</mrow>
-</msub>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle t_{0}&lt;t_{1}&lt;t_{2}&lt;\dots &lt;t_{k}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle t_{0}&lt;t_{1}&lt;t_{2}&lt;\dots &lt;t_{k}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/8b8a2ac474ff7430aad3519e00f2d4413387c3ef" style="vertical-align: -0.671ex; width:22.727ex; height:2.343ex;"/></span>
-</p><p>The knot vector comprises the knots of the <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{i,n}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>N</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>,</mo>
-<mi>n</mi>
-</mrow>
-</msub>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle N_{i,n}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle N_{i,n}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/1bd501142b372d76ba33e36037e3cebf257b32b3" style="vertical-align: -1.005ex; width:4.109ex; height:2.843ex;"/></span> basis functions that define the B-spline, see <a class="external text" href="https://www.youtube.com/watch?v=ni5NNPCVvDY" rel="nofollow">this video</a>. The basis functions of a B-spline can be calculated using the knot vector and a creation algorithm, see <a class="external text" href="https://www.youtube.com/watch?v=hrsO45AHtbs" rel="nofollow">this video</a>.
-</p><p>The derivative until which continuity exists is given by the multiplicity <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle m}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>m</mi>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle m}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle m}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/0a07d98bb302f3856cbabc47b2b9016692e3f7bc" style="vertical-align: -0.338ex; width:2.04ex; height:1.676ex;"/></span>. Therefore we can specify a vector with the multiplicity for every knot: <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle \{m_{0},m_{1},\dots ,m_{k}\}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mo fence="false" stretchy="false">{</mo>
-<msub>
-<mi>m</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>0</mn>
-</mrow>
-</msub>
-<mo>,</mo>
-<msub>
-<mi>m</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>1</mn>
-</mrow>
-</msub>
-<mo>,</mo>
-<mo>…<!-- … --></mo>
-<mo>,</mo>
-<msub>
-<mi>m</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>k</mi>
-</mrow>
-</msub>
-<mo fence="false" stretchy="false">}</mo>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle \{m_{0},m_{1},\dots ,m_{k}\}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle \{m_{0},m_{1},\dots ,m_{k}\}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/0598cae76cf2890586d6b1067587a9be45d3dd78" style="vertical-align: -0.838ex; width:17.855ex; height:2.843ex;"/></span>. A knot on a spline with degree <i>d</i> and the multiplicity <i>m</i> tells that the curve left and right to the knot has at least an equal <i>n</i> order derivative (called <i>C</i><sup><i>n</i></sup> continuity) whereas <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle n=d-m}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mi>n</mi>
-<mo>=</mo>
-<mi>d</mi>
-<mo>−<!-- − --></mo>
-<mi>m</mi>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle n=d-m}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle n=d-m}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/f03a465bfac71680367d6c2ce4bd23314e5690ac" style="vertical-align: -0.505ex; width:10.59ex; height:2.343ex;"/></span>.
+<p>As derived above, B-splines are created out of <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>N</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>,</mo><mi>n</mi></mrow></mrow></msub></mstyle></mrow></math> piecewise polynomials with continuity up to a certain derivative between the pieces. The endpoints of the piece's definition interval are called knots. For a spline defined over <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>k</mi></mstyle></mrow></math> pieces, there are <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>k</mi><mo stretchy="false">+</mo><mn>1</mn></mstyle></mrow></math> knots given by the so-called <i>knot vector</i>:<br><math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mo fence="false" stretchy="false">{</mo><msub><mi>t</mi><mrow data-mjx-texclass="ORD"><mn>0</mn></mrow></msub><mo>,</mo><msub><mi>t</mi><mrow data-mjx-texclass="ORD"><mn>1</mn></mrow></msub><mo>,</mo><msub><mi>t</mi><mrow data-mjx-texclass="ORD"><mn>2</mn></mrow></msub><mo>,</mo><mo>&hellip;</mo><mo>,</mo><msub><mi>t</mi><mrow data-mjx-texclass="ORD"><mi>k</mi></mrow></msub><mo fence="false" stretchy="false">}</mo></mstyle></mrow></math> whereas <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>t</mi><mrow data-mjx-texclass="ORD"><mn>0</mn></mrow></msub><mo>&lt;</mo><msub><mi>t</mi><mrow data-mjx-texclass="ORD"><mn>1</mn></mrow></msub><mo>&lt;</mo><msub><mi>t</mi><mrow data-mjx-texclass="ORD"><mn>2</mn></mrow></msub><mo>&lt;</mo><mo>&hellip;</mo><mo>&lt;</mo><msub><mi>t</mi><mrow data-mjx-texclass="ORD"><mi>k</mi></mrow></msub></mstyle></mrow></math>
+</p><p>The knot vector comprises the knots of the <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>N</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>,</mo><mi>n</mi></mrow></mrow></msub></mstyle></mrow></math> basis functions that define the B-spline, see <a rel="nofollow" class="external text" href="https://www.youtube.com/watch?v=ni5NNPCVvDY">this video</a>. The basis functions of a B-spline can be calculated using the knot vector and a creation algorithm, see <a rel="nofollow" class="external text" href="https://www.youtube.com/watch?v=hrsO45AHtbs">this video</a>.
+</p><p>The derivative until which continuity exists is given by the multiplicity <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>m</mi></mstyle></mrow></math>. Therefore we can specify a vector with the multiplicity for every knot: <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mo fence="false" stretchy="false">{</mo><msub><mi>m</mi><mrow data-mjx-texclass="ORD"><mn>0</mn></mrow></msub><mo>,</mo><msub><mi>m</mi><mrow data-mjx-texclass="ORD"><mn>1</mn></mrow></msub><mo>,</mo><mo>&hellip;</mo><mo>,</mo><msub><mi>m</mi><mrow data-mjx-texclass="ORD"><mi>k</mi></mrow></msub><mo fence="false" stretchy="false">}</mo></mstyle></mrow></math>. A knot on a spline with degree <i>d</i> and the multiplicity <i>m</i> tells that the curve left and right to the knot has at least an equal <i>n</i> order derivative (called <i>C</i><sup><i>n</i></sup> continuity) whereas <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mi>n</mi><mo stretchy="false">=</mo><mi>d</mi><mo stretchy="false">&minus;</mo><mi>m</mi></mstyle></mrow></math>.
 </p><p><span id="Non-uniform_B-splines"></span>
 </p>
 <h3><span class="mw-headline" id="B-splines_no-uniformes">B-splines no-uniformes</span></h3>
 <div class="mw-translate-fuzzy">
-<p>Una propiedad de los polinomios de Bernstein es que cuando se observan las diferentes partes de la S-spline Bézier, la longitud del recorrido de cada parte es la misma. (La longitud de la trayectoria suele llamarse <i>tiempo de recorrido</i>). Como puedes imaginar, puede ser útil tener B-splines cuyas partes Bézier tengan diferentes longitudes de trayectoria. Esto puede lograrse ponderando los diferentes polinomios:
+<p>Una propiedad de los polinomios de Bernstein es que cuando se observan las diferentes partes de la S-spline B&eacute;zier, la longitud del recorrido de cada parte es la misma. (La longitud de la trayectoria suele llamarse <i>tiempo de recorrido</i>). Como puedes imaginar, puede ser &uacute;til tener B-splines cuyas partes B&eacute;zier tengan diferentes longitudes de trayectoria. Esto puede lograrse ponderando los diferentes polinomios:
 </p>
 </div>
-<p>Mathematically this is achieved by defining the different <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{i,n}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>N</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>,</mo>
-<mi>n</mi>
-</mrow>
-</msub>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle N_{i,n}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle N_{i,n}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/1bd501142b372d76ba33e36037e3cebf257b32b3" style="vertical-align: -1.005ex; width:4.109ex; height:2.843ex;"/></span> pieces at different intervals. If for example a B-spline is defined for the interval [0, 1], it is uniform if all its e.g. 5 pieces are also defined in this interval. If now <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle N_{1,4}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>N</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mn>1</mn>
-<mo>,</mo>
-<mn>4</mn>
-</mrow>
-</msub>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle N_{1,4}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle N_{1,4}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/c3738c6fe3451d054d671162b69741e9cb13604b" style="vertical-align: -1.005ex; width:4.2ex; height:2.843ex;"/></span> is only defined in the interval [0, 0.6] (outside the interval it is set to zero), it is shorter and thus the spline becomes non-uniform.
-</p><p>As described above the parameters of the knots are described by the knot vector. So the knot vector stores the definition intervals. When now one piece gets another interval, also the knot vector changes, see <a class="external text" href="https://www.youtube.com/watch?v=w-l5R70y6u0" rel="nofollow">this video</a> for a visualization.
+<p>Mathematically this is achieved by defining the different <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>N</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>i</mi><mo>,</mo><mi>n</mi></mrow></mrow></msub></mstyle></mrow></math> pieces at different intervals. If for example a B-spline is defined for the interval [0, 1], it is uniform if all its e.g. 5 pieces are also defined in this interval. If now <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>N</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mn>1</mn><mo>,</mo><mn>4</mn></mrow></mrow></msub></mstyle></mrow></math> is only defined in the interval [0, 0.6] (outside the interval it is set to zero), it is shorter and thus the spline becomes non-uniform.
+</p><p>As described above the parameters of the knots are described by the knot vector. So the knot vector stores the definition intervals. When now one piece gets another interval, also the knot vector changes, see <a rel="nofollow" class="external text" href="https://www.youtube.com/watch?v=w-l5R70y6u0">this video</a> for a visualization.
 </p>
 <h3><span class="mw-headline" id="Rational_B-splines">Rational B-splines</span></h3>
 <p>A further generalization can be made for B-splines by introducing weights for the control points. This way it can be controlled "how important" a control point is.
 </p><p>The equation for such a spline is
 </p>
 <div class="mw-translate-fuzzy">
-<p><span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle \quad c(t)={\cfrac {\sum _{k=0}^{N}d_{k}B_{k,D}(t)w_{k}}{\sum _{k=0}^{N}B_{k,D}(t)w_{k}}}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<mspace width="1em"></mspace>
-<mi>c</mi>
-<mo stretchy="false">(</mo>
-<mi>t</mi>
-<mo stretchy="false">)</mo>
-<mo>=</mo>
-<mrow class="MJX-TeXAtom-ORD">
-<mfrac>
-<mrow>
-<mpadded depth="3pt" height="8.6pt" width="0">
-<mrow></mrow>
-</mpadded>
-<mstyle displaystyle="false" scriptlevel="0">
-<mrow class="MJX-TeXAtom-ORD">
-<munderover>
-<mo>∑<!-- ∑ --></mo>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>k</mi>
-<mo>=</mo>
-<mn>0</mn>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>N</mi>
-</mrow>
-</munderover>
-<msub>
-<mi>d</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>k</mi>
-</mrow>
-</msub>
-<msub>
-<mi>B</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>k</mi>
-<mo>,</mo>
-<mi>D</mi>
-</mrow>
-</msub>
-<mo stretchy="false">(</mo>
-<mi>t</mi>
-<mo stretchy="false">)</mo>
-<msub>
-<mi>w</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>k</mi>
-</mrow>
-</msub>
-</mrow>
-</mstyle>
-</mrow>
-<mrow>
-<mpadded depth="3pt" height="8.6pt" width="0">
-<mrow></mrow>
-</mpadded>
-<mstyle displaystyle="false" scriptlevel="0">
-<mrow class="MJX-TeXAtom-ORD">
-<munderover>
-<mo>∑<!-- ∑ --></mo>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>k</mi>
-<mo>=</mo>
-<mn>0</mn>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>N</mi>
-</mrow>
-</munderover>
-<msub>
-<mi>B</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>k</mi>
-<mo>,</mo>
-<mi>D</mi>
-</mrow>
-</msub>
-<mo stretchy="false">(</mo>
-<mi>t</mi>
-<mo stretchy="false">)</mo>
-<msub>
-<mi>w</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>k</mi>
-</mrow>
-</msub>
-</mrow>
-</mstyle>
-</mrow>
-</mfrac>
-</mrow>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle \quad c(t)={\cfrac {\sum _{k=0}^{N}d_{k}B_{k,D}(t)w_{k}}{\sum _{k=0}^{N}B_{k,D}(t)w_{k}}}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle \quad c(t)={\cfrac {\sum _{k=0}^{N}d_{k}B_{k,D}(t)w_{k}}{\sum _{k=0}^{N}B_{k,D}(t)w_{k}}}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/407dd44d9270a586a5ab205f60677aa0bba6f0e6" style="vertical-align: -3.171ex; width:28.313ex; height:7.509ex;"/></span>
+<p><math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><mspace width="1em"></mspace><mi>c</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo stretchy="false">=</mo><mrow data-mjx-texclass="ORD"><mfrac><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mpadded depth="3pt" height="8.6pt" width="0"></mpadded></mrow><mstyle displaystyle="false" scriptlevel="0"><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><munderover><mo stretchy="false">&sum;</mo><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>k</mi><mo stretchy="false">=</mo><mn>0</mn></mrow></mrow><mrow data-mjx-texclass="ORD"><mi>N</mi></mrow></munderover></mstyle><msub><mi>d</mi><mrow data-mjx-texclass="ORD"><mi>k</mi></mrow></msub><msub><mi>B</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>k</mi><mo>,</mo><mi>D</mi></mrow></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><msub><mi>w</mi><mrow data-mjx-texclass="ORD"><mi>k</mi></mrow></msub></mrow></mrow></mstyle></mrow><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mpadded depth="3pt" height="8.6pt" width="0"></mpadded></mrow><mstyle displaystyle="false" scriptlevel="0"><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><munderover><mo stretchy="false">&sum;</mo><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>k</mi><mo stretchy="false">=</mo><mn>0</mn></mrow></mrow><mrow data-mjx-texclass="ORD"><mi>N</mi></mrow></munderover></mstyle><msub><mi>B</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>k</mi><mo>,</mo><mi>D</mi></mrow></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><msub><mi>w</mi><mrow data-mjx-texclass="ORD"><mi>k</mi></mrow></msub></mrow></mrow></mstyle></mrow></mfrac></mrow></mstyle></mrow></math>
 </p>
 </div>
-<p>Notice that the function is no longer a polynomial, but a rational function, and these splines are called rational B-splines. Observe that when all <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle w_{i}}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>w</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-</mrow>
-</msub>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle w_{i}}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle w_{i}}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/fe22f0329d3ecb2e1880d44d191aba0e5475db68" style="vertical-align: -0.671ex; width:2.464ex; height:2.009ex;"/></span> are equal, the equation reduces to a regular non-rational B-spline. So non-rational B-splines are a subset of rational B-splines.
+<p>Notice that the function is no longer a polynomial, but a rational function, and these splines are called rational B-splines. Observe that when all <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>w</mi><mrow data-mjx-texclass="ORD"><mi>i</mi></mrow></msub></mstyle></mrow></math> are equal, the equation reduces to a regular non-rational B-spline. So non-rational B-splines are a subset of rational B-splines.
 </p>
 <div class="mw-translate-fuzzy">
-<p>Estas B-splines no-uniformes y racionales (por la división) suelen llamarse <b>NURBS'</b>. Observando su fórmula, vemos que en realidad son una B-spline con una base ponderada <span class="mwe-math-element"><span class="mwe-math-mathml-inline mwe-math-mathml-a11y" style="display: none;"><math alttext="{\displaystyle R_{k,D}(t)}" xmlns="http://www.w3.org/1998/Math/MathML">
-<semantics>
-<mrow class="MJX-TeXAtom-ORD">
-<mstyle displaystyle="true" scriptlevel="0">
-<msub>
-<mi>R</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>k</mi>
-<mo>,</mo>
-<mi>D</mi>
-</mrow>
-</msub>
-<mo stretchy="false">(</mo>
-<mi>t</mi>
-<mo stretchy="false">)</mo>
-</mstyle>
-</mrow>
-<annotation encoding="application/x-tex">{\displaystyle R_{k,D}(t)}</annotation>
-</semantics>
-</math></span><img alt="{\displaystyle R_{k,D}(t)}" aria-hidden="true" class="mwe-math-fallback-image-inline" src="https://wikimedia.org/api/rest_v1/media/math/render/svg/76beb85dc45db981797d51c4d7ff9307e6579f01" style="vertical-align: -1.005ex; width:7.32ex; height:3.009ex;"/></span>:
+<p>Estas B-splines no-uniformes y racionales (por la divisi&oacute;n) suelen llamarse <b>NURBS'</b>. Observando su f&oacute;rmula, vemos que en realidad son una B-spline con una base ponderada <math class="mwe-math-element" xmlns="http://www.w3.org/1998/Math/MathML"><mrow data-mjx-texclass="ORD"><mstyle displaystyle="true" scriptlevel="0"><msub><mi>R</mi><mrow data-mjx-texclass="ORD"><mrow data-mjx-texclass="ORD"><mi>k</mi><mo>,</mo><mi>D</mi></mrow></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mstyle></mrow></math>:
 </p>
 </div>
 <p><span id="B-splines_in_FreeCAD"></span>
 </p>
 <h2><span class="mw-headline" id="B-splines_en_FreeCAD">B-splines en FreeCAD</span></h2>
-<p>FreeCAD ofrece la posibilidad de crear B-splines uniformes o no uniformes de cualquier grado en 2D a través del <a href="../es\Sketcher_Workbench.html" title="Sketcher Workbench/es">Ambiente de trabajo Croquizador</a>.
+<p>FreeCAD ofrece la posibilidad de crear B-splines uniformes o no uniformes de cualquier grado en 2D a trav&eacute;s del <a href="../es/Sketcher_Workbench.html" title="Sketcher Workbench/es">Ambiente de trabajo Croquizador</a>.
 </p><p><span id="Creation"></span>
 </p>
-<h3><span id="Creaci.C3.B3n"></span><span class="mw-headline" id="Creación">Creación</span></h3>
-<p>Para crear B-splines, entra en un sketch y utiliza el botón de la barra de herramientas <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_CreateBSpline.svg"><img decoding="async" height="16" src="../File/Sketcher_CreateBSpline.svg" width="16"/></a></span> <a class="new" href="../index.php?title=Sketcher_CreateBSpline_es&amp;action=edit&amp;redlink=1.html" title="Sketcher CreateBSpline/es (page does not exist)">Crear B-spline</a></span>. A continuación, haz clic con el botón izquierdo para establecer un punto de control, mueve el ratón con el botón izquierdo para establecer el siguiente punto de control y así sucesivamente. Finalmente, haz clic con el botón derecho para terminar la definición y crear la B-spline.
+<h3><span id="Creaci.C3.B3n"></span><span class="mw-headline" id="Creaci&oacute;n">Creaci&oacute;n</span></h3>
+<p>Para crear B-splines, entra en un sketch y utiliza el bot&oacute;n de la barra de herramientas <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_CreateBSpline.svg&amp;filetimestamp=20240101085839&amp;.html" class="mw-file-description"><img src="../File/Sketcher_CreateBSpline.svg" decoding="async" width="16" height="16" class="mw-file-element"></a></span> <a href="../es/Sketcher_CreateBSpline.html" title="Sketcher CreateBSpline/es">Crear B-spline</a></span>. A continuaci&oacute;n, haz clic con el bot&oacute;n izquierdo para establecer un punto de control, mueve el rat&oacute;n con el bot&oacute;n izquierdo para establecer el siguiente punto de control y as&iacute; sucesivamente. Finalmente, haz clic con el bot&oacute;n derecho para terminar la definici&oacute;n y crear la B-spline.
 </p>
 <div class="mw-translate-fuzzy">
-<p>Por defecto se crean splines cúbicas uniformes, excepto que no hay suficientes puntos de control para hacerlo. Así que cuando se crea una B-splinecon sólo 2 puntos de control, se obtiene por supuesto una spline que es curva lineal simple de Bézier, para 3 puntos de control se obtiene una curva cuadrática de Bézier, primero con 5 puntos de control se obtiene una spline B cúbica que consiste en 2 segmentos de Bézier.
+<p>Por defecto se crean splines c&uacute;bicas uniformes, excepto que no hay suficientes puntos de control para hacerlo. As&iacute; que cuando se crea una B-splinecon s&oacute;lo 2 puntos de control, se obtiene por supuesto una spline que es curva lineal simple de B&eacute;zier, para 3 puntos de control se obtiene una curva cuadr&aacute;tica de B&eacute;zier, primero con 5 puntos de control se obtiene una spline B c&uacute;bica que consiste en 2 segmentos de B&eacute;zier.
 </p>
 </div>
-<p>Para crear B-splines periódicas (B-splines que forman una curva cerrada), utiliza el botón de la barra de herramientas <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_CreatePeriodicBSpline.svg"><img decoding="async" height="16" src="../File/Sketcher_CreatePeriodicBSpline.svg" width="16"/></a></span> <a class="new" href="../index.php?title=Sketcher_CreatePeriodicBSpline_es&amp;action=edit&amp;redlink=1.html" title="Sketcher CreatePeriodicBSpline/es (page does not exist)">B-spline periódica</a></span>. No es necesario fijar el último punto de control sobre el primero porque la B-spline se cerrará automáticamente:
-</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_Periodic-B-spline-creation.gif"><img decoding="async" height="367" src="../File/Sketcher_Periodic-B-spline-creation.gif" width="368"/></a></span>
+<p>Para crear B-splines peri&oacute;dicas (B-splines que forman una curva cerrada), utiliza el bot&oacute;n de la barra de herramientas <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_CreatePeriodicBSpline.svg&amp;filetimestamp=20240101170403&amp;.html" class="mw-file-description"><img src="../File/Sketcher_CreatePeriodicBSpline.svg" decoding="async" width="16" height="16" class="mw-file-element"></a></span> <a href="../es/Sketcher_CreatePeriodicBSpline.html" title="Sketcher CreatePeriodicBSpline/es">B-spline peri&oacute;dica</a></span>. No es necesario fijar el &uacute;ltimo punto de control sobre el primero porque la B-spline se cerrar&aacute; autom&aacute;ticamente:
+</p><p><span class="mw-default-size" typeof="mw:File"><a href="../index.php?title=Sketcher_Periodic-B-spline-creation.gif&amp;filetimestamp=20210308020433&amp;.html" class="mw-file-description"><img src="../File/Sketcher_Periodic-B-spline-creation.gif" decoding="async" width="368" height="367" class="mw-file-element"></a></span>
 </p>
 <div class="mw-translate-fuzzy">
-<p>Las B-splines también pueden generarse a partir de segmentos de croquis existentes. Para ello, seleccione los elementos y pulse el botón de la barra de herramientas <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineApproximate.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineApproximate.svg" width="24"/></a></span> <a class="new" href="../index.php?title=Sketcher_BSplineApproximate_es&amp;action=edit&amp;redlink=1.html" title="Sketcher BSplineApproximate/es (page does not exist)">Convertir geometría en B-spline</a></span>.
+<p>Las B-splines tambi&eacute;n pueden generarse a partir de segmentos de croquis existentes. Para ello, seleccione los elementos y pulse el bot&oacute;n de la barra de herramientas <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_BSplineApproximate.svg&amp;filetimestamp=20240330072744&amp;.html" class="mw-file-description"><img src="../File/Sketcher_BSplineApproximate.svg" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="../index.php?title=Sketcher_BSplineApproximate/es&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineApproximate/es (page does not exist)">Convertir geometr&iacute;a en B-spline</a></span>.
 </p>
 </div>
-<p>While creating a B-spline, its degree can be specified by pressing the <span style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #888888; border-radius: 0.3em; padding: 0px 5px 1px 5px;">D</span> key. With this, the default to create a cubic B-spline if possible, can be overridden. <span style="font-size:small;"><a href="../Release_notes_0.20.html" title="Release notes 0.20">introduced in version 0.20</a></span>
+<p>While creating a B-spline, its degree can be specified by pressing the <span class="key" style="background: #f9f9f9; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 1px solid #888888; border-radius: 0.3em; padding: 0px 5px 1px 5px; color:#202122;">D</span> key. With this, the default to create a cubic B-spline if possible, can be overridden. <span style="font-size:small;"><a href="../Release_notes_0.20.html" title="Release notes 0.20">introduced in 0.20</a></span>
 </p><p><span id="Changing_the_Degree"></span>
 </p>
 <h3><span class="mw-headline" id="Cambio_de_grado">Cambio de grado</span></h3>
-<p>Para cambiar el grado, seleccione la B-spline y utilice el botón de la barra de herramientas <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineIncreaseDegree.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineIncreaseDegree.svg" width="24"/></a></span> <a class="new" href="../index.php?title=Sketcher_BSplineIncreaseDegree_es&amp;action=edit&amp;redlink=1.html" title="Sketcher BSplineIncreaseDegree/es (page does not exist)">Aumentar grado de la B-spline</a></span> o <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineDecreaseDegree.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineDecreaseDegree.svg" width="24"/></a></span> <a class="new" href="../index.php?title=Sketcher_BSplineDecreaseDegree_es&amp;action=edit&amp;redlink=1.html" title="Sketcher BSplineDecreaseDegree/es (page does not exist)">Decrementar grado de B-spline</a></span>.
-</p><p>Nota:<b> Disminuir el grado no puede revertir un aumento anterior del grado, ver la página Wiki <a class="new" href="../index.php?title=Sketcher_BSplineDecreaseDegree_es&amp;action=edit&amp;redlink=1.html" title="Sketcher BSplineDecreaseDegree/es (page does not exist)">Disminuir el grado de la B-spline</a> para una explicación.</b>
+<p>Para cambiar el grado, seleccione la B-spline y utilice el bot&oacute;n de la barra de herramientas <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_BSplineIncreaseDegree.svg&amp;filetimestamp=20240101115116&amp;.html" class="mw-file-description"><img src="../File/Sketcher_BSplineIncreaseDegree.svg" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="../index.php?title=Sketcher_BSplineIncreaseDegree/es&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineIncreaseDegree/es (page does not exist)">Aumentar grado de la B-spline</a></span> o <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_BSplineDecreaseDegree.svg&amp;filetimestamp=20240101115056&amp;.html" class="mw-file-description"><img src="../File/Sketcher_BSplineDecreaseDegree.svg" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="../index.php?title=Sketcher_BSplineDecreaseDegree/es&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineDecreaseDegree/es (page does not exist)">Decrementar grado de B-spline</a></span>.
+</p><p>Nota:<b> Disminuir el grado no puede revertir un aumento anterior del grado, ver la p&aacute;gina Wiki <a href="../index.php?title=Sketcher_BSplineDecreaseDegree/es&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineDecreaseDegree/es (page does not exist)">Disminuir el grado de la B-spline</a> para una explicaci&oacute;n.</b>
 </p><p><span id="Changing_the_Knot_Multiplicity"></span>
 </p>
 <h3><span class="mw-headline" id="Cambiar_la_multiplicidad_de_nudos">Cambiar la multiplicidad de nudos</span></h3>
-<p>Los puntos donde se conectan dos curvas Bézier para formar la B-spline se llaman nudos. La multiplicidad de nudos determina cómo se conectan las partes de Bézier, vea la página Wiki <a class="new" href="../index.php?title=Sketcher_BSplineIncreaseKnotMultiplicity_es&amp;action=edit&amp;redlink=1.html" title="Sketcher BSplineIncreaseKnotMultiplicity/es (page does not exist)">Aumentar multiplicidad de nudos</a> para más detalles.
-</p><p>Para cambiar la multiplicidad de nudos, utilice los botones de la barra de herramientas <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineIncreaseKnotMultiplicity.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineIncreaseKnotMultiplicity.svg" width="24"/></a></span> <a class="new" href="../index.php?title=Sketcher_BSplineIncreaseKnotMultiplicity_es&amp;action=edit&amp;redlink=1.html" title="Sketcher BSplineIncreaseKnotMultiplicity/es (page does not exist)">B-spline aumenta la multiplicidad de nudos</a></span> o <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineDecreaseKnotMultiplicity.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineDecreaseKnotMultiplicity.svg" width="24"/></a></span> <a class="new" href="../index.php?title=Sketcher_BSplineDecreaseKnotMultiplicity_es&amp;action=edit&amp;redlink=1.html" title="Sketcher BSplineDecreaseKnotMultiplicity/es (page does not exist)">B-spline disminuye la multiplicidad de los nudos</a></span>.
-</p><p><b>Nota:</b> La creación de dos B-Splines conectadas entre sí no se unirá a una sola B-spline nueva. Por lo tanto, su punto de conexión no es un nodo. La única manera de obtener un nuevo nodo en una B-spline existente es disminuir el grado. Sin embargo, puede obtener muchos nudos nuevos. Por tanto, la mejor opción es redibujar la B-spline con más puntos de control.
+<p>Los puntos donde se conectan dos curvas B&eacute;zier para formar la B-spline se llaman nudos. La multiplicidad de nudos determina c&oacute;mo se conectan las partes de B&eacute;zier, vea la p&aacute;gina Wiki <a href="../index.php?title=Sketcher_BSplineIncreaseKnotMultiplicity/es&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineIncreaseKnotMultiplicity/es (page does not exist)">Aumentar multiplicidad de nudos</a> para m&aacute;s detalles.
+</p><p>Para cambiar la multiplicidad de nudos, utilice los botones de la barra de herramientas <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_BSplineIncreaseKnotMultiplicity.svg&amp;filetimestamp=20240101115126&amp;.html" class="mw-file-description"><img src="../File/Sketcher_BSplineIncreaseKnotMultiplicity.svg" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="../index.php?title=Sketcher_BSplineIncreaseKnotMultiplicity/es&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineIncreaseKnotMultiplicity/es (page does not exist)">B-spline aumenta la multiplicidad de nudos</a></span> o <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_BSplineDecreaseKnotMultiplicity.svg&amp;filetimestamp=20240101115106&amp;.html" class="mw-file-description"><img src="../File/Sketcher_BSplineDecreaseKnotMultiplicity.svg" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="../index.php?title=Sketcher_BSplineDecreaseKnotMultiplicity/es&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineDecreaseKnotMultiplicity/es (page does not exist)">B-spline disminuye la multiplicidad de los nudos</a></span>.
+</p><p><b>Nota:</b> La creaci&oacute;n de dos B-Splines conectadas entre s&iacute; no se unir&aacute; a una sola B-spline nueva. Por lo tanto, su punto de conexi&oacute;n no es un nodo. La &uacute;nica manera de obtener un nuevo nodo en una B-spline existente es disminuir el grado. Sin embargo, puede obtener muchos nudos nuevos. Por tanto, la mejor opci&oacute;n es redibujar la B-spline con m&aacute;s puntos de control.
 </p><p><span id="Changing_the_Weight"></span>
 </p>
 <h3><span class="mw-headline" id="Cambiar_el_peso">Cambiar el peso</span></h3>
-<p>Alrededor de cada punto de control se ve un círculo amarillo oscuro. Su radio establece el peso del punto de control correspondiente. Por defecto todos los círculos tienen el radio <i>1</i>. Esto se indica con una restricción de radio para el primer círculo del punto de control.
+<p>Alrededor de cada punto de control se ve un c&iacute;rculo amarillo oscuro. Su radio establece el peso del punto de control correspondiente. Por defecto todos los c&iacute;rculos tienen el radio <i>1</i>. Esto se indica con una restricci&oacute;n de radio para el primer c&iacute;rculo del punto de control.
 </p><p>To create a rational B-spline the weights have to be made independent. To achieve that you can delete the constraint that all circles are equal and then set different radius constraints for the circles.
-</p><p>Si no se establece ninguna restricción de radio, también se puede cambiar el radio arrastrando:
-</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_Changing-control-point-weigth-dragging.gif"><img decoding="async" height="430" src="../File/Sketcher_Changing-control-point-weigth-dragging.gif" width="565"/></a></span>
+</p><p>Si no se establece ninguna restricci&oacute;n de radio, tambi&eacute;n se puede cambiar el radio arrastrando:
+</p><p><span class="mw-default-size" typeof="mw:File"><a href="../index.php?title=Sketcher_Changing-control-point-weigth-dragging.gif&amp;filetimestamp=20210307233624&amp;.html" class="mw-file-description"><img src="../File/Sketcher_Changing-control-point-weigth-dragging.gif" decoding="async" width="565" height="430" class="mw-file-element"></a></span>
 </p><p>En el ejemplo de arrastre se ve que un peso alto atrae la curva hacia el punto de control mientras que un peso muy bajo cambia la curva como si el punto de control casi no existiera.
 </p>
 <div class="mw-translate-fuzzy">
-<p>Cuando miras la <a href="#B-splines_no-uniformes">función de creación</a> para B-splines racionales no uniformes ves que un peso de cero llevaría a una división por cero. Por lo tanto, sólo se pueden especificar pesos mayores que cero.
+<p>Cuando miras la <a href="#B-splines_no-uniformes">funci&oacute;n de creaci&oacute;n</a> para B-splines racionales no uniformes ves que un peso de cero llevar&iacute;a a una divisi&oacute;n por cero. Por lo tanto, s&oacute;lo se pueden especificar pesos mayores que cero.
 </p>
 </div>
 <p><b>Note:</b> When dragging points, knots or widths, the circle diameters denoting the weight will change. This is because the diameter depends on the overall B-spline length for visualization reasons. The actual weight is not changed.
 </p>
 <h3><span class="mw-headline" id="Editing_Knots">Editing Knots</span></h3>
-<p>New knots can be added using the <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineInsertKnot.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineInsertKnot.svg" width="24"/></a></span> <a href="../Sketcher_BSplineInsertKnot.html" title="Sketcher BSplineInsertKnot">B-spline insert knot</a></span> button. <span style="font-size:small;"><a href="../Release_notes_0.20.html" title="Release notes 0.20">introduced in version 0.20</a></span>
-</p><p>A knot is deleted by decreasing it's degree to 0 (i.e applying <span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineDecreaseKnotMultiplicity.svg"><img decoding="async" height="24" src="../File/Sketcher_BSplineDecreaseKnotMultiplicity.svg" width="24"/></a></span> <a href="../Sketcher_BSplineDecreaseKnotMultiplicity.html" title="Sketcher BSplineDecreaseKnotMultiplicity">B-spline decrease knot multiplicity</a></span> when it's degree is 1).
+<p>New knots can be added using the <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_BSplineInsertKnot.svg&amp;filetimestamp=20240513165934&amp;.html" class="mw-file-description"><img src="../File/Sketcher_BSplineInsertKnot.svg" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="../Sketcher_BSplineInsertKnot.html" title="Sketcher BSplineInsertKnot">B-spline insert knot</a></span> button. <span style="font-size:small;"><a href="../Release_notes_0.20.html" title="Release notes 0.20">introduced in 0.20</a></span>
+</p><p>A knot is deleted by decreasing it's degree to 0 (i.e applying <span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_BSplineDecreaseKnotMultiplicity.svg&amp;filetimestamp=20240101115106&amp;.html" class="mw-file-description"><img src="../File/Sketcher_BSplineDecreaseKnotMultiplicity.svg" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="../Sketcher_BSplineDecreaseKnotMultiplicity.html" title="Sketcher BSplineDecreaseKnotMultiplicity">B-spline decrease knot multiplicity</a></span> when it's degree is 1).
 </p><p>Changing the parameter value of a knot is not yet supported.
 </p><p><span id="Display_Information"></span>
 </p>
-<h3><span id="Mostrar_Informaci.C3.B3n"></span><span class="mw-headline" id="Mostrar_Información">Mostrar Información</span></h3>
-<p>Como la forma de una B-spline no dice mucho sobre sus propiedades, FreeCAD ofrece <a href="../es\Sketcher_Workbench.html#Herramientas_de_la_B-spline_de_Sketcher" title="Sketcher Workbench/es">diferentes herramientas</a> para mostrar las propiedades:
+<h3><span id="Mostrar_Informaci.C3.B3n"></span><span class="mw-headline" id="Mostrar_Informaci&oacute;n">Mostrar Informaci&oacute;n</span></h3>
+<p>Como la forma de una B-spline no dice mucho sobre sus propiedades, FreeCAD ofrece <a href="../es/Sketcher_Workbench.html#Herramientas_de_la_B-spline_de_Sketcher" title="Sketcher Workbench/es">diferentes herramientas</a> para mostrar las propiedades:
 </p>
 <table class="wikitable float-right">
 <tbody><tr>
 <td>Propiedad
 </td>
-<td>Botón de la barra de herramientas
+<td>Bot&oacute;n de la barra de herramientas
 </td></tr>
 <tr>
 <td><b>Grado</b>
 </td>
-<td><span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineDegree.svg"><img decoding="async" height="16" src="../File/Sketcher_BSplineDegree.svg" width="16"/></a></span> <a class="new" href="../index.php?title=Sketcher_BSplineDegree_es&amp;action=edit&amp;redlink=1.html" title="Sketcher BSplineDegree/es (page does not exist)">Mostrar/ocultar el polígono de control de la B-spline</a></span>
+<td><span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_BSplineDegree.svg&amp;filetimestamp=20240101112910&amp;.html" class="mw-file-description"><img src="../File/Sketcher_BSplineDegree.svg" decoding="async" width="16" height="16" class="mw-file-element"></a></span> <a href="../index.php?title=Sketcher_BSplineDegree/es&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineDegree/es (page does not exist)">Mostrar/ocultar el pol&iacute;gono de control de la B-spline</a></span>
 </td></tr>
 <tr>
-<td><b>Polígono de control</b>
+<td><b>Pol&iacute;gono de control</b>
 </td>
-<td><span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplinePolygon.svg"><img decoding="async" height="16" src="../File/Sketcher_BSplinePolygon.svg" width="16"/></a></span> <a class="new" href="../index.php?title=Sketcher_BSplinePolygon_es&amp;action=edit&amp;redlink=1.html" title="Sketcher BSplinePolygon/es (page does not exist)">Mostrar/ocultar el polígono de control de la B-spline</a></span>
+<td><span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_BSplinePolygon.svg&amp;filetimestamp=20240101113010&amp;.html" class="mw-file-description"><img src="../File/Sketcher_BSplinePolygon.svg" decoding="async" width="16" height="16" class="mw-file-element"></a></span> <a href="../index.php?title=Sketcher_BSplinePolygon/es&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplinePolygon/es (page does not exist)">Mostrar/ocultar el pol&iacute;gono de control de la B-spline</a></span>
 </td></tr>
 <tr>
 <td><b>Peine de curvatura</b>
 </td>
-<td><span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineComb.svg"><img decoding="async" height="16" src="../File/Sketcher_BSplineComb.svg" width="16"/></a></span> <a class="new" href="../index.php?title=Sketcher_BSplineComb_es&amp;action=edit&amp;redlink=1.html" title="Sketcher BSplineComb/es (page does not exist)">Mostrar/Ocultar peine de curvatura B-spline</a></span>
+<td><span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_BSplineComb.svg&amp;filetimestamp=20240101112854&amp;.html" class="mw-file-description"><img src="../File/Sketcher_BSplineComb.svg" decoding="async" width="16" height="16" class="mw-file-element"></a></span> <a href="../index.php?title=Sketcher_BSplineComb/es&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineComb/es (page does not exist)">Mostrar/Ocultar peine de curvatura B-spline</a></span>
 </td></tr>
 <tr>
 <td><b>Multiplicidad de nudos</b>
 </td>
-<td><span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplineKnotMultiplicity.svg"><img decoding="async" height="16" src="../File/Sketcher_BSplineKnotMultiplicity.svg" width="16"/></a></span> <a class="new" href="../index.php?title=Sketcher_BSplineKnotMultiplicity_es&amp;action=edit&amp;redlink=1.html" title="Sketcher BSplineKnotMultiplicity/es (page does not exist)">Mostrar/Ocultar multiplicidad de nudos B-spline</a></span>
+<td><span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_BSplineKnotMultiplicity.svg&amp;filetimestamp=20240101112934&amp;.html" class="mw-file-description"><img src="../File/Sketcher_BSplineKnotMultiplicity.svg" decoding="async" width="16" height="16" class="mw-file-element"></a></span> <a href="../index.php?title=Sketcher_BSplineKnotMultiplicity/es&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplineKnotMultiplicity/es (page does not exist)">Mostrar/Ocultar multiplicidad de nudos B-spline</a></span>
 </td></tr>
 <tr>
 <td><b>Pesos</b>
 </td>
-<td><span style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.4em; padding: 0px 10px 1px 10px; font-weight:normal;"><span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_BSplinePoleWeight.svg"><img decoding="async" height="16" src="../File/Sketcher_BSplinePoleWeight.svg" width="16"/></a></span> <a class="new" href="../index.php?title=Sketcher_BSplinePoleWeight_es&amp;action=edit&amp;redlink=1.html" title="Sketcher BSplinePoleWeight/es (page does not exist)">Mostrar/Ocultar el peso del punto de control de la B-spline</a></span>
+<td><span class="ButtonTemplate" style="background: #f5f5f5; -moz-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); -webkit-box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); box-shadow: 0.1em 0.1em 0.2em rgba(0,0,0,0.1); border: 2px solid #989898; border-radius: 0.3em; padding: 0px 8px 1px 8px; font-weight:normal;color: #202122;"><span typeof="mw:File"><a href="../index.php?title=Sketcher_BSplinePoleWeight.svg&amp;filetimestamp=20240101112951&amp;.html" class="mw-file-description"><img src="../File/Sketcher_BSplinePoleWeight.svg" decoding="async" width="16" height="16" class="mw-file-element"></a></span> <a href="../index.php?title=Sketcher_BSplinePoleWeight/es&amp;action=edit&amp;redlink=1.html" class="new" title="Sketcher BSplinePoleWeight/es (page does not exist)">Mostrar/Ocultar el peso del punto de control de la B-spline</a></span>
 </td></tr></tbody></table>
 <p><span id="Limitations"></span>
 </p>
@@ -1188,67 +234,69 @@
 <div class="mw-translate-fuzzy">
 <p>De momento (FreeCAD 0.19) hay algunas limitaciones al usar splines que debes conocer:
 </p>
-<ol><li>No puedes establecer restricciones tangenciales.<br/>En este ejemplo<br/> <span typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_spline-limit-tangential.png"><img decoding="async" height="183" src="../File/Sketcher_spline-limit-tangential.png" width="450"/></a></span><br/> quieres asegurar que la spline toca la curva azul 2 veces tangencialmente. Esto sería útil porque la línea azul podría ser, por ejemplo, el límite espacial para su diseño.</li>
+<ol><li>No puedes establecer restricciones tangenciales.<br>En este ejemplo<br> <span typeof="mw:File"><a href="../index.php?title=Sketcher_spline-limit-tangential.png&amp;filetimestamp=20210330081716&amp;.html" class="mw-file-description"><img src="../File/Sketcher_spline-limit-tangential.png" decoding="async" width="450" height="183" class="mw-file-element"></a></span><br> quieres asegurar que la spline toca la curva azul 2 veces tangencialmente. Esto ser&iacute;a &uacute;til porque la l&iacute;nea azul podr&iacute;a ser, por ejemplo, el l&iacute;mite espacial para su dise&ntilde;o.</li>
 <li>No se puede insertar un nuevo punto de control entre dos puntos de control existentes seleccionados. No hay otra forma que redibujar la spline.</li>
-<li>No se puede eliminar un punto de control. También en este caso debe redibujar la spline</li>
-<li>No se puede crear una curva de desplazamiento para una B-spline utilizando la herramienta <a href="../es\Draft_Offset.html" title="Draft Offset/es">Borrador Desplazamiento</a>.</li></ol>
+<li>No se puede eliminar un punto de control. Tambi&eacute;n en este caso debe redibujar la spline</li>
+<li>No se puede crear una curva de desplazamiento para una B-spline utilizando la herramienta <a href="../es/Draft_Offset.html" title="Draft Offset/es">Borrador Desplazamiento</a>.</li></ol>
 </div>
 <p><span id="Typical_Use_Cases"></span>
 </p>
-<h2><span id="Casos_t.C3.ADpicos_de_uso"></span><span class="mw-headline" id="Casos_típicos_de_uso">Casos típicos de uso</span></h2>
-<p>Según las propiedades de las B-splines, hay 3 casos de uso principales:
+<h2><span id="Casos_t.C3.ADpicos_de_uso"></span><span class="mw-headline" id="Casos_t&iacute;picos_de_uso">Casos t&iacute;picos de uso</span></h2>
+<p>Seg&uacute;n las propiedades de las B-splines, hay 3 casos de uso principales:
 </p>
-<ol><li>Curvas que comienzan/terminan tangencialmente a una determinada dirección. Un ejemplo de esto es el ejemplo de motivación <a href="#Motivación">arriba</a>.</li>
-<li>Curvas que describen diseños más grandes y proporcionan la libertad de cambios locales. Véase <a href="#Diseño">este ejemplo</a> más abajo.</li>
-<li>Curvas que proporcionan una cierta continuidad (derivada). Véase <a href="#Continuidad_en_las_transiciones_geométricas">este ejemplo</a> más abajo.</li></ol>
+<ol><li>Curvas que comienzan/terminan tangencialmente a una determinada direcci&oacute;n. Un ejemplo de esto es el ejemplo de motivaci&oacute;n <a href="#Motivaci%C3%B3n">arriba</a>.</li>
+<li>Curvas que describen dise&ntilde;os m&aacute;s grandes y proporcionan la libertad de cambios locales. V&eacute;ase <a href="#Dise%C3%B1o">este ejemplo</a> m&aacute;s abajo.</li>
+<li>Curvas que proporcionan una cierta continuidad (derivada). V&eacute;ase <a href="#Continuidad_en_las_transiciones_geom%C3%A9tricas">este ejemplo</a> m&aacute;s abajo.</li></ol>
 <p><span id="Designing"></span>
 </p>
-<h3><span id="Dise.C3.B1o"></span><span class="mw-headline" id="Diseño">Diseño</span></h3>
-<p>Tomemos por ejemplo el caso de que usted diseñe la carcasa de una batidora de cocina. Su forma deseada debe ser como esta:
-</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_spline-exmple-mixer-shell.png"><img decoding="async" height="445" src="../File/Sketcher_spline-exmple-mixer-shell.png" width="399"/></a></span>
-</p><p>Para definir la forma exterior es ventajoso utilizar una B-spline porque cuando se cambia un punto de control para cambiar la curvatura en la parte inferior, la curvatura en el lado y la parte superior no se cambiará:
-</p><p><span class="mw-default-size" typeof="mw:File"><a class="mw-file-description" href="../File/Sketcher_spline-exmple-mixer-sketch.gif"><img decoding="async" height="619" src="../File/Sketcher_spline-exmple-mixer-sketch.gif" width="276"/></a></span>
+<h3><span id="Dise.C3.B1o"></span><span class="mw-headline" id="Dise&ntilde;o">Dise&ntilde;o</span></h3>
+<p>Tomemos por ejemplo el caso de que usted dise&ntilde;e la carcasa de una batidora de cocina. Su forma deseada debe ser como esta:
+</p><p><span class="mw-default-size" typeof="mw:File"><a href="../index.php?title=Sketcher_spline-exmple-mixer-shell.png&amp;filetimestamp=20210330083829&amp;.html" class="mw-file-description"><img src="../File/Sketcher_spline-exmple-mixer-shell.png" decoding="async" width="399" height="445" class="mw-file-element"></a></span>
+</p><p>Para definir la forma exterior es ventajoso utilizar una B-spline porque cuando se cambia un punto de control para cambiar la curvatura en la parte inferior, la curvatura en el lado y la parte superior no se cambiar&aacute;:
+</p><p><span class="mw-default-size" typeof="mw:File"><a href="../index.php?title=Sketcher_spline-exmple-mixer-sketch.gif&amp;filetimestamp=20210330084135&amp;.html" class="mw-file-description"><img src="../File/Sketcher_spline-exmple-mixer-sketch.gif" decoding="async" width="276" height="619" class="mw-file-element"></a></span>
 </p><p><span id="Continuity_at_Geometric_Transitions"></span>
 </p>
-<h3><span id="Continuidad_en_las_transiciones_geom.C3.A9tricas"></span><span class="mw-headline" id="Continuidad_en_las_transiciones_geométricas">Continuidad en las transiciones geométricas</span></h3>
-<p>Hay varios casos en los que es físicamente necesario tener una cierta continuidad superficial en las transiciones geométricas. Tomemos por ejemplo las paredes interiores de un canal de fluido. Cuando tienes un cambio en el diámetro del canal, no quieres tener un borde porque los bordes introducirían turbulencias. Por lo tanto, como en el ejemplo de motivación <a href="#Motivación">arriba</a>, uno utiliza splines para este propósito.
-</p><p>El desarrollo de las curvas de Bézier fue impulsado inicialmente por la industria automovilística francesa. Además del ahorro de material y la reducción de la resistencia al flujo de aire, también había que mejorar el aspecto de los coches. Y cuando se observa el elegante diseño de los coches franceses de los años 60 y 70 se ve que las curvas de Bézier dieron un impulso al diseño de los coches.
-</p><p>Tomemos como ejemplo esta tarea en el diseño de coches: El guardabarros del coche debe "tener un buen aspecto". He aquí un croquis básico de nuestra tarea:
-</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/Spline-Fender-sketch1.svg"><img decoding="async" height="304" src="../File/Spline-Fender-sketch1.svg" width="250"/></a></span>
-</p><p>"Tener un buen aspecto" significa que el cliente (potencial) mire el guardabarros y no vea reflejos de luz inesperados ni tampoco cambios repentinos en el reflejo de la pintura del automóvil. Entonces, ¿qué se necesita para evitar cambios en los reflejos? Mirar de cerca el guardabarros:
-</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/Spline-Fender-sketch2.svg"><img decoding="async" height="244" src="../File/Spline-Fender-sketch2.svg" width="300"/></a></span>
+<h3><span id="Continuidad_en_las_transiciones_geom.C3.A9tricas"></span><span class="mw-headline" id="Continuidad_en_las_transiciones_geom&eacute;tricas">Continuidad en las transiciones geom&eacute;tricas</span></h3>
+<p>Hay varios casos en los que es f&iacute;sicamente necesario tener una cierta continuidad superficial en las transiciones geom&eacute;tricas. Tomemos por ejemplo las paredes interiores de un canal de fluido. Cuando tienes un cambio en el di&aacute;metro del canal, no quieres tener un borde porque los bordes introducir&iacute;an turbulencias. Por lo tanto, como en el ejemplo de motivaci&oacute;n <a href="#Motivaci%C3%B3n">arriba</a>, uno utiliza splines para este prop&oacute;sito.
+</p><p>El desarrollo de las curvas de B&eacute;zier fue impulsado inicialmente por la industria automovil&iacute;stica francesa. Adem&aacute;s del ahorro de material y la reducci&oacute;n de la resistencia al flujo de aire, tambi&eacute;n hab&iacute;a que mejorar el aspecto de los coches. Y cuando se observa el elegante dise&ntilde;o de los coches franceses de los a&ntilde;os 60 y 70 se ve que las curvas de B&eacute;zier dieron un impulso al dise&ntilde;o de los coches.
+</p><p>Tomemos como ejemplo esta tarea en el dise&ntilde;o de coches: El guardabarros del coche debe "tener un buen aspecto". He aqu&iacute; un croquis b&aacute;sico de nuestra tarea:
+</p><p><span typeof="mw:File"><a href="../index.php?title=Spline-Fender-sketch1.svg&amp;filetimestamp=20210605153548&amp;.html" class="mw-file-description"><img src="../File/Spline-Fender-sketch1.svg" decoding="async" width="250" height="304" class="mw-file-element"></a></span>
+</p><p>"Tener un buen aspecto" significa que el cliente (potencial) mire el guardabarros y no vea reflejos de luz inesperados ni tampoco cambios repentinos en el reflejo de la pintura del autom&oacute;vil. Entonces, &iquest;qu&eacute; se necesita para evitar cambios en los reflejos? Mirar de cerca el guardabarros:
+</p><p><span typeof="mw:File"><a href="../index.php?title=Spline-Fender-sketch2.svg&amp;filetimestamp=20210605153626&amp;.html" class="mw-file-description"><img src="../File/Spline-Fender-sketch2.svg" decoding="async" width="300" height="244" class="mw-file-element"></a></span>
 </p>
-<p style="text-align:left; font-style:italic; width:800px; margin-left:1em; margin-right:1em;">En el área espacial por encima del borde, la intensidad de la luz reflejada es baja (denotada por la elipse roja) porque no se refleja luz directamente en la dirección del borde al ojo.</p>
-<p>Cuando hay un borde, hay una zona espacial en la que la luz reflejada tiene menos intensidad y esto es lo que se nota al mirar el guardabarros. Para evitar esto necesitas un cambio continuo en la pendiente de tus elementos de superficie. La pendiente es la derivada de primer orden y como se explica en la sección <a href="#Basicos">Basicos</a>, una B-spline de segundo grado (cuadrática) ofrece en cada punto una derivada continua de primer orden.
-</p><p>¿Pero es esto realmente suficiente? En el punto de transición geométrica tenemos ahora en ambos lados la misma pendiente, pero la pendiente puede cambiar de forma diferente en ambos lados. Entonces tenemos esta situación:
-</p><p><span typeof="mw:File"><a class="mw-file-description" href="../File/Spline-Fender-sketch3.svg"><img decoding="async" height="244" src="../File/Spline-Fender-sketch3.svg" width="300"/></a></span>
-</p><p>Por lo tanto, también tenemos zonas espaciales en las que la intensidad de la luz reflejada es diferente. Para evitar esto, necesitamos en el punto geométrico de transición también una continuidad de la derivada de segundo orden y, por tanto, una B-spline cúbica.
+<p style="text-align:left; font-style:italic; max-width:800px; box-sizing:border-box; margin-block:1em; margin-inline:clamp(1em, 6vw, 2em); padding-inline:clamp(0.75em, 4vw, 2em); word-break:normal; overflow-wrap:break-word;">En el &aacute;rea espacial por encima del borde, la intensidad de la luz reflejada es baja (denotada por la elipse roja) porque no se refleja luz directamente en la direcci&oacute;n del borde al ojo.</p>
+<p>Cuando hay un borde, hay una zona espacial en la que la luz reflejada tiene menos intensidad y esto es lo que se nota al mirar el guardabarros. Para evitar esto necesitas un cambio continuo en la pendiente de tus elementos de superficie. La pendiente es la derivada de primer orden y como se explica en la secci&oacute;n <a href="#Basicos">Basicos</a>, una B-spline de segundo grado (cuadr&aacute;tica) ofrece en cada punto una derivada continua de primer orden.
+</p><p>&iquest;Pero es esto realmente suficiente? En el punto de transici&oacute;n geom&eacute;trica tenemos ahora en ambos lados la misma pendiente, pero la pendiente puede cambiar de forma diferente en ambos lados. Entonces tenemos esta situaci&oacute;n:
+</p><p><span typeof="mw:File"><a href="../index.php?title=Spline-Fender-sketch3.svg&amp;filetimestamp=20210605153651&amp;.html" class="mw-file-description"><img src="../File/Spline-Fender-sketch3.svg" decoding="async" width="300" height="244" class="mw-file-element"></a></span>
+</p><p>Por lo tanto, tambi&eacute;n tenemos zonas espaciales en las que la intensidad de la luz reflejada es diferente. Para evitar esto, necesitamos en el punto geom&eacute;trico de transici&oacute;n tambi&eacute;n una continuidad de la derivada de segundo orden y, por tanto, una B-spline c&uacute;bica.
 </p>
 <!-- 
 NewPP limit report
-Cached time: 20241214203207
+Cached time: 20260519082304
 Cache expiry: 86400
 Reduced expiry: false
-Complications: [show‐toc, no‐toc‐conversion]
-CPU time usage: 1.218 seconds
-Real time usage: 1.545 seconds
-Preprocessor visited node count: 462/1000000
-Post‐expand include size: 7503/2097152 bytes
+Complications: [show&#8208;toc]
+CPU time usage: 0.161 seconds
+Real time usage: 0.576 seconds
+Preprocessor visited node count: 463/1000000
+Post&#8208;expand include size: 9272/2097152 bytes
 Template argument size: 1994/2097152 bytes
 Highest expansion depth: 4/100
 Expensive parser function count: 0/100
 Unstrip recursion depth: 0/20
-Unstrip post‐expand size: 2597/5000000 bytes
+Unstrip post&#8208;expand size: 18868/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%    5.426      1 -total
- 16.41%    0.890     14 Template:Button
- 15.08%    0.818      3 Template:Caption
- 11.17%    0.606      1 Template:TOCright
-  9.69%    0.526      2 Template:Version
-  9.10%    0.494      1 Template:KEY
+100.00%  149.002      1 -total
+ 18.55%   27.641      1 Template:TOCright
+ 16.65%   24.813      3 Template:Caption
+  2.41%    3.588     14 Template:Button
+  1.73%    2.577      1 Template:KEY
+  1.62%    2.421      2 Template:Version
 -->
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:268545-0!canonical and timestamp 20241214203206 and revision id 1390229. Rendering was triggered because: api-parse
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:268545-0!canonical and timestamp 20260519082304 and revision id 1805068. Rendering was triggered because: edit-page
  -->
-</div></div><script src="../script.js"></script>
+</div>
+</div><script src="../site.js"></script>
