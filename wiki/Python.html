@@ -89,55 +89,6 @@ For example, the two functions <code>Arch.make_window()</code> and <code>myModul
 <span class="n">Wire</span> <span class="o">=</span> <span class="n">Draft</span><span class="o">.</span><span class="n">make_wire</span><span class="p">(</span><span class="n">pointslist</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">face</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">Structure</span> <span class="o">=</span> <span class="n">Arch</span><span class="o">.</span><span class="n">make_structure</span><span class="p">(</span><span class="n">Wire</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"Big pillar"</span><span class="p">)</span>
 </pre></div>
-<p><br>
-import FreeCAD as App
-</p>
-<pre><code>import Part
-import Sketcher
-
-# Create a new document
-doc = App.newDocument("Flanged_Mount")
-
-# 1. CREATE THE BASE SKETCH
-sketch = doc.addObject('Sketcher::SketchObject', 'BaseSketch')
-sketch.Support = (doc.getObject('XYZ_Axis'), ['WZ_Plane'])
-sketch.MapMode = 'FlatFace'
-
-# Draw the outer rectangle (100mm x 60mm)
-sketch.addGeometry(Part.LineSegment(App.Vector(-50, -30, 0), App.Vector(50, -30, 0)), False)
-sketch.addGeometry(Part.LineSegment(App.Vector(50, -30, 0), App.Vector(50, 30, 0)), False)
-sketch.addGeometry(Part.LineSegment(App.Vector(50, 30, 0), App.Vector(-50, 30, 0)), False)
-sketch.addGeometry(Part.LineSegment(App.Vector(-50, 30, 0), App.Vector(-50, -30, 0)), False)
-
-# Constrain the rectangle symmetrically
-sketch.addConstraint(Sketcher.Constraint('Horizontal', 0))
-sketch.addConstraint(Sketcher.Constraint('Vertical', 1))
-sketch.addConstraint(Sketcher.Constraint('Horizontal', 2))
-sketch.addConstraint(Sketcher.Constraint('Vertical', 3))
-sketch.addConstraint(Sketcher.Constraint('Symmetric', 0, 1, 1, 2, doc.getObject('XYZ_Axis'), 1))
-
-# 2. FEATURE 1: EXTRUDE BASE FLANGE (10mm)
-pad1 = doc.addObject('PartDesign::Pad', 'BasePad')
-pad1.Profile = sketch
-pad1.Length = 10.0
-
-# 3. FEATURE 2: EXTRUDE CENTER BOSS (30mm)
-boss_sketch = doc.addObject('Sketcher::SketchObject', 'BossSketch')
-boss_sketch.addGeometry(Part.Circle(App.Vector(0,0,0), App.Vector(0,0,1), 25.0), False) # 50mm Diameter
-pad2 = doc.addObject('PartDesign::Pad', 'BossPad')
-pad2.Profile = boss_sketch
-pad2.Length = 30.0
-
-# 4. FEATURE 3: CUT THROUGH-HOLE (30mm)
-hole_sketch = doc.addObject('Sketcher::SketchObject', 'HoleSketch')
-hole_sketch.addGeometry(Part.Circle(App.Vector(0,0,0), App.Vector(0,0,1), 15.0), False) # 30mm Diameter
-pocket = doc.addObject('PartDesign::Pocket', 'ThruHole')
-pocket.Profile = hole_sketch
-pocket.Length = 50.0
-
-# Refresh the document to build geometry visually
-doc.recompute()</code>
-</pre>
 <div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
     <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="index.php?title=Power_user_hub.png&amp;filetimestamp=20200511213015&amp;.html" class="mw-file-description"><img src="File/Power_user_hub.png" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="Power_users_hub.html" title="Power users hub">Power user documentation</a>
         <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
@@ -159,12 +110,12 @@ doc.recompute()</code>
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260528201601
+Cached time: 20260528210413
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.108 seconds
-Real time usage: 0.115 seconds
+CPU time usage: 0.113 seconds
+Real time usage: 0.171 seconds
 Preprocessor visited node count: 227/1000000
 Post&#8208;expand include size: 6661/2097152 bytes
 Template argument size: 3455/2097152 bytes
@@ -175,15 +126,15 @@ Unstrip post&#8208;expand size: 14115/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   14.471      1 -total
- 42.51%    6.152      1 Template:Powerdocnavi
- 29.44%    4.260      8 Template:Code
- 24.12%    3.490      1 Template:Navigation_menu_2
- 11.00%    1.592      4 Template:Incode
- 10.23%    1.481      1 Template:TOCright
+100.00%   24.616      1 -total
+ 38.45%    9.465      1 Template:Powerdocnavi
+ 26.99%    6.644      8 Template:Code
+ 18.68%    4.599      1 Template:Navigation_menu_2
+ 15.72%    3.870      1 Template:TOCright
+ 13.76%    3.388      4 Template:Incode
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:111533-0!canonical and timestamp 20260528201628 and revision id 1810778. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:111533-0!canonical and timestamp 20260528210411 and revision id 1810903. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
