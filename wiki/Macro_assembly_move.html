@@ -69,63 +69,370 @@ assembly_move
 </td></tr>
 </tbody></table>
 <p><b>assembly_move.FCMacro</b>
+</p><p><br>
 </p>
-<div class="toccolours mw-collapsible mw-collapsed" style="cursor:not-allowed">
-<p>Temporary code for external macro link. Do not use this code. This code is used exclusively by <a href="Std_AddonMgr.html" title="Std AddonMgr">Addon Manager</a>. <i>Link for optional manual installation: <a rel="nofollow" class="external text" href="https://codeberg.org/onekk/freecad-macro/raw/branch/main/assembly_move/assembly_move.FCMacro">Macro</a></i>
+<h2><span class="mw-headline" id="Script">Script</span></h2>
+<p><b>Macro_assembly_move.FCMacro</b>
 </p>
-<div class="mw-collapsible-content">
-<pre>
+<pre>"""Animator.
 
-# This code is copied instead of the original macro code
-# to guide the user to the online download page.
-# Use it if the code of the macro is larger than 64 KB and cannot be included in the wiki
-# or if the RAW code URL is somewhere else in the wiki.
+Name: assembly_move.FCMacro
 
-from PySide import QtGui, QtCore
+See Changelog after import statements.
 
-diag = QtGui.QMessageBox(QtGui.QMessageBox.Information,
-    "Information",
-    "This macro must be downloaded from this link\n"
-    "\n"
-    "https://codeberg.org/onekk/freecad-macro/raw/branch/main/assembly_move/assembly_move.FCMacro" + "\n"
-    "\n"
-    "Quit this window to access the download page")
+Author: Carlo Dormeletti (onekk)
+Copyright: 2026
+Licence: LGPL2.1
+"""
+__version__ = "20260529_1138"
+__revision__ = "01"
 
-diag.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
-diag.setWindowModality(QtCore.Qt.ApplicationModal)
-diag.exec_()
+__Title__ = "Title_Of_macro"
+__Author__ = "Carlo Dormeletti (onekk)"
+__Version__ = "0.4"
+__Date__ = "2026-05-23"
+__Comment__ = "Animate an Assembly object"
+__Web__ = "https://forum.freecad.org/viewtopic.php?t=105451"
+__Wiki__ = "https://wiki.freecad.org/Macro_Move_Assembly"
+__Icon__ = "https://www.freecad.org/wiki/images/2/2c/Text-x-python.png"
+__IconW__ = ""
+__Help__ = "Animate and Assembly Object, see https://forum.freecad.org/viewtopic.php?t=105451"
+__Status__ = "stable"
+__Requires__ = "freecad 1.1"
+__Communication__ = ""
 
-import webbrowser 
-webbrowser.open("https://codeberg.org/onekk/freecad-macro/raw/branch/main/assembly_move/assembly_move.FCMacro")
-</pre>
-</div>
-</div>
-<div style="display:none;">&lt;class="rawcodeurl"&gt;&lt;a href="<a rel="nofollow" class="external free" href="https://codeberg.org/onekk/freecad-macro/raw/branch/main/assembly_move/assembly_move.FCMacro">https://codeberg.org/onekk/freecad-macro/raw/branch/main/assembly_move/assembly_move.FCMacro</a>"&gt;raw code&lt;/a&gt;</div>
+import FreeCAD as App
+import FreeCADGui as Gui
 
+# Assembly imports
+import UtilsAssembly
+import JointObject
+
+from PySide import QtGui, QtCore  # noqa  # QtWidgets
+from PySide.QtWidgets import (  # noqa
+    QApplication, QCheckBox, QGroupBox, QLabel, QLineEdit, QPushButton, QSpinBox,
+    QTextEdit, QGraphicsView, QMdiSubWindow,  # Widgets
+    QDialog, QFileDialog, QInputDialog, QMessageBox,  # Dialogs
+    QGridLayout, QVBoxLayout, QSizePolicy)  # Layouts and Policy
+
+from PySide.QtCore import QObject, Qt  # noqa
+
+"""
+----------------------------------------
+Changelog:
+----------------------------------------
+v0.1 - Initial version
+v0.2 - Header changed to prepare for inserting in the macro page
+       Introducing the reading of joints limits
+v0.3 - Changed the extension to FCMacro
+v0.4 - Added some check to reset only "Revolute" and "Slider" joints.
+"""
+
+fcl_err = App.Console.PrintError
+fcl_msg = App.Console.PrintMessage
+fcl_warn = App.Console.PrintWarning
+mw = Gui.getMainWindow()
+
+V3 = App.Vector
+Rotation = App.Rotation
+Placement = App.Placement
+
+VEC0 = V3(0, 0, 0)
+ROT0 = Rotation(0, 0, 0)
+
+ap_clr = {
+    "Black": [(0.0, 0.0, 0.0), "#000000"],
+    "Grey75": [(0.25, 0.25, 0.25), "#404040"],
+    "White": [(1.0, 1.0, 1.0), "#FFFFFF"],
+    # Vibrant
+    "V_Blue": [(0.0, 0.467, 0.733), "#0077BB"],
+    "V_Cyan": [(0.20, 0.733, 0.933), "#33BBEE"],
+    "V_Teal": [(0.0, 0.6, 0.533), "#009988"],
+    "V_Orange": [(0.933, 0.467, 0.2), "#EE7733"],
+    "V_Red": [(0.8, 0.2, 0.67), "#CC3311"],
+    "V_Magenta": [(0.933, 0.2, 0.467), "#EE3377"],
+    "V_Grey": [(0.733, 0.733, 0.733), "#BBBBBB"],
+    # Bright
+    "B_Blue": [(0.267, 0.467, 0.667), "#4477AA"],
+    "B_Cyan": [(0.4, 0.8, 0.933), "#66CCEE"],
+    "B_Green": [(0.133, 0.533, 0.200), "#228833"],
+    "B_Yellow": [(0.8, 0.733, 0.267), "#CCBB44"],
+    "B_Red": [(0.933, 0.4, 0.467), "#EE6677"],
+    "B_Purple": [(0.667, 0.2, 0.467), "#AA3377"],
+    # High Contrast
+    "HC_Yellow": [(0.867, 0.667, 0.2), "#DDAA33"],
+    "HC_Red": [(0.733, 0.333, 0.4), "#BB5566"],
+    "HC_Blue": [(0.0, 0.267, 0.533), "#004488"],
+    # Additional
+    "Aqua": [(0.0, 1.0, 1.0), "#00FFFF"],
+    "Orange": [(1.0, 0.647, 0.0), "#FFA500"],
+}
+
+
+# ------------------------------------------------
+#                  General Service
+# ------------------------------------------------
+
+def clear_doc(doc_name):
+    """Clear the document deleting all the objects.
+
+    Args:
+    doc_name  (str): document name
+    """
+    doc = App.getDocument(doc_name)
+    try:
+        while len(doc.Objects) &gt; 0:
+            doc.removeObject(doc.Objects[0].Name)
+    except Exception as e:
+        fcl_msg(f"Exception:  {e}\n")
+
+
+def ensure_document(doc_name, action=0, dbg_l=0):
+    """Ensure existence of document with doc_name and clear the doc.
+
+    Args:
+        doc_name (string): document name
+        action (int): clear action if document exist
+              0: do nothing
+              1: close and reopen the document with the same name
+              2: delete all objects
+        dbg_l (int):
+
+    Returns:
+        doc_name (string): Document name from obj.Name
+    """
+    doc_root = App.listDocuments()
+    doc_exist = False
+
+    for d_name, doc in doc_root.items():
+
+        if dbg_l &gt; 0:
+            fcl_msg(f"ED: doc name = {d_name}\n")
+
+        if d_name == doc_name:
+            if dbg_l &gt; 0:
+                fcl_msg(f"ED: Match name: {doc_name} action: {action}\n")
+
+            if action == 1:
+                # when using clear_doc() is not possible like in Part.Design
+                App.closeDocument(doc_name)
+                doc_exist = False
+            elif action == 2:
+                # debug info do not delete
+                # print("action 2")  # kp
+                doc_exist = True
+                clear_doc(doc_name)
+                App.setActiveDocument(d_name)
+                return App.getDocument(d_name).Name
+            else:
+                doc_exist = True
+                App.setActiveDocument(d_name)
+                return App.getDocument(d_name).Name
+
+    if doc_exist is False:
+        if dbg_l &gt; 0:
+            fcl_msg(f"ED: Create = {doc_name}\n")
+
+        new_doc = App.newDocument(doc_name)
+        return new_doc.Name
+
+
+def setview(doc_name, t_v=0):
+    """Set viewport in 3D view."""
+    App.setActiveDocument("")
+    App.ActiveDocument = None
+    Gui.ActiveDocument = None
+
+    """
+    ViewAxo, ViewFit, ViewSelection, ViewFront, ViewRear,
+    ViewLeft, ViewRight, ViewTop, ViewBottom
+    """
+    switch_document(doc_name)
+    VIEW = Gui.ActiveDocument.ActiveView
+    
+    fcl_msg(f"View: {VIEW}\n")  # DBG
+
+    if t_v == 0:
+        Gui.SendMsgToActiveView("ViewTop")
+    elif t_v == 1:
+        Gui.SendMsgToActiveView("ViewFront")
+    elif t_v == 99:
+        VIEW.setCameraOrientation(
+            Rotation(0.0, 0.0, -0.7071067811865475, 0.7071067811865475))
+
+    else:
+        Gui.SendMsgToActiveView("ViewAxo")
+
+    VIEW.setAxisCross(True)  # it create problems
+    Gui.SendMsgToActiveView("ViewFit")
+    # Gui.updateGui()
+
+
+def switch_document(doc_name):
+    """Switch a FreeCAD document."""
+
+    def hasGraphicsView(w):
+        return bool(w.findChild(QGraphicsView))
+
+    def sanitize_title(w):
+        s = w.windowTitle()
+        return s.split(':')[0].strip()
+
+    available = App.listDocuments()
+
+    if doc_name not in available:
+        return
+
+    fcl_msg(f"available: {available}\n")
+    App.setActiveDocument(doc_name)
+    App.ActiveDocument = App.getDocument(doc_name)
+    Gui.ActiveDocument = Gui.getDocument(doc_name)
+
+    # wmdi = mw.findChildren(QMdiSubWindow)
+    # has_gv = {sanitize_title(w): w for w in wmdi if hasGraphicsView(w)}
+    # fcl_msg(f"has_gv = {has_gv}\n")
+    # mdig = has_gv.get(doc_name)  # DBG
+    # fcl_msg(f"mdig: {mdig}\n")  # DBG
+    # # print(dir(mdig))
+    # if mdig:
+    #     fcl_msg("change focus\n")  # DBG
+    #     mdig.setFocus()
+    #     mdig.activateWindow()  # DBG test code
+    #     App.setActiveDocument(doc_name)
+    #     App.ActiveDocument = App.getDocument(doc_name)
+    #     Gui.ActiveDocument = Gui.getDocument(doc_name)
+
+
+def set_txt_color(txt, col):
+    """Set text color using html syntax."""
+    if col == "o":
+        f_clr = ap_clr['B_Green'][1]
+    elif col == "w":
+        f_clr = ap_clr['Orange'][1]
+    elif col == "e":
+        f_clr = ap_clr['B_Red'][1]
+    else:
+        f_clr = "black"
+
+    return f"&lt;span style='color: {f_clr}'&gt; {txt} &lt;/span&gt;"
+
+
+# ------------------------------------------------
+#               Service functions
+# ------------------------------------------------
+
+def roundvec(r_vec, prec=6):
+    """Round value in vectors."""
+    vlist = [round(r_vec.x, prec), round(r_vec.y, prec), round(r_vec.z, prec)]
+    return vlist
+
+
+def roundrot(r_rot, prec=6):
+    """Round value in vectors."""
+    vlist = [round(r_rot[0], prec), round(r_rot[1], prec), round(r_rot[2], prec)]
+    return vlist
+
+
+# ------------------------------------------------
+#                   UI functions
+# ------------------------------------------------
+
+def cm_gbx(parent, gb_nm, gb_lbl, gbl_nm="", style="bold", blay=0):
+    """Create a groupbox container and return it."""
+    gpbx = QGroupBox(gb_lbl)
+    gpbx.setObjectName(f"{gb_nm}_wd")
+
+    if style == "bold":
+        gpbx_style = (
+            "QGroupBox{"
+            "    font-weight: bold;"
+            "    font-style: normal;"
+            "    text-decoration: none;"
+            "}")
+        gpbx.setStyleSheet(gpbx_style)
+
+    if blay == 0:
+        gpbxl = QGridLayout()
+    else:
+        gpbxl = QVBoxLayout()
+
+    if gbl_nm == "":
+        gpbxl.setObjectName(f"{gb_nm}_l")
+    else:
+        gpbxl.setObjectName(gbl_nm)
+
+    return gpbx, gpbxl
+
+
+def cm_btn(parent, b_nm, b_txt, b_fnt, b_tfm):
+    """Create a styled QPushButton."""
+    button = QPushButton()
+    button.setObjectName(b_nm)
+    button.setFont = b_fnt
+    button.setAutoDefault(False)
+
+    if b_tfm == 1:
+        button.setTextFormat(Qt.RichText)
+    else:
+        pass
+
+    button.setText(b_txt)
+
+    if parent is None:
+        pass
+    else:
+        button.setParent(parent)
+
+    button.setAutoDefault(False)
+
+    return button
+
+
+def cm_lbl(parent, l_nm, l_txt, l_fnt, l_tfm, l_aln=0):
+    """Create a styled QLabel.
+
+       l_tfm (int): text format 0: Auto 1: RichText 2: bold
+       l_aln (int): alignment 0: Standard  1: Center H and V
+    """
+    #
+    label = QLabel()
+    label.setObjectName(l_nm)
+    label.setFont(l_fnt)
+    label.setWordWrap(False)
+
+    lab_txt = l_txt
+
+    if l_tfm in (1, 2):
+        label.setTextFormat(Qt.RichText)
+        if l_tfm == 2:
+            lab_txt = f"&lt;b&gt;{l_txt}&lt;/b&gt;"
+
+    if l_aln == 1:
+        label.setAlignment(Qt.AlignHCenter</pre>
 <!-- 
 NewPP limit report
-Cached time: 20260531180435
+Cached time: 20260531184609
 Cache expiry: 86400
 Reduced expiry: false
-Complications: []
-CPU time usage: 0.017 seconds
-Real time usage: 0.047 seconds
-Preprocessor visited node count: 78/1000000
-Post&#8208;expand include size: 2904/2097152 bytes
-Template argument size: 766/2097152 bytes
+Complications: [show&#8208;toc]
+CPU time usage: 0.016 seconds
+Real time usage: 0.029 seconds
+Preprocessor visited node count: 85/1000000
+Post&#8208;expand include size: 2332/2097152 bytes
+Template argument size: 9788/2097152 bytes
 Highest expansion depth: 7/100
 Expensive parser function count: 2/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 853/5000000 bytes
+Unstrip post&#8208;expand size: 9437/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   12.978      1 -total
- 52.93%    6.869      1 Template:Macro
- 46.37%    6.018      1 Template:Codeextralink
+100.00%   10.555      1 -total
+ 59.84%    6.316      1 Template:Macro
+ 39.34%    4.152      1 Template:MacroCode
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:429642-0!canonical and timestamp 20260531180429 and revision id 1813492. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:429642-0!canonical and timestamp 20260531184607 and revision id 1813504. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
