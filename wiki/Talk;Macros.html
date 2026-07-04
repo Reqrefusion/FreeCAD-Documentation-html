@@ -1,0 +1,103 @@
+<link href="site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Talk:Macros</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><div class="mw-heading mw-heading2 ext-discussiontools-init-section"><!--__DTSUBSCRIBEBUTTONDESKTOP__{&quot;headingLevel&quot;:2,&quot;name&quot;:&quot;h-212.115.103.145-20260704184800&quot;,&quot;type&quot;:&quot;heading&quot;,&quot;level&quot;:0,&quot;id&quot;:&quot;h-Panel-20260704184800&quot;,&quot;replies&quot;:[&quot;c-212.115.103.145-20260704184800-Panel&quot;],&quot;text&quot;:&quot;Panel&quot;,&quot;linkableTitle&quot;:&quot;Panel&quot;}--><h2 data-mw-thread-id="h-Panel-20260704184800"><span class="mw-headline" id="Panel"><span data-mw-comment-start="" id="h-Panel-20260704184800"></span>Panel<span data-mw-comment-end="h-Panel-20260704184800"></span></span></h2><div class="ext-discussiontools-init-section-bar"><div class="ext-discussiontools-init-section-metadata"><span class="ext-discussiontools-init-section-metaitem ext-discussiontools-init-section-timestampLabel">Latest comment: <a href="#c-212.115.103.145-20260704184800-Panel">just now</a></span><span class="ext-discussiontools-init-section-metaitem ext-discussiontools-init-section-commentCountLabel">1 comment</span><span class="ext-discussiontools-init-section-metaitem ext-discussiontools-init-section-authorCountLabel">1 person in discussion</span></div><div class="ext-discussiontools-init-section-actions"><!--__DTSUBSCRIBEBUTTONMOBILE__{&quot;headingLevel&quot;:2,&quot;name&quot;:&quot;h-212.115.103.145-20260704184800&quot;,&quot;type&quot;:&quot;heading&quot;,&quot;level&quot;:0,&quot;id&quot;:&quot;h-Panel-20260704184800&quot;,&quot;replies&quot;:[&quot;c-212.115.103.145-20260704184800-Panel&quot;],&quot;text&quot;:&quot;Panel&quot;,&quot;linkableTitle&quot;:&quot;Panel&quot;}--></div></div></div>
+<p><span data-mw-comment-start="" id="c-212.115.103.145-20260704184800-Panel"></span>import FreeCAD
+</p><p>import Part
+</p><p>import Draft
+</p><p>import math
+</p><p># ========== &#1578;&#1606;&#1592;&#1740;&#1605;&#1575;&#1578; &#1575;&#1576;&#1593;&#1575;&#1583; ==========
+</p><p>width = 200.0
+</p><p>height = 120.0
+</p><p>panel_thickness = 3.0
+</p><p>frame_thickness = 2.5
+</p><p>frame_offset = 3.0
+</p><p>box_depth = 10.0
+</p><p>hole_diameter = 5.0
+</p><p># ========== &#1575;&#1740;&#1580;&#1575;&#1583; &#1587;&#1606;&#1583; &#1580;&#1583;&#1740;&#1583; ==========
+</p><p>doc = FreeCAD.newDocument("OLED_Enclosure")
+</p><p>doc.recompute()
+</p><p># ========== 1. &#1589;&#1601;&#1581;&#1607; &#1580;&#1604;&#1608;&#1740;&#1740; ==========
+</p><p>front_panel = Part.makeBox(width, height, panel_thickness)
+</p><p>Part.show(front_panel)
+</p><p># ========== 2. &#1602;&#1575;&#1576; &#1580;&#1604;&#1608; ==========
+</p><p>frame_outer = Part.makeBox(width, height, frame_thickness)
+</p><p>frame_inner = Part.makeBox(width - 2*frame_offset, height - 2*frame_offset, frame_thickness)
+</p><p>frame_inner.translate(FreeCAD.Vector(frame_offset, frame_offset, 0))
+</p><p>frame = frame_outer.cut(frame_inner)
+</p><p>Part.show(frame)
+</p><p># ========== 3. &#1578;&#1575;&#1576;&#1593; &#1587;&#1575;&#1582;&#1578; &#1587;&#1608;&#1585;&#1575;&#1582;&zwnj;&#1607;&#1575;&#1740; LED ==========
+</p><p>def create_hole_pattern(cx, cy, radius, count, hole_diameter):
+</p><p>&nbsp; &nbsp; holes = []
+</p><p>&nbsp; &nbsp; for i in range(count):
+</p><p>&nbsp; &nbsp; &nbsp; &nbsp; angle = i * (2 * math.pi / count)
+</p><p>&nbsp; &nbsp; &nbsp; &nbsp; x = cx + radius * math.cos(angle)
+</p><p>&nbsp; &nbsp; &nbsp; &nbsp; y = cy + radius * math.sin(angle)
+</p><p>&nbsp; &nbsp; &nbsp; &nbsp; hole = Part.makeCylinder(hole_diameter/2, panel_thickness)
+</p><p>&nbsp; &nbsp; &nbsp; &nbsp; hole.translate(FreeCAD.Vector(x, y, 0))
+</p><p>&nbsp; &nbsp; &nbsp; &nbsp; holes.append(hole)
+</p><p>&nbsp; &nbsp; return holes
+</p><p># OLED 1: 16 LED
+</p><p>holes_oled1 = create_hole_pattern(55, 60, 30, 16, hole_diameter)
+</p><p># OLED 2: 4 rings of 8 LEDs
+</p><p>holes_oled2 = []
+</p><p>holes_oled2.extend(create_hole_pattern(145, 60, 18, 8, hole_diameter))
+</p><p>holes_oled2.extend(create_hole_pattern(145, 100, 18, 8, hole_diameter))
+</p><p>holes_oled2.extend(create_hole_pattern(110, 60, 18, 8, hole_diameter))
+</p><p>holes_oled2.extend(create_hole_pattern(180, 60, 18, 8, hole_diameter))
+</p><p># ========== 4. &#1575;&#1740;&#1580;&#1575;&#1583; &#1587;&#1608;&#1585;&#1575;&#1582;&zwnj;&#1607;&#1575; &#1585;&#1608;&#1740; &#1589;&#1601;&#1581;&#1607; ==========
+</p><p>all_holes = holes_oled1 + holes_oled2
+</p><p>for hole in all_holes:
+</p><p>&nbsp; &nbsp; front_panel = front_panel.cut(hole)
+</p><p># ========== 5. &#1606;&#1588;&#1575;&#1606;&#1711;&#1585;&#1607;&#1575;&#1740; OLED ==========
+</p><p>oled1 = Part.makeBox(40, 20, 0.5)
+</p><p>oled1.translate(FreeCAD.Vector(35, 50, panel_thickness))
+</p><p>oled2 = Part.makeBox(40, 20, 0.5)
+</p><p>oled2.translate(FreeCAD.Vector(125, 50, panel_thickness))
+</p><p>front_panel = front_panel.fuse(oled1)
+</p><p>front_panel = front_panel.fuse(oled2)
+</p><p># ========== 6. &#1587;&#1608;&#1585;&#1575;&#1582;&zwnj;&#1607;&#1575;&#1740; &#1662;&#1740;&#1670; (M3) ==========
+</p><p>screw_positions = [(10, 10), (190, 10), (10, 110), (190, 110)]
+</p><p>for pos in screw_positions:
+</p><p>&nbsp; &nbsp; screw = Part.makeCylinder(1.5, panel_thickness)
+</p><p>&nbsp; &nbsp; screw.translate(FreeCAD.Vector(pos[0], pos[1], 0))
+</p><p>&nbsp; &nbsp; front_panel = front_panel.cut(screw)
+</p><p># ========== 7. &#1576;&#1575;&#1705;&#1587; &#1583;&#1575;&#1582;&#1604;&#1740; ==========
+</p><p>box_inner = Part.makeBox(width - 16, height - 16, box_depth)
+</p><p>box_inner.translate(FreeCAD.Vector(8, 8, panel_thickness - box_depth))
+</p><p>front_panel = front_panel.cut(box_inner)
+</p><p># ========== 8. &#1583;&#1585;&#1662;&#1608;&#1588; &#1662;&#1588;&#1578;&#1740; ==========
+</p><p>lid = Part.makeBox(width - 10, height - 10, 2.5)
+</p><p>lid.translate(FreeCAD.Vector(5, 5, -2.5))
+</p><p>Part.show(lid)
+</p><p># ========== &#1606;&#1605;&#1575;&#1740;&#1588; &#1606;&#1607;&#1575;&#1740;&#1740; ==========
+</p><p>Part.show(front_panel)
+</p><p>doc.recompute()
+</p><p>print("&#9989; &#1591;&#1585;&#1575;&#1581;&#1740; &#1705;&#1575;&#1605;&#1604; &#1588;&#1583;!")
+</p><p>print("&#128193; &#1576;&#1585;&#1575;&#1740; &#1582;&#1585;&#1608;&#1580;&#1740; STL:")
+</p><p>print(" &nbsp; 1. &#1585;&#1608;&#1740; &#1602;&#1591;&#1593;&#1607; &#1705;&#1604;&#1740;&#1705; &#1585;&#1575;&#1587;&#1578; &#1705;&#1606;&#1740;&#1583;")
+</p><p>print(" &nbsp; 2. Export &rarr; STL &#1585;&#1575; &#1575;&#1606;&#1578;&#1582;&#1575;&#1576; &#1705;&#1606;&#1740;&#1583;") <a href="Special;Contributions/212.115.103.145.html" title="Special:Contributions/212.115.103.145">212.115.103.145</a> <a href="http://wiki.freecad.org/Talk:Macros#c-212.115.103.145-20260704184800-Panel" class="ext-discussiontools-init-timestamplink">18:48, 4 July 2026 (UTC)</a><span class="ext-discussiontools-init-replylink-buttons" data-mw-thread-id="c-212.115.103.145-20260704184800-Panel"><span id="ooui-php-1" class="ext-discussiontools-init-replybutton oo-ui-widget oo-ui-widget-enabled oo-ui-buttonElement oo-ui-buttonElement-frameless oo-ui-labelElement oo-ui-flaggedElement-progressive oo-ui-buttonWidget" data-ooui='{"_":"OO.ui.ButtonWidget","rel":["nofollow"],"framed":false,"label":"Reply","flags":["progressive"],"classes":["ext-discussiontools-init-replybutton"]}'><a role="button" tabindex="0" rel="nofollow" class="oo-ui-buttonElement-button"><span class="oo-ui-iconElement-icon oo-ui-iconElement-noIcon oo-ui-image-progressive"></span><span class="oo-ui-labelElement-label">Reply</span><span class="oo-ui-indicatorElement-indicator oo-ui-indicatorElement-noIndicator oo-ui-image-progressive"></span></a></span></span><span data-mw-comment-end="c-212.115.103.145-20260704184800-Panel"></span>
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20260704184858
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [user&#8208;signature]
+DiscussionTools time usage: 0.016 seconds
+CPU time usage: 0.009 seconds
+Real time usage: 0.026 seconds
+Preprocessor visited node count: 41/1000000
+Post&#8208;expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 13/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:431717-0!canonical and timestamp 20260704184854 and revision id 1824842. Rendering was triggered because: edit-page
+ -->
+</div>
+</div><script src="site.js"></script>
