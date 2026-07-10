@@ -142,30 +142,74 @@ cmake<span class="w"> </span>--preset<span class="w"> </span>occt<span class="w"
 </pre></div>
 <p>If you start FreeCAD in this directory and you check the information and libraries, FreeCAD should report the version of OCCT of your particular commit in the OCCT source.
 </p>
+<h2><span id=".28Optional.29_Merge_the_compilation_commands"></span><span class="mw-headline" id="(Optional)_Merge_the_compilation_commands">(Optional) Merge the compilation commands</span></h2>
+<p>If you want to debug FreeCAD and OCCT at the same time, your tooling will need to be aware of the compilation commands of both FreeCAD and OCCT.
+</p><p>Since you probably want to open the files from the FreeCAD source code directory <code>/home/user/freecad-occt-main</code>, you can create a file <code>/home/user/freecad-occt-main/compile_commands.json</code> that contains the compilation commands from both builds.
+</p><p>The script below can be executed as follows:
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/home/user/freecad-occt-main
+merge-compile-commands<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>/scratch/build-occt-main/compile_commands.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>/scratch/build-freecad-occt-main/compile_commands.json
+</pre></div>
+<p>The script <code>merge-compile-commands</code> should be accessible and executable:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="ch">#!/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">merged</span> <span class="o">+=</span> <span class="n">load</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">merged</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Usage: merge-compile-commands /build1/compile_commands.json /build2/compile_commands.json"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"  Do this in the source tree from where you open files."</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">in_paths</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">OUT_PATH</span> <span class="o">=</span> <span class="s2">"compile_commands.json"</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">OUT_PATH</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">OUT_PATH</span><span class="p">)</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">in_paths</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">OUT_PATH</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">merged</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Wrote </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span><span class="si">}</span><span class="s2"> entries to </span><span class="si">{</span><span class="n">OUT_PATH</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
 <!-- 
 NewPP limit report
-Cached time: 20260710144235
+Cached time: 20260710145402
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.023 seconds
-Real time usage: 0.026 seconds
-Preprocessor visited node count: 184/1000000
-Post&#8208;expand include size: 1017/2097152 bytes
-Template argument size: 1732/2097152 bytes
+CPU time usage: 0.038 seconds
+Real time usage: 0.039 seconds
+Preprocessor visited node count: 225/1000000
+Post&#8208;expand include size: 1328/2097152 bytes
+Template argument size: 2775/2097152 bytes
 Highest expansion depth: 4/100
-Expensive parser function count: 8/100
+Expensive parser function count: 10/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 9288/5000000 bytes
+Unstrip post&#8208;expand size: 14252/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%    6.542      1 -total
- 55.93%    3.659      8 Template:Code
- 28.22%    1.846      9 Template:Incode
+100.00%    9.567      1 -total
+ 54.70%    5.233     10 Template:Code
+ 27.38%    2.619     12 Template:Incode
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:432268-0!canonical and timestamp 20260710144249 and revision id 1828166. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:432268-0!canonical and timestamp 20260710145407 and revision id 1828225. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
