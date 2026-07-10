@@ -1,0 +1,168 @@
+<link href="site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Compile with OCCT</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><meta property="mw:PageProp/toc">
+<h2><span class="mw-headline" id="Overview">Overview</span></h2>
+<p>To build FreeCAD with a specific version of OpenCASCADE (OCCT), first make sure you can compile FreeCAD using the standard OCCT on your system.  After that the steps are the following:
+</p>
+<ol><li>Getting the OCCT source code.</li>
+<li>Configure OCCT.</li>
+<li>Compile OCCT.</li>
+<li>Create a distribution (installation) of OCCT.</li>
+<li>Compile FreeCAD linking to the distribution.</li>
+<li>Optionally, merge the compilation commands for cross FreeCAD/OCCT debugging.</li></ol>
+<p>In the rest, I will assume a Linux install, but the process is very similar for a Windows or MacOS build.
+</p>
+<h2><span class="mw-headline" id="Getting_the_OCCT_source_code">Getting the OCCT source code</span></h2>
+<p>For the remainder of this page, we assume that we store the OCCT source code in <code>/home/user/occt-main</code>. Given this, execute the following command.
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Open-Cascade-SAS/OCCT.git<span class="w"> </span>/home/user/occt-main
+</pre></div>
+<p>The source of OCCT will be in their main branch.  From there you can easily make multiple worktrees.
+</p>
+<h2><span class="mw-headline" id="Configure_OCCT">Configure OCCT</span></h2>
+<p>To build OCCT, it is useful to determine a build directory and an installation directory, for example:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<td>source directory</td>
+<td><code>/home/user/occt-main</code>
+</td></tr>
+<tr>
+<td>build directory</td>
+<td><code>/scratch/build-occt-main</code>
+</td></tr>
+<tr>
+<td>install directory</td>
+<td><code>/scratch/dist-occt-main</code>
+</td></tr></tbody></table>
+<p>Once we have determined that, we can create a <code>CMakeUserPresets.json</code> file in the root of the source directory (note that we need to be explicit about the installation directory):
+</p>
+<div class="mw-highlight mw-highlight-lang-json mw-content-ltr" dir="ltr"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"cmakeMinimumRequired"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"major"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"minor"</span><span class="p">:</span><span class="w"> </span><span class="mi">19</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"patch"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"configurePresets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"debug"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Preset for a debug build"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"generator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Ninja"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"cacheVariables"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">	</span><span class="nt">"INSTALL_DIR"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/scratch/dist-occt-main"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"CMAKE_BUILD_TYPE"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Debug"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"CMAKE_EXPORT_COMPILE_COMMANDS"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ON"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"USE_RAPIDJSON"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ON"</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+<p>Now that we have configured OCCT, we can execute the following commands to compile it:
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>mkdir<span class="w"> </span>/scratch/build-occt-main
+<span class="nb">cd</span><span class="w"> </span>/scratch/build-occt-main
+cmake<span class="w"> </span>--preset<span class="w"> </span>debug<span class="w"> </span>/home/user/occt-main
+</pre></div>
+<h2><span class="mw-headline" id="Compile_OCCT">Compile OCCT</span></h2>
+<p>I typically simply compile with (assuming I'm still in the build directory):
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>ninja
+</pre></div>
+<h2><span class="mw-headline" id="Create_a_distribution">Create a distribution</span></h2>
+<p>To create a distribution and install it in the install directory, simply execute the following command, assuming that we're still in the build directory:
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>ninja<span class="w"> </span>install
+</pre></div>
+<p>We have no successfully installed OCCT in such a way that FreeCAD can link to it.
+</p>
+<h2><span class="mw-headline" id="Configure_FreeCAD">Configure FreeCAD</span></h2>
+<p>It may be useful to create a worktree or a git repository that refers to the OCCT distribution that you're using, so let's assume that we have a worktree or git repository with FreeCAD's source and build directory as follows:
+</p>
+<table class="wikitable">
+
+<tbody><tr>
+<td>source directory</td>
+<td><code>/home/user/freecad-occt-main</code>
+</td></tr>
+<tr>
+<td>build directory</td>
+<td><code>/scratch/build-freecad-occt-main</code>
+</td></tr></tbody></table>
+<p>Note that we don't need an installation directory because we can directly run FreeCAD from the build directory.
+</p><p>Given this information, we can create a <code>CMakeUserPresets.json</code> that we store in FreeCAD's source code:
+</p>
+<div class="mw-highlight mw-highlight-lang-json mw-content-ltr" dir="ltr"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"configurePresets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"occt"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"displayName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Debug build with custom OCCT"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"User-specific debug build with custom OCCT."</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inherits"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">	</span><span class="s2">"common"</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">"generator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Ninja"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"cacheVariables"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">	</span><span class="nt">"CMAKE_BUILD_TYPE"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Debug"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"FREECAD_USE_OCC_VARIANT"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Official Version"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"CMAKE_PREFIX_PATH"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/scratch/dist-occt-main"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"FREECAD_USE_PCL"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"CMAKE_EXPORT_COMPILE_COMMANDS"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ON"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"FREECAD_QT_VERSION"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"BUILD_FEM"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"BUILD_OPENSCAD"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"BUILD_REVERSEENGINEERING"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"BUILD_ROBOT"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"BUILD_POINTS"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"BUILD_SMESH"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"BUILD_WEB"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"BUILD_SURFACE"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ON"</span><span class="p">,</span>
+<span class="w">	</span><span class="nt">"BUILD_INSPECTION"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+<p>Note that we filled in the installation directory of OCCT.  Some modules are turned off to diminish the compilation time as well.
+</p><p>Configuring FreeCAD boils down to:
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>mkdir<span class="w"> </span>/scratch/build-freecad-occt-main
+<span class="nb">cd</span><span class="w"> </span>/scratch/build-freecad-occt-main
+cmake<span class="w"> </span>--preset<span class="w"> </span>occt<span class="w"> </span>/home/user/freecad-occt-main
+</pre></div>
+<p>Pay attention to the report regarding OCCT.  It should have found OCCT in <code>/scratch/dist-occt-main</code>.
+</p><p>If all of this is correct, we can compile FreeCAD.
+</p>
+<h2><span class="mw-headline" id="Compile_FreeCAD">Compile FreeCAD</span></h2>
+<p>Assuming we're still in the build directory, we can do:
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>ninja
+</pre></div>
+<!-- 
+NewPP limit report
+Cached time: 20260710143955
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show&#8208;toc]
+CPU time usage: 0.029 seconds
+Real time usage: 0.078 seconds
+Preprocessor visited node count: 184/1000000
+Post&#8208;expand include size: 1017/2097152 bytes
+Template argument size: 1732/2097152 bytes
+Highest expansion depth: 4/100
+Expensive parser function count: 8/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 9288/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   16.963      1 -total
+ 72.26%   12.258      8 Template:Code
+ 19.99%    3.390      9 Template:Incode
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:432268-0!canonical and timestamp 20260710144012 and revision id 1828148. Rendering was triggered because: edit-page
+ -->
+</div>
+</div><script src="site.js"></script>
