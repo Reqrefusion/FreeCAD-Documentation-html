@@ -1,0 +1,307 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Compile with OCCT/fr</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="fr" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-Compile+with+OCCT&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
+<li><a href="../Compile_with_OCCT.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="Compile with OCCT (100% translated)" lang="en" dir="ltr">English</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--low" lang="fr" dir="ltr">fran&ccedil;ais</span></li></ul></div>
+<p><span id="Overview"></span>
+</p>
+<meta property="mw:PageProp/toc">
+<h2><span id="Pr.C3.A9sentation"></span><span class="mw-headline" id="Pr&eacute;sentation">Pr&eacute;sentation</span></h2>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>To build FreeCAD with a specific version of OpenCASCADE (OCCT), first make sure you can compile FreeCAD using the standard OCCT on your system. After that the steps are the following:
+</p>
+<ol><li>Getting the OCCT source code.</li>
+<li>Configure OCCT.</li>
+<li>Compile OCCT.</li>
+<li>Create a distribution (installation) of OCCT.</li>
+<li>Configure FreeCAD.</li>
+<li>Compile FreeCAD linking to the distribution.</li>
+<li>Optionally, merge the compilation commands for cross FreeCAD/OCCT debugging.</li></ol>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>In the rest, I will assume a Linux install, but the process is very similar for a Windows or MacOS build.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Getting_the_OCCT_source_code">Getting the OCCT source code</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>For the remainder of this page, we assume that we store the OCCT source code in <code>/home/user/occt-main</code>. Given this, execute the following command.
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Open-Cascade-SAS/OCCT.git<span class="w"> </span>/home/user/occt-main
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>The source of OCCT will be in their main branch. From there you can easily make multiple worktrees.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Configure_OCCT">Configure OCCT</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>To build OCCT, it is useful to determine a build directory and an installation directory, for example:
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<table class="wikitable">
+
+<tbody><tr>
+<td>source directory</td>
+<td><code>/home/user/occt-main</code>
+</td></tr>
+<tr>
+<td>build directory</td>
+<td><code>/scratch/build-occt-main</code>
+</td></tr>
+<tr>
+<td>install directory</td>
+<td><code>/scratch/dist-occt-main</code>
+</td></tr></tbody></table>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Once we have determined that, we can create a <code>CMakeUserPresets.json</code> file in the root of the source directory (note that we need to be explicit about the installation directory):
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-json mw-content-ltr" dir="ltr"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"cmakeMinimumRequired"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"major"</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"minor"</span><span class="p">:</span><span class="w"> </span><span class="mi">19</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"patch"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"configurePresets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"debug"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Preset for a debug build"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"generator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Ninja"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"cacheVariables"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"INSTALL_DIR"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/scratch/dist-occt-main"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"CMAKE_BUILD_TYPE"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Debug"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"CMAKE_EXPORT_COMPILE_COMMANDS"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ON"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"USE_RAPIDJSON"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ON"</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Now that we have configured OCCT, we can execute the following commands to compile it:
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>mkdir<span class="w"> </span>/scratch/build-occt-main
+<span class="nb">cd</span><span class="w"> </span>/scratch/build-occt-main
+cmake<span class="w"> </span>--preset<span class="w"> </span>debug<span class="w"> </span>/home/user/occt-main
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Compile_OCCT">Compile OCCT</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>I typically simply compile with (assuming I'm still in the build directory):
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>ninja
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Create_a_distribution">Create a distribution</span></h2>
+</div> 
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>To create a distribution and install it in the install directory, simply execute the following command, assuming that we're still in the build directory:
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>ninja<span class="w"> </span>install
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>We have no successfully installed OCCT in such a way that FreeCAD can link to it.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Configure_FreeCAD">Configure FreeCAD</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>It may be useful to create a worktree or a git repository that refers to the OCCT distribution that you're using, so let's assume that we have a worktree or git repository with FreeCAD's source and build directory as follows:
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<table class="wikitable">
+
+<tbody><tr>
+<td>source directory</td>
+<td><code>/home/user/freecad-occt-main</code>
+</td></tr>
+<tr>
+<td>build directory</td>
+<td><code>/scratch/build-freecad-occt-main</code>
+</td></tr></tbody></table>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Note that we don't need an installation directory because we can directly run FreeCAD from the build directory.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Given this information, we can create a <code>CMakeUserPresets.json</code> that we store in FreeCAD's source code:
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-json mw-content-ltr" dir="ltr"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">"version"</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"configurePresets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"occt"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"displayName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Debug build with custom OCCT"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"description"</span><span class="p">:</span><span class="w"> </span><span class="s2">"User-specific debug build with custom OCCT."</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"inherits"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">	</span><span class="s2">"common"</span>
+<span class="w">      </span><span class="p">],</span>
+<span class="w">      </span><span class="nt">"generator"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Ninja"</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">"cacheVariables"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">"CMAKE_BUILD_TYPE"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Debug"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"FREECAD_USE_OCC_VARIANT"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Official Version"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"CMAKE_PREFIX_PATH"</span><span class="p">:</span><span class="w"> </span><span class="s2">"/scratch/dist-occt-main"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"FREECAD_USE_PCL"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"CMAKE_EXPORT_COMPILE_COMMANDS"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ON"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"FREECAD_QT_VERSION"</span><span class="p">:</span><span class="w"> </span><span class="s2">"6"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"BUILD_FEM"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"BUILD_OPENSCAD"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"BUILD_REVERSEENGINEERING"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"BUILD_ROBOT"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"BUILD_POINTS"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"BUILD_SMESH"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"BUILD_WEB"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"BUILD_SURFACE"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ON"</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">"BUILD_INSPECTION"</span><span class="p">:</span><span class="w"> </span><span class="s2">"OFF"</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Note that we filled in the installation directory of OCCT. Some modules are turned off to diminish the compilation time as well.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Configuring FreeCAD boils down to:
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>mkdir<span class="w"> </span>/scratch/build-freecad-occt-main
+<span class="nb">cd</span><span class="w"> </span>/scratch/build-freecad-occt-main
+cmake<span class="w"> </span>--preset<span class="w"> </span>occt<span class="w"> </span>/home/user/freecad-occt-main
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Pay attention to the report regarding OCCT. It should have found OCCT in <code>/scratch/dist-occt-main</code>.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>If all of this is correct, we can compile FreeCAD.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span class="mw-headline" id="Compile_FreeCAD">Compile FreeCAD</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Assuming we're still in the build directory, we can do:
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>ninja
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>If you start FreeCAD in this directory and you check the information and libraries, FreeCAD should report the version of OCCT of your particular commit in the OCCT source.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<h2><span id=".28Optional.29_Merge_the_compilation_commands"></span><span class="mw-headline" id="(Optional)_Merge_the_compilation_commands">(Optional) Merge the compilation commands</span></h2>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>If you want to debug FreeCAD and OCCT at the same time, your tooling will need to be aware of the compilation commands of both FreeCAD and OCCT.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>Since you probably want to open the files from the FreeCAD source code directory <code>/home/user/freecad-occt-main</code>, you can create a file <code>/home/user/freecad-occt-main/compile_commands.json</code> that contains the compilation commands from both builds.
+</p>
+</div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>The script below can be executed as follows:
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/home/user/freecad-occt-main
+merge-compile-commands<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>/scratch/build-occt-main/compile_commands.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>/scratch/build-freecad-occt-main/compile_commands.json
+</pre></div>
+<div lang="en" dir="ltr" class="mw-content-ltr">
+<p>The script <code>merge-compile-commands</code> should be accessible and executable:
+</p>
+</div>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="ch">#!/bin/env python</span>
+
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="n">files</span><span class="p">):</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+        <span class="n">merged</span> <span class="o">+=</span> <span class="n">load</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">merged</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Usage: merge-compile-commands /build1/compile_commands.json /build2/compile_commands.json"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"  Do this in the source tree from where you open files."</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">in_paths</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">OUT_PATH</span> <span class="o">=</span> <span class="s2">"compile_commands.json"</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">OUT_PATH</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">OUT_PATH</span><span class="p">)</span>
+    <span class="n">merged</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">in_paths</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">OUT_PATH</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">merged</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Wrote </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span><span class="si">}</span><span class="s2"> entries to </span><span class="si">{</span><span class="n">OUT_PATH</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</pre></div>
+<p><br>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=User_hub.png&amp;filetimestamp=20190221145008&amp;.html" class="mw-file-description"><img src="../File/User_hub.png" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="../fr/User_hub.html" title="User hub/fr">Hub utilisateurs</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b><a href="../fr/Getting_started.html" title="Getting started/fr">D&eacute;marrer avec FreeCAD</a></b></li>
+<li><b>Installation&nbsp;:</b> <a href="../fr/Download.html" title="Download/fr">T&eacute;l&eacute;chargements</a>, <a href="../fr/Installing_on_Windows.html" title="Installing on Windows/fr">Windows</a>, <a href="../fr/Installing_on_Linux.html" title="Installing on Linux/fr">Linux</a>, <a href="../fr/Installing_on_Mac.html" title="Installing on Mac/fr">Mac</a>, <a href="../fr/Installing_additional_components.html" title="Installing additional components/fr">Logiciels suppl&eacute;mentaires</a>, <a href="../fr/Compile_on_Docker.html" title="Compile on Docker/fr">Docker</a>, <a href="../fr/AppImage.html" title="AppImage/fr">AppImage</a>, <a href="../fr/Ubuntu_Snap.html" title="Ubuntu Snap/fr">Ubuntu Snap</a></li>
+<li><b>Bases&nbsp;:</b> <a href="../fr/About_FreeCAD.html" title="About FreeCAD/fr">&Agrave; propos de FreeCAD</a>, <a href="../fr/Interface.html" title="Interface/fr">Interface</a>, <a href="../fr/Mouse_navigation.html" title="Mouse navigation/fr">Navigation par la souris</a>, <a href="../fr/Selection_methods.html" title="Selection methods/fr">M&eacute;thodes de s&eacute;lection</a>, <a href="../fr/Object_name.html" title="Object name/fr">Objet name</a>, <a href="../fr/Preferences_Editor.html" title="Preferences Editor/fr">Pr&eacute;f&eacute;rences</a>, <a href="../fr/Workbenches.html" title="Workbenches/fr">Ateliers</a>, <a href="../fr/Document_structure.html" title="Document structure/fr">Structure du document</a>, <a href="../fr/Property.html" title="Property/fr">Propri&eacute;t&eacute;s</a>, <a href="../fr/Help_FreeCAD.html" title="Help FreeCAD/fr">Contribuer &agrave; FreeCAD</a>, <a href="../fr/Donate.html" title="Donate/fr">Faire un don</a></li></ul>
+<hr>
+<ul><li><b>Aide&nbsp;:</b> <a href="../fr/Tutorials.html" title="Tutorials/fr">Tutoriels</a>, <a href="../fr/Video_tutorials.html" title="Video tutorials/fr">Tutoriels vid&eacute;o</a></li>
+<li><b><a href="../fr/Workbenches.html" title="Workbenches/fr">Ateliers</a>&nbsp;:</b> <a href="../fr/Std_Base.html" title="Std Base/fr">Std Base</a>, <a href="../fr/Assembly_Workbench.html" title="Assembly Workbench/fr">Assembly</a>, <a href="../fr/BIM_Workbench.html" title="BIM Workbench/fr">BIM</a>, <a href="../fr/CAM_Workbench.html" title="CAM Workbench/fr">CAM</a>, <a href="../fr/Draft_Workbench.html" title="Draft Workbench/fr">Draft</a>, <a href="../fr/FEM_Workbench.html" title="FEM Workbench/fr">FEM</a>, <a href="../fr/Inspection_Workbench.html" title="Inspection Workbench/fr">Inspection</a>, <a href="../fr/Material_Workbench.html" title="Material Workbench/fr">Material</a>, <a href="../fr/Mesh_Workbench.html" title="Mesh Workbench/fr">Mesh</a>, <a href="../fr/OpenSCAD_Workbench.html" title="OpenSCAD Workbench/fr">OpenSCAD</a>, <a href="../fr/Part_Workbench.html" title="Part Workbench/fr">Part</a>, <a href="../fr/PartDesign_Workbench.html" title="PartDesign Workbench/fr">PartDesign</a>, <a href="../fr/Points_Workbench.html" title="Points Workbench/fr">Points</a>, <a href="../fr/Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/fr">Reverse Engineering</a>, <a href="../fr/Robot_Workbench.html" title="Robot Workbench/fr">Robot</a>, <a href="../fr/Sketcher_Workbench.html" title="Sketcher Workbench/fr">Sketcher</a>, <a href="../fr/Spreadsheet_Workbench.html" title="Spreadsheet Workbench/fr">Spreadsheet</a>, <a href="../fr/Surface_Workbench.html" title="Surface Workbench/fr">Surface</a>, <a href="../fr/TechDraw_Workbench.html" title="TechDraw Workbench/fr">TechDraw</a>, <a href="../fr/Testing.html" title="Testing/fr">Test</a></li></ul>
+<hr>
+<ul><li><b><a href="../fr/Addon.html" title="Addon/fr">Addons</a>&nbsp;:</b> <a href="../fr/Std_AddonMgr.html" title="Std AddonMgr/fr">Gestionnaire des extensions</a>, <a href="../fr/External_workbenches.html" title="External workbenches/fr">Ateliers externes</a>, <a href="../fr/Scripting_and_macros.html" title="Scripting and macros/fr">Scripts et macros</a></li></ul>
+<hr>
+<ul><li><b>Hubs&nbsp;:</b> <a href="../fr/User_hub.html" title="User hub/fr">Hub utilisateurs</a>, <a href="../fr/Power_users_hub.html" title="Power users hub/fr">Hub utilisateurs exp&eacute;riment&eacute;s</a>, <a href="../fr/Developer_hub.html" title="Developer hub/fr">Hub D&eacute;veloppeurs</a></li></ul></div>
+    </div></div>
+<!-- 
+NewPP limit report
+Cached time: 20260711090812
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show&#8208;toc]
+CPU time usage: 0.066 seconds
+Real time usage: 0.207 seconds
+Preprocessor visited node count: 331/1000000
+Post&#8208;expand include size: 7161/2097152 bytes
+Template argument size: 4893/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 10/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 15056/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   23.107      1 -total
+ 36.41%    8.414      1 Template:Userdocnavi/fr
+ 34.04%    7.866     10 Template:Code
+ 22.69%    5.242      1 Template:Navigation_menu_2
+ 17.39%    4.018     12 Template:Incode
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:432528-0!canonical and timestamp 20260711090812 and revision id 1828966. Rendering was triggered because: edit-page
+ -->
+</div>
+</div><script src="../site.js"></script>
