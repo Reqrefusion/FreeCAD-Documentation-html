@@ -9,7 +9,7 @@
 <table class="fcinfobox wikitable ct" width="100%" style="float: right; width: 230px; margin-left: 10px;">
 <tbody><tr>
 <td class="ctTitle" style="font-weight: bold; font-size: 125%;">
-<p><span typeof="mw:File"><a href="../index.php?title=Text-x-python.png&amp;filetimestamp=20121224162851&amp;.html" class="mw-file-description" title="Generic macro icon. Create your personal icon with the same name of the macro"><img alt="Generic macro icon. Create your personal icon with the same name of the macro" src="../File/Text-x-python.png" decoding="async" width="32" height="32" class="mw-file-element" data-file-width="48" data-file-height="48"></a></span><span> </span>
+<p><span typeof="mw:File"><a href="../index.php?title=Text-x-python.png&amp;filetimestamp=20121224162851&amp;.html" class="mw-file-description" title="Generic macro icon. Create your personal icon with the same name of the macro"><img alt="Generic macro icon. Create your personal icon with the same name of the macro" src="../File/Text-x-python.png" decoding="async" width="32" height="32" class="mw-file-element"></a></span><span> </span>
 FreeCAD Manual Converter
 </p>
 </td></tr>
@@ -35,7 +35,7 @@ FreeCAD Manual Converter
 <th class="ctOdd">Links
 </th></tr>
 <tr>
-<td class="ctEven macro-Links"><a href="../Macros_recipes.html" title="Macros recipes">Macros recipes</a><br><a href="../How_to_install_macros.html" title="How to install macros">How to install macros</a><br><a href="../Customize_Toolbars.html" title="Customize Toolbars">How to customize toolbars</a>
+<td class="ctEven macro-Links"><a href="../Macros_recipes.html" title="Macros recipes">Macros recipes</a><br><a href="../How_to_install_macros.html" title="How to install macros">How to install macros</a>
 </td></tr>
 <tr>
 <th class="ctOdd">Macro Version
@@ -160,8 +160,9 @@ class FreeCADManualConverter:
     def __init__(self):
         self.session = requests.Session()
         self.session.headers.update({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+             "User-Agent": ("FreeCAD Manual Converter/1.0 " "(MediaWiki API client)" )
         })
+        self.api_url = "https://wiki.freecad.org/api.php"
         self.toc_entries = []  # Store chapter titles, subchapters, and hierarchy
         self.chapters_html = []  # Store HTML content for EPUB creation
         self.image_cache = {}  # Cache for deduplicating images
@@ -197,64 +198,128 @@ class FreeCADManualConverter:
         })
         self.toc_entries = []  # Store chapter titles, subchapters, and hierarchy
         self.chapters_html = []  # Store HTML content for EPUB creation
-
-    def extract_manual_links(self, base_url="https://wiki.freecad.org/Manual"):
-        """Extract all manual links and subchapters from the main Manual page."""
-        print(f"Fetching manual links from {base_url}...")
-        html_content = self.fetch_page(base_url)
-        if not html_content:
-            return []
-
-        soup = BeautifulSoup(html_content, 'html.parser')
+    
+    def extract_manual_links(self):
         links = {}
-        seen = set()
+        url = "https://wiki.freecad.org/Manual:Introduction"
+        visited = set()
 
-        # Define unwanted languages
-        excluded_languages = ['fr', 'de', 'es', 'hr', 'it', 'ko', 'pl', 'pt', 'ro', 'ru', 'zh']
+        while url and url not in visited:
+            visited.add(url)
+            links[url] = []
+            page = self.fetch_page(url)
+            url = self.find_next_page(
+                page["html"]
+            )
+            print(f"Next page: {url}") 
 
-        for a_tag in soup.find_all('a', href=True):
-            href = a_tag['href']
-            if any(f"/{lang}" in href for lang in excluded_languages):
-                continue
-
-            if href.startswith('/Manual:'):
-                full_url = f"https://wiki.freecad.org{href}"
-                base_chapter = full_url.split('#')[0]
-                subchapter = full_url.split('#')[1] if '#' in full_url else None
-
-                if base_chapter not in seen:
-                    links[base_chapter] = []
-                    seen.add(base_chapter)
-
-                if subchapter:
-                    links[base_chapter].append(subchapter)
-
-        print(f"Found {len(links)} unique manual links with subchapters.")
         return links
 
     def fetch_page(self, url):
-        """Fetch the HTML content of a given URL."""
-        if url.startswith('/'):
-            url = f"https://wiki.freecad.org{url}"
+        """
+        Fetch rendered HTML through the MediaWiki API.
+        """
+
+        if url.startswith("https://wiki.freecad.org/"):
+            title = url.replace(
+                "https://wiki.freecad.org/",
+                ""
+            )
+        else:
+            title = url
+
+        params = {
+            "action": "parse",
+            "page": title,
+            "prop": "text",
+            "format": "json",
+            "formatversion": "2"
+        }
 
         try:
-            response = self.session.get(url)
-            if response.status_code&nbsp;!= 200:
-                print(f"Failed to fetch {url}. HTTP status code: {response.status_code}")
+            response = self.session.get(
+                self.api_url,
+                params=params,
+                timeout=30
+            )
+
+            response.raise_for_status()
+
+            data = response.json()
+
+            if "error" in data:
+                print(data["error"])
                 return None
-            return response.text
+        
+            parsed_title = data["parse"]["title"]
+            html = data["parse"]["text"]
+
+            # Check if this is a redirect page
+            soup = BeautifulSoup(html, "html.parser")
+
+            redirect = soup.find("div", class_="redirectMsg")
+
+            if redirect:
+                link = redirect.find("a", href=True)
+
+                if link:
+                    new_title = link["href"].replace("/Manual:", "Manual:")
+
+                    print(f"Redirect found: {title} -&gt; {new_title}")
+
+                    return self.fetch_page(
+                        "https://wiki.freecad.org/" + new_title
+                    )
+
+            return {
+                "title": parsed_title,
+                "html": html
+            }
+
         except Exception as e:
-            print(f"Error fetching {url}: {e}")
+            print(f"Error fetching {title}: {e}")
             return None
+        
+    def find_next_page(self, html):  
+        soup = BeautifulSoup(html, "html.parser")
+        nav = soup.find("div", class_="docnav")
+
+        if nav is None:
+            print("DOCNAV NOT FOUND")
+            return None
+
+        links = []
+
+        for a in nav.find_all("a", href=True):
+            href = a["href"]
+
+            if href.startswith("/Manual:") and a.get_text(strip=True)&nbsp;!= "Manual start":
+                links.append(href)
+
+        if len(links) == 0:
+            return None
+
+        # On a normal page:
+        # links[0] = previous
+        # links[1] = next
+        #
+        # On the start page:
+        # links[0] = next
+
+        if len(links) == 1:
+            return "https://wiki.freecad.org" + links[0]
+
+        return "https://wiki.freecad.org" + links[1]
 
     def extract_main_content(self, html_content, base_url, chapter_title, chapter_id, subchapters):
         """Extract content within the 'mw-parser-output' div, fix links, and process image paths."""
         soup = BeautifulSoup(html_content, 'html.parser')
 
         # Remove unwanted elements
-        for class_name in ['mw-pt-languages noprint', 'docnav', 'NavFrame', 'manualtoc']:
-            for element in soup.find_all(class_=class_name):
-                element.decompose()
+        for element in soup.select(
+            ".mw-pt-languages, .docnav, .NavFrame, .manualtoc, .mw-editsection"
+        ):
+            element.decompose()
 
         main_content = soup.find('div', class_='mw-parser-output')
         if not main_content:
@@ -311,13 +376,12 @@ class FreeCADManualConverter:
         print(f"Processing {url}...")
         os.makedirs(output_dir, exist_ok=True)
 
-        html_content = self.fetch_page(url)
-        if not html_content:
+        page_data = self.fetch_page(url)
+        if not page_data:
             return None
+        html_content = page_data["html"]
 
-        soup = BeautifulSoup(html_content, 'html.parser')
-        chapter_title = soup.title.string.split(" - ")[0] if soup.title else "Chapter"
-        chapter_title = chapter_title.replace("Manual:", "").strip()
+        chapter_title = page_data["title"].replace("Manual:", "").strip()
 
         base_url = "https://wiki.freecad.org"
         main_content = self.extract_main_content(html_content, base_url, chapter_title, chapter_id, subchapters)
@@ -619,7 +683,18 @@ class FreeCADManualConverter:
         # First create PDF as before
         pdf_files = []
         for chapter_number, (chapter_url, subchapters) in enumerate(links.items(), start=1):
-            chapter_id = re.sub(r'[&lt;&gt;:"/\\?*]', '_', chapter_url.split('/')[-1])
+            
+            chapter_title = chapter_url.replace(
+                "https://wiki.freecad.org/",
+                ""
+            )
+
+            chapter_id = re.sub(
+                r'[&lt;&gt;:"/\\?*]',
+                '_',
+                chapter_title
+            )
+
             pdf_file = self.convert_to_pdf(chapter_url, chapter_number, chapter_id, subchapters, output_dir)
             if pdf_file:
                 pdf_files.append(pdf_file)
@@ -650,29 +725,29 @@ if __name__ == "__main__":
 </pre>
 <!-- 
 NewPP limit report
-Cached time: 20260310081647
+Cached time: 20260719105956
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.037 seconds
-Real time usage: 0.063 seconds
+CPU time usage: 0.033 seconds
+Real time usage: 0.046 seconds
 Preprocessor visited node count: 155/1000000
-Post&#8208;expand include size: 2446/2097152 bytes
+Post&#8208;expand include size: 2393/2097152 bytes
 Template argument size: 631/2097152 bytes
 Highest expansion depth: 7/100
 Expensive parser function count: 5/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 21642/5000000 bytes
+Unstrip post&#8208;expand size: 22791/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   15.258      1 -total
- 45.23%    6.901      1 Template:Macro
- 27.55%    4.203      3 Template:Code
- 24.81%    3.785      1 Template:MacroCode
+100.00%    7.012      1 -total
+ 44.75%    3.138      1 Template:Macro
+ 29.49%    2.068      3 Template:Code
+ 20.96%    1.470      1 Template:MacroCode
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:418445-0!canonical and timestamp 20260310081646 and revision id 1764213. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:418445-0!canonical and timestamp 20260719105956 and revision id 1831134. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="../site.js"></script>
