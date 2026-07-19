@@ -1,10 +1,12 @@
-<link href="site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">OCCT DRAW</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><meta property="mw:PageProp/toc">
+<link href="site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">OCCT DRAW</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><p><br>
+</p>
+<meta property="mw:PageProp/toc">
 <h2><span class="mw-headline" id="Overview">Overview</span></h2>
 <p>This page is a cheat heet for the OpenCASCADE Draw tool.  Important links:
 </p>
 <ul><li><a href="#Cheat_Sheet">The cheat sheet</a></li>
 <li>The <a rel="nofollow" class="external text" href="https://dev.opencascade.org/doc/overview/html/occt_user_guides__test_harness.html">OpenCASCADE Draw user guide</a></li>
-<li>Background information</li></ul>
+<li><a href="#Background_Information">Background Information</a></li></ul>
 <h3><span class="mw-headline" id="Cheat_Sheet">Cheat Sheet</span></h3>
 <h4><span class="mw-headline" id="Initialization">Initialization</span></h4>
 <p>Load all modules:
@@ -93,30 +95,88 @@
 </p>
 <div class="mw-highlight mw-highlight-lang-tcl mw-content-ltr" dir="ltr"><pre><span></span><span class="nv">box</span><span class="w"> </span>b<span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="mi">3</span>
 </pre></div>
+<h3><span class="mw-headline" id="Background_Information">Background Information</span></h3>
+<h4><span class="mw-headline" id="Installation">Installation</span></h4>
+<p>The Draw program is typically installed together with your OpenCASCADE distribution.  On Linux, you can typically find the program in your path under <code>DRAWEXE</code>.
+</p><p>If you followed <a href="Compile_with_OCCT.html" title="Compile with OCCT">Compile with OCCT</a>, you can find the Draw tool of the custom version in your distribution directory, in the <code>bin</code> directory of your distribution.
+</p><p>To make sure that I load an OCCT Draw from a particular distribution, I have the following function in my <code>$HOME/.bashrc</code>:
+</p>
+<div class="mw-highlight mw-highlight-lang-tcl mw-content-ltr" dir="ltr"><pre><span></span><span class="nv">function</span><span class="w"> </span>set-occt<span class="k">()</span><span class="w"> </span><span class="k">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="k">[</span><span class="w"> </span><span class="nv">-z</span><span class="w"> </span><span class="s2">"$1"</span><span class="w"> </span><span class="k">];</span><span class="w"> </span><span class="k">then</span>
+<span class="w">	</span><span class="nv">echo</span><span class="w"> </span><span class="s2">"Usage: set-occt &lt;dir&gt;"</span>
+<span class="w">	</span><span class="k">return</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="nv">fi</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="k">[</span><span class="w"> </span><span class="o">!</span><span class="w"> </span><span class="nv">-d</span><span class="w"> </span><span class="s2">"$1"</span><span class="w"> </span><span class="k">];</span><span class="w"> </span><span class="k">then</span>
+<span class="w">	</span><span class="nv">echo</span><span class="w"> </span><span class="s2">"Error: Directory $1 does not exist"</span>
+<span class="w">	</span><span class="k">return</span><span class="w"> </span><span class="mi">1</span>
+<span class="w">    </span><span class="nv">fi</span>
+<span class="w">    </span><span class="nv">pushd</span><span class="w"> </span><span class="s2">"$1"</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span>dev<span class="o">/</span>null
+<span class="w">    </span><span class="nv">export</span><span class="w"> </span>CASROOT<span class="err">=</span>
+<span class="w">    </span><span class="nv">export</span><span class="w"> </span>CSF_OCCTResourcePath<span class="err">=</span><span class="nv">$PWD</span><span class="o">/</span>share<span class="o">/</span>opencascade<span class="o">/</span>resources
+<span class="w">    </span><span class="nv">export</span><span class="w"> </span>LD_LIBRARY_PATH<span class="err">=</span><span class="nv">$PWD</span><span class="o">/</span>lib:<span class="nv">$LD_LIBRARY_PATH</span>
+<span class="w">    </span><span class="nv">export</span><span class="w"> </span>PATH<span class="err">=</span><span class="nv">$PWD</span><span class="o">/</span>bin:<span class="nv">$PATH</span>
+<span class="w">    </span><span class="nb">source</span><span class="w"> </span>.<span class="o">/</span>bin<span class="o">/</span>env.sh
+<span class="w">    </span><span class="nv">popd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">/</span>dev<span class="o">/</span>null
+<span class="k">}</span>
+</pre></div>
+<p>Suppose I want to make use of the OCCT version that is in the following installation directory <code>/scratch/dist-occt-main</code>, I execute the following in my bash shell:
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>set-occt<span class="w"> </span>/scratch/dist-occt-main
+</pre></div>
+<p>I verify whether the correct Draw program is really in my path:
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>which<span class="w"> </span>DRAWEXE
+</pre></div>
+<p>This should print:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">/</span><span class="n">scratch</span><span class="o">/</span><span class="n">dist</span><span class="o">-</span><span class="n">occt</span><span class="o">-</span><span class="n">main</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">DRAWEXE</span>
+</pre></div>
+<p>You can verify the version number with:
+</p>
+<div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>DRAWEXE<span class="w"> </span>--help
+</pre></div>
+<p><br>
+</p>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="index.php?title=User_hub.png&amp;filetimestamp=20190221145008&amp;.html" class="mw-file-description"><img src="File/User_hub.png" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="User_hub.html" title="User hub">User documentation</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b><a href="Getting_started.html" title="Getting started">Getting started</a></b></li>
+<li><b>Installation:</b> <a href="Download.html" title="Download">Download</a>, <a href="Installing_on_Windows.html" title="Installing on Windows">Windows</a>, <a href="Installing_on_Linux.html" title="Installing on Linux">Linux</a>, <a href="Installing_on_Mac.html" title="Installing on Mac">Mac</a>, <a href="Installing_additional_components.html" title="Installing additional components">Additional components</a>, <a href="Compile_on_Docker.html" title="Compile on Docker">Docker</a>, <a href="AppImage.html" title="AppImage">AppImage</a>, <a href="Ubuntu_Snap.html" title="Ubuntu Snap">Ubuntu Snap</a></li>
+<li><b>Basics:</b> <a href="About_FreeCAD.html" title="About FreeCAD">About FreeCAD</a>, <a href="Interface.html" title="Interface">Interface</a>, <a href="Mouse_navigation.html" title="Mouse navigation">Mouse navigation</a>, <a href="Selection_methods.html" title="Selection methods">Selection methods</a>, <a href="Object_name.html" title="Object name">Object name</a>, <a href="Preferences_Editor.html" title="Preferences Editor">Preferences</a>, <a href="Workbenches.html" title="Workbenches">Workbenches</a>, <a href="Document_structure.html" title="Document structure">Document structure</a>, <a href="Property.html" title="Property">Properties</a>, <a href="Help_FreeCAD.html" title="Help FreeCAD">Help FreeCAD</a>, <a href="Donate.html" title="Donate">Donate</a></li></ul>
+<hr>
+<ul><li><b>Help:</b> <a href="Tutorials.html" title="Tutorials">Tutorials</a>, <a href="Video_tutorials.html" title="Video tutorials">Video tutorials</a></li>
+<li><b><a href="Workbenches.html" title="Workbenches">Workbenches</a>:</b> <a href="Std_Base.html" title="Std Base">Std Base</a>, <a href="Assembly_Workbench.html" title="Assembly Workbench">Assembly</a>, <a href="BIM_Workbench.html" title="BIM Workbench">BIM</a>, <a href="CAM_Workbench.html" title="CAM Workbench">CAM</a>, <a href="Draft_Workbench.html" title="Draft Workbench">Draft</a>, <a href="FEM_Workbench.html" title="FEM Workbench">FEM</a>, <a href="Inspection_Workbench.html" title="Inspection Workbench">Inspection</a>, <a href="Material_Workbench.html" title="Material Workbench">Material</a>, <a href="Mesh_Workbench.html" title="Mesh Workbench">Mesh</a>, <a href="OpenSCAD_Workbench.html" title="OpenSCAD Workbench">OpenSCAD</a>, <a href="Part_Workbench.html" title="Part Workbench">Part</a>, <a href="PartDesign_Workbench.html" title="PartDesign Workbench">PartDesign</a>, <a href="Points_Workbench.html" title="Points Workbench">Points</a>, <a href="Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench">Reverse Engineering</a>, <a href="Robot_Workbench.html" title="Robot Workbench">Robot</a>, <a href="Sketcher_Workbench.html" title="Sketcher Workbench">Sketcher</a>, <a href="Spreadsheet_Workbench.html" title="Spreadsheet Workbench">Spreadsheet</a>, <a href="Surface_Workbench.html" title="Surface Workbench">Surface</a>, <a href="TechDraw_Workbench.html" title="TechDraw Workbench">TechDraw</a>, <a href="Testing.html" title="Testing">Test Framework</a></li></ul>
+<hr>
+<ul><li><b><a href="Addon.html" title="Addon">Addons</a>:</b> <a href="Std_AddonMgr.html" title="Std AddonMgr">Addon Manager</a>, <a href="External_workbenches.html" title="External workbenches">External workbenches</a>, <a href="Scripting_and_macros.html" title="Scripting and macros">Scripting and macros</a></li></ul>
+<hr>
+<ul><li><b>Hubs:</b> <a href="User_hub.html" title="User hub">User hub</a>, <a href="Power_users_hub.html" title="Power users hub">Power users hub</a>, <a href="Developer_hub.html" title="Developer hub">Developer hub</a></li></ul></div>
+    </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260719103115
+Cached time: 20260719110715
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.026 seconds
-Real time usage: 0.028 seconds
-Preprocessor visited node count: 353/1000000
-Post&#8208;expand include size: 1731/2097152 bytes
-Template argument size: 549/2097152 bytes
-Highest expansion depth: 4/100
-Expensive parser function count: 17/100
+CPU time usage: 0.046 seconds
+Real time usage: 0.059 seconds
+Preprocessor visited node count: 511/1000000
+Post&#8208;expand include size: 7444/2097152 bytes
+Template argument size: 2879/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 22/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 5029/5000000 bytes
+Unstrip post&#8208;expand size: 9031/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   12.444      1 -total
- 63.16%    7.860     17 Template:Code
- 16.64%    2.070     15 Template:Incode
+100.00%   18.825      1 -total
+ 46.55%    8.763     22 Template:Code
+ 25.21%    4.746      1 Template:Userdocnavi
+ 16.57%    3.119      1 Template:Navigation_menu_2
+ 11.22%    2.113     19 Template:Incode
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:432850-0!canonical and timestamp 20260719103119 and revision id 1830998. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:432850-0!canonical and timestamp 20260719110716 and revision id 1831140. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
