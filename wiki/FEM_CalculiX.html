@@ -2,10 +2,10 @@
 <li><a href="de/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--complete" title="FEM CalculiX (100% translated)" lang="de" dir="ltr">Deutsch</a></li>
 <li><span class="mw-pt-languages-ui mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="en" dir="ltr">English</span></li>
 <li><a href="fr/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--complete" title="FEM CalculiX (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
-<li><a href="it/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--med" title="FEM CalculiX (21% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="it/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--med" title="FEM CalculiX (17% translated)" lang="it" dir="ltr">italiano</a></li>
 <li><a href="pl/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--complete" title="MES: CalculiX (100% translated)" lang="pl" dir="ltr">polski</a></li>
 <li><a href="ro/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--low" title="FEM CalculiX (4% translated)" lang="ro" dir="ltr">rom&acirc;n&#259;</a></li>
-<li><a href="ru/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--med" title="FEM CalculiX (17% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li></ul></div>
+<li><a href="ru/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--low" title="FEM CalculiX (12% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li></ul></div>
 <div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
 <h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
 <p>This page collects information on the <a rel="nofollow" class="external text" href="http://www.calculix.de/">CalculiX</a> finite element solver, the default solver in the <span typeof="mw:File"><a href="index.php?title=Workbench_FEM.svg&amp;filetimestamp=20240405093343&amp;.html" class="mw-file-description"><img src="File/Workbench_FEM.svg" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="FEM_Workbench.html" title="FEM Workbench">FEM Workbench</a> for structural and thermo-mechanical analysis. Depending on the operating system you are working with, you'll need to install CalculiX before running your first simulation. Please see <a href="FEM_Install.html" title="FEM Install">FEM Install</a>.
@@ -56,15 +56,17 @@
 <ul><li>Linear elastic isotropic materials (uniform properties in all directions)</li>
 <li>Plasticity with isotropic or kinematic hardening</li></ul>
 <h2><span class="mw-headline" id="Postprocessing_interface">Postprocessing interface</span></h2>
-<p>The FEM Workbench loads CalculiX results into a <a href="FEM_ResultShow.html" title="FEM ResultShow">result object</a> which will contain:
+<p>The legacy CalculiX implementation (SolverCcxTools object created if the Result object preference is disabled) in the FEM workbench loads the results into <a href="FEM_ResultShow.html" title="FEM ResultShow">result objects</a> which will contain:
 </p>
-<ul><li>Displacements</li>
-<li>Stresses</li>
-<li>Strains</li>
-<li>Equivalent plastic strain (PEEQ) &ndash; if nonlinear material was used</li>
-<li>Temperature &ndash; for thermomechanical analysis</li></ul>
-<p>FreeCAD reads results from <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">*.frd</span> file which was created by CalculiX. If these results contain multiple time steps, each time step is imported to FreeCAD as a new result object. Same behavior applies for Frequency or Buckling analysis with multiple eigenvalues.
-</p><p>Reaction forces can be found in <i>ccx_dat_file</i> which contains reaction force components (fx, fy, fz) for each fixed boundary condition and for each displacement boundary condition which constrains translation degrees of freedom.
+<ul><li>Displacements (components and magnitude)</li>
+<li>Stresses: max/min principal, von Mises, max shear (Tresca)</li>
+<li>Equivalent plastic strain &ndash; if nonlinear material was used</li>
+<li>Temperature &ndash; for thermomechanical analysis</li>
+<li>Mass flow rate and network pressure - for 1D fluid networks</li></ul>
+<p>These objects show color maps without legend, but minimum and maximum values can be read from the task panel. Units shown there are adjusted based on the values (e.g. GPa for large stresses, mm for small displacements and so on). FreeCAD reads the results from the <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">*.frd</span> file which was created by CalculiX. If these results contain multiple time steps, each time step is imported to FreeCAD as a new result object. Same behavior applies for Frequency or Buckling analysis with multiple eigenvalues.
+</p><p>The legacy CalculiX implementation also creates a multi-frame Pipeline_CCX_Results object. The units there are currently inconsistent - the input SI(mm) system is used for most outputs apart from displacements (meters) and stresses (Pascals). So, for example, heat flux units are mW/mm^2.
+</p><p>The refactored CalculiX implementation (SolverCalculiX object created if the Result object preference is enabled) creates only a multi-frame Pipeline_CCX_Results object. The units there are consistent with input SI(mm) units so displacements are in mm, stresses in MPa, heat flux in mW/mm^2 and so on.
+</p><p>Reaction forces can be found in <i>ccx_dat_file</i> which contains reaction force components (fx, fy, fz) for each fixed boundary condition and for each displacement boundary condition which constrains translation degrees of freedom. Displacements, reaction forces and moments are also printed there for degrees of freedom constrained at rigid body constraint reference nodes.
 </p>
 <h2><span class="mw-headline" id="Related">Related</span></h2>
 <ul><li><a href="FEM_Mesh_CalculiX.html" title="FEM Mesh CalculiX">FEM Mesh CalculiX</a></li>
@@ -94,12 +96,12 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260416092524
+Cached time: 20260721125719
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.057 seconds
-Real time usage: 0.110 seconds
+CPU time usage: 0.094 seconds
+Real time usage: 0.191 seconds
 Preprocessor visited node count: 190/1000000
 Post&#8208;expand include size: 11556/2097152 bytes
 Template argument size: 4836/2097152 bytes
@@ -110,15 +112,15 @@ Unstrip post&#8208;expand size: 1436/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   17.215      1 -total
- 48.96%    8.428      1 Template:FEM_Tools_navi
- 26.79%    4.612      1 Template:Navigation_menu_2
- 16.36%    2.817      1 Template:FileName
- 15.23%    2.622      1 Template:Incode
- 15.14%    2.606      1 Template:TOCright
+100.00%   29.290      1 -total
+ 48.57%   14.226      1 Template:FEM_Tools_navi
+ 19.27%    5.644      1 Template:FileName
+ 17.84%    5.224      1 Template:TOCright
+ 13.57%    3.974      1 Template:Navigation_menu_2
+ 12.53%    3.669      1 Template:Incode
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:60567-0!canonical and timestamp 20260416092523 and revision id 1783259. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:60567-0!canonical and timestamp 20260721125730 and revision id 1831956. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
