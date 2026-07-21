@@ -1,10 +1,10 @@
 <link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">FEM CalculiX/ru</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="ru" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-FEM+CalculiX&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
-<li><a href="../de/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--high" title="FEM CalculiX (75% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="../de/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--med" title="FEM CalculiX (67% translated)" lang="de" dir="ltr">Deutsch</a></li>
 <li><a href="../FEM_CalculiX.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="FEM CalculiX (100% translated)" lang="en" dir="ltr">English</a></li>
-<li><a href="../fr/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--high" title="FEM CalculiX (75% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
-<li><a href="../it/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--med" title="FEM CalculiX (17% translated)" lang="it" dir="ltr">italiano</a></li>
-<li><a href="../pl/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--high" title="MES: CalculiX (75% translated)" lang="pl" dir="ltr">polski</a></li>
-<li><a href="../ro/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--low" title="FEM CalculiX (4% translated)" lang="ro" dir="ltr">rom&acirc;n&#259;</a></li>
+<li><a href="../fr/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--med" title="FEM CalculiX (67% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../it/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--low" title="FEM CalculiX (13% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="../pl/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--med" title="MES: CalculiX (67% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../ro/FEM_CalculiX.html" class="mw-pt-progress mw-pt-progress--low" title="FEM CalculiX (3% translated)" lang="ro" dir="ltr">rom&acirc;n&#259;</a></li>
 <li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--low" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</span></li></ul></div>
 <div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
 <h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
@@ -28,9 +28,10 @@
 <li>force: N,</li>
 <li>mass: tonne,</li>
 <li>time: s,</li>
-<li>stress: MPa,</li>
+<li>pressure: MPa,</li>
 <li>energy: mJ,</li>
-<li>density: tonne/mm^3.</li></ul>
+<li>density: tonne/mm^3,</li>
+<li>temperature: K.</li></ul>
 <p>The CalculiX interface supports the following objects:
 </p><p><span id="Finite_elements"></span>
 </p>
@@ -55,22 +56,61 @@
 <li>Frequency analysis</li>
 <li>Linear buckling analysis</li>
 <li>Coupled and uncoupled thermal-structural analysis, pure heat transfer analysis</li>
-<li>Electrostatic analysis</li></ul>
+<li>Electrostatic analysis - only refactored CalculiX solver implementation</li></ul>
 <p><span id="Materials"></span>
 </p>
 <h3><span id=".D0.9C.D0.B0.D1.82.D0.B5.D1.80.D0.B8.D0.B0.D0.BB.D1.8B"></span><span class="mw-headline" id="&#1052;&#1072;&#1090;&#1077;&#1088;&#1080;&#1072;&#1083;&#1099;">&#1052;&#1072;&#1090;&#1077;&#1088;&#1080;&#1072;&#1083;&#1099;</span></h3>
 <ul><li>Linear elastic isotropic materials (uniform properties in all directions)</li>
 <li>Plasticity with isotropic or kinematic hardening</li></ul>
 <h2><span class="mw-headline" id="Postprocessing_interface">Postprocessing interface</span></h2>
-<p>The FEM Workbench loads CalculiX results into a <a href="../FEM_ResultShow.html" title="FEM ResultShow">result object</a> which will contain:
+<p>The legacy CalculiX implementation (SolverCcxTools object created if the Result object preference is disabled) in the FEM workbench loads the results into "CCX_Results" <a href="../FEM_ResultShow.html" title="FEM ResultShow">legacy result objects</a> which will contain:
 </p>
-<ul><li>Displacements</li>
-<li>Stresses</li>
-<li>Strains</li>
-<li>Equivalent plastic strain (PEEQ) &ndash; if nonlinear material was used</li>
-<li>Temperature &ndash; for thermomechanical analysis</li></ul>
-<p>FreeCAD reads results from <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">*.frd</span> file which was created by CalculiX. If these results contain multiple time steps, each time step is imported to FreeCAD as a new result object. Same behavior applies for Frequency or Buckling analysis with multiple eigenvalues.
-</p><p>Reaction forces can be found in <i>ccx_dat_file</i> which contains reaction force components (fx, fy, fz) for each fixed boundary condition and for each displacement boundary condition which constrains translation degrees of freedom.
+<ul><li>Displacements (components and magnitude)</li>
+<li>Stresses: max/min principal, von Mises, max shear (Tresca)</li>
+<li>Equivalent plastic strain &ndash; if nonlinear material was used</li>
+<li>Temperature &ndash; for thermomechanical analysis</li>
+<li>Mass flow rate and network pressure - for 1D fluid networks</li></ul>
+<p>These objects show color maps without legend, but minimum and maximum values can be read from the task panel. Units shown there are adjusted based on the values (e.g. GPa for large stresses, mm for small displacements and so on). FreeCAD reads the results from the <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">*.frd</span> file which was created by CalculiX. If these results contain multiple time steps, each time step is imported to FreeCAD as a new result object. The same behavior applies for Frequency or Buckling analysis with multiple eigenvalues. Each result object contains the mode number or buckling factor value in its name and the Eigenmode Frequency shows the corresponding natural frequency.
+</p><p>The legacy CalculiX implementation also creates a multi-frame "Pipeline_CCX_Results" <a href="../FEM_PostPipelineFromResult.html" title="FEM PostPipelineFromResult">results pipeline object</a>. The units there are currently inconsistent - the input SI(mm) system is used for most outputs apart from displacements (meters) and stresses (Pascals). So, for example, heat flux units are mW/mm^2.
+</p><p>Results available in the legacy CalculiX solver's pipeline object are:
+</p>
+<ul><li>Displacement</li>
+<li>Displacement magnitude</li>
+<li>Tresca stress</li>
+<li>Strain xx, xy, xz, yy, yz and zz components</li>
+<li>Stress xx, xy, xz, yy, yz and zz components</li>
+<li>Major, intermediate and minor principal stress</li>
+<li>Von Mises stress</li>
+<li>Critical strain ratio - for analyses with nonlinear (plastic) materials</li>
+<li>Equivalent plastic strain - for analyses with nonlinear (plastic) materials</li>
+<li>Major, intermediate and minor principal stress vector - for analyses with reinforced materials</li>
+<li>MohrCoulomb - for analyses with reinforced materials</li>
+<li>Reinforcement ratio x,y,z - for analyses with reinforced materials</li>
+<li>Mass flow rate - for 1D fluid networks</li>
+<li>Network pressure - for 1D fluid networks</li>
+<li>Heat flux - for thermomechanical analyses</li>
+<li>Temperature - for thermomechanical analyses</li></ul>
+<p>The refactored CalculiX implementation (SolverCalculiX object created if the Result object preference is enabled) creates only a multi-frame "SolverCalculiXResult" <a href="../FEM_PostPipelineFromResult.html" title="FEM PostPipelineFromResult">results pipeline object</a>. The units there are consistent with input SI(mm) units so displacements are in mm, stresses in MPa, heat flux in mW/mm^2 and so on.
+</p><p>Results available in the refactored CalculiX solver's pipeline object are:
+</p>
+<ul><li>Displacement components and magnitude</li>
+<li>Stress components and magnitude</li>
+<li>Strain components and magnitude</li>
+<li>Error</li>
+<li>Major, intermediate and minor principal stress</li>
+<li>Major, intermediate and minor principal stress direction</li>
+<li>Von Mises stress</li>
+<li>Tresca stress</li>
+<li>Maximum absolute principal stress</li>
+<li>Heat flux components and magnitude - for thermomechanical analyses</li>
+<li>Temperature - for thermomechanical analyses</li>
+<li>Equivalent plastic strain - for analyses with nonlinear (plastic) materials</li>
+<li>Mass flow rate (MF) - for 1D fluid networks</li>
+<li>Network pressure (PS) - for 1D fluid networks</li>
+<li>Potential - for electrostatic analyses [mV]</li>
+<li>Electric flux density - for electrostatic analyses [C/mm^2]</li></ul>
+<p>Reaction forces can be found in <i>ccx_dat_file</i> which contains reaction force components (fx, fy, fz) for each fixed boundary condition and for each displacement boundary condition which constrains translation degrees of freedom. Displacements, reaction forces and moments are also printed there for degrees of freedom constrained at rigid body constraint reference nodes.
+</p><p>The same file contains eigenvalue output for frequency analyses and buckling factor for buckling analyses.
 </p>
 <h2><span class="mw-headline" id="Related">Related</span></h2>
 <ul><li><a href="../FEM_Mesh_CalculiX.html" title="FEM Mesh CalculiX">FEM Mesh CalculiX</a></li>
@@ -100,31 +140,31 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260416092535
+Cached time: 20260721162734
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.052 seconds
-Real time usage: 0.077 seconds
-Preprocessor visited node count: 167/1000000
+CPU time usage: 0.056 seconds
+Real time usage: 0.108 seconds
+Preprocessor visited node count: 169/1000000
 Post&#8208;expand include size: 12408/2097152 bytes
 Template argument size: 5115/2097152 bytes
 Highest expansion depth: 5/100
 Expensive parser function count: 0/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 1419/5000000 bytes
+Unstrip post&#8208;expand size: 1416/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   14.485      1 -total
- 66.72%    9.664      1 Template:FEM_Tools_navi/ru
- 34.08%    4.937      1 Template:Navigation_menu_2
- 12.33%    1.786      1 Template:TOCright
- 10.52%    1.524      1 Template:Incode
-  7.95%    1.152      1 Template:FileName
+100.00%   16.706      1 -total
+ 59.12%    9.877      1 Template:FEM_Tools_navi/ru
+ 33.92%    5.667      1 Template:Navigation_menu_2
+ 17.28%    2.887      1 Template:TOCright
+ 11.59%    1.937      1 Template:Incode
+  9.15%    1.528      1 Template:FileName
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:79959-0!canonical and timestamp 20260416092534 and revision id 1783272. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:79959-0!canonical and timestamp 20260721162734 and revision id 1831977. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="../site.js"></script>
