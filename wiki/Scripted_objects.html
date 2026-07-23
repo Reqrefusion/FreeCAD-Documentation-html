@@ -522,6 +522,177 @@
     <span class="n">ViewProviderLine</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
     <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
 </pre></div>
+<h2><span class="mw-headline" id="Part_Design_scripted_objects">Part Design scripted objects</span></h2>
+<p>When making scripted objects in PartDesign the process is similar to the scripted objects discussed above, but with a few additional considerations. We must handle 2 shape properties, one for the shape we see in the 3D view and another for the shape used by the pattern tools, such as polar pattern features. The object shapes also needs to be fused to any existing material already in the Body (or cut from it in the case of Subtractive features). And we must account for the placement and attachment of our objects a little bit differently.
+</p><p>PartDesign scripted solid object features should be based on either PartDesign::FeaturePython, PartDesign::FeatureAdditivePython, or PartDesign::FeatureSubtractivePython rather than Part::FeaturePython. Only the Additive and Subtractive variants can be used in pattern features, and if based on Part::FeaturePython when the user drops the object into a PartDesign Body it becomes a BaseFeature rather than being treated by the Body as a native PartDesign object. Note: all of these are expected to be solids, so if you are making a non-solid feature it should be based on Part::FeaturePython or else the next feature in the tree will attempt to fuse to as a solid and it will fail.
+</p><p>Here is a simple example of making a Tube primitive, similar to the Tube primitive in Part Workbench except this one will be a PartDesign solid feature object.  For this we will 2 separate files: pdtube.FCMacro and pdtube.py. The .FCMacro file will be executed by the user to create the object. The .py file will hold the class definitions, imported by the .FCMacro. The reason for doing it this way is to maintain the parametric nature of the object after restarting FreeCAD and opening a document containing one of our Tubes.
+</p><p>A single file solution is now also possible, see <a href="#Macro_based_parametric_objects">Macro based parametric objects</a>.
+</p><p>First, the class definition file:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#classes should go in pdtube.py</span>
+<span class="kn">import</span> <span class="nn">FreeCAD</span><span class="o">,</span> <span class="nn">FreeCADGui</span><span class="o">,</span> <span class="nn">Part</span>
+<span class="k">class</span> <span class="nc">PDTube</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">):</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span><span class="s2">"Radius1"</span><span class="p">,</span><span class="s2">"Tube"</span><span class="p">,</span><span class="s2">"Radius1"</span><span class="p">)</span><span class="o">.</span><span class="n">Radius1</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span><span class="s2">"Radius2"</span><span class="p">,</span><span class="s2">"Tube"</span><span class="p">,</span><span class="s2">"Radius2"</span><span class="p">)</span><span class="o">.</span><span class="n">Radius2</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span><span class="s2">"Height"</span><span class="p">,</span><span class="s2">"Tube"</span><span class="p">,</span><span class="s2">"Height of tube"</span><span class="p">)</span><span class="o">.</span><span class="n">Height</span> <span class="o">=</span> <span class="mi">10</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">makeAttachable</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">makeAttachable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Version</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">19</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">addExtension</span><span class="p">(</span><span class="s1">'Part::AttachExtensionPython'</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">addExtension</span><span class="p">(</span><span class="s1">'Part::AttachExtensionPython'</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">setEditorMode</span><span class="p">(</span><span class="s1">'Placement'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">#non-readonly non-hidden</span>
+
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fp</span><span class="p">):</span>
+        <span class="n">outer_cylinder</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">makeCylinder</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">Radius2</span><span class="p">,</span> <span class="n">fp</span><span class="o">.</span><span class="n">Height</span><span class="p">)</span>
+        <span class="n">inner_cylinder</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">makeCylinder</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">Radius1</span><span class="p">,</span> <span class="n">fp</span><span class="o">.</span><span class="n">Height</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">fp</span><span class="o">.</span><span class="n">Radius1</span> <span class="o">==</span> <span class="n">fp</span><span class="o">.</span><span class="n">Radius2</span><span class="p">:</span> <span class="c1">#just make cylinder</span>
+            <span class="n">tube_shape</span> <span class="o">=</span> <span class="n">outer_cylinder</span>
+        <span class="k">elif</span> <span class="n">fp</span><span class="o">.</span><span class="n">Radius1</span> <span class="o">&lt;</span> <span class="n">fp</span><span class="o">.</span><span class="n">Radius2</span><span class="p">:</span>
+            <span class="n">tube_shape</span> <span class="o">=</span> <span class="n">outer_cylinder</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">inner_cylinder</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1">#invert rather than error out</span>
+            <span class="n">tube_shape</span> <span class="o">=</span> <span class="n">inner_cylinder</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">outer_cylinder</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s2">"positionBySupport"</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">makeAttachable</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
+        <span class="n">fp</span><span class="o">.</span><span class="n">positionBySupport</span><span class="p">()</span>
+        <span class="n">tube_shape</span><span class="o">.</span><span class="n">Placement</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">Placement</span>
+
+        <span class="c1">#BaseFeature (shape property of type Part::PropertyPartShape) is provided for us</span>
+        <span class="c1">#with the PartDesign::FeaturePython and related classes, but it might be empty</span>
+        <span class="c1">#if our object is the first object in the tree.  it's a good idea to check</span>
+        <span class="c1">#for its existence in case we want to make type Part::FeaturePython, which won't have it</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s2">"BaseFeature"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp</span><span class="o">.</span><span class="n">BaseFeature</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"Subtractive"</span> <span class="ow">in</span> <span class="n">fp</span><span class="o">.</span><span class="n">TypeId</span><span class="p">:</span>
+                <span class="n">full_shape</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">BaseFeature</span><span class="o">.</span><span class="n">Shape</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">tube_shape</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">full_shape</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">BaseFeature</span><span class="o">.</span><span class="n">Shape</span><span class="o">.</span><span class="n">fuse</span><span class="p">(</span><span class="n">tube_shape</span><span class="p">)</span>
+            <span class="n">full_shape</span><span class="o">.</span><span class="n">transformShape</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span><span class="o">.</span><span class="n">toMatrix</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span> <span class="c1">#borrowed from gears workbench</span>
+            <span class="n">fp</span><span class="o">.</span><span class="n">Shape</span> <span class="o">=</span> <span class="n">full_shape</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fp</span><span class="o">.</span><span class="n">Shape</span> <span class="o">=</span> <span class="n">tube_shape</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span><span class="s2">"AddSubShape"</span><span class="p">):</span> <span class="c1">#PartDesign::FeatureAdditivePython and</span>
+                                      <span class="c1">#PartDesign::FeatureSubtractivePython have this</span>
+                                      <span class="c1">#property but PartDesign::FeaturePython does not</span>
+                                      <span class="c1">#It is the shape used for copying in pattern features</span>
+                                      <span class="c1">#for example in making a polar pattern</span>
+            <span class="n">tube_shape</span><span class="o">.</span><span class="n">transformShape</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span><span class="o">.</span><span class="n">toMatrix</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">fp</span><span class="o">.</span><span class="n">AddSubShape</span> <span class="o">=</span> <span class="n">tube_shape</span>
+
+<span class="k">class</span> <span class="nc">PDTubeVP</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">'''Set this object to the proxy object of the actual view provider'''</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+
+    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">vobj</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vobj</span> <span class="o">=</span> <span class="n">vobj</span>
+
+    <span class="k">def</span> <span class="nf">updateData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">'''If a property of the handled feature has changed we have the chance to handle this here'''</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">getDisplayModes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">'''Return a list of display modes.'''</span>
+        <span class="n">modes</span><span class="o">=</span><span class="p">[]</span>
+        <span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Flat Lines"</span><span class="p">)</span>
+        <span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Shaded"</span><span class="p">)</span>
+        <span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Wireframe"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">modes</span>
+
+    <span class="k">def</span> <span class="nf">getDefaultDisplayMode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">'''Return the name of the default display mode. It must be defined in getDisplayModes.'''</span>
+        <span class="k">return</span> <span class="s2">"Flat Lines"</span>
+
+    <span class="k">def</span> <span class="nf">setDisplayMode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mode</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">'''Map the display mode defined in attach with those defined in getDisplayModes.\</span>
+<span class="sd">                Since they have the same names nothing needs to be done. This method is optional'''</span>
+        <span class="k">return</span> <span class="n">mode</span>
+
+    <span class="k">def</span> <span class="nf">onChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">'''Here we can do something when a single property got changed'''</span>
+        <span class="c1">#FreeCAD.Console.PrintMessage("Change property: " + str(prop) + "\n")</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">getIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">'''Return the icon in XPM format which will appear in the tree view. This method is\</span>
+<span class="sd">                optional and if not defined a default icon is shown.'''</span>
+        <span class="k">return</span> <span class="s2">"""</span>
+<span class="s2">            /* XPM */</span>
+<span class="s2">            static const char * ViewProviderBox_xpm[] = {</span>
+<span class="s2">            "16 16 6 1",</span>
+<span class="s2">            "   c None",</span>
+<span class="s2">            ".  c #141010",</span>
+<span class="s2">            "+  c #615BD2",</span>
+<span class="s2">            "@  c #C39D55",</span>
+<span class="s2">            "#  c #000000",</span>
+<span class="s2">            "$  c #57C355",</span>
+<span class="s2">            "        ........",</span>
+<span class="s2">            "   ......++..+..",</span>
+<span class="s2">            "   .@@@@.++..++.",</span>
+<span class="s2">            "   .@@@@.++..++.",</span>
+<span class="s2">            "   .@@  .++++++.",</span>
+<span class="s2">            "  ..@@  .++..++.",</span>
+<span class="s2">            "###@@@@ .++..++.",</span>
+<span class="s2">            "##$.@@$#.++++++.",</span>
+<span class="s2">            "#$#$.$$$........",</span>
+<span class="s2">            "#$$#######      ",</span>
+<span class="s2">            "#$$#$$$$$#      ",</span>
+<span class="s2">            "#$$#$$$$$#      ",</span>
+<span class="s2">            "#$$#$$$$$#      ",</span>
+<span class="s2">            " #$#$$$$$#      ",</span>
+<span class="s2">            "  ##$$$$$#      ",</span>
+<span class="s2">            "   #######      "};</span>
+<span class="s2">            """</span>
+
+    <span class="k">def</span> <span class="nf">dumps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">'''When saving the document this object gets stored using Python's json module.\</span>
+<span class="sd">                Since we have some un-serializable parts here -- the Coin stuff -- we must define this method\</span>
+<span class="sd">                to return a tuple of all serializable objects or None.'''</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">state</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">'''When restoring the serialized object from document we have the chance to set some internals here.\</span>
+<span class="sd">                Since no data were serialized nothing needs to be done here.'''</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+<p>And now the macro file to create the object:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1">#pdtube.FCMacro</span>
+<span class="kn">import</span> <span class="nn">pdtube</span>
+<span class="c1">#above line needed if the class definitions above are place in another file: PDTube.py</span>
+<span class="c1">#this is needed if the tube object is to remain parametric after restarting FreeCAD and loading</span>
+<span class="c1">#a document containing the object</span>
+
+<span class="n">body</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ActiveView</span><span class="o">.</span><span class="n">getActiveObject</span><span class="p">(</span><span class="s2">"pdbody"</span><span class="p">)</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">body</span><span class="p">:</span>
+    <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintError</span><span class="p">(</span><span class="s2">"No active body.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">getMainWindow</span><span class="p">()</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Additive"</span><span class="p">,</span><span class="s2">"Subtractive"</span><span class="p">,</span><span class="s2">"Neither additive nor subtractive"</span><span class="p">]</span>
+    <span class="n">item</span><span class="p">,</span><span class="n">ok</span> <span class="o">=</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QInputDialog</span><span class="o">.</span><span class="n">getItem</span><span class="p">(</span><span class="n">window</span><span class="p">,</span><span class="s2">"Select tube type"</span><span class="p">,</span><span class="s2">"Select whether you want additive, subtractive, or neither:"</span><span class="p">,</span><span class="n">items</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">className</span> <span class="o">=</span> <span class="s2">"PartDesign::FeatureAdditivePython"</span>
+        <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="n">items</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">className</span> <span class="o">=</span> <span class="s2">"PartDesign::FeatureSubtractivePython"</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">className</span> <span class="o">=</span> <span class="s2">"PartDesign::FeaturePython"</span> <span class="c1">#not usable in pattern features, such as polar pattern</span>
+
+        <span class="n">tube</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="n">className</span><span class="p">,</span><span class="s2">"Tube"</span><span class="p">)</span>
+        <span class="n">pdtube</span><span class="o">.</span><span class="n">PDTube</span><span class="p">(</span><span class="n">tube</span><span class="p">)</span>
+        <span class="n">pdtube</span><span class="o">.</span><span class="n">PDTubeVP</span><span class="p">(</span><span class="n">tube</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
+        <span class="n">body</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="n">tube</span><span class="p">)</span> <span class="c1">#optionally we can also use body.insertObject() for placing at particular place in tree</span>
+</pre></div>
 <h2><span class="mw-headline" id="Scenegraph_Structure">Scenegraph Structure</span></h2>
 <p>You may have noticed that the examples above construct their scenegraphs in slightly different ways. Some use <code>obj.addDisplayMode(node, "modename")</code> while others use <code>obj.SwitchNode.getChild(x).addChild(y)</code>.
 </p><p>Each feature in a FreeCAD document is based the following scenegraph structure:
@@ -693,177 +864,6 @@
     <span class="k">return</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span>
 
 <span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="n">makeMolecule</span><span class="p">()</span>
-</pre></div>
-<h2><span class="mw-headline" id="Part_Design_scripted_objects">Part Design scripted objects</span></h2>
-<p>When making scripted objects in PartDesign the process is similar to the scripted objects discussed above, but with a few additional considerations. We must handle 2 shape properties, one for the shape we see in the 3D view and another for the shape used by the pattern tools, such as polar pattern features. The object shapes also needs to be fused to any existing material already in the Body (or cut from it in the case of Subtractive features). And we must account for the placement and attachment of our objects a little bit differently.
-</p><p>PartDesign scripted solid object features should be based on either PartDesign::FeaturePython, PartDesign::FeatureAdditivePython, or PartDesign::FeatureSubtractivePython rather than Part::FeaturePython. Only the Additive and Subtractive variants can be used in pattern features, and if based on Part::FeaturePython when the user drops the object into a PartDesign Body it becomes a BaseFeature rather than being treated by the Body as a native PartDesign object. Note: all of these are expected to be solids, so if you are making a non-solid feature it should be based on Part::FeaturePython or else the next feature in the tree will attempt to fuse to as a solid and it will fail.
-</p><p>Here is a simple example of making a Tube primitive, similar to the Tube primitive in Part Workbench except this one will be a PartDesign solid feature object.  For this we will 2 separate files: pdtube.FCMacro and pdtube.py. The .FCMacro file will be executed by the user to create the object. The .py file will hold the class definitions, imported by the .FCMacro. The reason for doing it this way is to maintain the parametric nature of the object after restarting FreeCAD and opening a document containing one of our Tubes.
-</p><p>A single file solution is now also possible, see <a href="#Macro_based_parametric_objects">Macro based parametric objects</a>.
-</p><p>First, the class definition file:
-</p>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="c1">#classes should go in pdtube.py</span>
-<span class="kn">import</span> <span class="nn">FreeCAD</span><span class="o">,</span> <span class="nn">FreeCADGui</span><span class="o">,</span> <span class="nn">Part</span>
-<span class="k">class</span> <span class="nc">PDTube</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">):</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span><span class="s2">"Radius1"</span><span class="p">,</span><span class="s2">"Tube"</span><span class="p">,</span><span class="s2">"Radius1"</span><span class="p">)</span><span class="o">.</span><span class="n">Radius1</span> <span class="o">=</span> <span class="mi">5</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span><span class="s2">"Radius2"</span><span class="p">,</span><span class="s2">"Tube"</span><span class="p">,</span><span class="s2">"Radius2"</span><span class="p">)</span><span class="o">.</span><span class="n">Radius2</span> <span class="o">=</span> <span class="mi">10</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyLength"</span><span class="p">,</span><span class="s2">"Height"</span><span class="p">,</span><span class="s2">"Tube"</span><span class="p">,</span><span class="s2">"Height of tube"</span><span class="p">)</span><span class="o">.</span><span class="n">Height</span> <span class="o">=</span> <span class="mi">10</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">makeAttachable</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">makeAttachable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-
-        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Version</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">19</span><span class="p">:</span>
-            <span class="n">obj</span><span class="o">.</span><span class="n">addExtension</span><span class="p">(</span><span class="s1">'Part::AttachExtensionPython'</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">obj</span><span class="o">.</span><span class="n">addExtension</span><span class="p">(</span><span class="s1">'Part::AttachExtensionPython'</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
-
-        <span class="n">obj</span><span class="o">.</span><span class="n">setEditorMode</span><span class="p">(</span><span class="s1">'Placement'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">#non-readonly non-hidden</span>
-
-    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">fp</span><span class="p">):</span>
-        <span class="n">outer_cylinder</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">makeCylinder</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">Radius2</span><span class="p">,</span> <span class="n">fp</span><span class="o">.</span><span class="n">Height</span><span class="p">)</span>
-        <span class="n">inner_cylinder</span> <span class="o">=</span> <span class="n">Part</span><span class="o">.</span><span class="n">makeCylinder</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">Radius1</span><span class="p">,</span> <span class="n">fp</span><span class="o">.</span><span class="n">Height</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">fp</span><span class="o">.</span><span class="n">Radius1</span> <span class="o">==</span> <span class="n">fp</span><span class="o">.</span><span class="n">Radius2</span><span class="p">:</span> <span class="c1">#just make cylinder</span>
-            <span class="n">tube_shape</span> <span class="o">=</span> <span class="n">outer_cylinder</span>
-        <span class="k">elif</span> <span class="n">fp</span><span class="o">.</span><span class="n">Radius1</span> <span class="o">&lt;</span> <span class="n">fp</span><span class="o">.</span><span class="n">Radius2</span><span class="p">:</span>
-            <span class="n">tube_shape</span> <span class="o">=</span> <span class="n">outer_cylinder</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">inner_cylinder</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span> <span class="c1">#invert rather than error out</span>
-            <span class="n">tube_shape</span> <span class="o">=</span> <span class="n">inner_cylinder</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">outer_cylinder</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s2">"positionBySupport"</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">makeAttachable</span><span class="p">(</span><span class="n">fp</span><span class="p">)</span>
-        <span class="n">fp</span><span class="o">.</span><span class="n">positionBySupport</span><span class="p">()</span>
-        <span class="n">tube_shape</span><span class="o">.</span><span class="n">Placement</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">Placement</span>
-
-        <span class="c1">#BaseFeature (shape property of type Part::PropertyPartShape) is provided for us</span>
-        <span class="c1">#with the PartDesign::FeaturePython and related classes, but it might be empty</span>
-        <span class="c1">#if our object is the first object in the tree.  it's a good idea to check</span>
-        <span class="c1">#for its existence in case we want to make type Part::FeaturePython, which won't have it</span>
-
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="s2">"BaseFeature"</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp</span><span class="o">.</span><span class="n">BaseFeature</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s2">"Subtractive"</span> <span class="ow">in</span> <span class="n">fp</span><span class="o">.</span><span class="n">TypeId</span><span class="p">:</span>
-                <span class="n">full_shape</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">BaseFeature</span><span class="o">.</span><span class="n">Shape</span><span class="o">.</span><span class="n">cut</span><span class="p">(</span><span class="n">tube_shape</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">full_shape</span> <span class="o">=</span> <span class="n">fp</span><span class="o">.</span><span class="n">BaseFeature</span><span class="o">.</span><span class="n">Shape</span><span class="o">.</span><span class="n">fuse</span><span class="p">(</span><span class="n">tube_shape</span><span class="p">)</span>
-            <span class="n">full_shape</span><span class="o">.</span><span class="n">transformShape</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span><span class="o">.</span><span class="n">toMatrix</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span> <span class="c1">#borrowed from gears workbench</span>
-            <span class="n">fp</span><span class="o">.</span><span class="n">Shape</span> <span class="o">=</span> <span class="n">full_shape</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">fp</span><span class="o">.</span><span class="n">Shape</span> <span class="o">=</span> <span class="n">tube_shape</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span><span class="s2">"AddSubShape"</span><span class="p">):</span> <span class="c1">#PartDesign::FeatureAdditivePython and</span>
-                                      <span class="c1">#PartDesign::FeatureSubtractivePython have this</span>
-                                      <span class="c1">#property but PartDesign::FeaturePython does not</span>
-                                      <span class="c1">#It is the shape used for copying in pattern features</span>
-                                      <span class="c1">#for example in making a polar pattern</span>
-            <span class="n">tube_shape</span><span class="o">.</span><span class="n">transformShape</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">Placement</span><span class="o">.</span><span class="n">inverse</span><span class="p">()</span><span class="o">.</span><span class="n">toMatrix</span><span class="p">(),</span> <span class="kc">True</span><span class="p">)</span>
-            <span class="n">fp</span><span class="o">.</span><span class="n">AddSubShape</span> <span class="o">=</span> <span class="n">tube_shape</span>
-
-<span class="k">class</span> <span class="nc">PDTubeVP</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">'''Set this object to the proxy object of the actual view provider'''</span>
-        <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
-
-    <span class="k">def</span> <span class="nf">attach</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">vobj</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vobj</span> <span class="o">=</span> <span class="n">vobj</span>
-
-    <span class="k">def</span> <span class="nf">updateData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">'''If a property of the handled feature has changed we have the chance to handle this here'''</span>
-        <span class="k">pass</span>
-
-    <span class="k">def</span> <span class="nf">getDisplayModes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">'''Return a list of display modes.'''</span>
-        <span class="n">modes</span><span class="o">=</span><span class="p">[]</span>
-        <span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Flat Lines"</span><span class="p">)</span>
-        <span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Shaded"</span><span class="p">)</span>
-        <span class="n">modes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Wireframe"</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">modes</span>
-
-    <span class="k">def</span> <span class="nf">getDefaultDisplayMode</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">'''Return the name of the default display mode. It must be defined in getDisplayModes.'''</span>
-        <span class="k">return</span> <span class="s2">"Flat Lines"</span>
-
-    <span class="k">def</span> <span class="nf">setDisplayMode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">mode</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">'''Map the display mode defined in attach with those defined in getDisplayModes.\</span>
-<span class="sd">                Since they have the same names nothing needs to be done. This method is optional'''</span>
-        <span class="k">return</span> <span class="n">mode</span>
-
-    <span class="k">def</span> <span class="nf">onChanged</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vp</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">'''Here we can do something when a single property got changed'''</span>
-        <span class="c1">#FreeCAD.Console.PrintMessage("Change property: " + str(prop) + "\n")</span>
-        <span class="k">pass</span>
-
-    <span class="k">def</span> <span class="nf">getIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">'''Return the icon in XPM format which will appear in the tree view. This method is\</span>
-<span class="sd">                optional and if not defined a default icon is shown.'''</span>
-        <span class="k">return</span> <span class="s2">"""</span>
-<span class="s2">            /* XPM */</span>
-<span class="s2">            static const char * ViewProviderBox_xpm[] = {</span>
-<span class="s2">            "16 16 6 1",</span>
-<span class="s2">            "   c None",</span>
-<span class="s2">            ".  c #141010",</span>
-<span class="s2">            "+  c #615BD2",</span>
-<span class="s2">            "@  c #C39D55",</span>
-<span class="s2">            "#  c #000000",</span>
-<span class="s2">            "$  c #57C355",</span>
-<span class="s2">            "        ........",</span>
-<span class="s2">            "   ......++..+..",</span>
-<span class="s2">            "   .@@@@.++..++.",</span>
-<span class="s2">            "   .@@@@.++..++.",</span>
-<span class="s2">            "   .@@  .++++++.",</span>
-<span class="s2">            "  ..@@  .++..++.",</span>
-<span class="s2">            "###@@@@ .++..++.",</span>
-<span class="s2">            "##$.@@$#.++++++.",</span>
-<span class="s2">            "#$#$.$$$........",</span>
-<span class="s2">            "#$$#######      ",</span>
-<span class="s2">            "#$$#$$$$$#      ",</span>
-<span class="s2">            "#$$#$$$$$#      ",</span>
-<span class="s2">            "#$$#$$$$$#      ",</span>
-<span class="s2">            " #$#$$$$$#      ",</span>
-<span class="s2">            "  ##$$$$$#      ",</span>
-<span class="s2">            "   #######      "};</span>
-<span class="s2">            """</span>
-
-    <span class="k">def</span> <span class="nf">dumps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">'''When saving the document this object gets stored using Python's json module.\</span>
-<span class="sd">                Since we have some un-serializable parts here -- the Coin stuff -- we must define this method\</span>
-<span class="sd">                to return a tuple of all serializable objects or None.'''</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">loads</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">state</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">'''When restoring the serialized object from document we have the chance to set some internals here.\</span>
-<span class="sd">                Since no data were serialized nothing needs to be done here.'''</span>
-        <span class="k">return</span> <span class="kc">None</span>
-</pre></div>
-<p>And now the macro file to create the object:
-</p>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-
-<span class="c1">#pdtube.FCMacro</span>
-<span class="kn">import</span> <span class="nn">pdtube</span>
-<span class="c1">#above line needed if the class definitions above are place in another file: PDTube.py</span>
-<span class="c1">#this is needed if the tube object is to remain parametric after restarting FreeCAD and loading</span>
-<span class="c1">#a document containing the object</span>
-
-<span class="n">body</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">ActiveView</span><span class="o">.</span><span class="n">getActiveObject</span><span class="p">(</span><span class="s2">"pdbody"</span><span class="p">)</span>
-<span class="k">if</span> <span class="ow">not</span> <span class="n">body</span><span class="p">:</span>
-    <span class="n">FreeCAD</span><span class="o">.</span><span class="n">Console</span><span class="o">.</span><span class="n">PrintError</span><span class="p">(</span><span class="s2">"No active body.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">PySide</span> <span class="kn">import</span> <span class="n">QtGui</span>
-    <span class="n">window</span> <span class="o">=</span> <span class="n">FreeCADGui</span><span class="o">.</span><span class="n">getMainWindow</span><span class="p">()</span>
-    <span class="n">items</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Additive"</span><span class="p">,</span><span class="s2">"Subtractive"</span><span class="p">,</span><span class="s2">"Neither additive nor subtractive"</span><span class="p">]</span>
-    <span class="n">item</span><span class="p">,</span><span class="n">ok</span> <span class="o">=</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QInputDialog</span><span class="o">.</span><span class="n">getItem</span><span class="p">(</span><span class="n">window</span><span class="p">,</span><span class="s2">"Select tube type"</span><span class="p">,</span><span class="s2">"Select whether you want additive, subtractive, or neither:"</span><span class="p">,</span><span class="n">items</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="n">items</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-            <span class="n">className</span> <span class="o">=</span> <span class="s2">"PartDesign::FeatureAdditivePython"</span>
-        <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="n">items</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-            <span class="n">className</span> <span class="o">=</span> <span class="s2">"PartDesign::FeatureSubtractivePython"</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">className</span> <span class="o">=</span> <span class="s2">"PartDesign::FeaturePython"</span> <span class="c1">#not usable in pattern features, such as polar pattern</span>
-
-        <span class="n">tube</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="n">className</span><span class="p">,</span><span class="s2">"Tube"</span><span class="p">)</span>
-        <span class="n">pdtube</span><span class="o">.</span><span class="n">PDTube</span><span class="p">(</span><span class="n">tube</span><span class="p">)</span>
-        <span class="n">pdtube</span><span class="o">.</span><span class="n">PDTubeVP</span><span class="p">(</span><span class="n">tube</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
-        <span class="n">body</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="n">tube</span><span class="p">)</span> <span class="c1">#optionally we can also use body.insertObject() for placing at particular place in tree</span>
 </pre></div>
 <h2><span class="mw-headline" id="Macro_based_parametric_objects">Macro based parametric objects</span></h2>
 <p>If you open an FCStd file containing parametric objects created by a macro in a new FreeCAD session, or on a different computer, they will not be modifiable via their properties unless the following conditions are met:
@@ -1090,12 +1090,12 @@
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260723102628
+Cached time: 20260723102748
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.259 seconds
-Real time usage: 0.268 seconds
+CPU time usage: 0.249 seconds
+Real time usage: 0.262 seconds
 Preprocessor visited node count: 1303/1000000
 Post&#8208;expand include size: 13424/2097152 bytes
 Template argument size: 34121/2097152 bytes
@@ -1106,17 +1106,17 @@ Unstrip post&#8208;expand size: 141122/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   30.335      1 -total
- 28.19%    8.552     21 Template:Code
- 15.90%    4.824    123 Template:Incode
- 12.71%    3.855      1 Template:Powerdocnavi
-  7.26%    2.203      1 Template:Navigation_menu_2
-  6.44%    1.953      2 Template:Docnav
-  5.77%    1.751      1 Template:Version
-  3.12%    0.948      1 Template:TOCright
+100.00%   29.298      1 -total
+ 27.69%    8.113     21 Template:Code
+ 16.72%    4.899    123 Template:Incode
+ 11.59%    3.396      1 Template:Powerdocnavi
+  8.04%    2.356      2 Template:Docnav
+  6.62%    1.939      1 Template:Navigation_menu_2
+  4.43%    1.299      1 Template:Version
+  4.03%    1.181      1 Template:TOCright
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:435-0!canonical and timestamp 20260723102631 and revision id 1832153. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:435-0!canonical and timestamp 20260723102811 and revision id 1832154. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
