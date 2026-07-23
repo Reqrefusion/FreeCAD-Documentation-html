@@ -522,39 +522,6 @@
     <span class="n">ViewProviderLine</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
     <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
 </pre></div>
-<p>If you open an FCStd file containing Line objects created by this Macro on a different computer, they will render properly, but will not be modifiable via their p1 and p2 properties unless, in addition, this same Macro file is installed on its python path- typically in its Macro directory, with the same filename. This file must have a .py extension, so it is recognized as a python module.  For this filename information to be saved and restored in the FCStd file, additional code is required.  A clean solution is to add to Line's __init__ function.
-</p>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">...</span>
-<span class="k">class</span> <span class="nc">Line</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
-<span class="w">         </span><span class="sd">'''"App two point properties" '''</span>
-         <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyVector"</span><span class="p">,</span><span class="s2">"p1"</span><span class="p">,</span><span class="s2">"Line"</span><span class="p">,</span><span class="s2">"Start point"</span><span class="p">)</span>
-         <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyVector"</span><span class="p">,</span><span class="s2">"p2"</span><span class="p">,</span><span class="s2">"Line"</span><span class="p">,</span><span class="s2">"End point"</span><span class="p">)</span><span class="o">.</span><span class="n">p2</span><span class="o">=</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-         <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
-         <span class="bp">self</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="s1">'line'</span>
-<span class="o">...</span>
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'main'</span><span class="p">:</span>
-    <span class="n">a</span><span class="o">=</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::FeaturePython"</span><span class="p">,</span><span class="s2">"Line"</span><span class="p">)</span>     
-    <span class="n">Line</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-    <span class="n">ViewProviderLine</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
-    <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
-</pre></div>
-<p>where <i>line.py</i> is the filename of our macro. 
-In addition, so the creation code is not executed when the line module is imported to restore line objects, we needed to condition the execution code above.
-</p><p><b>Notes</b>
-Earlier versions of the Addon Manager changed <i>.py</i> extensions to <i>.FCMacro</i> when installing in the user's Macro directory.  Since this extension is not recognized as an importable module, you will find various work-arounds in earlier Macros. Now a single <i>line.py</i> is all that is required for a working Macro.
-</p><p>Another way to correctly set the <i>__module__</i> property is to change the creation script to
-</p>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">if</span> <span class="n">___name__</span> <span class="o">==</span> <span class="s1">'main'</span><span class="p">:</span>
-    <span class="n">a</span><span class="o">=</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::FeaturePython"</span><span class="p">,</span><span class="s2">"Line"</span><span class="p">)</span>
-    <span class="kn">import</span> <span class="nn">line</span>
-    <span class="n">line</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
-    <span class="n">ViewProviderLine</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
-    <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
-</pre></div>
-<p>This is a less efficient (and a bit mysterious - a file module importing itself!), but you will find it in use.
-</p><p>This discussion applies to Macros, not Workbenches.
-</p>
 <h2><span class="mw-headline" id="Scenegraph_Structure">Scenegraph Structure</span></h2>
 <p>You may have noticed that the examples above construct their scenegraphs in slightly different ways. Some use <code>obj.addDisplayMode(node, "modename")</code> while others use <code>obj.SwitchNode.getChild(x).addChild(y)</code>.
 </p><p>Each feature in a FreeCAD document is based the following scenegraph structure:
@@ -897,6 +864,42 @@ Earlier versions of the Addon Manager changed <i>.py</i> extensions to <i>.FCMac
         <span class="n">pdtube</span><span class="o">.</span><span class="n">PDTubeVP</span><span class="p">(</span><span class="n">tube</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
         <span class="n">body</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="n">tube</span><span class="p">)</span> <span class="c1">#optionally we can also use body.insertObject() for placing at particular place in tree</span>
 </pre></div>
+<h2><span class="mw-headline" id="Macro_based_parametric_objects">Macro based parametric objects</span></h2>
+<p>If you open an FCStd file containing parametric objects created by a macro in a new FreeCAD session, or on a different computer, they will not be modifiable via their properties unless the following conditions are met:
+</p>
+<ul><li>The macro file must be installed in the python path, typically in the user's Macro directory.</li>
+<li>The file must have a fixed filename and, to be recognized as a Python module, the <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">.py</span> extension.</li>
+<li>The filename information must be saved in the FCStd file. See the 2 examples below.</li></ul>
+<p>Earlier versions of the Addon Manager changed <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">.py</span> extensions to <span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">.FCMacro</span> when installing in the user's Macro directory. Since this extension is not recognized as an importable module, you will find various work-arounds in earlier macros.
+</p><p>The examples are based on the <a href="#Working_with_simple_shapes">Line</a> code given above.
+</p>
+<h3><span class="mw-headline" id="Example_1">Example 1</span></h3>
+<p>A clean solution is to add to the <code>__init__</code> function.
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="o">...</span>
+<span class="k">class</span> <span class="nc">Line</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+<span class="w">         </span><span class="sd">"""App two point properties"""</span>
+         <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyVector"</span><span class="p">,</span><span class="s2">"p1"</span><span class="p">,</span><span class="s2">"Line"</span><span class="p">,</span><span class="s2">"Start point"</span><span class="p">)</span>
+         <span class="n">obj</span><span class="o">.</span><span class="n">addProperty</span><span class="p">(</span><span class="s2">"App::PropertyVector"</span><span class="p">,</span><span class="s2">"p2"</span><span class="p">,</span><span class="s2">"Line"</span><span class="p">,</span><span class="s2">"End point"</span><span class="p">)</span><span class="o">.</span><span class="n">p2</span><span class="o">=</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+         <span class="n">obj</span><span class="o">.</span><span class="n">Proxy</span> <span class="o">=</span> <span class="bp">self</span>
+         <span class="bp">self</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="s2">"line"</span>
+<span class="o">...</span>
+</pre></div>
+<p>where <code>"line"</code> is the filename of our macro.
+</p>
+<h3><span class="mw-headline" id="Example_2">Example 2</span></h3>
+<p>Another way to correctly set the <code>__module__</code> property is to change the creation script to:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">if</span> <span class="n">___name__</span> <span class="o">==</span> <span class="s2">"main"</span><span class="p">:</span>
+    <span class="n">a</span><span class="o">=</span><span class="n">FreeCAD</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Part::FeaturePython"</span><span class="p">,</span><span class="s2">"Line"</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">line</span>
+    <span class="n">line</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">ViewProviderLine</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">ViewObject</span><span class="p">)</span>
+    <span class="n">App</span><span class="o">.</span><span class="n">ActiveDocument</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+</pre></div>
+<p>This is a less efficient (and a bit mysterious: a file module importing itself!), but you will find it in use.
+</p>
 <h2><span class="mw-headline" id="Available_object_types">Available object types</span></h2>
 <p>The object types you can create with <code>FreeCAD.ActiveDocument.addObject()</code> depend on the loaded modules. After loading all internal workbenches a complete list can be obtained with <code>FreeCAD.ActiveDocument.supportedTypes()</code>. Only object types with a name ending in <code>Python</code> can be used for scripted objects. These are listed here (for FreeCAD v1.0):
 </p>
@@ -1086,33 +1089,34 @@ Earlier versions of the Addon Manager changed <i>.py</i> extensions to <i>.FCMac
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260723093927
+Cached time: 20260723101108
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.276 seconds
-Real time usage: 0.817 seconds
-Preprocessor visited node count: 1268/1000000
-Post&#8208;expand include size: 13343/2097152 bytes
-Template argument size: 34274/2097152 bytes
+CPU time usage: 0.314 seconds
+Real time usage: 0.357 seconds
+Preprocessor visited node count: 1317/1000000
+Post&#8208;expand include size: 13702/2097152 bytes
+Template argument size: 34130/2097152 bytes
 Highest expansion depth: 5/100
 Expensive parser function count: 21/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 142095/5000000 bytes
+Unstrip post&#8208;expand size: 141122/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%  439.391      1 -total
- 90.77%  398.815     21 Template:Code
-  2.76%   12.143      1 Template:Powerdocnavi
-  1.94%    8.515      1 Template:Version
-  1.79%    7.884    119 Template:Incode
-  1.25%    5.472      1 Template:Navigation_menu_2
-  0.50%    2.198      2 Template:Docnav
-  0.30%    1.323      1 Template:TOCright
+100.00%   36.286      1 -total
+ 26.32%    9.550     21 Template:Code
+ 15.98%    5.798    122 Template:Incode
+ 13.20%    4.789      1 Template:Powerdocnavi
+  7.34%    2.665      1 Template:Navigation_menu_2
+  6.89%    2.500      2 Template:Docnav
+  5.18%    1.880      3 Template:FileName
+  4.11%    1.492      1 Template:Version
+  3.21%    1.166      1 Template:TOCright
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:435-0!canonical and timestamp 20260723093927 and revision id 1832145. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:435-0!canonical and timestamp 20260723101253 and revision id 1832146. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
