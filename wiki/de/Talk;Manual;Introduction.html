@@ -1,0 +1,91 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Talk:Manual:Introduction/de</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><meta property="mw:PageProp/toc">
+<div class="mw-heading mw-heading2 ext-discussiontools-init-section"><h2 data-mw-thread-id='h-Help_on_using_FreeCAD"_oder_"Installation"'><span id="Help_on_using_FreeCAD.22_oder_.22Installation.22"></span><span class="mw-headline" id='Help_on_using_FreeCAD"_oder_"Installation"'><span data-mw-comment-start="" id='h-Help_on_using_FreeCAD"_oder_"Installation"'></span>Help on using FreeCAD" oder "Installation"<span data-mw-comment-end='h-Help_on_using_FreeCAD"_oder_"Installation"'></span></span></h2></div>
+<h1 data-mw-thread-id="h-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)-20260731233400"><span id="FreeCAD_Manual_Converter_.E2.80.94_Fixes_f.C3.BCr_Windows.2FPython_3.14_.28Stand:_August_2026.29"></span><span class="mw-headline" id="FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"><span data-mw-comment-start="" id="h-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)-20260731233400"></span>FreeCAD Manual Converter &mdash; Fixes f&uuml;r Windows/Python 3.14 (Stand: August 2026)<span data-mw-comment-end="h-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)-20260731233400"></span></span></h1>
+<p>Das Script auf der Wiki-Seite l&auml;uft nicht "out of the box". Hier die Stolpersteine, die mich beim ersten Durchlauf gestoppt haben, plus L&ouml;sung. Getestet unter Windows 11, Python 3.14.6.
+</p>
+<div class="mw-heading mw-heading2 ext-discussiontools-init-section"><h2 data-mw-thread-id="h-1._PyPDF2_ist_tot-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"><span class="mw-headline" id="1._PyPDF2_ist_tot"><span data-mw-comment-start="" id="h-1._PyPDF2_ist_tot-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"></span>1. <code>PyPDF2</code> ist tot<span data-mw-comment-end="h-1._PyPDF2_ist_tot-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"></span></span></h2></div>
+<p>Die Installationsanleitung nennt:
+</p>
+<pre><code>pip install requests weasyprint beautifulsoup4 PyPDF2 Pillow cairosvg ebooklib</code>
+</pre>
+<p><code>PyPDF2</code> wird seit 2023 nicht mehr weiterentwickelt. Der Nachfolger hei&szlig;t <code>pypdf</code>. Wer trotzdem <code>PyPDF2</code> installiert, bekommt nur die letzte tote Version (3.0.1) &mdash; technisch nutzbar, aber ohne jede Wartung/Sicherheitsfixes.
+</p><p><b>Fix:</b> <code>pypdf</code> statt <code>PyPDF2</code> installieren:
+</p>
+<pre><code>pip install requests weasyprint beautifulsoup4 pypdf Pillow cairosvg ebooklib</code>
+</pre>
+<div class="mw-heading mw-heading2 ext-discussiontools-init-section"><h2 data-mw-thread-id="h-2._Im_Script:_PdfMerger_existiert_in_aktuellem_pypdf_nicht_mehr-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"><span class="mw-headline" id="2._Im_Script:_PdfMerger_existiert_in_aktuellem_pypdf_nicht_mehr"><span data-mw-comment-start="" id="h-2._Im_Script:_PdfMerger_existiert_in_aktuellem_pypdf_nicht_mehr-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"></span>2. Im Script: <code>PdfMerger</code> existiert in aktuellem <code>pypdf</code> nicht mehr<span data-mw-comment-end="h-2._Im_Script:_PdfMerger_existiert_in_aktuellem_pypdf_nicht_mehr-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"></span></span></h2></div>
+<p>Das Script importiert:
+</p>
+<pre><code>from PyPDF2 import PdfMerger</code>
+</pre>
+<p>und nutzt <code>PdfMerger()</code> in <code>merge_pdfs()</code>. In <code>pypdf</code> ab Version ~5.0 wurde diese Klasse entfernt &mdash; Ersatz ist <code>PdfWriter</code>, das dieselbe <code>.append()</code>/<code>.write()</code>/<code>.close()</code>- API hat.
+</p><p><b>Fix:</b> Zwei Stellen &auml;ndern.
+</p><p>Import (Zeile 6):
+</p>
+<pre><code>from pypdf import PdfWriter</code>
+</pre>
+<p><code>merge_pdfs()</code>-Methode:
+</p>
+<pre><code>def merge_pdfs(self, pdf_files, output_file):
+    print(f"Merging PDFs into {output_file}...")
+    merger = PdfWriter()          # statt PdfMerger()
+    for pdf in pdf_files:
+        merger.append(pdf)
+    merger.write(output_file)
+    merger.close()
+    print(f"Successfully created {output_file}")</code>
+</pre>
+<p>Sonst nichts am Code &auml;ndern &mdash; die Methodennamen sind identisch geblieben.
+</p>
+<div class="mw-heading mw-heading2 ext-discussiontools-init-section"><h2 data-mw-thread-id="h-3._GTK3-Runtime_fehlt_(WeasyPrint_braucht_sie_zur_Laufzeit)-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"><span id="3._GTK3-Runtime_fehlt_.28WeasyPrint_braucht_sie_zur_Laufzeit.29"></span><span class="mw-headline" id="3._GTK3-Runtime_fehlt_(WeasyPrint_braucht_sie_zur_Laufzeit)"><span data-mw-comment-start="" id="h-3._GTK3-Runtime_fehlt_(WeasyPrint_braucht_sie_zur_Laufzeit)-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"></span>3. GTK3-Runtime fehlt (WeasyPrint braucht sie zur Laufzeit)<span data-mw-comment-end="h-3._GTK3-Runtime_fehlt_(WeasyPrint_braucht_sie_zur_Laufzeit)-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"></span></span></h2></div>
+<p>Die Anleitung erw&auml;hnt "GTK3 runtime" als Windows-Abh&auml;ngigkeit, nennt aber keine Quelle. Ohne sie bricht WeasyPrint beim PDF-Rendern ab (fehlende Pango/Cairo-DLLs).
+</p><p><b>Fix (am saubersten via winget, da man Updates/Deinstallation dann verwaltet bekommt):</b>
+</p>
+<pre><code>winget install -e --id tschoonj.GTKForWindows</code>
+</pre>
+<p>Danach PowerShell/Terminal <b>neu starten</b>, damit der PATH aktualisiert wird.
+</p><p><b>Bekannter Zusatz-Stolperstein:</b> WeasyPrint sucht <code>gobject-2.0-0.dll</code>, der Installer legt aber nur <code>libgobject-2.0-0.dll</code> ab (mit <code>lib</code>-Pr&auml;fix). F&uuml;hrt sonst zu <code>OSError: cannot load library 'gobject-2.0-0'</code>.
+</p><p><b>Fix:</b>
+</p>
+<pre><code>Copy-Item "C:\Program Files\GTK3-Runtime Win64\bin\libgobject-2.0-0.dll" `
+          "C:\Program Files\GTK3-Runtime Win64\bin\gobject-2.0-0.dll"</code>
+</pre>
+<p>Danach den Rechner neu starten (nicht nur die Shell).
+</p><p><b>Verifizieren, bevor man das Hauptscript startet:</b>
+</p>
+<pre><code>python -m weasyprint --info</code>
+</pre>
+<p>L&auml;uft das ohne <code>OSError</code>, ist die Kette komplett.
+</p>
+<div class="mw-heading mw-heading2 ext-discussiontools-init-section"><h2 data-mw-thread-id="h-Ergebnis-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"><span class="mw-headline" id="Ergebnis"><span data-mw-comment-start="" id="h-Ergebnis-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"></span>Ergebnis<span data-mw-comment-end="h-Ergebnis-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)"></span></span></h2></div>
+<p>Mit diesen drei Fixes l&auml;uft der Converter unter Windows 11 + Python 3.14 sauber durch: 24 Kapitel-PDFs, Inhaltsverzeichnis, gemergtes Gesamt-PDF (172 Seiten bei mir) und EPUB &mdash; ohne weitere Fehler.
+</p>
+<div class="mw-heading mw-heading2 ext-discussiontools-init-section"><!--__DTSUBSCRIBEBUTTONDESKTOP__{&quot;headingLevel&quot;:2,&quot;name&quot;:&quot;h-Jke-FreeCAD-20260731233400&quot;,&quot;type&quot;:&quot;heading&quot;,&quot;level&quot;:0,&quot;id&quot;:&quot;h-Vorschlag-FreeCAD_Manual_Converter_\u2014_Fixes_f\u00fcr_Windows\/Python_3.14_(Stand:_August_2026)-20260731233400&quot;,&quot;replies&quot;:[&quot;c-Jke-FreeCAD-20260731233400-Vorschlag&quot;],&quot;text&quot;:&quot;Vorschlag&quot;,&quot;linkableTitle&quot;:&quot;Vorschlag&quot;}--><h2 data-mw-thread-id="h-Vorschlag-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)-20260731233400"><span class="mw-headline" id="Vorschlag"><span data-mw-comment-start="" id="h-Vorschlag-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)-20260731233400"></span>Vorschlag<span data-mw-comment-end="h-Vorschlag-FreeCAD_Manual_Converter_&mdash;_Fixes_f&uuml;r_Windows/Python_3.14_(Stand:_August_2026)-20260731233400"></span></span></h2><div class="ext-discussiontools-init-section-bar"><div class="ext-discussiontools-init-section-metadata"><span class="ext-discussiontools-init-section-metaitem ext-discussiontools-init-section-timestampLabel">Latest comment: <a href="#c-Jke-FreeCAD-20260731233400-Vorschlag">just now</a></span><span class="ext-discussiontools-init-section-metaitem ext-discussiontools-init-section-commentCountLabel">1 comment</span><span class="ext-discussiontools-init-section-metaitem ext-discussiontools-init-section-authorCountLabel">1 person in discussion</span></div><div class="ext-discussiontools-init-section-actions"><!--__DTSUBSCRIBEBUTTONMOBILE__{&quot;headingLevel&quot;:2,&quot;name&quot;:&quot;h-Jke-FreeCAD-20260731233400&quot;,&quot;type&quot;:&quot;heading&quot;,&quot;level&quot;:0,&quot;id&quot;:&quot;h-Vorschlag-FreeCAD_Manual_Converter_\u2014_Fixes_f\u00fcr_Windows\/Python_3.14_(Stand:_August_2026)-20260731233400&quot;,&quot;replies&quot;:[&quot;c-Jke-FreeCAD-20260731233400-Vorschlag&quot;],&quot;text&quot;:&quot;Vorschlag&quot;,&quot;linkableTitle&quot;:&quot;Vorschlag&quot;}--></div></div></div>
+<p><span data-mw-comment-start="" id="c-Jke-FreeCAD-20260731233400-Vorschlag"></span>W&auml;re sch&ouml;n, wenn die Wiki-Seite entweder (a) auf <code>pypdf</code>/<code>PdfWriter</code> aktualisiert und den GTK3-Installer-Link + DLL-Hinweis erg&auml;nzt, oder (b) zumindest einen "bekannte Probleme"-Abschnitt bekommt. So wie es jetzt dasteht, scheitert jeder Windows-Einsteiger ohne Python-Erfahrung an Schritt 1. <a href="../index.php?title=User;Jke-FreeCAD&amp;action=edit&amp;redlink=1.html" class="new" title="User:Jke-FreeCAD (page does not exist)">Jke-FreeCAD</a> (<a href="../index.php?title=User_talk;Jke-FreeCAD&amp;action=edit&amp;redlink=1.html" class="new" title="User talk:Jke-FreeCAD (page does not exist)">talk</a>) <a href="http://wiki.freecad.org/Talk:Manual:Introduction/de#c-Jke-FreeCAD-20260731233400-Vorschlag" class="ext-discussiontools-init-timestamplink">23:34, 31 July 2026 (UTC)</a><span class="ext-discussiontools-init-replylink-buttons" data-mw-thread-id="c-Jke-FreeCAD-20260731233400-Vorschlag"><span id="ooui-php-1" class="ext-discussiontools-init-replybutton oo-ui-widget oo-ui-widget-enabled oo-ui-buttonElement oo-ui-buttonElement-frameless oo-ui-labelElement oo-ui-flaggedElement-progressive oo-ui-buttonWidget" data-ooui='{"_":"OO.ui.ButtonWidget","rel":["nofollow"],"framed":false,"label":"Reply","flags":["progressive"],"classes":["ext-discussiontools-init-replybutton"]}'><a role="button" tabindex="0" rel="nofollow" class="oo-ui-buttonElement-button"><span class="oo-ui-iconElement-icon oo-ui-iconElement-noIcon oo-ui-image-progressive"></span><span class="oo-ui-labelElement-label">Reply</span><span class="oo-ui-indicatorElement-indicator oo-ui-indicatorElement-noIndicator oo-ui-image-progressive"></span></a></span></span><span data-mw-comment-end="c-Jke-FreeCAD-20260731233400-Vorschlag"></span>
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20260731233440
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show&#8208;toc, user&#8208;signature]
+DiscussionTools time usage: 0.005 seconds
+CPU time usage: 0.013 seconds
+Real time usage: 0.014 seconds
+Preprocessor visited node count: 20/1000000
+Post&#8208;expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:434078-0!canonical and timestamp 20260731233434 and revision id 1835307. Rendering was triggered because: edit-page
+ -->
+</div>
+</div><script src="../site.js"></script>
