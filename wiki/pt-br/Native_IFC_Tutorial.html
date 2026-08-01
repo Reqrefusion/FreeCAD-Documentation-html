@@ -100,18 +100,16 @@
 </p><p>No entanto, n&atilde;o &eacute; dif&iacute;cil criar modelos IFC de qualidade. Mas &eacute; preciso contar com um aplicativo que leve o formato a s&eacute;rio e deixe o usu&aacute;rio no controle do que &eacute; exportado e de como isso &eacute; feito.
 </p><p>As coisas que voc&ecirc; deve saber s&atilde;o poucas:
 </p>
-<div lang="en" dir="ltr" class="mw-content-ltr">
 <ul>
-<li><p>As inherited from the STEP format, an IFC file is <b>a text file</b>, where each line represents an element, and starts with an ID number. For example:</p>
+<li><p>Herdado do formato STEP, um arquivo IFC &eacute; <b>um arquivo de texto</b>, no qual cada linha representa um elemento e come&ccedil;a com um n&uacute;mero de identifica&ccedil;&atilde;o (ID). Por exemplo:</p>
 <pre>#66=IFCWALL('3JmWkr',$,'MyWall',$,$,(#71),$,$,$,.SOLIDWALL.);</pre>
-<p>The above line defines an element of class <b>IfcWall</b>, with ID 66. the things inside the parentheses are its attributes. More about attributes below.</p>
-<p>The important piece is the <b>class</b> (as in 'Industry Foundation Classes'). Each element has a class, that defines the type of element: A wall, a window, but also a floor, a space, or even a line, a circle, a point in the 3D space or even concepts like a moment in time, or a task to do. Most useful IFC classes for building elements are derived from the <a rel="nofollow" class="external text" href="https://standards.buildingsmart.org/IFC/RELEASE/IFC4_1/FINAL/HTML/schema/ifcproductextension/lexical/ifcbuildingelement.htm">IfcBuildingElement</a> class.</p></li>
-<li><p>IFC models usually follow a <b>strict structure</b>: In each file there should be one and only one <b>IfcProject</b>. The <a rel="nofollow" class="external text" href="https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/lexical/IfcProject.htm">IfcProject</a> is the root of all objects inside an IFC model. Under the IfcProject, there is usually at least one <b>IfcSite</b>, that can contain one or more <b>IfcBuildings</b>, which in turn are divided in <b>IfcBuildingStoreys</b>. These can be further divided into <b>IfcZones</b> and <b>IfcSpaces</b>.</p></li>
-<li><p>Building elements, such as <b>IfcWalls</b> or <b>IfcWindows</b> are then <b>related</b> to one of the structures above, usually an IfcBuildingStorey, but they can also be related to another building element, so one element can be composed of several others. These relations are always explicitly stated in the IFC files, they are never automatic or implicit.</p></li>
-<li><p>IFC elements, be they building elements such as walls or windows, or structure elements such as sites and storeys, or any of the many other <a rel="nofollow" class="external text" href="https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/annex-b1.html">element classes</a> offered by the IFC format, all have a predefined set of <b>attributes</b>. Attributes are things like name, position in space, or unique ID number, that are defined in the format. All entities of the same class must have the same attributes. Elements can also have <b>properties</b>. Contrary to attributes, properties are not defined by the IFC format, and can be defined freely by the user (or the BIM application). Think of them as custom attributes. The IFC format also proposes default sets of properties for many element classes. For example, for beams, there is a set called <a rel="nofollow" class="external text" href="https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/lexical/Pset_BeamCommon.htm">BimCommon</a> that holds a series of properties that are typical for beams.</p></li>
-<li><p>The <b>geometry</b> of IFC elements is defined in separate elements, that are attached to each wall, window, door, etc. It can also be shared by several elements. There are many, many ways to define geometry, and that's where many problems begin. Building elements can have both a 3D geometry and a 2D geometry (for example a plan view or footprint), and also for example a linear geometry (that is useful for stability studies). Good geometry is usually well-defined and sensibly constructed. For example, the geometry of a simple wall would be defined by a rectangle on the ground, with width and length, that is then extruded vertically by a given height to produce the wall shape. This is 3 lines in the IFC file: The rectangle, the extrusion, and the position of the final object. It is recognizable by other BIM applications, and the parameters can be changed, for example the width of the base rectangle.</p></li>
-<li><p>In some IFC files you might receive, this logical information might be completely lost, and the wall geometry defined as a bunch of triangular facets. This is often the cases with files that have been converted to IFC from another format. There might be further problems such as incomplete relationships, etc. Suffices to say, the IFC format allows for a huge range of ways to define geometry, from the 'dumbest' ones (triangular facets) to the 'smartest' ones (NURBS-based objects), with a big focus on well-defined solids (such as our extruded rectangle). Fortunately for us, that is FreeCAD's specialty.</p></li></ul>
-</div>
+<p>A linha acima define um elemento da classe <b>IfcWall</b>, com ID 66. Os itens entre par&ecirc;nteses s&atilde;o seus atributos. Mais informa&ccedil;&otilde;es sobre atributos abaixo.</p>
+<p>O elemento fundamental &eacute; a <b>classe</b> (como em 'Industry Foundation Classes'). Cada elemento possui uma classe que define seu tipo: uma parede ou uma janela, mas tamb&eacute;m um piso, um espa&ccedil;o ou at&eacute; mesmo uma linha, um c&iacute;rculo, um ponto no espa&ccedil;o 3D ou conceitos como um momento no tempo ou uma tarefa a ser realizada. As classes IFC mais &uacute;teis para elementos de constru&ccedil;&atilde;o derivam da classe <a rel="nofollow" class="external text" href="https://standards.buildingsmart.org/IFC/RELEASE/IFC4_1/FINAL/HTML/schema/ifcproductextension/lexical/ifcbuildingelement.htm">IfcBuildingElement</a>.</p></li>
+<li><p>Os modelos IFC geralmente seguem uma <b>estrutura r&iacute;gida</b>: em cada arquivo, deve haver um, e apenas um, <b>IfcProject</b>. O <a rel="nofollow" class="external text" href="https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/lexical/IfcProject.htm">IfcProject</a> &eacute; a raiz de todos os objetos dentro de um modelo IFC. Abaixo do IfcProject, geralmente existe pelo menos um <b>IfcSite</b>, que pode conter um ou mais <b>IfcBuildings</b>, os quais, por sua vez, s&atilde;o divididos em <b>IfcBuildingStoreys</b>. Estes podem ser subdivididos em <b>IfcZones</b> e <b>IfcSpaces</b>.</p></li>
+<li><p>Elementos de constru&ccedil;&atilde;o, como <b>IfcWalls</b> ou <b>IfcWindows</b>, s&atilde;o ent&atilde;o <b>relacionados</b> a uma das estruturas acima &mdash; geralmente um IfcBuildingStorey &mdash;, mas tamb&eacute;m podem estar relacionados a outro elemento de constru&ccedil;&atilde;o; assim, um elemento pode ser composto por v&aacute;rios outros. Essas rela&ccedil;&otilde;es s&atilde;o sempre declaradas explicitamente nos arquivos IFC; nunca s&atilde;o autom&aacute;ticas ou impl&iacute;citas.</p></li>
+<li><p>Os elementos IFC &mdash; sejam eles elementos de constru&ccedil;&atilde;o como paredes ou janelas, elementos estruturais como terrenos e pavimentos, ou qualquer uma das muitas outras <a rel="nofollow" class="external text" href="https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/annex-b1.html">classes de elementos</a> oferecidas pelo formato IFC &mdash; possuem, todos, um conjunto predefinido de <b>atributos</b>. Atributos s&atilde;o caracter&iacute;sticas como nome, posi&ccedil;&atilde;o no espa&ccedil;o ou n&uacute;mero de identifica&ccedil;&atilde;o &uacute;nico, definidas pelo formato. Todas as entidades de uma mesma classe devem possuir os mesmos atributos. Os elementos tamb&eacute;m podem ter <b>propriedades</b>. Ao contr&aacute;rio dos atributos, as propriedades n&atilde;o s&atilde;o definidas pelo formato IFC e podem ser definidas livremente pelo usu&aacute;rio (ou pela aplica&ccedil;&atilde;o BIM). Pense nelas como atributos personalizados. O formato IFC tamb&eacute;m prop&otilde;e conjuntos padr&atilde;o de propriedades para muitas classes de elementos. Por exemplo, para vigas, existe um conjunto chamado <a rel="nofollow" class="external text" href="https://ifc43-docs.standards.buildingsmart.org/IFC/RELEASE/IFC4x3/HTML/lexical/Pset_BeamCommon.htm">BimCommon</a>, que cont&eacute;m uma s&eacute;rie de propriedades t&iacute;picas de vigas.</p></li>
+<li><p>A <b>geometria</b> dos elementos IFC &eacute; definida em elementos separados, associados a cada parede, janela, porta, etc. Ela tamb&eacute;m pode ser compartilhada por v&aacute;rios elementos. Existem in&uacute;meras maneiras de definir a geometria, e &eacute; a&iacute; que surgem muitos problemas. Elementos de constru&ccedil;&atilde;o podem ter geometria 3D e 2D (por exemplo, uma vista em planta ou proje&ccedil;&atilde;o horizontal) e, tamb&eacute;m, geometria linear (&uacute;til para estudos de estabilidade). Uma boa geometria &eacute;, geralmente, bem definida e constru&iacute;da de forma sensata. Por exemplo, a geometria de uma parede simples seria definida por um ret&acirc;ngulo no plano de base &mdash; com largura e comprimento &mdash; que &eacute; ent&atilde;o extrudado verticalmente at&eacute; uma determinada altura para gerar o formato da parede. Isso corresponde a tr&ecirc;s linhas no arquivo IFC: o ret&acirc;ngulo, a extrus&atilde;o e a posi&ccedil;&atilde;o do objeto final. Essa estrutura &eacute; reconhec&iacute;vel por outros aplicativos BIM, e os par&acirc;metros podem ser alterados (como, por exemplo, a largura do ret&acirc;ngulo da base).</p></li>
+<li><p>Em alguns arquivos IFC que voc&ecirc; venha a receber, essa informa&ccedil;&atilde;o l&oacute;gica pode ser totalmente perdida, e a geometria da parede pode acabar definida apenas como um conjunto de faces triangulares. Isso ocorre frequentemente com arquivos convertidos para IFC a partir de outros formatos. Podem surgir outros problemas, como rela&ccedil;&otilde;es incompletas, entre outros. Basta dizer que o formato IFC permite uma enorme variedade de formas de definir a geometria, desde as mais "simples" (faces triangulares) at&eacute; as mais "inteligentes" (objetos baseados em NURBS), com grande &ecirc;nfase em s&oacute;lidos bem definidos (como o nosso ret&acirc;ngulo extrudado). Felizmente para n&oacute;s, essa &eacute; a especialidade do FreeCAD.</p></li></ul>
 <div lang="en" dir="ltr" class="mw-content-ltr">
 <h3><span id="Opening.2C_creating_and_converting_IFC_models"></span><span class="mw-headline" id="Opening,_creating_and_converting_IFC_models">Opening, creating and converting IFC models</span></h3>
 </div>
@@ -509,13 +507,13 @@
 </div>
 <!-- 
 NewPP limit report
-Cached time: 20260801155624
+Cached time: 20260801155638
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.117 seconds
-Real time usage: 0.211 seconds
-Preprocessor visited node count: 416/1000000
+CPU time usage: 0.149 seconds
+Real time usage: 0.362 seconds
+Preprocessor visited node count: 415/1000000
 Post&#8208;expand include size: 2564/2097152 bytes
 Template argument size: 1786/2097152 bytes
 Highest expansion depth: 4/100
@@ -525,15 +523,15 @@ Unstrip post&#8208;expand size: 11503/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   14.063      1 -total
- 33.45%    4.705     11 Template:Code
- 19.04%    2.677      1 Template:TutorialInfo
- 16.17%    2.274      1 Template:Caption
- 12.34%    1.736      1 Template:Incode
-  7.30%    1.027      2 Template:Legenda
+100.00%   38.502      1 -total
+ 50.41%   19.408     11 Template:Code
+ 11.08%    4.268      1 Template:TutorialInfo
+  8.67%    3.339      1 Template:Incode
+  8.40%    3.235      2 Template:Legenda
+  7.64%    2.942      1 Template:Caption
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:434081-0!canonical and timestamp 20260801155624 and revision id 1835367. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:434081-0!canonical and timestamp 20260801155637 and revision id 1835369. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="../site.js"></script>
