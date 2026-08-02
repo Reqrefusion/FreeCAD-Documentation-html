@@ -296,14 +296,14 @@ Each write instruction contains one single line of svg code ending with <code>"\
 <li>Editable texts like part number or part name.</li></ul>
 <p>Normally these graphical elements are used repeatedly and so the generating code is put into four functions:
 </p>
-<ul><li>svgRect() for rectangular frame elements.</li>
-<li>svgPath() for straight line elements.</li>
-<li>svgText() for static texts.</li>
-<li>ediText() for editable texts.</li></ul>
-<p>All functions are placed inside the above macro before the main() function and their related function calls are inserted in the main() function between <code>startSvg(...)</code> and <code>endSvg(...)</code>.
+<ul><li><code>svgRect()</code> for rectangular frame elements.</li>
+<li><code>svgPath()</code> for straight line elements.</li>
+<li><code>svgText()</code> for static texts.</li>
+<li><code>ediText()</code> for editable texts.</li></ul>
+<p>All functions are placed inside the above macro before the <code>main()</code> function and their related function calls are inserted in the <code>main()</code> function between <code>startSvg(...)</code> and <code>endSvg(...)</code>.
 </p>
 <h4><span id="svgRect.28.29"></span><span class="mw-headline" id="svgRect()">svgRect()</span></h4>
-<p>To draw a rectangle we just need to call the <b>svgRect</b> function and hand over the values for width, height, and position of the upper left corner. That is better readable in this place than if svg_line would contain the whole svg code line.
+<p>To draw a rectangle we just need to call the <code>svgRect()</code> function and hand over the values for width, height, and position of the upper left corner. That is better readable in this place than if svg_line would contain the whole svg code line.
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">svgRect</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="c1"># Generates an svg-instruction to draw a rectangle with the given values</span>
@@ -314,17 +314,17 @@ Each write instruction contains one single line of svg code ending with <code>"\
     <span class="k">return</span> <span class="n">svg_line</span>
 </pre></div>
 <p>The svg instruction is split to stay within the recommended Python line length, it will result in a single svg line nevertheless.
-</p><p>With more Python experience another way to fill in variable content emerged: the built-in <code>.format()</code> function in connection with named <code>{name}</code>, indexed <code>{0}</code> , or empty  <code>{}</code> placeholders. Single character names would change the function like this:
+</p><p>With more Python experience another way to fill in variable content emerged: the built-in <code>.format()</code> function in connection with named <code>{name}</code>, indexed <code>{0}</code> , or empty  <code>{}</code>  placeholders. Single character names would change the function like this:
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">svgRect</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
     <span class="c1"># Generates an svg-instruction to draw a rectangle with the given values</span>
     <span class="n">svg_line</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"&lt;rect width=</span><span class="se">\"</span><span class="si">{W}</span><span class="se">\"</span><span class="s2"> height=</span><span class="se">\"</span><span class="si">{H}</span><span class="se">\"</span><span class="s2"> x=</span><span class="se">\"</span><span class="si">{X}</span><span class="se">\"</span><span class="s2"> y=</span><span class="se">\"</span><span class="si">{Y}</span><span class="se">\"</span><span class="s2"> /&gt;"</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">svg_line</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">W</span> <span class="o">=</span> <span class="n">width</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="n">height</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">y</span><span class="p">)</span>
 </pre></div>
-<p>(The brackets/parentheses are optional as long as we don't need to split the <b>svg_line</b> string)
+<p>(The brackets/parentheses are optional as long as we don't need to split the <code>svg_line</code> string)
 </p>
 <h4><span id="svgPath.28.29"></span><span class="mw-headline" id="svgPath()">svgPath()</span></h4>
-<p>To draw a line we just need to call the <b>svgPath</b> function and hand over the coordinates of the start point and the endpoint of a line.
+<p>To draw a line we just need to call the <code>svgPath</code> function and hand over the coordinates of the start point and the end point of a line.
 </p><p>Instead of the end point coordinates we can hand over a tag to draw a horizontal (h) or vertical (v) line followed by the length of the line or the tag to draw a horizontal (H) or vertical (V) line followed by the x or y ordinate of the end point.
 </p><p>Each path starts at the origin and the first action is a movement with "raised pen" (not drawing) to the start point. In this case the relative movement and the absolute movement are the same and so it is irrelevant whether the m-tag is upper or lower case.
 </p>
@@ -347,7 +347,7 @@ Each write instruction contains one single line of svg code ending with <code>"\
     <span class="k">return</span> <span class="n">svg_line</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">x1</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">y1</span><span class="p">,</span> <span class="n">C</span> <span class="o">=</span> <span class="n">x2</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">y2</span><span class="p">)</span>
 </pre></div>
 <h4><span id="svgText.28.29"></span><span class="mw-headline" id="svgText()">svgText()</span></h4>
-<p>To draw a piece of text we just need to call the <b>svgText</b> function and hand over the coordinates of the text's anchor point, the text string itself, and optionally an angle for rotated text. To rotate texts a transformation instruction has to be inserted in each text tag separately; the rotation centers are set to the same coordinates as the related text anchor points.
+<p>To draw a piece of text we just need to call the <code>svgText</code> function and hand over the coordinates of the text's anchor point, the text string itself, and optionally an angle for rotated text. To rotate texts a transformation instruction has to be inserted in each text tag separately; the rotation centers are set to the same coordinates as the related text anchor points.
 </p><p>(The text alignment is controlled by the surrounding group tag or left-aligned as default).
 </p>
 <div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">def</span> <span class="nf">svgText</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">str_value</span><span class="p">,</span> <span class="n">str_angle</span><span class="o">=</span><span class="s2">"0"</span><span class="p">):</span>
@@ -381,7 +381,7 @@ Each write instruction contains one single line of svg code ending with <code>"\
     <span class="k">return</span> <span class="n">svg_line</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span> <span class="n">SV</span> <span class="o">=</span> <span class="n">str_value</span><span class="p">,</span> <span class="n">SA</span> <span class="o">=</span> <span class="n">str_angle</span><span class="p">)</span>
 </pre></div>
 <h4><span id="ediText.28.29"></span><span class="mw-headline" id="ediText()">ediText()</span></h4>
-<p>To draw a piece of editable text we just need to call the <b>ediText</b> function and hand over a name, the coordinates of the text's anchor point, the text string itself, and optionally an angle for rotated text. To rotate texts a transformation instruction has to be inserted in each text tag separately; the rotation centers are set to the same coordinates as the related text anchor points.
+<p>To draw a piece of editable text we just need to call the <code>ediTex()</code> function and hand over a name, the coordinates of the text's anchor point, the text string itself, and optionally an angle for rotated text. To rotate texts a transformation instruction has to be inserted in each text tag separately; the rotation centers are set to the same coordinates as the related text anchor points.
 </p><p>FreeCAD creates a dictionary object with every inserted template, and each entry has a name (key) and a value.
 </p><p>(The text alignment is controlled by the surrounding group tag or left-aligned as default).
 </p>
@@ -702,15 +702,15 @@ Each write instruction contains one single line of svg code ending with <code>"\
 </p>
 <!-- 
 NewPP limit report
-Cached time: 20260802220509
+Cached time: 20260802223337
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.290 seconds
-Real time usage: 0.447 seconds
-Preprocessor visited node count: 585/1000000
-Post&#8208;expand include size: 3126/2097152 bytes
-Template argument size: 21137/2097152 bytes
+CPU time usage: 0.187 seconds
+Real time usage: 0.242 seconds
+Preprocessor visited node count: 651/1000000
+Post&#8208;expand include size: 3356/2097152 bytes
+Template argument size: 21224/2097152 bytes
 Highest expansion depth: 4/100
 Expensive parser function count: 21/100
 Unstrip recursion depth: 0/20
@@ -718,13 +718,13 @@ Unstrip post&#8208;expand size: 100635/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   32.843      1 -total
- 37.15%   12.201     20 Template:Incode
- 36.50%   11.986     21 Template:Code
- 12.90%    4.237      1 Template:TutorialInfo
+100.00%   22.120      1 -total
+ 54.85%   12.134     21 Template:Code
+ 16.56%    3.663      1 Template:TutorialInfo
+ 11.23%    2.484     31 Template:Incode
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:237613-0!canonical and timestamp 20260802220536 and revision id 1836076. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:237613-0!canonical and timestamp 20260802223422 and revision id 1836077. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
