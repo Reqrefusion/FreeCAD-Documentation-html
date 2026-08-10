@@ -4,7 +4,7 @@
 <p>Pyzo is a free and open-source Python IDE focused on interactivity and introspection, which makes it well-suited for engineering and scientific applications.
 This page describes how to use it in conjunction with FreeCAD.
 </p>
-<figure class="mw-default-size" typeof="mw:File/Thumb"><a href="index.php?title=Screenshot_pyzo.png&amp;filetimestamp=20230909175145&amp;.html" class="mw-file-description"><img src="File/Screenshot_pyzo.png" decoding="async" width="300" height="157" class="mw-file-element" data-file-width="1421" data-file-height="746"></a><figcaption>Screenshot of Pyzo running the FreeCAD Python Interpreter</figcaption></figure>
+<figure class="mw-default-size" typeof="mw:File/Thumb"><a href="index.php?title=Screenshot_pyzo.png&amp;filetimestamp=20230909175145&amp;.html" class="mw-file-description"><img src="File/Screenshot_pyzo.png" decoding="async" width="300" height="157" class="mw-file-element"></a><figcaption>Screenshot of Pyzo running the FreeCAD Python Interpreter</figcaption></figure>
 <h3><span class="mw-headline" id="Pyzo">Pyzo</span></h3>
 <ul><li>website: <a rel="nofollow" class="external free" href="https://pyzo.org">https://pyzo.org</a></li>
 <li>GitHub repository: <a rel="nofollow" class="external free" href="https://github.com/pyzo/pyzo">https://github.com/pyzo/pyzo</a></li>
@@ -57,7 +57,7 @@ Otherwise, if there is no config with an empty "exe" textbox, press the button "
 <dd>Or, in case of this error: <i>Fatal Python error: take_gil: PyMUTEX(gil-&gt;mutex) failed</i>, try:</dd>
 <dd><span style="font-weight:bold; font-family:monospace, Consolas, Courier New, Courier;">/Applications/FreeCAD.app/Contents/Resources/bin/freecadcmd</span></dd>
 <dt>gui</dt>
-<dd>"PySide2" (for FreeCAD with Qt5) resp. "PySide6" (for Qt6)</dd>
+<dd>"PySide6" (for newer FreeCAD versions with Qt6) resp. "PySide2" (for Qt5)</dd>
 <dt>pythonPath [for Windows and Linux]</dt>
 <dd>[leave empty]</dd>
 <dt>pythonPath [for macOS]</dt>
@@ -65,7 +65,7 @@ Otherwise, if there is no config with an empty "exe" textbox, press the button "
 <dt>startupScript</dt>
 <dd>select radio button "Code to run at startup"</dd>
 <dd>enter the following code in the text field, replacing everything that was there before:</dd>
-<dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">PySide2</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>  <span class="c1"># resp. PySide6 instead of PySide2</span>
+<dd><div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">PySide6</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtWidgets</span>  <span class="c1"># resp. PySide2 instead of PySide6</span>
 <span class="n">QtCore</span><span class="o">.</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">setAttribute</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AA_ShareOpenGLContexts</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 <span class="c1"># optional switches:</span>
 <span class="c1"># QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)</span>
@@ -73,10 +73,8 @@ Otherwise, if there is no config with an empty "exe" textbox, press the button "
 
 <span class="c1"># AFTER_GUI - code below runs after integrating the GUI</span>
 <span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
-<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">'linux'</span><span class="p">:</span> <span class="c1"># ... and using the (extracted) AppImage</span>
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">'linux'</span><span class="p">:</span>  <span class="c1"># ... and using the (extracted) AppImage</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">'PATH_TO_FREECAD_LIBDIR'</span><span class="p">])</span>
-<span class="c1"># some older Linux systems require the following line:</span>
-<span class="c1"># os.environ['FREECAD_USER_HOME'] = os.environ['HOME']</span>
 
 <span class="n">sys</span><span class="o">.</span><span class="n">_stdout_pyzo</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
 <span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
@@ -90,6 +88,7 @@ Otherwise, if there is no config with an empty "exe" textbox, press the button "
 <dd></dd>
 <dd>enter the following environment variables:</dd>
 <dd><div class="mw-highlight mw-highlight-lang-text mw-content-ltr" dir="ltr"><pre><span></span>PYZO_PROCESS_EVENTS_WHILE_DEBUGGING=1
+PYZO_INTROSPECT_IN_MAIN_THREAD=1
 LC_NUMERIC=C
 </pre></div></dd></dl>
 <p>The PySide version (2 or 6) in the fields "gui" and "startupScript" depends on the Qt library version used by FreeCAD: Qt 5.x needs PySide2, and Qt 6.x needs PySide6. The Qt version can be seen in FreeCAD's "About" dialog.
@@ -97,6 +96,7 @@ LC_NUMERIC=C
 Run a new "freecad" shell via Pyzo's "Shell" menu. This will start the FreeCAD Gui and will open a FreeCAD Python shell in Pyzo.
 </p><p>On Linux, when not using an (extracted) AppImage, change <code>sys.path.append(os.environ['PATH_TO_FREECAD_LIBDIR'])</code> in the text field "startupScript" to e.g. <code>sys.path.append('/builds/freecad-source/build/lib')</code>, specifying the directory to the library files "FreeCAD.so" and "FreeCADGui.so". This library directory path could also be added to the field "pythonPath" in the Pyzo shell configuration dialog instead.
 </p><p>The environment variable entry <code>PYZO_PROCESS_EVENTS_WHILE_DEBUGGING=1</code> will tell Pyzo to periodically update FreeCAD's Qt-GUI while FreeCAD is stopped during a breakpoint.
+And the environment variable entry <code>PYZO_INTROSPECT_IN_MAIN_THREAD=1</code> is necessary to access the attributes of a FreeCAD <code>ViewObject</code> via autocompletion since <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/pull/21292">fundamental changes in FreeCAD's GUI thread</a>.
 </p><p>Do not remove the <code># AFTER_GUI</code> comment in the newly entered startup code -- this is a separator used by Pyzo to split the code into two blocks.
 </p><p>If you have an older Mac and Pyzo fails to launch (e.g. Pyzo 4.13.2 on OS-X 10.15), a possible work-around is to launch a patched Pyzo 4.12.7 from the terminal.  See <a rel="nofollow" class="external text" href="https://forum.freecad.org/viewtopic.php?p=707159#p707159">FreeCAD forum message</a>
 </p>
@@ -240,7 +240,7 @@ Editing the method and executing the cell can now be repeated as often as desire
 </p>
 <h2><span class="mw-headline" id="Advanced_Topics">Advanced Topics</span></h2>
 <h3><span class="mw-headline" id="Creating_a_Custom_Tool">Creating a Custom Tool</span></h3>
-<figure class="mw-default-size" typeof="mw:File/Thumb"><a href="index.php?title=PyzoMyRunner.png&amp;filetimestamp=20230916083505&amp;.html" class="mw-file-description"><img src="File/PyzoMyRunner.png" decoding="async" width="300" height="151" class="mw-file-element" data-file-width="502" data-file-height="252"></a><figcaption>Custom tool example "MyRunner" in Pyzo</figcaption></figure>
+<figure class="mw-default-size" typeof="mw:File/Thumb"><a href="index.php?title=PyzoMyRunner.png&amp;filetimestamp=20230916083505&amp;.html" class="mw-file-description"><img src="File/PyzoMyRunner.png" decoding="async" width="300" height="151" class="mw-file-element"></a><figcaption>Custom tool example "MyRunner" in Pyzo</figcaption></figure>
 <p>Pyzo includes a Plug-In concept to extend its features without patching its source code.
 </p><p>See the example code in the Pyzo repository:
 </p><p><a rel="nofollow" class="external free" href="https://github.com/pyzo/pyzo/blob/main/pyzo/resources/code_examples/myRunner.py">https://github.com/pyzo/pyzo/blob/main/pyzo/resources/code_examples/myRunner.py</a>
@@ -394,29 +394,29 @@ The extracted scripts can then be opened in Pyzo, modified and debugged like any
 <li><a href="Embedding_FreeCAD.html" title="Embedding FreeCAD">Embedding_FreeCAD</a></li></ul>
 <!-- 
 NewPP limit report
-Cached time: 20260101144510
+Cached time: 20260810184309
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.060 seconds
-Real time usage: 0.062 seconds
-Preprocessor visited node count: 468/1000000
-Post&#8208;expand include size: 3649/2097152 bytes
-Template argument size: 6681/2097152 bytes
+CPU time usage: 0.070 seconds
+Real time usage: 0.266 seconds
+Preprocessor visited node count: 480/1000000
+Post&#8208;expand include size: 3721/2097152 bytes
+Template argument size: 6651/2097152 bytes
 Highest expansion depth: 4/100
 Expensive parser function count: 7/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 26606/5000000 bytes
+Unstrip post&#8208;expand size: 26466/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   10.596      1 -total
- 35.83%    3.796      7 Template:Code
- 25.82%    2.736     28 Template:Incode
- 16.08%    1.704     15 Template:FileName
+100.00%  208.278      1 -total
+ 96.54%  201.071      7 Template:Code
+  1.18%    2.453     30 Template:Incode
+  0.84%    1.752     15 Template:FileName
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:321825-0!canonical and timestamp 20260101144545 and revision id 1725175. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:321825-0!canonical and timestamp 20260810184350 and revision id 1839620. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
