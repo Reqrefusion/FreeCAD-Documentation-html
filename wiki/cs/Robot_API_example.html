@@ -1,0 +1,195 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Robot API example/cs</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="cs" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="../index.php?title=Special;Translate&amp;group=page-Robot+API+example&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
+<li><a href="../de/Robot_API_example.html" class="mw-pt-progress mw-pt-progress--complete" title="Roboter API Beispiel (100% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="../Robot_API_example.html" class="mw-pt-languages-ui mw-pt-progress mw-pt-progress--complete" title="Robot API example (100% translated)" lang="en" dir="ltr">English</a></li>
+<li><a href="../es/Robot_API_example.html" class="mw-pt-progress mw-pt-progress--complete" title="Robot API Ejemplo (100% translated)" lang="es" dir="ltr">espa&ntilde;ol</a></li>
+<li><a href="../fr/Robot_API_example.html" class="mw-pt-progress mw-pt-progress--complete" title="Robot API exemple (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="../it/Robot_API_example.html" class="mw-pt-progress mw-pt-progress--complete" title="Esempio di API Robot (100% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="../pl/Robot_API_example.html" class="mw-pt-progress mw-pt-progress--low" title="Robot: przyk&#322;ady skrypt&oacute;w (4% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="../pt-br/Robot_API_example.html" class="mw-pt-progress mw-pt-progress--low" title="Exemplo de API do rob&ocirc; (4% translated)" lang="pt-BR" dir="ltr">portugu&ecirc;s do Brasil</a></li>
+<li><span class="mw-pt-languages-selected mw-pt-progress mw-pt-progress--low" lang="cs" dir="ltr">&#269;e&scaron;tina</span></li>
+<li><a href="../ru/Robot_API_example.html" class="mw-pt-progress mw-pt-progress--low" title="Robot API example/ru (4% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li></ul></div>
+<meta property="mw:PageProp/toc">
+<h2><span class="mw-headline" id="Introduction">Introduction</span></h2>
+<p>This example is based on the <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD_sf_master/blob/master/src/Mod/Robot/RobotExample.py">RobotExample.py</a> example.
+</p><p>You may use this file directly if you want.
+</p><p>Example how to use the basic robot class Robot6Axis which represents a 6-axis industrial robot. The Robot module is  dependent on Part but not on other modules.
+It works mostly with the basic types Placement, Vector and Matrix. So we need only:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">Robot</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">Part</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">FreeCAD</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+<h3><span class="mw-headline" id="Basic_robot_stuff">Basic robot stuff</span></h3>
+<p>create the robot. If you do not specify another kinematic it becomes a Puma 560
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">rob</span> <span class="o">=</span> <span class="n">Robot6Axis</span><span class="p">()</span>
+<span class="nb">print</span> <span class="n">rob</span>
+</pre></div>
+<p>accessing the axis and the TCP. Axes go from 1-6 and are in degree:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">Start</span> <span class="o">=</span> <span class="n">rob</span><span class="o">.</span><span class="n">Tcp</span>
+<span class="nb">print</span> <span class="n">Start</span>
+<span class="nb">print</span> <span class="n">rob</span><span class="o">.</span><span class="n">Axis1</span>
+</pre></div>
+<p>move the first axis of the robot:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">rob</span><span class="o">.</span><span class="n">Axis1</span> <span class="o">=</span> <span class="mf">5.0</span>
+</pre></div>
+<p>the TCP has changed (forward kinematic)
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">print</span> <span class="n">rob</span><span class="o">.</span><span class="n">Tcp</span>
+</pre></div>
+<p>move the robot back to start position (reverse kinematic):
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">rob</span><span class="o">.</span><span class="n">Tcp</span> <span class="o">=</span> <span class="n">Start</span>
+<span class="nb">print</span> <span class="n">rob</span><span class="o">.</span><span class="n">Axis1</span>
+</pre></div>
+<p>the same with axis 2:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">rob</span><span class="o">.</span><span class="n">Axis2</span> <span class="o">=</span> <span class="mf">5.0</span>
+<span class="nb">print</span> <span class="n">rob</span><span class="o">.</span><span class="n">Tcp</span>
+<span class="n">rob</span><span class="o">.</span><span class="n">Tcp</span> <span class="o">=</span> <span class="n">Start</span>
+<span class="nb">print</span> <span class="n">rob</span><span class="o">.</span><span class="n">Axis2</span>
+</pre></div>
+<p>Waypoints:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="n">Waypoint</span><span class="p">(</span><span class="n">Placement</span><span class="p">(),</span><span class="n">name</span><span class="o">=</span><span class="s2">"Pt"</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="s2">"LIN"</span><span class="p">)</span>
+<span class="nb">print</span> <span class="n">w</span><span class="o">.</span><span class="n">Name</span><span class="p">,</span><span class="n">w</span><span class="o">.</span><span class="n">Type</span><span class="p">,</span><span class="n">w</span><span class="o">.</span><span class="n">Pos</span><span class="p">,</span><span class="n">w</span><span class="o">.</span><span class="n">Cont</span><span class="p">,</span><span class="n">w</span><span class="o">.</span><span class="n">Velocity</span><span class="p">,</span><span class="n">w</span><span class="o">.</span><span class="n">Base</span><span class="p">,</span><span class="n">w</span><span class="o">.</span><span class="n">Tool</span>
+</pre></div>
+<p>generate more. The trajectory always finds automatically a unique name for the waypoints
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="n">w</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+  <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Waypoint</span><span class="p">(</span><span class="n">Placement</span><span class="p">(</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="o">*</span><span class="mi">100</span><span class="p">),</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="mi">0</span><span class="p">),</span><span class="s2">"LIN"</span><span class="p">,</span><span class="s2">"Pt"</span><span class="p">))</span>
+</pre></div>
+<p>create a trajectory  
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">Trajectory</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+<span class="nb">print</span> <span class="n">t</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">):</span>
+  <span class="n">t</span><span class="o">.</span><span class="n">insertWaypoints</span><span class="p">(</span><span class="n">Waypoint</span><span class="p">(</span><span class="n">Placement</span><span class="p">(</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="o">*</span><span class="mi">100</span><span class="o">+</span><span class="mi">500</span><span class="p">),</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="mi">0</span><span class="p">),</span><span class="s2">"LIN"</span><span class="p">,</span><span class="s2">"Pt"</span><span class="p">))</span>
+</pre></div>
+<p>see a list of all waypoints:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="nb">print</span> <span class="n">t</span><span class="o">.</span><span class="n">Waypoints</span>
+ 
+<span class="k">del</span> <span class="n">rob</span><span class="p">,</span><span class="n">Start</span><span class="p">,</span><span class="n">t</span><span class="p">,</span><span class="n">l</span><span class="p">,</span><span class="n">w</span>
+</pre></div>
+<h3><span class="mw-headline" id="Working_with_the_document_objects">Working with the document objects</span></h3>
+<p>Working with the robot document objects:
+first create a robot in the active document
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">if</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span><span class="n">App</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>
+ 
+<span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Robot::RobotObject"</span><span class="p">,</span><span class="s2">"Robot"</span><span class="p">)</span>
+</pre></div>
+<p>Define the visual representation and the kinematic definition (see <a href="../Robot_6-Axis.html" title="Robot 6-Axis">Robot 6-Axis</a> and <a href="../VRML_Preparation_for_Robot_Simulation.html" title="VRML Preparation for Robot Simulation">VRML Preparation for Robot Simulation</a> for details about that)
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Robot</span><span class="o">.</span><span class="n">RobotVrmlFile</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">getResourceDir</span><span class="p">()</span><span class="o">+</span><span class="s2">"Mod/Robot/Lib/Kuka/kr500_1.wrl"</span>
+<span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Robot</span><span class="o">.</span><span class="n">RobotKinematicFile</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">getResourceDir</span><span class="p">()</span><span class="o">+</span><span class="s2">"Mod/Robot/Lib/Kuka/kr500_1.csv"</span>
+</pre></div>
+<p>start positon of the Axis (only that which differ from 0)
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Robot</span><span class="o">.</span><span class="n">Axis2</span> <span class="o">=</span> <span class="o">-</span><span class="mi">90</span>
+<span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Robot</span><span class="o">.</span><span class="n">Axis3</span> <span class="o">=</span> <span class="mi">90</span>
+</pre></div>
+<p>retrieve the TCP position 
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">pos</span> <span class="o">=</span> <span class="n">FreeCAD</span><span class="o">.</span><span class="n">getDocument</span><span class="p">(</span><span class="s2">"Unnamed"</span><span class="p">)</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s2">"Robot"</span><span class="p">)</span><span class="o">.</span><span class="n">Tcp</span>
+</pre></div>
+<p>move the robot
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">pos</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="n">FreeCAD</span><span class="o">.</span><span class="n">getDocument</span><span class="p">(</span><span class="s2">"Unnamed"</span><span class="p">)</span><span class="o">.</span><span class="n">getObject</span><span class="p">(</span><span class="s2">"Robot"</span><span class="p">)</span><span class="o">.</span><span class="n">Tcp</span> <span class="o">=</span> <span class="n">pos</span>
+</pre></div>
+<p>create an empty Trajectory object in the active document
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Robot::TrajectoryObject"</span><span class="p">,</span><span class="s2">"Trajectory"</span><span class="p">)</span>
+</pre></div>
+<p>get the Trajectory
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">t</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Trajectory</span><span class="o">.</span><span class="n">Trajectory</span>
+</pre></div>
+<p>add the actual TCP position of the robot to the trajectory
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="n">StartTcp</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Robot</span><span class="o">.</span><span class="n">Tcp</span>
+<span class="n">t</span><span class="o">.</span><span class="n">insertWaypoints</span><span class="p">(</span><span class="n">StartTcp</span><span class="p">)</span>
+<span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Trajectory</span><span class="o">.</span><span class="n">Trajectory</span> <span class="o">=</span> <span class="n">t</span>
+<span class="nb">print</span> <span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Trajectory</span><span class="o">.</span><span class="n">Trajectory</span>
+</pre></div>
+<p>insert some more Waypoints and the start point at the end again:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">):</span>
+  <span class="n">t</span><span class="o">.</span><span class="n">insertWaypoints</span><span class="p">(</span><span class="n">Waypoint</span><span class="p">(</span><span class="n">Placement</span><span class="p">(</span><span class="n">Vector</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1000</span><span class="p">,</span><span class="n">i</span><span class="o">*</span><span class="mi">100</span><span class="o">+</span><span class="mi">500</span><span class="p">),</span><span class="n">Vector</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="n">i</span><span class="p">),</span><span class="s2">"LIN"</span><span class="p">,</span><span class="s2">"Pt"</span><span class="p">))</span>
+
+<span class="n">t</span><span class="o">.</span><span class="n">insertWaypoints</span><span class="p">(</span><span class="n">StartTcp</span><span class="p">)</span> <span class="c1"># end point of the trajectory</span>
+<span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Trajectory</span><span class="o">.</span><span class="n">Trajectory</span> <span class="o">=</span> <span class="n">t</span>
+<span class="nb">print</span> <span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Trajectory</span><span class="o">.</span><span class="n">Trajectory</span>
+</pre></div>
+<h3><span class="mw-headline" id="Simulation">Simulation</span></h3>
+<p>To be done..... 
+</p>
+<h3><span class="mw-headline" id="Exporting_the_trajectory">Exporting the trajectory</span></h3>
+<p>The trajectory is exported by Python. That means for every control cabinet type there is a post-processor
+Python module. Here is in detail the Kuka post-processor described
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">from</span> <span class="nn">KukaExporter</span> <span class="kn">import</span> <span class="n">ExportCompactSub</span>
+
+<span class="n">ExportCompactSub</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Robot</span><span class="p">,</span><span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Trajectory</span><span class="p">,</span><span class="s1">'D:/Temp/TestOut.src'</span><span class="p">)</span>
+</pre></div>
+<p>and that's kind of how it's done:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">App</span><span class="o">.</span><span class="n">activeDocument</span><span class="p">()</span><span class="o">.</span><span class="n">Trajectory</span><span class="o">.</span><span class="n">Trajectory</span><span class="o">.</span><span class="n">Waypoints</span><span class="p">:</span>
+	<span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">Pos</span><span class="o">.</span><span class="n">Rotation</span><span class="o">.</span><span class="n">toEuler</span><span class="p">())</span>
+	<span class="nb">print</span> <span class="p">(</span><span class="s2">"LIN {X </span><span class="si">%.3f</span><span class="s2">,Y </span><span class="si">%.3f</span><span class="s2">,Z </span><span class="si">%.3f</span><span class="s2">,A </span><span class="si">%.3f</span><span class="s2">,B </span><span class="si">%.3f</span><span class="s2">,C </span><span class="si">%.3f</span><span class="s2">}&nbsp;; </span><span class="si">%s</span><span class="s2">"</span><span class="o">%</span><span class="p">(</span><span class="n">w</span><span class="o">.</span><span class="n">Pos</span><span class="o">.</span><span class="n">Base</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="n">w</span><span class="o">.</span><span class="n">Pos</span><span class="o">.</span><span class="n">Base</span><span class="o">.</span><span class="n">y</span><span class="p">,</span><span class="n">w</span><span class="o">.</span><span class="n">Pos</span><span class="o">.</span><span class="n">Base</span><span class="o">.</span><span class="n">z</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">,</span><span class="n">w</span><span class="o">.</span><span class="n">Name</span><span class="p">))</span>
+</pre></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=Workbench_Robot.svg&amp;filetimestamp=20200404173908&amp;.html" class="mw-file-description"><img src="../File/Workbench_Robot.svg" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="../cs/Robot_Workbench.html" title="Robot Workbench/cs">Robot</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b>Robot toolbar:</b> <a href="../index.php?title=Robot_CreateRobot/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot CreateRobot/cs (page does not exist)">Place Robot</a>, <a href="../index.php?title=Robot_CreateTrajectory/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot CreateTrajectory/cs (page does not exist)">Trajectory</a>, <a href="../index.php?title=Robot_InsertWaypoint/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot InsertWaypoint/cs (page does not exist)">Insert in Trajectory</a>, <a href="../index.php?title=Robot_InsertWaypointPre/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot InsertWaypointPre/cs (page does not exist)">Insert in Trajectory (vertex)</a>, <a href="../index.php?title=Robot_Edge2Trac/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot Edge2Trac/cs (page does not exist)">Edge to Trajectory</a>, <a href="../index.php?title=Robot_TrajectoryDressUp/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot TrajectoryDressUp/cs (page does not exist)">Dress-Up Trajectory</a>, <a href="../index.php?title=Robot_TrajectoryCompound/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot TrajectoryCompound/cs (page does not exist)">Trajectory Compound</a>, <a href="../index.php?title=Robot_SetHomePos/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot SetHomePos/cs (page does not exist)">Set Home Position</a>, <a href="../index.php?title=Robot_RestoreHomePos/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot RestoreHomePos/cs (page does not exist)">Move to Home</a>, <a href="../index.php?title=Robot_Simulate/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot Simulate/cs (page does not exist)">Simulate Trajectory</a></li></ul>
+<ul><li><b>Export tools:</b> <a href="../index.php?title=Robot_ExportKukaCompact/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot ExportKukaCompact/cs (page does not exist)">Kuka Compact Subroutine</a>, <a href="../index.php?title=Robot_ExportKukaFull/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot ExportKukaFull/cs (page does not exist)">Kuka Full Subroutine</a></li></ul>
+<ul><li><b>Other tools:</b> <a href="../index.php?title=Robot_AddToolShape/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot AddToolShape/cs (page does not exist)">Tool</a>, <a href="../index.php?title=Robot_SetDefaultOrientation/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot SetDefaultOrientation/cs (page does not exist)">Set Default Orientation</a>, <a href="../index.php?title=Robot_SetDefaultValues/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Robot SetDefaultValues/cs (page does not exist)">Set Default Values</a></li></ul></div>
+    </div></div>
+<div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
+    <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="../index.php?title=User_hub.png&amp;filetimestamp=20190221145008&amp;.html" class="mw-file-description"><img src="../File/User_hub.png" decoding="async" width="24" height="24" class="mw-file-element"></a></span> <a href="../cs/User_hub.html" title="User hub/cs">User documentation</a>
+        <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
+<ul><li><b><a href="../cs/Getting_started.html" title="Getting started/cs">Getting started</a></b></li>
+<li><b>Installation:</b> <a href="../cs/Download.html" title="Download/cs">Download</a>, <a href="../cs/Installing_on_Windows.html" title="Installing on Windows/cs">Windows</a>, <a href="../cs/Installing_on_Linux.html" title="Installing on Linux/cs">Linux</a>, <a href="../cs/Installing_on_Mac.html" title="Installing on Mac/cs">Mac</a>, <a href="../cs/Installing_additional_components.html" title="Installing additional components/cs">Additional components</a>, <a href="../cs/Compile_on_Docker.html" title="Compile on Docker/cs">Docker</a>, <a href="../index.php?title=AppImage/cs&amp;action=edit&amp;redlink=1.html" class="new" title="AppImage/cs (page does not exist)">AppImage</a>, <a href="../index.php?title=Ubuntu_Snap/cs&amp;action=edit&amp;redlink=1.html" class="new" title="Ubuntu Snap/cs (page does not exist)">Ubuntu Snap</a></li>
+<li><b>Basics:</b> <a href="../cs/About_FreeCAD.html" title="About FreeCAD/cs">About FreeCAD</a>, <a href="../cs/Interface.html" title="Interface/cs">Interface</a>, <a href="../cs/Mouse_navigation.html" title="Mouse navigation/cs">Mouse navigation</a>, <a href="../cs/Selection_methods.html" title="Selection methods/cs">Selection methods</a>, <a href="../cs/Object_name.html" title="Object name/cs">Object name</a>, <a href="../cs/Preferences_Editor.html" title="Preferences Editor/cs">Preferences</a>, <a href="../cs/Workbenches.html" title="Workbenches/cs">Workbenches</a>, <a href="../cs/Document_structure.html" title="Document structure/cs">Document structure</a>, <a href="../cs/Property.html" title="Property/cs">Properties</a>, <a href="../cs/Help_FreeCAD.html" title="Help FreeCAD/cs">Help FreeCAD</a>, <a href="../cs/Donate.html" title="Donate/cs">Donate</a></li></ul>
+<hr>
+<ul><li><b>Help:</b> <a href="../cs/Tutorials.html" title="Tutorials/cs">Tutorials</a>, <a href="../cs/Video_tutorials.html" title="Video tutorials/cs">Video tutorials</a></li>
+<li><b><a href="../cs/Workbenches.html" title="Workbenches/cs">Workbenches</a>:</b> <a href="../cs/Std_Base.html" title="Std Base/cs">Std Base</a>, <a href="../cs/Assembly_Workbench.html" title="Assembly Workbench/cs">Assembly</a>, <a href="../cs/BIM_Workbench.html" title="BIM Workbench/cs">BIM</a>, <a href="../cs/CAM_Workbench.html" title="CAM Workbench/cs">CAM</a>, <a href="../cs/Draft_Workbench.html" title="Draft Workbench/cs">Draft</a>, <a href="../cs/FEM_Workbench.html" title="FEM Workbench/cs">FEM</a>, <a href="../cs/Inspection_Workbench.html" title="Inspection Workbench/cs">Inspection</a>, <a href="../cs/Material_Workbench.html" title="Material Workbench/cs">Material</a>, <a href="../cs/Mesh_Workbench.html" title="Mesh Workbench/cs">Mesh</a>, <a href="../cs/OpenSCAD_Workbench.html" title="OpenSCAD Workbench/cs">OpenSCAD</a>, <a href="../cs/Part_Workbench.html" title="Part Workbench/cs">Part</a>, <a href="../cs/PartDesign_Workbench.html" title="PartDesign Workbench/cs">PartDesign</a>, <a href="../cs/Points_Workbench.html" title="Points Workbench/cs">Points</a>, <a href="../cs/Reverse_Engineering_Workbench.html" title="Reverse Engineering Workbench/cs">Reverse Engineering</a>, <a href="../cs/Robot_Workbench.html" title="Robot Workbench/cs">Robot</a>, <a href="../cs/Sketcher_Workbench.html" title="Sketcher Workbench/cs">Sketcher</a>, <a href="../cs/Spreadsheet_Workbench.html" title="Spreadsheet Workbench/cs">Spreadsheet</a>, <a href="../cs/Surface_Workbench.html" title="Surface Workbench/cs">Surface</a>, <a href="../cs/TechDraw_Workbench.html" title="TechDraw Workbench/cs">TechDraw</a>, <a href="../cs/Testing.html" title="Testing/cs">Test Framework</a></li></ul>
+<hr>
+<ul><li><b><a href="../cs/Addon.html" title="Addon/cs">Addons</a>:</b> <a href="../cs/Std_AddonMgr.html" title="Std AddonMgr/cs">Addon Manager</a>, <a href="../cs/External_workbenches.html" title="External workbenches/cs">External workbenches</a>, <a href="../cs/Scripting_and_macros.html" title="Scripting and macros/cs">Scripting and macros</a></li></ul>
+<hr>
+<ul><li><b>Hubs:</b> <a href="../cs/User_hub.html" title="User hub/cs">User hub</a>, <a href="../cs/Power_users_hub.html" title="Power users hub/cs">Power users hub</a>, <a href="../cs/Developer_hub.html" title="Developer hub/cs">Developer hub</a></li></ul></div>
+    </div></div>
+<!-- 
+NewPP limit report
+Cached time: 20260828203821
+Cache expiry: 86400
+Reduced expiry: false
+Complications: [show&#8208;toc]
+CPU time usage: 0.085 seconds
+Real time usage: 0.144 seconds
+Preprocessor visited node count: 401/1000000
+Post&#8208;expand include size: 10959/2097152 bytes
+Template argument size: 4823/2097152 bytes
+Highest expansion depth: 5/100
+Expensive parser function count: 22/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 20599/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%   31.541      1 -total
+ 42.21%   13.313      1 Template:Robot_Tools_navi/cs
+ 30.14%    9.507     22 Template:Code
+ 21.53%    6.792      1 Template:Userdocnavi/cs
+ 11.79%    3.719      2 Template:Navigation_menu_2
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:436173-0!canonical and timestamp 20260828203821 and revision id 1844574. Rendering was triggered because: edit-page
+ -->
+</div>
+</div><script src="../site.js"></script>
