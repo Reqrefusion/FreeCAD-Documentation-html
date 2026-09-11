@@ -59,45 +59,75 @@
 <p>Der Befehl <b>Std AnPythonKonsoleSenden</b> erstellt Variablen in der <a href="../de/Python_Console.html" title="Python Console/de">Python-Konsole</a>, die auf ausgew&auml;hlte Objekte und ausgew&auml;hlte Teilobjekte verweisen, zusammen mit ein paar n&uuml;tzlichen anderen Variablen. Sie k&ouml;nnen f&uuml;r die Entwicklung von Python-Skripten verwendet werden.
 </p><p>Die folgenden Variablen werden erstellt:
 </p>
-<div class="mw-translate-fuzzy">
 <table class="wikitable">
 
 <tbody><tr>
-<th>Variablenname</th>
+<th>Variable</th>
 <th>Referenzierte Objekte
 </th></tr>
+<tr>
+<td><code>sels</code></td>
+<td>Eine Liste von Auswahlobjekten (eins f&uuml;r jedes ausgew&auml;hlte Objekt)
+</td></tr>
+<tr>
+<td><code>sel</code></td>
+<td>Das letzte Element in <code>sels</code> (geh&ouml;rt zum zuletzt ausgew&auml;hlten Objekt)
+</td></tr>
 <tr>
 <td><code>doc</code></td>
 <td>Das Dokument, das das ausgew&auml;hlte Objekt enth&auml;lt
 </td></tr>
 <tr>
-<td><code>lnk</code></td>
-<td>Das ausgew&auml;hlte Link-Objekt (wird nur erstellt, wenn das ausgew&auml;hlte Objekt ein Link ist)
+<td><code>objs</code></td>
+<td>Eine Liste mit einem Element f&uuml;r jedes ausgew&auml;hlte Objekt:<br>
+<p>Das ausgew&auml;hlte Objekt selbst (wenn das ausgew&auml;hlte Objekt kein Link ist)<br>
+Das verkn&uuml;pfte Objekt (wenn das ausgew&auml;hlte Objekt ein Link ist)
+</p>
 </td></tr>
 <tr>
 <td><code>obj</code></td>
-<td>Je nach ausgew&auml;hltem Objekt:<br>
-<p>Das ausgew&auml;hlte Objekt selbst (wenn das ausgew&auml;hlte Objekt kein Link ist)<br>
-Das verkn&uuml;pfte Objekt (wenn das ausgew&auml;hlte Objekt ein Link ist)<br>
+<td>Das letzte Element in <code>objs</code> (geh&ouml;rt zum zuletzt ausgew&auml;hlten Objekt)
+</td></tr>
+<tr>
+<td><code>lnks</code></td>
+<td>Eine Liste mit einem Element f&uuml;r jedes ausgew&auml;hlte Objekt:<br>
+<p>Das ausgew&auml;hlte Objekt selbst (wenn das ausgew&auml;hlte Objekt ein Link ist)<br>
+<code>None</code> (wenn das ausgew&auml;hlte Objekt kein Link ist)
+</p>
+</td></tr>
+<tr>
+<td><code>lnk</code></td>
+<td>Das letzte Element in <code>lnks</code> (geh&ouml;rt zum zuletzt ausgew&auml;hlten Objekt)
+</td></tr>
+<tr>
+<td><code>shps</code></td>
+<td>Eine Liste mit einem Element f&uuml;r jedes <code>obj</code> in <code>objs</code>:<br>
+<p>Die Eigenschaft <code>Shape</code> eines <code>obj</code> (f&uuml;r Objekte, die diese Eigenschaft besitzen)<br>
+The <code>Mesh</code> property of <code>obj</code> (for Mesh objects)<br>
+The <code>Points</code> property of <code>obj</code> (for Points objects)<br>
+<code>None</code> (for other objects)
 </p>
 </td></tr>
 <tr>
 <td><code>shp</code></td>
-<td>Je nach Art des <code>obj</code>:<br>
-<p>Die Eigenschaft <code>Shape</code> von <code>obj</code> (f&uuml;r Objekte, die von der Klasse <code>Part::Feature</code> abgeleitet sind)<br>
-Die Eigenschaft <code>Mesh</code> von <code>obj</code> (f&uuml;r Mesh-Objekte)<br>
-Die Eigenschaft <code>Points</code> von <code>obj</code> (f&uuml;r Punkteobjekte)
-</p>
-</td></tr>
-<tr>
-<td><code>sub</code></td>
-<td>Die erste ausgew&auml;hlte Unterform (wird nur erstellt, wenn mindestens eine Unterform ausgew&auml;hlt ist)
+<td>Das letzte Element in <code>shps</code> (geh&ouml;rt zum letzten Element in <code>objs</code>)
 </td></tr>
 <tr>
 <td><code>subs</code></td>
-<td>Eine Liste mit allen Unterformen (wird nur erstellt, wenn zwei oder mehr Unterformen ausgew&auml;hlt sind)
+<td>Eine Liste mit den Ausgew&auml;hlten Teilobjekten. Die Liste ist leer, wenn kein Teilobjekt ausgew&auml;hlt wurde.
+</td></tr>
+<tr>
+<td><code>sub</code></td>
+<td>Das letzte Element in <code>subs</code> oder <code>None</code>, wenn <code>subs</code> leer ist.
+</td></tr>
+<tr>
+<td><code>names</code></td>
+<td>Eine Liste mit einem Tupel f&uuml;r jedes ausgew&auml;hlte Objekt. Jedes Tupel enth&auml;lt die Namen der Teilobjekte, die zu dem Objekt geh&ouml;ren. Das Tupel ist leer, wenn keine Teilobjekte f&uuml;r das Objekt ausgew&auml;hlt wurden.
+</td></tr>
+<tr>
+<td><code>name</code></td>
+<td>Das letzte Element in <code>names</code> oder <code>None</code>, wenn das Tupel leer ist.
 </td></tr></tbody></table>
-</div>
 <p><span id="Usage"></span>
 </p>
 <h2><span class="mw-headline" id="Anwendung">Anwendung</span></h2>
@@ -182,15 +212,15 @@ Die Eigenschaft <code>Points</code> von <code>obj</code> (f&uuml;r Punkteobjekte
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20260911122311
+Cached time: 20260911125207
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.129 seconds
-Real time usage: 0.259 seconds
-Preprocessor visited node count: 549/1000000
-Post&#8208;expand include size: 33103/2097152 bytes
-Template argument size: 13980/2097152 bytes
+CPU time usage: 0.134 seconds
+Real time usage: 0.197 seconds
+Preprocessor visited node count: 662/1000000
+Post&#8208;expand include size: 33418/2097152 bytes
+Template argument size: 14048/2097152 bytes
 Highest expansion depth: 6/100
 Expensive parser function count: 2/100
 Unstrip recursion depth: 0/20
@@ -198,19 +228,19 @@ Unstrip post&#8208;expand size: 2620/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   73.154      1 -total
- 42.58%   31.146      1 Template:Std_Base_navi/de
- 32.45%   23.735      2 Template:Navigation_menu_2
- 12.30%    8.998      2 Template:Docnav/de
- 11.01%    8.056      1 Template:GuiCommand/de
-  6.33%    4.629      1 Template:Code
-  6.25%    4.575      1 Template:Userdocnavi/de
-  6.24%    4.562     17 Template:Incode
-  6.21%    4.540      1 Template:VeryImportantMessage
-  4.51%    3.300      2 Template:MenuCommand
+100.00%   50.193      1 -total
+ 35.08%   17.606      1 Template:Std_Base_navi/de
+ 23.78%   11.934      2 Template:Navigation_menu_2
+ 17.40%    8.736      1 Template:GuiCommand/de
+  8.04%    4.035      6 Template:KEY
+  7.79%    3.909      2 Template:Docnav/de
+  7.49%    3.758     36 Template:Incode
+  6.44%    3.234      1 Template:Userdocnavi/de
+  6.16%    3.093      1 Template:VeryImportantMessage
+  6.06%    3.043      1 Template:Code
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:200989-0!canonical and timestamp 20260911122311 and revision id 1849818. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:200989-0!canonical and timestamp 20260911125206 and revision id 1849820. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="../site.js"></script>
