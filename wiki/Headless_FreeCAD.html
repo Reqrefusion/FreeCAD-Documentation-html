@@ -162,19 +162,33 @@ Configuration:
 Box<span class="w"> </span>created<span class="w"> </span>and<span class="w"> </span>exported<span class="w"> </span>successfully<span class="w"> </span>to<span class="w"> </span>my_box_model.step
 </pre></div>
 <h3><span class="mw-headline" id="Via_the_full_GUI_application_under_a_virtual_display">Via the full GUI application under a virtual display</span></h3>
-<p>The methods above (<code>FreeCADCmd</code>, <code>FreeCAD -c</code>, and using FreeCAD as an embedded Python library) are all, unable to create <a href="Viewprovider.html" title="Viewprovider">view providers</a>. If your script needs <code>ViewObject</code> access (for example, properties like text style or font size), none of the methods above will work..
+<p>The methods above (<code>FreeCADCmd</code>, <code>FreeCAD -c</code>, and using FreeCAD as an embedded Python library) are all unable to create <a href="Viewprovider.html" title="Viewprovider">view providers</a>. If your script needs <code>ViewObject</code> access (for example, properties like text style or font size), none of the methods above will work.
 </p><p>To get a fully-initialized GUI session (including working view providers) without a physical monitor, under Linux you can run the actual <code>FreeCAD</code> GUI executable under a virtual X server such as <a rel="nofollow" class="external text" href="https://en.wikipedia.org/wiki/Xvfb">Xvfb</a>. Unlike the console modes, the GUI executable performs its normal startup (creating a <code>MainWindow</code> and real view providers).
 </p><p>On Linux, this can be achieved with <code>xvfb-run</code>, which handles allocating a virtual display and cleanup automatically:
 </p>
 <div class="mw-highlight mw-highlight-lang-bash mw-content-ltr" dir="ltr"><pre><span></span>$<span class="w"> </span>xvfb-run<span class="w"> </span>-a<span class="w"> </span>FreeCAD<span class="w"> </span>my_script.py
 </pre></div>
 <p>As with the script-file invocation described in <a href="Start_up_and_Configuration.html" title="Start up and Configuration">Start up and Configuration</a>, the file passed on the command line can have either a <code>.py</code> or <code>.FCMacro</code> extension; both are run the same way.
-</p><p><b>The application does not exit on its own after the script finishes.</b> Unlike <code>FreeCADCmd</code>, the GUI executable always enters the normal Qt event loop and stays open, whether or not a display is visible to a user. The script itself must request the exit, for example:
+</p><p><b>The application does not exit on its own after the script finishes.</b> Unlike <code>FreeCADCmd</code>, the GUI executable always enters the normal Qt event loop and stays open, whether or not a display is visible to a user. The script itself must request the exit.
+</p><p>Calling <code>FreeCADGui.getMainWindow().close()</code> alone is not reliable for this: it goes through the normal interactive close sequence, which includes FreeCAD's "save changes?" prompt for any document with unsaved modifications &mdash; a modal dialog with nobody available to dismiss it, which will hang the process indefinitely under a virtual display. Clear each document's modified flag first so there is nothing to prompt about:
 </p>
-<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCADGui</span>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">FreeCADGui</span> <span class="k">as</span> <span class="nn">Gui</span>
+
 <span class="c1"># ... script code ...</span>
-<span class="n">FreeCADGui</span><span class="o">.</span><span class="n">getMainWindow</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">App</span><span class="o">.</span><span class="n">listDocuments</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="n">Gui</span><span class="o">.</span><span class="n">getDocument</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">Name</span><span class="p">)</span><span class="o">.</span><span class="n">Modified</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">Gui</span><span class="o">.</span><span class="n">getMainWindow</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
+<p>If something else still keeps the process alive despite this (for example, another modal dialog unrelated to unsaved changes), a script can fall back to a hard exit that bypasses the Qt event loop entirely:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="c1"># ... script code ...</span>
+<span class="n">os</span><span class="o">.</span><span class="n">_exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+<p>Use this only as a last resort: it skips Qt's and FreeCAD's normal shutdown and cleanup, so anything that shutdown would otherwise remove (such as lock files) is left behind. Prefer clearing the modified flag and closing normally whenever possible.
+</p>
 <h2><span class="mw-headline" id="Examples">Examples</span></h2>
 <h3><span class="mw-headline" id="Searching_FreeCAD_modules">Searching FreeCAD modules</span></h3>
 <ol><li>Open the terminal and type:
@@ -204,29 +218,29 @@ Box<span class="w"> </span>created<span class="w"> </span>and<span class="w"> </
 <li><a href="Start_up_and_Configuration.html#Running_FreeCAD_without_GUI_(headless)" title="Start up and Configuration">Start up and Configuration</a></li></ul>
 <!-- 
 NewPP limit report
-Cached time: 20260917150311
+Cached time: 20260918071010
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.107 seconds
-Real time usage: 0.139 seconds
-Preprocessor visited node count: 523/1000000
-Post&#8208;expand include size: 2117/2097152 bytes
-Template argument size: 4367/2097152 bytes
+CPU time usage: 0.110 seconds
+Real time usage: 0.143 seconds
+Preprocessor visited node count: 543/1000000
+Post&#8208;expand include size: 2250/2097152 bytes
+Template argument size: 4562/2097152 bytes
 Highest expansion depth: 4/100
-Expensive parser function count: 12/100
+Expensive parser function count: 13/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 19498/5000000 bytes
+Unstrip post&#8208;expand size: 20669/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   12.035      1 -total
- 38.99%    4.692     12 Template:Code
- 20.14%    2.424     41 Template:Incode
- 18.78%    2.260      1 Template:TOCright
+100.00%   14.191      1 -total
+ 41.43%    5.879     13 Template:Code
+ 20.79%    2.951     42 Template:Incode
+ 10.22%    1.451      1 Template:TOCright
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:231411-0!canonical and timestamp 20260917150330 and revision id 1854759. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:231411-0!canonical and timestamp 20260918071032 and revision id 1854859. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
