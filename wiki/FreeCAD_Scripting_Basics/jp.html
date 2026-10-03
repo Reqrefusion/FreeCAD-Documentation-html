@@ -1,0 +1,111 @@
+<link href="../site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">FreeCAD Scripting Basics/jp</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><pre><code>import FreeCAD as App
+import Part
+
+# &#26032;&#35215;&#12489;&#12461;&#12517;&#12513;&#12531;&#12488;
+doc = App.newDocument("CircularPlate")
+
+# =========================
+# &#12497;&#12521;&#12513;&#12540;&#12479; [mm]
+# =========================
+outer_diameter = 300.0
+thickness = 20.0
+
+center_hole_diameter = 100.0
+bolt_hole_diameter = 8.0
+
+# M8&#31348;&#12398;&#20013;&#24515;&#20301;&#32622;
+# &#20870;&#30436;&#20013;&#24515;&#12363;&#12425;X/Y&#26041;&#21521;&#12395;&#37197;&#32622;
+bolt_offset = 100.0
+
+# =========================
+# &#20870;&#30436;&#26412;&#20307;
+# =========================
+outer_radius = outer_diameter / 2.0
+
+plate = Part.makeCylinder(
+    outer_radius,
+    thickness
+)
+
+# =========================
+# &#20013;&#22830;&#12398;&phi;100&#36011;&#36890;&#31348;
+# =========================
+center_hole = Part.makeCylinder(
+    center_hole_diameter / 2.0,
+    thickness
+)
+
+plate = plate.cut(center_hole)
+
+# =========================
+# &#22235;&#38533;&#12398;M8&#36011;&#36890;&#31348;
+# =========================
+bolt_positions = [
+    (-bolt_offset, -bolt_offset),
+    (-bolt_offset,  bolt_offset),
+    ( bolt_offset, -bolt_offset),
+    ( bolt_offset,  bolt_offset)
+]
+
+for x, y in bolt_positions:
+    hole = Part.makeCylinder(
+        bolt_hole_diameter / 2.0,
+        thickness,
+        App.Vector(x, y, 0)
+    )
+    plate = plate.cut(hole)
+
+# =========================
+# FreeCAD&#12395;&#24418;&#29366;&#12434;&#36861;&#21152;
+# =========================
+obj = doc.addObject("PartDesign::Feature", "CircularPlate")
+obj.Label = "300mm Circular Plate"
+obj.Shape = plate
+
+# &#33394;
+obj.ViewObject.ShapeColor = (0.75, 0.75, 0.78)
+
+# &#20445;&#23384;
+doc.recompute()
+
+# &#24517;&#35201;&#12394;&#12425;&#20445;&#23384;&#20808;&#12434;&#25351;&#23450;
+# doc.saveAs("C:/temp/circular_plate.FCStd")</code>
+</pre>
+<h3><span id=".E5.AF.B8.E6.B3.95"></span><span class="mw-headline" id="&#23544;&#27861;">&#23544;&#27861;</span></h3>
+<ul><li>&#22806;&#24452;&#65306;<b>300 mm</b></li>
+<li>&#26495;&#21402;&#65306;<b>20 mm</b></li>
+<li>&#20013;&#22830;&#31348;&#65306;<b>&phi;100 mm</b></li>
+<li>M8&#31348;&#65306;<b>&phi;8 mm &times; 4</b></li>
+<li>M8&#31348;&#20301;&#32622;&#65306;&#20013;&#24515;&#12363;&#12425; <b>X&plusmn;100 mm / Y&plusmn;100 mm</b></li>
+<li>&#12377;&#12409;&#12390;&#36011;&#36890;&#31348;</li></ul>
+<p>&#12394;&#12362;&#12289;&#12300;&#22235;&#38533;&#12301;&#12364;<b>300 mm &times; 300 mm&#12398;&#22806;&#25509;&#27491;&#26041;&#24418;&#12398;&#22235;&#38533;&#20184;&#36817;</b>&#12392;&#12356;&#12358;&#24847;&#21619;&#12394;&#12425;&#12289;&#19978;&#35352;&#12398; <code>bolt_offset = 100</code> &#12399;&#22793;&#26356;&#12391;&#12365;&#12414;&#12377;&#12290;&#20363;&#12360;&#12400;&#31348;&#20013;&#24515;&#12434;&#22806;&#21608;&#12363;&#12425;30 mm&#38626;&#12377;&#35373;&#35336;&#12394;&#12425;&#12289;&#20013;&#24515;&#20301;&#32622;&#12399; <code>&plusmn;(150-30)=&plusmn;120 mm</code> &#12394;&#12398;&#12391;&#12289;
+</p>
+<pre><code>bolt_offset = 120.0</code>
+</pre>
+<p>&#12392;&#12377;&#12428;&#12400;OK&#12391;&#12377;&#12290;
+</p>
+<!-- 
+NewPP limit report
+Cached time: 20261003042141
+Cache expiry: 86400
+Reduced expiry: false
+Complications: []
+CPU time usage: 0.004 seconds
+Real time usage: 0.004 seconds
+Preprocessor visited node count: 3/1000000
+Post&#8208;expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Highest expansion depth: 2/100
+Expensive parser function count: 0/100
+Unstrip recursion depth: 0/20
+Unstrip post&#8208;expand size: 0/5000000 bytes
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%    0.000      1 -total
+-->
+
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:440651-0!canonical and timestamp 20261003042212 and revision id 1860829. Rendering was triggered because: edit-page
+ -->
+</div>
+</div><script src="../site.js"></script>
