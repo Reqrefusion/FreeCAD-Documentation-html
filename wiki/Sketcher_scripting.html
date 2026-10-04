@@ -1,11 +1,12 @@
 <link href="site.css" rel="stylesheet" type="text/css"/><div class="mw-page-container"><h1 id="firstHeading" class="firstHeading mw-first-heading"><span class="mw-page-title-main">Sketcher scripting</span></h1><?xml encoding="UTF-8"><div class="mw-content-ltr mw-parser-output" lang="en" dir="ltr"><div class="mw-pt-languages noprint navigation-not-searchable" lang="en" dir="ltr"><div class="mw-pt-languages-label">Other languages:</div><ul class="mw-pt-languages-list"><li><a href="index.php?title=Special;Translate&amp;group=page-Sketcher+scripting&amp;language=&amp;task=view.html" class="new" title="Start translation for this language" lang="" dir="ltr"></a></li>
-<li><a href="de/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--high" title="Sketcher Skripterstellung (97% translated)" lang="de" dir="ltr">Deutsch</a></li>
+<li><a href="de/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--complete" title="Sketcher Skripterstellung (100% translated)" lang="de" dir="ltr">Deutsch</a></li>
 <li><span class="mw-pt-languages-ui mw-pt-languages-selected mw-pt-progress mw-pt-progress--complete" lang="en" dir="ltr">English</span></li>
 <li><a href="es/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--med" title="Croquizador Gui&oacute;n (15% translated)" lang="es" dir="ltr">espa&ntilde;ol</a></li>
-<li><a href="fr/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--high" title="Sketcher Scripts (97% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
-<li><a href="it/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--low" title="Sketcher: scripting (3% translated)" lang="it" dir="ltr">italiano</a></li>
-<li><a href="pl/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--high" title="Skrypty Szkicownika (97% translated)" lang="pl" dir="ltr">polski</a></li>
+<li><a href="fr/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--complete" title="Sketcher Scripts (100% translated)" lang="fr" dir="ltr">fran&ccedil;ais</a></li>
+<li><a href="it/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--complete" title="Sketcher: scripting (100% translated)" lang="it" dir="ltr">italiano</a></li>
+<li><a href="pl/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--complete" title="Skrypty Szkicownika (100% translated)" lang="pl" dir="ltr">polski</a></li>
 <li><a href="pt-br/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--low" title="Sketcher scripting (3% translated)" lang="pt-BR" dir="ltr">portugu&ecirc;s do Brasil</a></li>
+<li><a href="cs/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--low" title="Sketcher skriptov&aacute;n&iacute; (3% translated)" lang="cs" dir="ltr">&#269;e&scaron;tina</a></li>
 <li><a href="ru/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--high" title="&#1053;&#1072;&#1087;&#1080;&#1089;&#1072;&#1085;&#1080;&#1077; &#1089;&#1082;&#1088;&#1080;&#1087;&#1090;&#1086;&#1074; &#1074; &#1057;&#1082;&#1077;&#1090;&#1095;&#1077;&#1088; (97% translated)" lang="ru" dir="ltr">&#1088;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;</a></li>
 <li><a href="ja/Sketcher_scripting.html" class="mw-pt-progress mw-pt-progress--med" title="&#12473;&#12465;&#12483;&#12481;&#12515;&#12540;&#12539;&#12473;&#12463;&#12522;&#12503;&#12486;&#12451;&#12531;&#12464; (30% translated)" lang="ja" dir="ltr">&#26085;&#26412;&#35486;</a></li></ul></div>
 <div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
@@ -217,12 +218,32 @@ The sections below describe how to <a href="#Identifying_the_numbering_of_a_line
 
 <span class="n">doc</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
 </pre></div>  
+<h3><span class="mw-headline" id="Variant_Code">Variant Code</span></h3>
+<p>Since the <code>addGeometry()</code> method returns the line ID we can store it in a variable to be used in the <code>Constraint()</code> method instead of the cryptic element index. This improves clarity, and it provides an easier access to the lines in later steps:
+</p>
+<div class="mw-highlight mw-highlight-lang-python mw-content-ltr" dir="ltr"><pre><span></span><span class="kn">import</span> <span class="nn">FreeCAD</span> <span class="k">as</span> <span class="nn">App</span>
+<span class="kn">import</span> <span class="nn">Part</span>
+<span class="kn">import</span> <span class="nn">Sketcher</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">newDocument</span><span class="p">()</span>  
+
+<span class="n">sketch</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">addObject</span><span class="p">(</span><span class="s2">"Sketcher::SketchObject"</span><span class="p">,</span> <span class="s2">"Sketch"</span><span class="p">)</span>
+<span class="n">line1</span> <span class="o">=</span> <span class="n">sketch</span><span class="o">.</span><span class="n">addGeometry</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                                    <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">5.2</span><span class="p">,</span> <span class="mf">5.3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">line2</span> <span class="o">=</span> <span class="n">sketch</span><span class="o">.</span><span class="n">addGeometry</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">6.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                                    <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">10.2</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">line3</span> <span class="o">=</span> <span class="n">sketch</span><span class="o">.</span><span class="n">addGeometry</span><span class="p">(</span><span class="n">Part</span><span class="o">.</span><span class="n">LineSegment</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">12.2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                                    <span class="n">App</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="mf">15.4</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)),</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">sketch</span><span class="o">.</span><span class="n">addConstraint</span><span class="p">(</span><span class="n">Sketcher</span><span class="o">.</span><span class="n">Constraint</span><span class="p">(</span><span class="s2">"Coincident"</span><span class="p">,</span> <span class="n">line2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">line3</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="n">doc</span><span class="o">.</span><span class="n">recompute</span><span class="p">()</span>
+</pre></div>  
 <p><br>
 </p>
 <div class="NavFrame" style="margin: 0px; text-align: center; border-collapse: collapse; font-size: 100%; border-top-style: double; border-top-style: 1px; clear:both;">
     <div class="NavHead mw-collapsible mw-collapsed" style="margin: 1px; font-weight: normal; background-color: var(--background-color-neutral-subtle, #fefefe);"><span typeof="mw:File"><a href="index.php?title=Workbench_Sketcher.svg&amp;filetimestamp=20231231194727&amp;.html" class="mw-file-description"><img src="File/Workbench_Sketcher.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="64" data-file-height="64"></a></span> <a href="Sketcher_Workbench.html" title="Sketcher Workbench">Sketcher</a>
         <div class="NavContent mw-collapsible-content" style="margin: 10px; border: 1px solid var(--border-color-base, #aaaaaa); text-align: left; border-collapse: collapse; font-weight: normal; font-size: 100%; clear:both; margin-top: 1px; background-color: var(--background-color-neutral-subtle, #fefefe);">
-<ul><li><b>General:</b> <a href="Sketcher_NewSketch.html" title="Sketcher NewSketch">New Sketch</a>, <a href="Sketcher_EditSketch.html" title="Sketcher EditSketch">Edit Sketch</a>, <a href="Sketcher_MapSketch.html" title="Sketcher MapSketch">Attach Sketch</a>, <a href="Sketcher_ReorientSketch.html" title="Sketcher ReorientSketch">Reorient Sketch</a>, <a href="Sketcher_ValidateSketch.html" title="Sketcher ValidateSketch">Validate Sketch</a>, <a href="Sketcher_MergeSketches.html" title="Sketcher MergeSketches">Merge Sketches</a>, <a href="Sketcher_MirrorSketch.html" title="Sketcher MirrorSketch">Mirror Sketch</a>, <a href="Sketcher_LeaveSketch.html" title="Sketcher LeaveSketch">Leave Sketch</a>, <a href="Sketcher_ViewSketch.html" title="Sketcher ViewSketch">Align View to Sketch</a>, <a href="Sketcher_ViewSection.html" title="Sketcher ViewSection">Toggle Section View</a>, <a href="Sketcher_Grid.html" title="Sketcher Grid">Toggle Grid</a>, <a href="Sketcher_Snap.html" title="Sketcher Snap">Toggle Snap</a>, <a href="Sketcher_RenderingOrder.html" title="Sketcher RenderingOrder">Rendering Order</a>, <a href="Sketcher_StopOperation.html" title="Sketcher StopOperation">Stop Operation</a></li></ul>
+<ul><li><b>General:</b> <a href="Sketcher_NewSketch.html" title="Sketcher NewSketch">New Sketch</a>, <a href="Sketcher_EditSketch.html" title="Sketcher EditSketch">Edit Sketch</a>, <a href="Sketcher_MapSketch.html" title="Sketcher MapSketch">Attach Sketch</a>, <a href="Sketcher_ReorientSketch.html" title="Sketcher ReorientSketch">Reorient Sketch</a>, <a href="Sketcher_ValidateSketch.html" title="Sketcher ValidateSketch">Validate Sketch</a>, <a href="Sketcher_MergeSketches.html" title="Sketcher MergeSketches">Merge Sketches</a>, <a href="Sketcher_MirrorSketch.html" title="Sketcher MirrorSketch">Mirror Sketch</a>, <a href="Sketcher_LeaveSketch.html" title="Sketcher LeaveSketch">Leave Sketch</a>, <a href="Sketcher_ViewSketch.html" title="Sketcher ViewSketch">Align View to Sketch</a>, <a href="Sketcher_ViewSection.html" title="Sketcher ViewSection">Toggle Section View</a>, <a href="Sketcher_StopOperation.html" title="Sketcher StopOperation">Stop Operation</a>, <a href="Sketcher_Grid.html" title="Sketcher Grid">Grid</a>, <a href="Sketcher_Snap.html" title="Sketcher Snap">Snap</a>, <a href="Sketcher_RenderingOrder.html" title="Sketcher RenderingOrder">Rendering Order</a></li></ul>
 <hr>
 <ul><li><b>Geometries:</b> <a href="Sketcher_CreatePoint.html" title="Sketcher CreatePoint">Point</a>, <a href="Sketcher_CreatePolyline.html" title="Sketcher CreatePolyline">Polyline</a>, <a href="Sketcher_CreateLine.html" title="Sketcher CreateLine">Line</a>, <a href="Sketcher_CreateArc.html" title="Sketcher CreateArc">Arc From Center</a>, <a href="Sketcher_Create3PointArc.html" title="Sketcher Create3PointArc">Arc From 3 Points</a>, <a href="Sketcher_CreateArcOfEllipse.html" title="Sketcher CreateArcOfEllipse">Elliptical Arc</a>, <a href="Sketcher_CreateArcOfHyperbola.html" title="Sketcher CreateArcOfHyperbola">Hyperbolic Arc</a>, <a href="Sketcher_CreateArcOfParabola.html" title="Sketcher CreateArcOfParabola">Parabolic Arc</a>, <a href="Sketcher_CreateCircle.html" title="Sketcher CreateCircle">Circle From Center</a>, <a href="Sketcher_Create3PointCircle.html" title="Sketcher Create3PointCircle">Circle From 3 Points</a>, <a href="Sketcher_CreateEllipseByCenter.html" title="Sketcher CreateEllipseByCenter">Ellipse From Center</a>, <a href="Sketcher_CreateEllipseBy3Points.html" title="Sketcher CreateEllipseBy3Points">Ellipse From 3 Points</a>, <a href="Sketcher_CreateRectangle.html" title="Sketcher CreateRectangle">Rectangle</a>, <a href="Sketcher_CreateRectangle_Center.html" title="Sketcher CreateRectangle Center">Centered Rectangle</a>, <a href="Sketcher_CreateOblong.html" title="Sketcher CreateOblong">Rounded Rectangle</a>, <a href="Sketcher_CreateTriangle.html" title="Sketcher CreateTriangle">Triangle</a>, <a href="Sketcher_CreateSquare.html" title="Sketcher CreateSquare">Square</a>, <a href="Sketcher_CreatePentagon.html" title="Sketcher CreatePentagon">Pentagon</a>, <a href="Sketcher_CreateHexagon.html" title="Sketcher CreateHexagon">Hexagon</a>, <a href="Sketcher_CreateHeptagon.html" title="Sketcher CreateHeptagon">Heptagon</a>, <a href="Sketcher_CreateOctagon.html" title="Sketcher CreateOctagon">Octagon</a>, <a href="Sketcher_CreateRegularPolygon.html" title="Sketcher CreateRegularPolygon">Polygon</a>, <a href="Sketcher_CreateSlot.html" title="Sketcher CreateSlot">Slot</a>, <a href="Sketcher_CreateArcSlot.html" title="Sketcher CreateArcSlot">Arc Slot</a>, <a href="Sketcher_CreateBSpline.html" title="Sketcher CreateBSpline">B-Spline</a>, <a href="Sketcher_CreatePeriodicBSpline.html" title="Sketcher CreatePeriodicBSpline">Periodic B-Spline</a>, <a href="Sketcher_CreateBSplineByInterpolation.html" title="Sketcher CreateBSplineByInterpolation">B-Spline From Knots</a>, <a href="Sketcher_CreatePeriodicBSplineByInterpolation.html" title="Sketcher CreatePeriodicBSplineByInterpolation">Periodic B-Spline From Knots</a>, <a href="Sketcher_ToggleConstruction.html" title="Sketcher ToggleConstruction">Toggle Construction Geometry</a></li></ul>
 <hr>
@@ -255,33 +276,33 @@ The sections below describe how to <a href="#Identifying_the_numbering_of_a_line
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20250922170004
+Cached time: 20261004071126
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.166 seconds
-Real time usage: 0.215 seconds
-Preprocessor visited node count: 583/1000000
-Post&#8208;expand include size: 20603/2097152 bytes
-Template argument size: 9490/2097152 bytes
+CPU time usage: 0.192 seconds
+Real time usage: 0.286 seconds
+Preprocessor visited node count: 620/1000000
+Post&#8208;expand include size: 20712/2097152 bytes
+Template argument size: 10147/2097152 bytes
 Highest expansion depth: 5/100
-Expensive parser function count: 5/100
+Expensive parser function count: 6/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 11423/5000000 bytes
+Unstrip post&#8208;expand size: 15741/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   22.498      1 -total
- 30.43%    6.847      1 Template:Sketcher_Tools_navi
- 26.23%    5.901      2 Template:Navigation_menu_2
- 15.35%    3.453      5 Template:Code
- 14.03%    3.156      1 Template:Userdocnavi
- 12.34%    2.776     30 Template:Incode
-  7.82%    1.759      1 Template:Caption
-  7.35%    1.653      1 Template:TOCright
+100.00%   22.083      1 -total
+ 27.32%    6.033      1 Template:Sketcher_Tools_navi
+ 24.22%    5.349      2 Template:Navigation_menu_2
+ 18.29%    4.038      6 Template:Code
+ 13.37%    2.953      1 Template:Userdocnavi
+ 12.32%    2.721     32 Template:Incode
+  8.24%    1.820      1 Template:Caption
+  7.34%    1.620      1 Template:TOCright
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:228642-0!canonical and timestamp 20250922170004 and revision id 1647453. Rendering was triggered because: unknown
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:228642-0!canonical and timestamp 20261004071127 and revision id 1861179. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
