@@ -28,99 +28,7 @@
  <span class="mw-default-size" typeof="mw:File"><span><img src="File/Arrow-right.svg" decoding="async" width="16" height="16" class="mw-file-element" data-file-width="64" data-file-height="64"></span></span></div>
     <div><a href="Online_Help_Toc.html" title="Online Help Toc">Index</a> <span class="mw-default-size" typeof="mw:File"><span><img src="File/Online_Help_Toc.svg" decoding="async" width="24" height="24" class="mw-file-element" data-file-width="48" data-file-height="48"></span></span></div>
 </div>
-<p>import FreeCAD as App
-</p><p>import FreeCADGui as Gui
-</p><p>import Part
-</p><p>import math
-</p><p># =========================
-</p><p># MG90S SMALL GEAR
-</p><p># =========================
-</p><p>module = 0.8
-</p><p>teeth = 20
-</p><p>pressure_angle = 20.0
-</p><p>thickness = 6.0
-</p><p># MG90S shaft hole
-</p><p>bore_diameter = 4.9
-</p><p># Gear dimensions
-</p><p>pitch_diameter = module * teeth
-</p><p>outside_diameter = module * (teeth + 2)
-</p><p>root_diameter = module * (teeth - 2.5)
-</p><p># Create document
-</p><p>doc = App.newDocument("MG90S_Small_Gear")
-</p><p># -------------------------------------------------
-</p><p># Involute gear profile
-</p><p># -------------------------------------------------
-</p><p>alpha = math.radians(pressure_angle)
-</p><p>rp = pitch_diameter / 2.0
-</p><p>ra = outside_diameter / 2.0
-</p><p>rf = root_diameter / 2.0
-</p><p>rb = rp * math.cos(alpha)
-</p><p>points = []
-</p><p>def involute_point(t):
-</p><p>&nbsp; &nbsp; x = rb * (math.cos(t) + t * math.sin(t))
-</p><p>&nbsp; &nbsp; y = rb * (math.sin(t) - t * math.cos(t))
-</p><p>&nbsp; &nbsp; return App.Vector(x, y, 0)
-</p><p># Maximum involute parameter
-</p><p>t_max = math.sqrt((ra / rb)**2 - 1)
-</p><p># One tooth
-</p><p>tooth_points = []
-</p><p>for i in range(11):
-</p><p>&nbsp; &nbsp; t = t_max * i / 10.0
-</p><p>&nbsp; &nbsp; p = involute_point(t)
-</p><p>&nbsp; &nbsp; # Rotate to approximate tooth center
-</p><p>&nbsp; &nbsp; angle = math.radians(-90.0 / teeth)
-</p><p>&nbsp; &nbsp; x = p.x * math.cos(angle) - p.y * math.sin(angle)
-</p><p>&nbsp; &nbsp; y = p.x * math.sin(angle) + p.y * math.cos(angle)
-</p><p>&nbsp; &nbsp; tooth_points.append(App.Vector(x, y, 0))
-</p><p># Create complete gear using polar tooth approximation
-</p><p>gear_points = []
-</p><p>for n in range(teeth):
-</p><p>&nbsp; &nbsp; tooth_center = 2.0 * math.pi * n / teeth
-</p><p>&nbsp; &nbsp; # Tooth angular width
-</p><p>&nbsp; &nbsp; half_width = math.pi / (2.0 * teeth)
-</p><p>&nbsp; &nbsp; # Root point before tooth
-</p><p>&nbsp; &nbsp; a1 = tooth_center - half_width * 1.6
-</p><p>&nbsp; &nbsp; gear_points.append(
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; App.Vector(rf * math.cos(a1), rf * math.sin(a1), 0)
-</p><p>&nbsp; &nbsp; )
-</p><p>&nbsp; &nbsp; # Tooth flanks
-</p><p>&nbsp; &nbsp; for side in [-1, 1]:
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; for j in range(6):
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; r = rp + (ra - rp) * j / 5.0
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; # Simple involute-like flank
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; offset = half_width * (1.0 - j / 5.0)
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if side == -1:
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; angle = tooth_center - offset
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; else:
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; angle = tooth_center + offset
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; gear_points.append(
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; App.Vector(r * math.cos(angle), r * math.sin(angle), 0)
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; )
-</p><p>&nbsp; &nbsp; # Root point after tooth
-</p><p>&nbsp; &nbsp; a2 = tooth_center + half_width * 1.6
-</p><p>&nbsp; &nbsp; gear_points.append(
-</p><p>&nbsp; &nbsp; &nbsp; &nbsp; App.Vector(rf * math.cos(a2), rf * math.sin(a2), 0)
-</p><p>&nbsp; &nbsp; )
-</p><p>gear_points.append(gear_points[0])
-</p><p>wire = Part.makePolygon(gear_points)
-</p><p>face = Part.Face(wire)
-</p><p># Extrude
-</p><p>gear = face.extrude(App.Vector(0, 0, thickness))
-</p><p># Center bore
-</p><p>bore = Part.makeCylinder(
-</p><p>&nbsp; &nbsp; bore_diameter / 2.0,
-</p><p>&nbsp; &nbsp; thickness + 2,
-</p><p>&nbsp; &nbsp; App.Vector(0, 0, -1)
-</p><p>)
-</p><p>gear = gear.cut(bore)
-</p><p>obj = doc.addObject("Part::Feature", "MG90S_Small_Gear")
-</p><p>obj.Shape = gear
-</p><p>obj.addProperty("App::PropertyString", "Specifications", "Gear")
-</p><p>obj.Specifications = "20T | Module 0.8 | Pressure angle 20 deg | Thickness 6 mm"
-</p><p>doc.recompute()
-</p><p>Gui.activeDocument().activeView().viewAxonometric()
-</p><p>
-Gui.activeDocument().activeView().fitAll()</p><div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
+<div style="clear:right; margin-bottom: .5em; float: right; padding: .5em 0 .8em 1.4em; background: none;"><meta property="mw:PageProp/toc"></div>
 <h2><span class="mw-headline" id="Standard_Installation">Standard Installation</span></h2>
 <p>The easiest way to install the latest stable version of FreeCAD is to use the installer, see the <a href="Download.html" title="Download">Download</a> page.
 </p><p>If you would like to download a development version, which may be unstable, see the <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD/releases">weekly builds</a>.
@@ -195,33 +103,33 @@ Gui.activeDocument().activeView().fitAll()</p><div style="clear:right; margin-bo
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20261006175050
+Cached time: 20261006175740
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.126 seconds
-Real time usage: 0.157 seconds
-Preprocessor visited node count: 345/1000000
+CPU time usage: 0.132 seconds
+Real time usage: 0.373 seconds
+Preprocessor visited node count: 275/1000000
 Post&#8208;expand include size: 7516/2097152 bytes
 Template argument size: 2335/2097152 bytes
 Highest expansion depth: 5/100
 Expensive parser function count: 6/100
 Unstrip recursion depth: 0/20
-Unstrip post&#8208;expand size: 5526/5000000 bytes
+Unstrip post&#8208;expand size: 5512/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   20.385      1 -total
- 29.04%    5.919      2 Template:Docnav
- 21.28%    4.338      1 Template:Userdocnavi
- 18.17%    3.704      6 Template:Code
- 13.47%    2.745      1 Template:Navigation_menu_2
-  9.41%    1.919      1 Template:TOCright
-  8.21%    1.673      1 Template:Incode
-  7.10%    1.448      3 Template:FileName
+100.00%   43.491      1 -total
+ 29.54%   12.845      1 Template:Userdocnavi
+ 20.09%    8.737      6 Template:Code
+ 17.54%    7.627      2 Template:Docnav
+ 11.79%    5.127      1 Template:Incode
+ 11.71%    5.092      1 Template:Navigation_menu_2
+  9.94%    4.323      3 Template:FileName
+  5.47%    2.378      1 Template:TOCright
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:61-0!canonical and timestamp 20261006175058 and revision id 1862006. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:61-0!canonical and timestamp 20261006175739 and revision id 1862007. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
