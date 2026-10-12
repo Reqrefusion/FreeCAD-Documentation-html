@@ -48,141 +48,10 @@
 </p><p><span class="mw-default-size" typeof="mw:File"><a href="index.php?title=Macros_config.jpg&amp;filetimestamp=20090727004641&amp;.html" class="mw-file-description"><img src="File/Macros_config.jpg" decoding="async" width="400" height="276" class="mw-file-element" data-file-width="400" data-file-height="276"></a></span>
 </p><p>This way you can make your macro become a real tool, just like any standard FreeCAD tool. This, added to the power of Python scripting within FreeCAD, makes it possible to easily add your own tools to the interface.
 </p><p>See <a href="Customize_Toolbars.html" title="Customize Toolbars">Customize Toolbars</a> for a more detailed description.
-</p><p><br>
-import FreeCAD as App
-import Part
-from FreeCAD import Vector
-</p><p>doc = App.newDocument("GamingZone")
 </p>
-<ol><li>Dimensions in millimeters</li></ol>
-<p>ROOM_L = 8000
-ROOM_W = 6000
-WALL_H = 3000
-WALL_T = 150
-</p>
-<ol><li>Colors</li></ol>
-<p>floor_color = (0.16, 0.17, 0.20)
-wall_color = (0.30, 0.32, 0.38)
-desk_color = (0.10, 0.11, 0.14)
-rgb_blue = (0.0, 0.65, 1.0)
-rgb_purple = (0.65, 0.1, 1.0)
-chair_color = (0.08, 0.09, 0.12)
-monitor_color = (0.015, 0.02, 0.03)
-</p><p><br>
-def cube(name, x, y, z, lx, ly, lz, color):
-</p>
-<pre>   shape = Part.makeBox(lx, ly, lz, Vector(x, y, z))
-   obj = doc.addObject("PartDesign::Feature", name)
-   obj.Shape = shape
-   obj.ViewObject.ShapeColor = color
-   return obj
-</pre>
-<p><br>
-</p>
-<ol><li>Floor</li></ol>
-<p>cube("Floor", 0, 0, 0,
-</p>
-<pre>    ROOM_L, ROOM_W, 150, floor_color)
-</pre>
-<ol><li>Back wall and side walls</li></ol>
-<p>cube("BackWall", 0, ROOM_W - WALL_T, 150,
-</p>
-<pre>    ROOM_L, WALL_T, WALL_H, wall_color)
-</pre>
-<p>cube("LeftWall", 0, 0, 150,
-</p>
-<pre>    WALL_T, ROOM_W, WALL_H, wall_color)
-</pre>
-<p>cube("RightWall", ROOM_L - WALL_T, 0, 150,
-</p>
-<pre>    WALL_T, ROOM_W, WALL_H, wall_color)
-</pre>
-<ol><li>Front wall sections leave a central entrance</li></ol>
-<p>cube("FrontLeft", 0, 0, 150,
-</p>
-<pre>    2500, WALL_T, WALL_H, wall_color)
-</pre>
-<p>cube("FrontRight", 5500, 0, 150,
-</p>
-<pre>    2500, WALL_T, WALL_H, wall_color)
-</pre>
-<ol><li>RGB accent strips on the floor perimeter</li></ol>
-<p>cube("BlueLED", 400, 500, 155,
-</p>
-<pre>    7200, 35, 12, rgb_blue)
-</pre>
-<p>cube("PurpleLED", 400, 5500, 155,
-</p>
-<pre>    7200, 35, 12, rgb_purple)
-</pre>
-<ol><li>Four gaming stations</li></ol>
-<p>station_x = [1000, 2600, 4200, 5800]
-</p><p>for i, x in enumerate(station_x, start=1):
-</p>
-<pre>   y = 3900
-</pre>
-<pre>   # Desk top
-   cube("DeskTop" + str(i),
-        x, y, 850, 1300, 650, 60, desk_color)
-</pre>
-<pre>   # Desk legs
-   for dx in [80, 1160]:
-       for dy in [50, 560]:
-           cube("DeskLeg", x + dx, y + dy, 150,
-                50, 50, 700, desk_color)
-</pre>
-<pre>   # Monitor body
-   cube("Monitor" + str(i),
-        x + 400, y + 470, 920,
-        500, 35, 300, monitor_color)
-</pre>
-<pre>   # Monitor stand
-   cube("MonitorStand" + str(i),
-        x + 620, y + 480, 870,
-        60, 40, 50, desk_color)
-</pre>
-<pre>   # Keyboard
-   cube("Keyboard" + str(i),
-        x + 430, y + 170, 915,
-        400, 140, 18, chair_color)
-</pre>
-<pre>   # Gaming chair seat and back
-   cube("ChairSeat" + str(i),
-        x + 450, y - 650, 520,
-        400, 400, 100, chair_color)
-</pre>
-<pre>   cube("ChairBack" + str(i),
-        x + 450, y - 680, 620,
-        400, 100, 550, chair_color)
-</pre>
-<pre>   # Chair pedestal
-   cube("ChairBase" + str(i),
-        x + 620, y - 480, 180,
-        60, 60, 340, desk_color)
-</pre>
-<ol><li>Central reception counter</li></ol>
-<p>cube("Reception", 2800, 1800, 850,
-</p>
-<pre>    2400, 650, 900, desk_color)
-</pre>
-<ol><li>Reception accent panel</li></ol>
-<p>cube("ReceptionRGB", 2850, 1775, 1100,
-</p>
-<pre>    2300, 25, 100, rgb_blue)
-</pre>
-<ol><li>Wall-mounted decorative panels</li></ol>
-<p>for i in range(5):
-</p>
-<pre>   cube("WallPanel" + str(i),
-        900 + i * 1300, 5800, 1500,
-        800, 35, 900,
-        rgb_purple if i&nbsp;% 2 else rgb_blue)
-</pre>
-<ol><li>Recompute and display</li></ol>
-<p>doc.recompute()
-</p><p>Gui.activeDocument().activeView().viewAxonometric()
-Gui.activeDocument().activeView().fitAll()
-</p><p>print("Gaming zone model created successfully!")
+<h2><span class="mw-headline" id="Creating_macros_without_recording">Creating macros without recording</span></h2>
+<p>You can also directly copy/paste Python code into a macro, without recording GUI action. Simply create a new macro, edit it, and paste your code. You can then save your macro the same way as you save a FreeCAD document. Next time you start FreeCAD, the macro will appear under the "Installed Macros" item of the Macro menu.
+</p><p>See <a href="How_to_install_macros.html" title="How to install macros">How to install macros</a> for a more detailed description.
 </p>
 <h2><span class="mw-headline" id="Macro_repositories">Macro repositories</span></h2>
 <p>There are two main places for macros. The first one is the official peer-reviewed macro repository on <a rel="nofollow" class="external text" href="https://github.com/FreeCAD/FreeCAD-macros">GitHub</a>. The second one is the <a href="Macros_recipes.html" title="Macros recipes">Macros recipes</a> page from which you can pick some useful macros to add to your FreeCAD installation. Macros from both repositories can be installed via the <a href="Std_AddonMgr.html" title="Std AddonMgr">Addon Manager</a> directly from FreeCAD.
@@ -224,13 +93,13 @@ Gui.activeDocument().activeView().fitAll()
     </div></div>
 <!-- 
 NewPP limit report
-Cached time: 20261012064416
+Cached time: 20261012084006
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.142 seconds
-Real time usage: 0.383 seconds
-Preprocessor visited node count: 215/1000000
+CPU time usage: 0.165 seconds
+Real time usage: 0.967 seconds
+Preprocessor visited node count: 223/1000000
 Post&#8208;expand include size: 7981/2097152 bytes
 Template argument size: 2461/2097152 bytes
 Highest expansion depth: 5/100
@@ -240,17 +109,17 @@ Unstrip post&#8208;expand size: 2990/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   43.297      1 -total
- 44.28%   19.170      1 Template:Powerdocnavi
- 33.83%   14.649      1 Template:Navigation_menu_2
- 13.36%    5.785      2 Template:Docnav
- 11.37%    4.925      1 Template:TOCright
-  9.27%    4.014      1 Template:Caption
-  8.92%    3.863      2 Template:Incode
-  8.73%    3.781      2 Template:MenuCommand
+100.00%  106.883      1 -total
+ 24.94%   26.654      2 Template:Incode
+ 23.75%   25.382      1 Template:Caption
+ 22.69%   24.257      2 Template:Docnav
+ 19.77%   21.136      1 Template:Powerdocnavi
+  5.90%    6.305      1 Template:TOCright
+  3.05%    3.265      1 Template:Navigation_menu_2
+  2.11%    2.254      2 Template:MenuCommand
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:446-0!canonical and timestamp 20261012064426 and revision id 1865132. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:446-0!canonical and timestamp 20261012083957 and revision id 1865133. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
