@@ -79,8 +79,10 @@
 <li>A cubic B&eacute;zier curve, a <b>CubicCurve_4</b> object, is created.</li>
 <li>Optionally adjust parameters in the <a href="Property_View.html" title="Property View">Property View</a>.</li></ol>
 <h2><span class="mw-headline" id="Notes">Notes</span></h2>
-<ul><li>Segmenting (sectioning, cutting) is a core Silk modeling technique, essential for blending. The current workflow uses curve segments as references to cut surfaces. There are plans to cut surfaces by drawing points directly on them, but since the same result is already achievable using curve segments, this convenience is a medium priority.</li>
-<li>Why so much segmenting in Silk &mdash; segmenting curves, then segmenting surfaces, so much time spent aligning segmentation points? Because building off segments/pieces of a single Bezier curve or surface preserves "relatedness" between the parts. They blend well, and sections separated by gaps still feel like part of the same surface. This sense of connectedness is nearly impossible to achieve by trying to "harmonize" two curves or surfaces that were built separately and then merged. The key to blending in Silk is sharing edges between base surfaces (which are not otherwise aligned), and then blending strips of the surfaces near that shared edge. The shared edges and strips produce blends that look decent even before fine-tuning.</li></ul>
+<ul><li>The main purpose of creating curves is to preview what the edges of a surface will look like if the input poly is used in a control grid (curves themselves are not used directly to make surfaces, but they can share polys with them). Curves are also used by cutting them into segments, which in turn defines how to cut surfaces for blending.</li>
+<li>This is a B&eacute;zier cubic curve. A NURBS is B&eacute;zier when the number of control points equals the degree + 1. A cubic (degree 3) therefore has 4 control points. B&eacute;ziers are the smoothest, highest quality NURBS. However, it is difficult to connect several of them in a satisfying manner. It is relatively easy to obtain tangency (G1) by aligning certain control points, but difficult to obtain curvature matching (G2), as this involves adjusting multiple control points at the same time. G3 is very difficult, and arguably pointless: in the attempt to smooth the join of two B&eacute;zier to G3, the control points must be moved to the point where one or both curves/surfaces become unrecognizable.</li>
+<li>So why use B&eacute;zier at all? They are still the best choice for individual curves/surfaces, and sometimes G1 is good enough to use them directly. For higher-quality work, Silk's design strategy is to use multiple B&eacute;ziers for the broad strokes of the design, let them meet at sharp angles along a shared edge, and finally trim back and blend. This is not a new idea &mdash; the most expensive surfacing software for industrial design uses the same strategy: B&eacute;zier as far as it will take you, then careful blending of the edges/joints (Silk does not attempt to fully emulate those programs; this is just one point in common).</li>
+<li>Silk currently only works with cubics, but the plan is to move to degree 4 (5 control points), degree 5 (6 control points), and so on, as development continues. A few more functions are needed before cubics are considered "done." When higher degrees are introduced, cubics will remain the bread and butter of design &mdash; higher degrees will only be used when strictly necessary, since they are harder to use (someone has to define all those extra control points).</li></ul>
 <h2><span class="mw-headline" id="Properties">Properties</span></h2>
 <p>See also: <a href="Property_View.html" title="Property View">Property View</a>.
 </p><p>A cubic curve, a <b>CubicCurve_4</b> object, is derived from a <a href="Part_Feature.html" title="Part Feature">Part feature</a>, or more precise a <code>Part::FeaturePython</code> object, and inherits all its properties. It also has the following additional properties:
@@ -106,12 +108,12 @@
 </div>
 <!-- 
 NewPP limit report
-Cached time: 20261118224722
+Cached time: 20261118230127
 Cache expiry: 86400
 Reduced expiry: false
 Complications: [show&#8208;toc]
-CPU time usage: 0.112 seconds
-Real time usage: 0.124 seconds
+CPU time usage: 0.106 seconds
+Real time usage: 0.117 seconds
 Preprocessor visited node count: 534/1000000
 Post&#8208;expand include size: 8076/2097152 bytes
 Template argument size: 1405/2097152 bytes
@@ -122,19 +124,19 @@ Unstrip post&#8208;expand size: 851/5000000 bytes
 -->
 <!--
 Transclusion expansion time report (%,ms,calls,template)
-100.00%   52.580      1 -total
-  9.46%    4.974      5 Template:PropertyData
-  6.40%    3.364      5 Template:Variable
-  3.44%    1.810      1 Template:GuiCommand
-  3.21%    1.689      2 Template:Docnav
-  2.74%    1.440      8 Template:Incode
-  2.73%    1.437      1 Template:UnfinishedDocu
-  2.37%    1.248      2 Template:Caption
-  2.26%    1.188      2 Template:Value
-  2.17%    1.142      1 Template:Button
+100.00%   54.838      1 -total
+  8.71%    4.777      5 Template:PropertyData
+  5.91%    3.242      5 Template:Variable
+  3.81%    2.087      1 Template:GuiCommand
+  3.42%    1.873      2 Template:Docnav
+  3.39%    1.857      1 Template:UnfinishedDocu
+  2.87%    1.575      8 Template:Incode
+  2.43%    1.330      2 Template:Caption
+  2.20%    1.205      2 Template:Value
+  1.79%    0.982      2 Template:Properties_Title
 -->
 
-<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:442160-0!canonical and timestamp 20261118224829 and revision id 1882093. Rendering was triggered because: edit-page
+<!-- Saved in parser cache with key freecadweb_db01-wiki_:pcache:idhash:442160-0!canonical and timestamp 20261118230223 and revision id 1882094. Rendering was triggered because: edit-page
  -->
 </div>
 </div><script src="site.js"></script>
